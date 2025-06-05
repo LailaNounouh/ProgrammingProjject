@@ -1,26 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Notfound from "./pages/Notfound";
+import Layout from "./components/layout/Layout";
 
-function App() {
-  const [companies, setCompanies] = useState([]);
-
-  useEffect(() => {
-    axios.get('/api/companies')
-      .then(response => setCompanies(response.data))
-      .catch(error => console.error('Er is een fout opgetreden:', error));
-  }, []);
-
+export default function App() {
   return (
-    <div>
-      <h1>Bedrijvenlijst</h1>
-      <ul>
-        {companies.map(company => (
-          <li key={company.id}>{company.name}</li>
-        ))}
-      </ul>
-    </div>
+    <Router>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="*" element={<Notfound />} />
+        </Routes>
+      </Layout>
+    </Router>
   );
 }
-
-export default App;
-
