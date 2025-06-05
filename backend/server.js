@@ -56,8 +56,7 @@ app.get('/companies', async (req, res) => {
   }
 });
 
-// Fallback-route voor niet-gedefinieerde routes
-app.get('*', (req, res) => {
+app.get('/{*any}', (req, res) => {
   res.status(404).send('❌ Pagina niet gevonden');
 });
 
