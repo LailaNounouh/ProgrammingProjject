@@ -3,10 +3,16 @@ const pool = require('./db');
 const cors = require('cors');
 
 const app = express();
-app.use(cors());
+
+// ✅ Specifieke CORS-configuratie (frontend bijv. draait op poort 5173)
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
+
 app.use(express.json());
 
-// API: Alle bedrijven ophalen
+// ✅ API: Alle bedrijven ophalen
 app.get('/api/bedrijven', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT company_id AS id, company_name AS name FROM companies');
@@ -17,7 +23,7 @@ app.get('/api/bedrijven', async (req, res) => {
   }
 });
 
-// Bezoeker registreren
+// ✅ Bezoeker registreren
 app.post('/register/visitor', async (req, res) => {
   try {
     const { email, passwordHash, name, phone, preferences } = req.body;
@@ -40,16 +46,17 @@ app.post('/register/visitor', async (req, res) => {
   }
 });
 
-// Root-route
+// ✅ Root-route
 app.get('/', (req, res) => {
   res.send('✅ Backend server draait');
 });
 
-// 404 fallback
+// ❌ 404 fallback
 app.use((req, res) => {
   res.status(404).send('❌ Pagina niet gevonden');
 });
 
+// ✅ Server starten
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server draait op poort ${PORT}`);
