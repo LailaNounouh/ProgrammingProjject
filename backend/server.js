@@ -2,13 +2,20 @@ const express = require('express');
 const pool = require('./db');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
-const homeRouter = require('./routes/home'); // <-- toegevoegd
+
+// Routers
+const homeRouter = require('./routes/home');
+const registerRouter = require('./routes/register');
+const newsletterRouter = require('./routes/newsletter');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use('/api', homeRouter); // <-- registratieformulier route
+// Routers gebruiken
+app.use('/api', homeRouter);
+app.use('/api/register', registerRouter);
+app.use('/api/newsletter', newsletterRouter);
 
 // API: Alle bedrijven ophalen
 app.get('/api/bedrijven', async (req, res) => {
@@ -21,65 +28,19 @@ app.get('/api/bedrijven', async (req, res) => {
   }
 });
 
-// Bezoeker registreren (oude route, optioneel)
-app.post('/register/visitor', async (req, res) => {
-  try {
-    const { email, passwordHash, name, phone, preferences } = req.body;
+// Oude visitor registratie route is verwijderd omdat dit nu in registerRouter zit
 
-    const [result] = await pool.query(
-      'INSERT INTO users (email, password_hash, role, name) VALUES (?, ?, "visitor", ?)',
-      [email, passwordHash, name]
-    );
-    const visitorId = result.insertId;
-
-    await pool.query(
-      'INSERT INTO visitor_profiles (visitor_id, phone, preferences) VALUES (?, ?, ?)',
-      [visitorId, phone, preferences]
-    );
-
-    res.json({ message: 'Bezoeker geregistreerd', visitorId });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Fout bij registratie' });
-  }
-});
-
-// Nieuwe algemene registratie route
-app.post('/api/register', async (req, res) => {
-  const { naam, email, wachtwoord, role } = req.body;
-
-  if (!naam || !email || !wachtwoord || !role) {
-    return res.status(400).json({ error: 'Alle velden zijn verplicht' });
-  }
-
-  try {
-    const [existing] = await pool.query('SELECT user_id FROM users WHERE email = ?', [email]);
-    if (existing.length > 0) {
-      return res.status(400).json({ error: 'Email is al geregistreerd' });
-    }
-
-    const hashedPassword = await bcrypt.hash(wachtwoord, 10);
-
-    await pool.query(
-      'INSERT INTO users (naam, email, wachtwoord, role, is_verified) VALUES (?, ?, ?, ?, ?)',
-      [naam, email, hashedPassword, role, 0]
-    );
-
-    res.json({ message: 'Registratie succesvol, wacht op verificatie' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Serverfout' });
-  }
-});
-
+// Testroute
 app.get('/', (req, res) => {
   res.send('✅ Backend server draait');
 });
 
+// Fallback 404
 app.use((req, res) => {
   res.status(404).send('❌ Pagina niet gevonden');
 });
 
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server draait op poort ${PORT}`);
