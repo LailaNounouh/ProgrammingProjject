@@ -120,7 +120,7 @@ export default function Home() {
             </label>
             <button type="submit">Registreren</button>
           </form>
-          {status && <p className="status">{status}</p>}
+          {status && <p className="status">{status}</p>}  
         </section>
       </main>
     </div>
