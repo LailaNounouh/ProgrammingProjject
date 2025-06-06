@@ -1,19 +1,19 @@
-body {
+body, html, .app {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #dcdcdc;
+  padding: 0;
+  font-family: sans-serif;
+  background-color: #e0e0e0;
 }
 
 .home {
   max-width: 1000px;
   margin: 0 auto;
-  background-color: #ffffff;
   padding: 20px;
   margin-top: 100px;
 }
 
 .header {
-  background-color: #00aab2;
+  background-color: #00a9b5;
   padding: 10px 20px;
   display: flex;
   justify-content: space-between;
@@ -23,6 +23,7 @@ body {
   left: 0;
   right: 0;
   z-index: 1000;
+  color: white;
 }
 
 .logo {
@@ -50,19 +51,19 @@ body {
   background-color: #aaa;
 }
 
-.content {
-  padding: 20px;
+main {
+  padding: 15px;
 }
 
-.content h1 {
-  font-size: 2rem;
-  margin-bottom: 10px;
-}
-
-.intro {
-  font-weight: bold;
-  line-height: 1.5;
+.linkedin-section {
   margin-bottom: 20px;
+}
+
+.linkedin-section input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  box-sizing: border-box;
 }
 
 .faq ul {
@@ -98,7 +99,7 @@ form label {
 
 form button {
   padding: 10px;
-  background-color: #00aab2;
+  background-color: #00a9b5;
   color: white;
   font-weight: bold;
   border: none;
@@ -108,4 +109,55 @@ form button {
 
 form button:hover {
   background-color: #008f95;
+}
+
+.bedrijven-lijst {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  background: #aaa;
+  padding: 10px;
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.bedrijf-kaart {
+  background: #ccc;
+  padding: 10px;
+  width: 45%;
+  text-align: center;
+}
+
+.logo-placeholder {
+  width: 60px;
+  height: 60px;
+  background: white;
+  border-radius: 50%;
+  margin: 0 auto 10px auto;
+}
+
+.standen-section {
+  margin-top: 30px;
+}
+
+.standen-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+  background: white;
+  padding: 10px;
+}
+
+.stand {
+  background-color: #ddd;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.stand.bedrijf {
+  background-color: #00a9b5;
+  border-radius: 50%;
 }
