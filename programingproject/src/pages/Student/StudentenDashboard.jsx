@@ -1,54 +1,81 @@
-import React from 'react';
-import './StudentenDashboard.css';
+import React, { useState, useEffect } from "react";
+import "./StudentenDashboard.css";
 
-export default function StudentDashboard() {
+function App() {
+  const [bedrijven, setBedrijven] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/bedrijven")
+      .then((res) => res.json())
+      .then((data) => setBedrijven(data))
+      .catch((error) => console.error("Fout bij laden bedrijven:", error));
+  }, []);
+
   return (
-    <div className="student-dashboard">
-      <h2>LinkedIn toevoegen:*</h2>
-      <input
-        type="url"
-        className="linkedin-input"
-        placeholder="URL naar LinkedIn profiel"
-      />
+    <div className="app">
+      <header>
+        <div className="top-bar">
+          <img src="erasmus-logo.png" alt="Erasmus logo" className="logo" />
+          <span>Student</span>
+          <div className="menu-icon">&#9776;</div>
+        </div>
+        <nav>
+          <ul>
+            <li>Deelnemende bedrijven</li>
+            <li>Standen</li>
+            <li>Afspraak maken</li>
+          </ul>
+        </nav>
+      </header>
 
-      <h3>Deelnemende bedrijven:</h3>
-      <div className="company-filter">
-        <button className="filter-btn">Filter ⌄</button>
-      </div>
+      <main>
+        <section className="linkedin-section">
+          <label htmlFor="linkedin">LinkedIn toevoegen:*</label>
+          <input
+            type="url"
+            id="linkedin"
+            placeholder="URL naar LinkedIn profiel"
+          />
+        </section>
 
-      <div className="companies-grid">
-        {['Microsoft', 'Cisco', 'Sopra Steri', 'Webdoos'].map((name) => (
-          <div key={name} className="company-card">
-            <div className="logo-placeholder" />
-            <div className="company-name">{name}</div>
-            <div className="more-info">• Meer info</div>
+        <section className="bedrijven-section">
+          <h2>Deelnemende bedrijven:</h2>
+          <button className="filter-button">Filter ▼</button>
+          <div className="bedrijven-lijst">
+          {bedrijven.length === 0 ? (
+              <p>Bedrijven worden geladen...</p>
+            ) : (
+              bedrijven.map((bedrijf, index) => (
+                <div className="bedrijf-kaart" key={index}>
+                  <div className="logo-placeholder"></div>
+                  <p>{bedrijf.name || bedrijf.id}</p>
+                  <a href="#">Meer info</a>
+                </div>
+              ))
+            )}
+          </div> 
+        </section>
+
+        <section className="standen-section">
+          <h2>Standen:</h2>
+          <div className="standen-grid">
+            {/* Voorbeeldstructuur */}
+            <div className="stand bedrijf"></div>
+            <div className="stand bedrijf"></div>
+            <div className="stand bedrijf"></div>
+            <div className="stand bedrijf"></div>
+            <div className="stand">Buffet</div>
+            <div className="stand bedrijf"></div>
+            <div className="stand bedrijf"></div>
+            <div className="stand">Onthaal</div>
+            <div className="stand bedrijf"></div>
+            <div className="stand bedrijf"></div>
+            {/* Voeg eventueel meer toe volgens het plan */}
           </div>
-        ))}
-      </div>
-
-      <h3>Standen:</h3>
-      <div className="booth-map">
-        <div className="booth-row">
-          <div className="booth gray" />
-          <div className="booth gray" />
-          <div className="booth buffet">Buffet</div>
-        </div>
-        <div className="booth-row">
-          <div className="booth gray" />
-          <div className="booth gray" />
-          <div className="booth teal" />
-        </div>
-        <div className="booth-row">
-          <div className="booth teal" />
-          <div className="booth teal" />
-          <div className="booth teal" />
-        </div>
-        <div className="booth-row">
-          <div className="booth teal" />
-          <div className="booth onthaallabel">Onthaal</div>
-          <div className="booth gray" />
-        </div>
-      </div>
+        </section>
+      </main>
     </div>
   );
 }
+
+export default App;
