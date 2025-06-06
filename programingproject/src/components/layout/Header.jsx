@@ -1,12 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Header.css';
-import logo from '../../public/erasmus-logo.png'; 
 
 const Header = () => {
   return (
     <header className="header">
-      <img src={logo} alt="Erasmus logo" className="logo" />
+      <img src="/erasmus-logo.png" alt="Erasmus logo" className="logo" />
       <nav>
         <ul>
           <li><Link to="/">Home</Link></li>
