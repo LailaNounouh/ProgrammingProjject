@@ -30,9 +30,6 @@ export default function Home() {
           <form>
             <input type="text" placeholder="Naam" />
             <input type="email" placeholder="E-mail" />
-            <label><input type="checkbox" /> Ik ben een bedrijf.</label>
-            <label><input type="checkbox" /> Ik ben een student.</label>
-            <button type="submit">Registreren</button>
           </form>
         </section>
       </main>
