@@ -70,7 +70,7 @@ Zorg dat `schema.sql` beschikbaar is. Voer uit:
 mysql -u projectuser -p programmingprojject < pad/naar/schema.sql
 ```
 
-Indien geen schema aanwezig is, controleer of er migraties bestaan (bv. map `sql bestand`).
+Kijk nar het map sql (bv. map `sql bestand`).
 
 ---
 
@@ -117,12 +117,6 @@ npm run start
 
 (of gebruik `node server.js` indien van toepassing)
 
-Test of de backend draait:
-
-```bash
-curl http://localhost:3000/api/test
-```
-
 ---
 
 ## Frontend installeren
@@ -138,7 +132,7 @@ npm install
 
 ## Frontend starten
 
-Start de frontend (bijvoorbeeld via Vite):
+Start de frontend (bijvoorbeeld via VSC):
 
 ```bash
 npm run dev
