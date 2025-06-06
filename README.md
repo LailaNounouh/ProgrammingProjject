@@ -1,107 +1,171 @@
-# ProgrammingProjject - Quick Install & Run Guide
-==============================================
+# ProgrammingProjject – Installatie & Gebruikershandleiding
 
-Volg deze stappen om het project lokaal op te zetten en de website te bekijken.
+Volg deze stappen om het project lokaal op te zetten en te draaien.
 
 ---
 
+## Benodigdheden
 
+- Node.js en npm geïnstalleerd
+- MySQL database geïnstalleerd
+- Git geïnstalleerd
 
+---
 
+##  Project clonen
 
+Open een terminal en voer uit:
 
-
-1. Project clonen
------------------
-Open een terminal en clone de repository:
-
+```bash
 git clone https://github.com/LailaNounouh/ProgrammingProjject.git
 cd ProgrammingProjject
+```
 
 ---
 
-2. Backend installeren
----------------------
-Ga naar de backend map (of waar jouw backend server staat):
+##  Backend installeren
 
+Navigeer naar de backend-map:
+
+```bash
 cd backend
-
-Installeer de benodigde dependencies:
-
 npm install
+```
 
 ---
 
-3. Database instellen
---------------------
-- Zorg dat MySQL draait en maak een nieuwe database aan, bijvoorbeeld `programmingprojject`.
+##  Database instellen
 
-- Importeer het SQL schema (als je een `.sql` bestand hebt):
+### MySQL installeren
 
-mysql -u jouw_gebruikersnaam -p programmingprojject < schema.sql
+ 
+- Download MySQL Installer via de officiële website  
+- Kies "Developer Default" tijdens installatie  
+- Stel een root-wachtwoord in  
+- Zorg dat de MySQL service draait
 
-- Pas de database connectie aan in `db.js` of het bestand waar de connectie staat:
 
-const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'jouw_gebruikersnaam',
-  password: 'jouw_wachtwoord',
-  database: 'programmingprojject',
-});
+### Database aanmaken
+
+Log in op MySQL via de terminal:
+
+```bash
+mysql -u root -p
+```
+
+Voer daarna uit:
+
+```sql
+CREATE DATABASE programmingprojject;
+EXIT;
+```
 
 ---
 
-4. Backend starten
------------------
+### Database schema importeren
+
+Zorg dat `schema.sql` beschikbaar is. Voer uit:
+
+```bash
+mysql -u projectuser -p programmingprojject < pad/naar/schema.sql
+```
+
+Indien geen schema aanwezig is, controleer of er migraties bestaan (bv. map `sql bestand`).
+
+---
+
+## 🔐 .env bestand configureren
+
+Maak het `.env` bestand aan in de backend-map:
+
+```bash
+touch .env
+```
+
+Voeg de volgende inhoud toe:
+
+```env
+# Server
+PORT=3000
+NODE_ENV=development
+
+# Database
+DB_HOST=localhost
+DB_USER=projectuser
+DB_PASSWORD=jouw_veilige_wachtwoord
+DB_NAME=programmingprojject
+DB_PORT=3306
+```
+
+Voeg het bestand toe aan `.gitignore`:
+
+```bash
+echo ".env" >> .gitignore
+```
+
+Controleer dat deze variabelen ook correct gebruikt worden in je `db.js` of connectiebestand.
+
+---
+
+##  Backend starten
+
 Start de backend server:
 
+```bash
 npm run start
+```
 
-(of bijvoorbeeld `node server.js` afhankelijk van je setup)
+(of gebruik `node server.js` indien van toepassing)
 
-De backend draait nu op: http://localhost:3000
+Test of de backend draait:
+
+```bash
+curl http://localhost:3000/api/test
+```
 
 ---
 
-5. Frontend installeren
-----------------------
-Open een nieuwe terminal en ga naar de frontend map (bijv. `frontend` of de map met `package.json` van de frontend):
+## Frontend installeren
 
+Navigeer naar de frontend-map:
+
+```bash
 cd frontend
-
-Installeer de frontend dependencies:
-
 npm install
+```
 
 ---
 
-6. Frontend starten
-------------------
-Start de frontend development server:
+## Frontend starten
 
+Start de frontend (bijvoorbeeld via Vite):
+
+```bash
 npm run dev
+```
 
-(als je Vite gebruikt; anders `npm start`)
-
-De frontend draait nu op: http://localhost:5173
+Frontend is nu beschikbaar op:  
+[http://localhost:5173](http://localhost:5173)
 
 ---
 
-7. Website bekijken
-------------------
+## Website bekijken
+
 Open je browser en ga naar:
 
-http://localhost:5173
+[http://localhost:5173](http://localhost:5173)
 
-De website zou nu moeten werken en communiceren met de backend op poort 3000.
+De frontend communiceert met de backend op poort 3000.
 
 ---
 
-Tips:
------
-- Zorg dat backend en database draaien voordat je de frontend start.
-- Controleer of API calls in de frontend de juiste backend URL gebruiken (bijv. http://localhost:3000/api/...).
-- Controleer de console op fouten en dat de database connectie correct is.
+## Tips & Troubleshooting
+
+- Zorg dat backend en database actief zijn voor je frontend opstart
+- Controleer of frontend API calls verwijzen naar `http://localhost:3000`
+- Bij `ER_ACCESS_DENIED_ERROR`: check je DB-gegevens in `.env`
+- Bij `ER_BAD_DB_ERROR`: check of je database correct aangemaakt is
+- Wijzigingen in `.env`? Herstart de backend
 
 ---
 
