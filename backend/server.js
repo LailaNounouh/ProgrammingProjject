@@ -1,33 +1,33 @@
 const express = require('express');
 const pool = require('./db');
+const cors = require('cors');
 
 const app = express();
-app.use(express.json()); // voor JSON body parsing
+app.use(cors());
+app.use(express.json());
 
-// Eenvoudige route om alle bedrijven op te halen
-app.get('/companies', async (req, res) => {
+// API: Alle bedrijven ophalen
+app.get('/api/bedrijven', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM companies');
+    const [rows] = await pool.query('SELECT company_id AS id, company_name AS name FROM companies');
     res.json(rows);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Database fout' });
+    res.status(500).json({ error: 'Database fout bij ophalen bedrijven' });
   }
 });
 
-// Route om een nieuwe bezoeker te registreren
+// Bezoeker registreren
 app.post('/register/visitor', async (req, res) => {
   try {
     const { email, passwordHash, name, phone, preferences } = req.body;
 
-    // Maak gebruiker aan in users
     const [result] = await pool.query(
       'INSERT INTO users (email, password_hash, role, name) VALUES (?, ?, "visitor", ?)',
       [email, passwordHash, name]
     );
     const visitorId = result.insertId;
 
-    // Maak profiel aan in visitor_profiles
     await pool.query(
       'INSERT INTO visitor_profiles (visitor_id, phone, preferences) VALUES (?, ?, ?)',
       [visitorId, phone, preferences]
@@ -45,18 +45,8 @@ app.get('/', (req, res) => {
   res.send('✅ Backend server draait');
 });
 
-// Voorbeeldroute: alle bedrijven ophalen
-app.get('/companies', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT * FROM companies');
-    res.json(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database fout' });
-  }
-});
-
-app.get('/{*any}', (req, res) => {
+// 404 fallback
+app.use((req, res) => {
   res.status(404).send('❌ Pagina niet gevonden');
 });
 
