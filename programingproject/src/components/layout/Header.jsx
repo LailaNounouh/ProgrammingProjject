@@ -5,7 +5,11 @@ import './Header.css';
 const Header = () => {
   return (
     <header className="header">
-      <img src="/erasmus-logo.png" alt="Erasmus logo" className="logo" />
+      <img 
+        src={`/${import.meta.env.BASE_URL}afbeelding/erasmuslogo.png`}
+        alt="Erasmus logo"
+        className="logo"
+      />
       <nav>
         <ul>
           <li><Link to="/">Home</Link></li>
