@@ -4,11 +4,6 @@ import './Home.css';
 export default function Home() {
   return (
     <div className="home">
-      <header className="header">
-        <img src="/logo.png" alt="Erasmus logo" className="logo" />
-    
-      </header>
-
       <main className="content">
         <h1>Career Launch Day 2025</h1>
         <p className="intro">

@@ -6,7 +6,7 @@ const Header = () => {
   return (
     <header className="header">
       <img 
-        src={`/${import.meta.env.BASE_URL}afbeelding/erasmuslogo.png`}
+        src={`${import.meta.env.BASE_URL}afbeelding/erasmuslogo.png`}
         alt="Erasmus logo"
         className="logo"
       />
