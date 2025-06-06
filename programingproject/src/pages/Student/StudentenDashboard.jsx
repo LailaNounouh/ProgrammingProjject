@@ -1,5 +1,5 @@
 import React from 'react';
-import './StudentDashboard.css';
+import './StudentenDashboard.css';
 
 export default function StudentDashboard() {
   return (
