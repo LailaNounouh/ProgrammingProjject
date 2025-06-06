@@ -11,6 +11,10 @@ export default function Login() {
         <button>WERKZOEKENDE</button>
         <button>ADMIN</button>
       </div>
+      <div className="register-container">
+        <p>Heb je nog geen account? <a href="/register">Registreer hier</a></p>
+      </div>
+
       <div className="login-image">Afbeelding</div>
     </div>
   );
