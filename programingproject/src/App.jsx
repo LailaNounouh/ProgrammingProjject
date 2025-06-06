@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Layout from "./components/Algemene_Layout/Layout";
-import StudentenLayout from "./components/Student_Layout/StudentenLayout";
+import Layout from "./components/algemenelayout/Layout";
+import StudentenLayout from "./components/studentenlayout/StudentenLayout";
 
 import Home from "./pages/Algemeen/Home";
 import Login from "./pages/Algemeen/login/Login";
