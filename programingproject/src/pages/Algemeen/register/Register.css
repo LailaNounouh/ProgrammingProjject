@@ -1,0 +1,9 @@
+.keuze-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.formulier-container {
+  margin-top: 1rem;
+}

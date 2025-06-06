@@ -6,7 +6,7 @@ import StudentenLayout from "./components/studentenlayout/StudentenLayout";
 
 import Home from "./pages/Algemeen/Home";
 import Login from "./pages/Algemeen/login/Login";
-import Register from "./pages/Algemeen/Register";
+import Register from "./pages/Algemeen/register/Register";
 import Notfound from "./pages/Algemeen/NotFound";
 import About from "./pages/Algemeen/About";
 import Contact from "./pages/Algemeen/Contact";
