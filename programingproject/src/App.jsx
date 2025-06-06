@@ -1,15 +1,15 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Layout from "./components/layout/Layout";
-import StudentenLayout from "./components/layout/StudentenLayout";
+import Layout from "./components/Algemene_Layout/Layout";
+import StudentenLayout from "./components/Student_Layout/StudentenLayout";
 
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Notfound from "./pages/NotFound";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
+import Home from "./pages/Algemeen/Home";
+import Login from "./pages/Algemeen/Login";
+import Register from "./pages/Algemeen/Register";
+import Notfound from "./pages/Algemeen/NotFound";
+import About from "./pages/Algemeen/About";
+import Contact from "./pages/Algemeen/Contact";
 
 import StudentDashboard from "./pages/Student/StudentenDashboard";
 
