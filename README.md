@@ -74,7 +74,7 @@ Indien geen schema aanwezig is, controleer of er migraties bestaan (bv. map `sql
 
 ---
 
-## 🔐 .env bestand configureren
+## .env bestand configureren
 
 Maak het `.env` bestand aan in de backend-map:
 
