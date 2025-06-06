@@ -15,8 +15,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="*" element={<Notfound />} />
           <Route path="/student" element={<StudentDashboard />} />
+          <Route path="*" element={<Notfound />} />
         </Routes>
       </Layout>
     </Router>

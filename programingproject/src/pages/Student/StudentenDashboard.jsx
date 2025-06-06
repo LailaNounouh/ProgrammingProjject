@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './StudentenDashboard.css';
 
 function App() {
@@ -42,18 +42,18 @@ function App() {
           <h2>Deelnemende bedrijven:</h2>
           <button className="filter-button">Filter ▼</button>
           <div className="bedrijven-lijst">
-          {bedrijven.length === 0 ? (
+            {bedrijven.length === 0 ? (
               <p>Bedrijven worden geladen...</p>
             ) : (
               bedrijven.map((bedrijf, index) => (
                 <div className="bedrijf-kaart" key={index}>
                   <div className="logo-placeholder"></div>
-                  <p>{bedrijf.name || bedrijf.id}</p>
+                  <p>{String(bedrijf.name || bedrijf.id)}</p>
                   <a href="#">Meer info</a>
                 </div>
               ))
             )}
-          </div> 
+          </div>
         </section>
 
         <section className="standen-section">
