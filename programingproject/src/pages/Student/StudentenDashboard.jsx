@@ -13,21 +13,6 @@ function App() {
 
   return (
     <div className="app">
-      <header>
-        <div className="top-bar">
-          <img src="erasmus-logo.png" alt="Erasmus logo" className="logo" />
-          <span>Student</span>
-          <div className="menu-icon">&#9776;</div>
-        </div>
-        <nav>
-          <ul className="nav-buttons">
-            <li><a href="#bedrijven" className="nav-button">Deelnemende bedrijven</a></li>
-            <li><a href="#standen" className="nav-button">Standen</a></li>
-            <li><a href="#afspraak" className="nav-button">Afspraak maken</a></li>
-          </ul>
-        </nav>
-      </header>
-
       <main>
         <section className="linkedin-section">
           <label htmlFor="linkedin">LinkedIn toevoegen:*</label>
