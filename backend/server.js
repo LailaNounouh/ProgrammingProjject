@@ -2,10 +2,13 @@ const express = require('express');
 const pool = require('./db');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
+const homeRouter = require('./routes/home'); // <-- toegevoegd
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+app.use('/api', homeRouter); // <-- registratieformulier route
 
 // API: Alle bedrijven ophalen
 app.get('/api/bedrijven', async (req, res) => {
@@ -50,16 +53,13 @@ app.post('/api/register', async (req, res) => {
   }
 
   try {
-    // Check of gebruiker al bestaat
-    const [existing] = await pool.query('SELECT id FROM users WHERE email = ?', [email]);
+    const [existing] = await pool.query('SELECT user_id FROM users WHERE email = ?', [email]);
     if (existing.length > 0) {
       return res.status(400).json({ error: 'Email is al geregistreerd' });
     }
 
-    // Hash het wachtwoord
     const hashedPassword = await bcrypt.hash(wachtwoord, 10);
 
-    // Voeg gebruiker toe
     await pool.query(
       'INSERT INTO users (naam, email, wachtwoord, role, is_verified) VALUES (?, ?, ?, ?, ?)',
       [naam, email, hashedPassword, role, 0]
@@ -72,12 +72,10 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Root-route
 app.get('/', (req, res) => {
   res.send('✅ Backend server draait');
 });
 
-// 404 fallback
 app.use((req, res) => {
   res.status(404).send('❌ Pagina niet gevonden');
 });
