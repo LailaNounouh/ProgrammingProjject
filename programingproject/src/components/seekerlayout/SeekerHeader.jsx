@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './SeekerHeader.css';
+import LogoutButton from '../button/logoutbutton.jsx';
 
-const StudentenHeader = () => {
+const SeekerHeader = () => {
   return (
     <header className="header">
       <img 
@@ -14,8 +15,9 @@ const StudentenHeader = () => {
         <ul>
           <li><Link to="/student/bedrijven">Deelnemende Bedrijven</Link></li>
           <li><Link to="/student/standen">Standen</Link></li>
-          <li><Link to="/student/logout">Logout</Link></li>
+          <li><LogoutButton /></li>
         </ul>
+
       </nav>
     </header>
   );

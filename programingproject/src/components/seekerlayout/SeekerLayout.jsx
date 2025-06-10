@@ -1,5 +1,5 @@
 import React from "react"; 
-import StudentenHeader from "./StudentenHeader";
+import StudentenHeader from "./SeekerHeader";
 
 const StudentenLayout = ({ children }) => {
   return (

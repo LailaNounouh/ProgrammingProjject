@@ -5,7 +5,7 @@ import Layout from "./components/algemenelayout/Layout";
 import StudentenLayout from "./components/studentenlayout/StudentenLayout";
 import BedrijvenLayout from "./components/bedrijvenlayout/BedrijvenLayout"
 import AdminLayout from "./components/adminlayout/AdminLayout"
-//import SeekerLayout from "./components/seekerlayout/SeekerLayout"
+import SeekerLayout from "./components/seekerlayout/SeekerLayout"
 
 
 import Home from "./pages/Algemeen/Home";
@@ -20,6 +20,8 @@ import StudentDashboard from "./pages/Student/StudentenDashboard";
 import Afspraken from "./pages/Student/AfsprakenModule";
 import Standen from "./pages/Student/StandenModule";
 import Bedrijven from "./pages/Student/BedrijvenModule";
+
+import SeekerDashboard from "./pages/Seeker/SeekerDashboard"
 
 // import BedrijfDashboard from "./pages/Bedrijven/BedrijvenDashboard";
 
@@ -38,6 +40,8 @@ export default function App() {
           <Route path="/student/bedrijven" element={<StudentenLayout><Bedrijven /></StudentenLayout>} />
           <Route path="/student/standen" element={<StudentenLayout><Standen /></StudentenLayout>} />
           <Route path="/student/afspraak" element={<StudentenLayout><Afspraken /></StudentenLayout>} />
+
+          <Route path="/seeker" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
 
           <Route path="*" element={<Notfound />} />
         </Routes>

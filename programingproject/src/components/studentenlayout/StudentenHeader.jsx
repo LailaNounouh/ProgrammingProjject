@@ -18,9 +18,10 @@ const StudentenHeader = () => {
           <li><Link to="/student/bedrijven">Deelnemende Bedrijven</Link></li>
           <li><Link to="/student/standen">Standen</Link></li>
           <li><Link to="/student/afspraak">Afspraak maken</Link></li>
+          <li><LogoutButton /></li>
         </ul>
       </nav>
-      <LogoutButton />
+      
     </header>
   );
 };
