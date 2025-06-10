@@ -1,18 +1,25 @@
 const express = require('express');
 const pool = require('./db');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
+
+// Routers
+const homeRouter = require('./routes/home');
+const registerRouter = require('./routes/register');
+const newsletterRouter = require('./routes/newsletter');
+const loginRouter = require('./routes/login'); // ✅ toegevoegd
 
 const app = express();
-
-// ✅ Specifieke CORS-configuratie (frontend bijv. draait op poort 5173)
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true
-}));
-
+app.use(cors());
 app.use(express.json());
 
-// ✅ API: Alle bedrijven ophalen
+// Routers gebruiken
+app.use('/api', homeRouter);
+app.use('/api/register', registerRouter);
+app.use('/api/newsletter', newsletterRouter);
+app.use('/api/login', loginRouter); // ✅ toegevoegd
+
+// API: Alle bedrijven ophalen
 app.get('/api/bedrijven', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT company_id AS id, company_name AS name FROM companies');
@@ -23,40 +30,17 @@ app.get('/api/bedrijven', async (req, res) => {
   }
 });
 
-// ✅ Bezoeker registreren
-app.post('/register/visitor', async (req, res) => {
-  try {
-    const { email, passwordHash, name, phone, preferences } = req.body;
-
-    const [result] = await pool.query(
-      'INSERT INTO users (email, password_hash, role, name) VALUES (?, ?, "visitor", ?)',
-      [email, passwordHash, name]
-    );
-    const visitorId = result.insertId;
-
-    await pool.query(
-      'INSERT INTO visitor_profiles (visitor_id, phone, preferences) VALUES (?, ?, ?)',
-      [visitorId, phone, preferences]
-    );
-
-    res.json({ message: 'Bezoeker geregistreerd', visitorId });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Fout bij registratie' });
-  }
-});
-
-// ✅ Root-route
+// Testroute
 app.get('/', (req, res) => {
   res.send('✅ Backend server draait');
 });
 
-// ❌ 404 fallback
+// Fallback 404
 app.use((req, res) => {
   res.status(404).send('❌ Pagina niet gevonden');
 });
 
-// ✅ Server starten
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server draait op poort ${PORT}`);

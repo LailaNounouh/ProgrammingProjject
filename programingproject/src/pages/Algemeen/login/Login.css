@@ -1,0 +1,131 @@
+.login-container {
+  max-width: 480px;
+  margin: 3rem auto;
+  padding: 2.5rem;
+  background: linear-gradient(135deg, #f9fafa 0%, #dee3ec 100%);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.06);
+  border-radius: 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+}
+
+.login-container h2 {
+  margin-bottom: 2.2rem;
+  font-size: 2.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+.login-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.login-buttons button {
+  padding: 1rem 1.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  background-color: white;
+  color: #1f2937;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-buttons button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  transition: left 0.5s ease;
+}
+
+.login-buttons button:hover {
+  background-color: #f0f4ff;
+  border-color: #a5b4fc;
+  transform: translateY(-2px);
+}
+
+.login-buttons button:hover::before {
+  left: 100%;
+}
+
+.login-buttons button:active {
+  transform: translateY(0);
+  transition: transform 0.15s ease;
+}
+
+.login-image {
+  width: 100%;
+  height: 220px;
+  background: linear-gradient(135deg, #d8dce4 0%, #c1c7d5 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1.1em;
+  color: #4b5563;
+  border-radius: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-image::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+  animation: shimmer 4s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 600px) {
+  .login-container {
+    margin: 1.5rem;
+    padding: 2rem 1.2rem;
+  }
+
+  .login-container h2 {
+    font-size: 1.8rem;
+  }
+
+  .login-buttons button {
+    padding: 0.9rem 1.2rem;
+    font-size: 1rem;
+  }
+
+  .login-image {
+    height: 180px;
+  }
+}

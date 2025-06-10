@@ -13,21 +13,6 @@ function App() {
 
   return (
     <div className="app">
-      <header>
-        <div className="top-bar">
-          <img src="erasmus-logo.png" alt="Erasmus logo" className="logo" />
-          <span>Student</span>
-          <div className="menu-icon">&#9776;</div>
-        </div>
-        <nav>
-          <ul>
-            <li>Deelnemende bedrijven</li>
-            <li>Standen</li>
-            <li>Afspraak maken</li>
-          </ul>
-        </nav>
-      </header>
-
       <main>
         <section className="linkedin-section">
           <label htmlFor="linkedin">LinkedIn toevoegen:*</label>
@@ -38,7 +23,7 @@ function App() {
           />
         </section>
 
-        <section className="bedrijven-section">
+        <section id="bedrijven" className="bedrijven-section">
           <h2>Deelnemende bedrijven:</h2>
           <button className="filter-button">Filter ▼</button>
           <div className="bedrijven-lijst">
@@ -56,7 +41,7 @@ function App() {
           </div>
         </section>
 
-        <section className="standen-section">
+        <section id="standen" className="standen-section">
           <h2>Standen:</h2>
           <div className="standen-grid">
             {/* Voorbeeldstructuur */}
@@ -79,3 +64,7 @@ function App() {
 }
 
 export default App;
+
+        <section id="afspraak">
+          {/* Afspraak maken sectie - voeg inhoud toe indien gewenst */}
+        </section>

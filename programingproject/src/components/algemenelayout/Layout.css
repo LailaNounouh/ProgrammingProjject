@@ -1,0 +1,19 @@
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  margin-top: 80px; /* adjust based on fixed header height */
+}
+
+.footer {
+  background-color: #00a9b5;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+}

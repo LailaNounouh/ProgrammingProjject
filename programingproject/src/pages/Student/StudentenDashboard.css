@@ -2,7 +2,7 @@ body, html, .app {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
-  background-color: #e0e0e0;
+  background-color: #f5f5f5;
 }
 
 header {
@@ -19,19 +19,38 @@ header {
 
 .menu-icon {
   font-size: 24px;
+  cursor: pointer;
 }
 
 nav ul {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   list-style: none;
   margin: 0;
-  background-color: #ccc;
   padding: 10px 0;
+
+  gap: 30px;
 }
 
 nav li {
+  padding: 0 10px;
+}
+
+nav li a {
+  text-decoration: none;
+  color: black;
   font-weight: bold;
+  padding: 8px 12px;
+  transition: color 0.3s ease;
+  margin: 0 10px;
+}
+
+nav li a:hover {
+  color: #00a9b5;
+}
+
+.logo {
+  height: 40px;
 }
 
 main {
@@ -45,7 +64,7 @@ main {
 .linkedin-section input {
   width: 100%;
   padding: 10px;
-  margin-top: 5px;
+  margin-top: 50px;
   box-sizing: border-box;
 }
 
@@ -58,21 +77,34 @@ main {
   padding: 6px 12px;
 }
 
-.bedrijven-lijst {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  background: #aaa;
+.bedrijven-lijst,
+.standen-grid {
+  background-color: #aaa;
   padding: 10px;
-  overflow-y: auto;
-  max-height: 300px;
+  max-width: 1000px;
+  margin: 0 auto;
+  border-radius: 8px;
 }
 
 .bedrijf-kaart {
-  background: #ccc;
-  padding: 10px;
+  background: white;
+  padding: 15px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   width: 45%;
   text-align: center;
+}
+
+.bedrijf-kaart a {
+  display: inline-block;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #00a9b5;
+  text-decoration: none;
+}
+
+.bedrijf-kaart a:hover {
+  text-decoration: underline;
 }
 
 .logo-placeholder {

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Layout from "./components/algemenelayout/Layout";
 import StudentenLayout from "./components/studentenlayout/StudentenLayout";
-import SeekerLayout from "./components/Seeker"
+import BedrijvenLayout from "./components/bedrijvenlayout/BedrijvenLayout"
 
 import Home from "./pages/Algemeen/Home";
 import Login from "./pages/Algemeen/login/Login";
@@ -13,12 +13,12 @@ import About from "./pages/Algemeen/About";
 import Contact from "./pages/Algemeen/Contact";
 
 import StudentDashboard from "./pages/Student/StudentenDashboard";
+// import BedrijfDashboard from "./pages/Bedrijven/BedrijvenDashboard";
 
 
 export default function App() {
   return (
     <Router>
-      <Layout>
         <Routes>
           <Route path="/" element={<Layout><Home /></Layout>}/>
           <Route path="/login" element={<Layout><Login /></Layout>} />
@@ -27,9 +27,9 @@ export default function App() {
           <Route path="/contact" element={<Layout><Contact /></Layout>} />
 
           <Route path="/student" element={<StudentenLayout><StudentDashboard /></StudentenLayout>} />
+
           <Route path="*" element={<Notfound />} />
         </Routes>
-      </Layout>
     </Router>
   );
 }
