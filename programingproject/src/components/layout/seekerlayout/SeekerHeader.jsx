@@ -15,8 +15,8 @@ const SeekerHeader = () => {
       </Link>
       <nav>
         <ul>
-          <li><Link to="/student/bedrijven">Deelnemende Bedrijven</Link></li>
-          <li><Link to="/student/standen">Standen</Link></li>
+          <li><Link to="/bedrijven">Deelnemende Bedrijven</Link></li>
+          <li><Link to="/standen">Standen</Link></li>
           <li><LogoutButton /></li>
         </ul>
 

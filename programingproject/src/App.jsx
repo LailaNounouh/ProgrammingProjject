@@ -15,15 +15,14 @@ import Notfound from "./pages/Algemeen/NotFound";
 import About from "./pages/Algemeen/About";
 import Contact from "./pages/Algemeen/Contact";
 
-
-import StudentDashboard from "./pages/Student/StudentenDashboard";
 import Afspraken from "./pages/Modules/AfsprakenModule";
 import Standen from "./pages/Modules/StandenModule";
 import Bedrijven from "./pages/Modules/BedrijvenModule";
 
+import StudentDashboard from "./pages/Student/StudentenDashboard";
 import SeekerDashboard from "./pages/Seeker/SeekerDashboard"
-
 // import BedrijfDashboard from "./pages/Bedrijven/BedrijvenDashboard";
+// import AdminDashboard from "./pages/Admin/AdminDashboard";
 
 
 export default function App() {
@@ -42,6 +41,8 @@ export default function App() {
           <Route path="/student/afspraak" element={<StudentenLayout><Afspraken /></StudentenLayout>} />
 
           <Route path="/seeker" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
+          <Route path="/bedrijven" element={<SeekerLayout><Bedrijven /></SeekerLayout>} />
+          <Route path="/standen" element={<SeekerLayout><Standen /></SeekerLayout>} />
 
           <Route path="*" element={<Notfound />} />
         </Routes>

@@ -1,13 +1,13 @@
 import React from "react"; 
-import StudentenHeader from "./SeekerHeader";
+import SeekerHeader from "./SeekerHeader";
 
-const StudentenLayout = ({ children }) => {
+const SeekerLayout = ({ children }) => {
   return (
     <div>
-      <StudentenHeader />
+      <SeekerHeader />
       <main>{children}</main>
     </div>
   );
 };
 
-export default StudentenLayout;
+export default SeekerLayout;
