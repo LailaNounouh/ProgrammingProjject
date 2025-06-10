@@ -7,20 +7,23 @@ const bcrypt = require('bcryptjs');
 const homeRouter = require('./routes/home');
 const registerRouter = require('./routes/register');
 const newsletterRouter = require('./routes/newsletter');
-const loginRouter = require('./routes/login'); // ✅ toegevoegd
+const loginRouter = require('./routes/login');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routers gebruiken
-app.use('/api', homeRouter);
-app.use('/api/register', registerRouter);
-app.use('/api/newsletter', newsletterRouter);
-app.use('/api/login', loginRouter);
+// Gebruik een express Router voor de base API path
+const apiRouter = express.Router();
 
-// API: Alle bedrijven ophalen
-app.get('/api/bedrijven', async (req, res) => {
+// Koppel subroutes aan de apiRouter
+apiRouter.use('/', homeRouter);             // /api/
+apiRouter.use('/register', registerRouter); // /api/register
+apiRouter.use('/newsletter', newsletterRouter);
+apiRouter.use('/login', loginRouter);
+
+// Route om bedrijven op te halen
+apiRouter.get('/bedrijven', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT company_id AS id, company_name AS name FROM companies');
     res.json(rows);
@@ -30,7 +33,10 @@ app.get('/api/bedrijven', async (req, res) => {
   }
 });
 
-// Testroute
+// Koppel de apiRouter aan base path /api
+app.use('/api', apiRouter);
+
+// Testroute (root van je server)
 app.get('/', (req, res) => {
   res.send('✅ Backend server draait');
 });
