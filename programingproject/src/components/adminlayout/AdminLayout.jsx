@@ -1,11 +1,11 @@
 import React from "react"; 
 import AdminHeader from "./AdminHeader.jsx";
 
-const AdminHeader = ({ children }) => {
+const AdminLayout = ({ children }) => { //De naam zou AdminLayout moeten zijn WANT DE FUNCTIE ZAL PROBEREN ZICHZELF TE GEBRUIKEN
   return (
     <div>
       <AdminHeader />
-      <main>{children}</main>
+      <main>{children}</main>   
     </div>
   );
 };
