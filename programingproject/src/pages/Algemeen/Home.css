@@ -26,6 +26,7 @@ body, html, .app {
   color: white;
 }
 
+/* layout */
 header {
   padding: 20px 0;
   border-bottom: 1px solid #eee;
@@ -55,6 +56,15 @@ h1 {
   font-weight: bold;
 }
 
+.cta-box {
+  background-color: #d3d9e0;
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
 
 .logo {
   height: 40px;
@@ -103,6 +113,13 @@ main {
 
 .faq li {
   margin: 5px 0;
+}
+
+.faq-section {
+  background-color: #d3d9e0;
+  padding: 30px;
+  border-radius: 8px;
+  margin-bottom: 40px;
 }
 
 .form-section {
