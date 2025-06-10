@@ -1,21 +1,32 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Notfound from "./pages/NotFound";
-import Layout from "./components/layout/Layout";
+
+import Layout from "./components/algemenelayout/Layout";
+import StudentenLayout from "./components/studentenlayout/StudentenLayout";
+import SeekerLayout from "./components/Seeker"
+
+import Home from "./pages/Algemeen/Home";
+import Login from "./pages/Algemeen/login/Login";
+import Register from "./pages/Algemeen/register/Register";
+import Notfound from "./pages/Algemeen/NotFound";
+import About from "./pages/Algemeen/About";
+import Contact from "./pages/Algemeen/Contact";
+
 import StudentDashboard from "./pages/Student/StudentenDashboard";
+
 
 export default function App() {
   return (
     <Router>
       <Layout>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/student" element={<StudentDashboard />} />
+          <Route path="/" element={<Layout><Home /></Layout>}/>
+          <Route path="/login" element={<Layout><Login /></Layout>} />
+          <Route path="/register" element={<Layout><Register /></Layout>} />
+          <Route path="/about" element={<Layout><About /></Layout>} />
+          <Route path="/contact" element={<Layout><Contact /></Layout>} />
+
+          <Route path="/student" element={<StudentenLayout><StudentDashboard /></StudentenLayout>} />
           <Route path="*" element={<Notfound />} />
         </Routes>
       </Layout>
