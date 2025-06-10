@@ -31,6 +31,9 @@ export default function App() {
           <Route path="/contact" element={<Layout><Contact /></Layout>} />
 
           <Route path="/student" element={<StudentenLayout><StudentDashboard /></StudentenLayout>} />
+          <Route path="/student/bedrijven" element={<StudentenLayout><BedrijvenDashboard /></StudentenLayout>} />
+          <Route path="/student/standen" element={<StudentenLayout><StandenOverzicht /></StudentenLayout>} />
+          <Route path="/student/afspraak" element={<StudentenLayout><AfspraakFormulier /></StudentenLayout>} />
 
           <Route path="*" element={<Notfound />} />
         </Routes>
