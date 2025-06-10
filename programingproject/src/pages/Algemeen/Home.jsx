@@ -62,25 +62,50 @@ export default function Home() {
   return (
     <div className="home">
       <main className="content">
-        <h1>Career Launch Day 2025</h1>
-        <p className="intro">
-          korte en efficiënte uitleg<br />
-          van wat het eigenlijk is.<br />
-          Hier komt een afb. van vorige edities van
-        </p>
-        <p>
-          Career Launch Days brengen studenten en werkzoekenden samen met werkgevers voor
-          inspirerende ontmoetingen, boeiende workshops en waardevolle netwerkgesprekken.
-        </p>
+        <header>
+          <h1>Welkom bij de Career Launch Day 2026</h1>
+          <div className="subtitle">Ontdek, ontmoet en lanceer je carrière!</div>
+        </header>
 
-        <div className="faq">
-          <h3>Hier komt een ‘FAQ’ met al gestelde vragen</h3>
-          <ul>
-            <li>Waar?</li>
-            <li>Wanneer?</li>
-            <li>Waarom?</li>
-            <li>Hoe?</li>
-          </ul>
+        <div className="description">
+          <p>Op <span className="highlight">Vrijdag 13 maart 2026</span> organiseert de Erasmus Hogeschool Brussel 
+          een inspirerende Career Launch Day voor alle studenten van de opleidingen Design & Technologie. 
+          Tijdens deze dag krijg je de kans om kennis te maken met toonaangevende bedrijven, 
+          deel te nemen aan interactieve workshops en je netwerk uit te breiden met professionals uit het werkveld.</p>
+          
+          <p>Of je nu op zoek bent naar een stage, een eerste job, of gewoon inspiratie wilt opdoen voor je toekomst: 
+            de Career Launch Day is dé plek om je carrière een vliegende start te geven!</p>
+        </div>
+
+        <div className="cta-box">
+          Zet de datum alvast in je agenda en schrijf je snel in!<br />
+          Samen bouwen we aan jouw toekomst.
+        </div>
+
+        <div className="faq-section">
+          <h2>FAQ - Veelgestelde vragen</h2>
+          
+          <div className="faq-item">
+            <div className="faq-question">Waar?</div>
+            <p>De Career Launch Day vindt plaats op de campus van Erasmus Hogeschool Brussel, Nijverheidskaai 170, 1070 Anderlecht.</p>
+          </div>
+          
+          <div className="faq-item">
+            <div className="faq-question">Wanneer?</div>
+            <p>Vrijdag 13 maart 2026, van 10:00 tot 16:00.</p>
+          </div>
+          
+          <div className="faq-item">
+            <div className="faq-question">Waarom?</div>
+            <p>De Career Launch Day is dé kans om bedrijven te ontmoeten, je netwerk uit te breiden, 
+              en alles te weten te komen over stage- en jobmogelijkheden binnen jouw vakgebied.</p>
+          </div>
+          
+          <div className="faq-item">
+            <div className="faq-question">Hoe?</div>
+            <p>Schrijf je vooraf in via het inschrijvingsformulier. Op de dag zelf ontvang je een programma met alle workshops, 
+              infosessies en bedrijven die aanwezig zijn.</p>
+          </div>
         </div>
 
         <section className="form-section">
