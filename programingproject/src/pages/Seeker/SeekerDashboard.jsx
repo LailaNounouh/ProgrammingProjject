@@ -1,49 +1,66 @@
 import React from 'react';
 import './SeekerDashboard.css';
 
-export default function LoginPage() {
+
+function App() {
+  const [bedrijven, setBedrijven] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/bedrijven")
+      .then((res) => res.json())
+      .then((data) => setBedrijven(data))
+      .catch((error) => console.error("Fout bij laden bedrijven:", error));
+  }, []);
+
   return (
-    <div className="login-container">
-      <div className="login-header">
-      <h1>Login als werkzoekende</h1>
-      <p>Vul je gegevens in om toegang te krijgen tot je account</p>
-    </div>
+    <div className="app">
+      <main>
+        <section className="linkedin-section">
+          <label htmlFor="linkedin">LinkedIn toevoegen:*</label>
+          <input
+            type="url"
+            id="linkedin"
+            placeholder="URL naar LinkedIn profiel"
+          />
+        </section>
 
-      <div className="login-form">
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          alert("Login logica hier!");
-        }}>
-          <div className="form-group">
-            <label htmlFor="email">E-mailadres</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              placeholder="voer je e-mailadres in"
-            />
+        <section id="bedrijven" className="bedrijven-section">
+          <h2>Deelnemende bedrijven:</h2>
+          <button className="filter-button">Filter ▼</button>
+          <div className="bedrijven-lijst">
+            {bedrijven.length === 0 ? (
+              <p>Bedrijven worden geladen...</p>
+            ) : (
+              bedrijven.map((bedrijf, index) => (
+                <div className="bedrijf-kaart" key={index}>
+                  <div className="logo-placeholder"></div>
+                  <p>{String(bedrijf.name || bedrijf.id)}</p>
+                  <a href="#">Meer info</a>
+                </div>
+              ))
+            )}
           </div>
+        </section>
 
-          <div className="form-group">
-            <label htmlFor="password">Wachtwoord</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              required
-              placeholder="voer je wachtwoord in"
-            />
+        <section id="standen" className="standen-section">
+          <h2>Standen:</h2>
+          <div className="standen-grid">
+            {/* Voorbeeldstructuur */}
+            <div className="stand bedrijf"></div>
+            <div className="stand bedrijf"></div>
+            <div className="stand bedrijf"></div>
+            <div className="stand bedrijf"></div>
+            <div className="stand">Buffet</div>
+            <div className="stand bedrijf"></div>
+            <div className="stand bedrijf"></div>
+            <div className="stand">Onthaal</div>
+            <div className="stand bedrijf"></div>
+            <div className="stand bedrijf"></div>
+            {/* Voeg eventueel meer toe volgens het plan */}
           </div>
-
-          <button type="submit" className="login-button">sign-in</button>
-        </form>
-
-        <div className="alternative-login">
-          <p>Geen account? <a href="#registreer">Registreer als werkzoekende</a></p>
-          <p><a href="#wachtwoord-vergeten">Wachtwoord vergeten?</a></p>
-        </div>
-      </div>
+        </section>
+      </main>
     </div>
   );
 }
+
