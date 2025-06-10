@@ -1,0 +1,38 @@
+header {
+  background-color: #00a9b5;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+  position: absolute;
+  top: 10px;
+  left: 20px;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 10px;
+}
+
+.nav-menu a {
+  background-color: #c0c0c0;
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 10px 20px;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.nav-menu a:hover {
+  background-color: #aaa;
+}
