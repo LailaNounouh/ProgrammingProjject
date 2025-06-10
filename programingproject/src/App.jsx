@@ -13,7 +13,7 @@ import About from "./pages/Algemeen/About";
 import Contact from "./pages/Algemeen/Contact";
 
 import StudentDashboard from "./pages/Student/StudentenDashboard";
-import BedrijfDashboard from "./pages/Bedrijven/BedrijvenDashboard";
+// import BedrijfDashboard from "./pages/Bedrijven/BedrijvenDashboard";
 
 
 export default function App() {
@@ -27,7 +27,6 @@ export default function App() {
           <Route path="/contact" element={<Layout><Contact /></Layout>} />
 
           <Route path="/student" element={<StudentenLayout><StudentDashboard /></StudentenLayout>} />
-          <Route path="/bedrijf" element={<BedrijvenLayout><BedrijfDashboard /></BedrijvenLayout>} />
 
           <Route path="*" element={<Notfound />} />
         </Routes>
