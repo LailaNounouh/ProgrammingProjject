@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './SeekerHeader.css';
-import LogoutButton from '../button/logoutbutton.jsx';
+import './BedrijvenHeader.css';
+import LogoutButton from '../../button/logoutbutton.jsx';
 
-const SeekerHeader = () => {
+const BedrijvenHeader = () => {
   return (
     <header className="header">
       <img 
@@ -15,12 +15,12 @@ const SeekerHeader = () => {
         <ul>
           <li><Link to="/student/bedrijven">Deelnemende Bedrijven</Link></li>
           <li><Link to="/student/standen">Standen</Link></li>
-          <li><LogoutButton /></li>
+          <li><Link to="/student/afspraak">Afspraak maken</Link></li>
         </ul>
-
       </nav>
+      <LogoutButton />
     </header>
   );
 };
 
-export default SeekerHeader;
+export default BedrijvenHeader;

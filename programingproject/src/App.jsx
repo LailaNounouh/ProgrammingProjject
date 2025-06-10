@@ -1,11 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Layout from "./components/algemenelayout/Layout";
-import StudentenLayout from "./components/studentenlayout/StudentenLayout";
-import BedrijvenLayout from "./components/bedrijvenlayout/BedrijvenLayout"
-import AdminLayout from "./components/adminlayout/AdminLayout"
-import SeekerLayout from "./components/seekerlayout/SeekerLayout"
+import Layout from "./components/layout/algemenelayout/Layout";
+import StudentenLayout from "./components/layout/studentenlayout/StudentenLayout";
+import BedrijvenLayout from "./components/layout/bedrijvenlayout/BedrijvenLayout"
+import AdminLayout from "./components/layout/adminlayout/AdminLayout"
+import SeekerLayout from "./components/layout/seekerlayout/SeekerLayout"
 
 
 import Home from "./pages/Algemeen/Home";
@@ -17,9 +17,9 @@ import Contact from "./pages/Algemeen/Contact";
 
 
 import StudentDashboard from "./pages/Student/StudentenDashboard";
-import Afspraken from "./pages/Student/AfsprakenModule";
-import Standen from "./pages/Student/StandenModule";
-import Bedrijven from "./pages/Student/BedrijvenModule";
+import Afspraken from "./pages/Modules/AfsprakenModule";
+import Standen from "./pages/Modules/StandenModule";
+import Bedrijven from "./pages/Modules/BedrijvenModule";
 
 import SeekerDashboard from "./pages/Seeker/SeekerDashboard"
 
