@@ -6,7 +6,7 @@ export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [wachtwoord, setWachtwoord] = useState("");
-  const [type, setType] = useState("student"); // default waarde
+  const [type, setType] = useState("student");
   const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
@@ -36,11 +36,17 @@ export default function Login() {
     <div className="login-container">
       <h2>Inloggen</h2>
       <form onSubmit={handleLogin}>
-        <select value={type} onChange={(e) => setType(e.target.value)} required>
+        <select
+          value={type}
+          onChange={(e) => setType(e.target.value)}
+          required
+          className="login-select"
+        >
           <option value="student">Student</option>
           <option value="werkzoekende">Werkzoekende</option>
           <option value="bedrijf">Bedrijf</option>
         </select>
+
         <input
           type="email"
           placeholder="E-mailadres"
@@ -55,14 +61,18 @@ export default function Login() {
           onChange={(e) => setWachtwoord(e.target.value)}
           required
         />
+
         <button type="submit">Inloggen</button>
+
         {error && <div className="error">{error}</div>}
       </form>
+
       <div className="register-container">
         <p>
           Heb je nog geen account? <a href="/register">Registreer hier</a>
         </p>
       </div>
+
       <div className="login-image">Afbeelding</div>
     </div>
   );
