@@ -1,11 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Layout from "./components/algemenelayout/Layout";
-import StudentenLayout from "./components/studentenlayout/StudentenLayout";
-import BedrijvenLayout from "./components/bedrijvenlayout/BedrijvenLayout"
-import AdminLayout from "./components/adminlayout/AdminLayout"
-//import SeekerLayout from "./components/seekerlayout/SeekerLayout"
+import Layout from "./components/layout/algemenelayout/Layout";
+import StudentenLayout from "./components/layout/studentenlayout/StudentenLayout";
+import BedrijvenLayout from "./components/layout/bedrijvenlayout/BedrijvenLayout"
+import AdminLayout from "./components/layout/adminlayout/AdminLayout"
+import SeekerLayout from "./components/layout/seekerlayout/SeekerLayout"
 
 
 import Home from "./pages/Algemeen/Home";
@@ -15,13 +15,15 @@ import Notfound from "./pages/Algemeen/NotFound";
 import About from "./pages/Algemeen/About";
 import Contact from "./pages/Algemeen/Contact";
 
+import Afspraken from "./pages/Modules/AfsprakenModule";
+import Standen from "./pages/Modules/StandenModule";
+import Bedrijven from "./pages/Modules/BedrijvenModule";
+import Gebruikers from "./pages/Modules/GebruikersModule";
 
 import StudentDashboard from "./pages/Student/StudentenDashboard";
-import Afspraken from "./pages/Student/AfsprakenModule";
-import Standen from "./pages/Student/StandenModule";
-import Bedrijven from "./pages/Student/BedrijvenModule";
-
+import SeekerDashboard from "./pages/Seeker/SeekerDashboard"
 // import BedrijfDashboard from "./pages/Bedrijven/BedrijvenDashboard";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 
 
 export default function App() {
@@ -38,6 +40,13 @@ export default function App() {
           <Route path="/student/bedrijven" element={<StudentenLayout><Bedrijven /></StudentenLayout>} />
           <Route path="/student/standen" element={<StudentenLayout><Standen /></StudentenLayout>} />
           <Route path="/student/afspraak" element={<StudentenLayout><Afspraken /></StudentenLayout>} />
+
+          <Route path="/seeker" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
+          <Route path="/bedrijven" element={<SeekerLayout><Bedrijven /></SeekerLayout>} />
+          <Route path="/standen" element={<SeekerLayout><Standen /></SeekerLayout>} />
+
+          <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+          <Route path="/admin/gebruikers" element={<AdminLayout><Gebruikers /></AdminLayout>} />
 
           <Route path="*" element={<Notfound />} />
         </Routes>
