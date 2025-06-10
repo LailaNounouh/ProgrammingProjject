@@ -10,15 +10,23 @@ const newsletterRouter = require('./routes/newsletter');
 const loginRouter = require('./routes/login');
 
 const app = express();
-app.use(cors());
+
+// CORS met opties
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 // Gebruik een express Router voor de base API path
 const apiRouter = express.Router();
 
 // Koppel subroutes aan de apiRouter
-apiRouter.use('/', homeRouter);             // /api/
-apiRouter.use('/register', registerRouter); // /api/register
+apiRouter.use('/', homeRouter);
+apiRouter.use('/register', registerRouter);
 apiRouter.use('/newsletter', newsletterRouter);
 apiRouter.use('/login', loginRouter);
 
