@@ -56,6 +56,30 @@ h1 {
   font-weight: bold;
 }
 
+/* opleidinglijst */
+.opleidingen-lijst {
+  margin: 12px 0;
+  padding-left: 24px;
+  list-style-type: none;
+}
+
+.opleidingen-lijst li {
+  margin-bottom: 6px;
+  position: relative;
+  padding-left: 20px;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.opleidingen-lijst li::before {
+  content: "•"; 
+  color: #00a9b5; 
+  position: absolute;
+  left: 0;
+  font-size: 1.1rem;
+  top: -1px;
+}
+
 .cta-box {
   background-color: #d3d9e0;
   padding: 25px;
@@ -106,6 +130,7 @@ main {
   box-sizing: border-box;
 }
 
+/* FAQ */
 .faq-section h2 {
   margin-top: 0;
   border-bottom: 2px solid #00a9b5; 

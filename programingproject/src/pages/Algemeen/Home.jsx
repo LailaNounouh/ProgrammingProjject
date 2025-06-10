@@ -75,6 +75,21 @@ export default function Home() {
           
           <p>Of je nu op zoek bent naar een stage, een eerste job, of gewoon inspiratie wilt opdoen voor je toekomst: 
             de Career Launch Day is dé plek om je carrière een vliegende start te geven!</p>
+
+          <p>De Career Launch Day brengt studenten uit zes topopleidingen samen:
+          <ul className="opleidingen-lijst">
+          <li>Bachelor in de Multimedia & Creatieve Technologie</li>
+          <li>Bachelor in de Toegepaste Informatica</li>
+          <li>Graduaat Elektromechanische Systemen</li>
+          <li>Graduaat Internet of Things</li>
+          <li>Graduaat Programmeren</li>
+          <li>Graduaat Systeem- & Netwerkbeheer</li>
+          </ul>  </p>  
+          
+          <p>Het event biedt je de mogelijkheid om jezelf te presenteren aan een breed groep potentiële werkgevers, 
+            stageplaatsen te ontdekken, bachelorproefpartners te vinden en waardevolle contacten te leggen met bedrijven 
+            uit de technische en IT-sector. Tijdens de interactieve workshops doe je praktische vaardigheden op en 
+            krijg je de kans om te leren van experts uit de industrie.</p>
         </div>
 
         <div className="cta-box">
