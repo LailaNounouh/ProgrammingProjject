@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './BedrijvenHeader.css';
+import LogoutButton from '../button/logoutbutton.jsx';
 
 const BedrijvenHeader = () => {
   return (
@@ -15,9 +16,9 @@ const BedrijvenHeader = () => {
           <li><Link to="/student/bedrijven">Deelnemende Bedrijven</Link></li>
           <li><Link to="/student/standen">Standen</Link></li>
           <li><Link to="/student/afspraak">Afspraak maken</Link></li>
-          <li><Link to="/student/logout">Logout</Link></li>
         </ul>
       </nav>
+      <LogoutButton />
     </header>
   );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './AdminHeader.css';
+import LogoutButton from '../button/logoutbutton.jsx';
 
 export default function AdminHeader() {
   return (
@@ -13,6 +14,7 @@ export default function AdminHeader() {
           <li><Link to="/admin/settings">Instellingen</Link></li>
         </ul>
       </nav>
+      <LogoutButton />
     </header>
   );
 }
