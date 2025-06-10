@@ -6,11 +6,13 @@ import LogoutButton from '../../button/logoutbutton.jsx';
 const BedrijvenHeader = () => {
   return (
     <header className="header">
-      <img 
-        src={`${import.meta.env.BASE_URL}afbeelding/erasmuslogo.png`}
-        alt="Erasmus logo"
-        className="logo"
-      />
+          <Link to="/" className="logo-link">
+            <img 
+              src={`${import.meta.env.BASE_URL}afbeelding/erasmuslogo.png`}
+              alt="Erasmus logo"
+              className="logo"
+            />
+          </Link>
       <nav>
         <ul>
           <li><Link to="/student/bedrijven">Deelnemende Bedrijven</Link></li>
