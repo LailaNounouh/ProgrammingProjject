@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Layout from "./components/algemenelayout/Layout";
 import StudentenLayout from "./components/studentenlayout/StudentenLayout";
-import BedrijvenLayout from "./componentts/bedrijvenlayout/BedrijvenLayout"
+import BedrijvenLayout from "./components/bedrijvenlayout/BedrijvenLayout"
 
 import Home from "./pages/Algemeen/Home";
 import Login from "./pages/Algemeen/login/Login";
@@ -13,7 +13,7 @@ import About from "./pages/Algemeen/About";
 import Contact from "./pages/Algemeen/Contact";
 
 import StudentDashboard from "./pages/Student/StudentenDashboard";
-import BedrijfDashboard from "./pages/Bedrijf/BedrijfDashboard";
+import BedrijfDashboard from "./pages/Bedrijven/BedrijvenDashboard";
 
 
 export default function App() {
