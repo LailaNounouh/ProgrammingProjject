@@ -1,23 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const bcrypt = require('bcryptjs');
 
 // POST /api/register
 router.post('/', async (req, res) => {
   try {
-    const { type, naam, email, studie, vaardigheden, sector } = req.body;
+    const { type, naam, email, wachtwoord, studie, vaardigheden, sector } = req.body;
 
-    if (!type || !naam || !email) {
-      return res.status(400).json({ error: 'Type, naam en email zijn verplicht' });
+    if (!type || !naam || !email || !wachtwoord) {
+      return res.status(400).json({ error: 'Type, naam, email en wachtwoord zijn verplicht' });
     }
+
+    const hashedPassword = await bcrypt.hash(wachtwoord, 10);
 
     if (type === 'student') {
       if (!studie) {
         return res.status(400).json({ error: 'Studie is verplicht voor studenten' });
       }
       const [result] = await pool.query(
-        'INSERT INTO students (naam, email, studie) VALUES (?, ?, ?)',
-        [naam, email, studie]
+        'INSERT INTO students (naam, email, wachtwoord, studie) VALUES (?, ?, ?, ?)',
+        [naam, email, hashedPassword, studie]
       );
       return res.json({ message: 'Student geregistreerd', id: result.insertId });
 
@@ -26,8 +29,8 @@ router.post('/', async (req, res) => {
         return res.status(400).json({ error: 'Vaardigheden zijn verplicht voor werkzoekenden' });
       }
       const [result] = await pool.query(
-        'INSERT INTO werkzoekende (naam, email, vaardigheden) VALUES (?, ?, ?)',
-        [naam, email, vaardigheden]
+        'INSERT INTO werkzoekende (naam, email, wachtwoord, vaardigheden) VALUES (?, ?, ?, ?)',
+        [naam, email, hashedPassword, vaardigheden]
       );
       return res.json({ message: 'Werkzoekende geregistreerd', id: result.insertId });
 
@@ -36,8 +39,8 @@ router.post('/', async (req, res) => {
         return res.status(400).json({ error: 'Sector is verplicht voor bedrijven' });
       }
       const [result] = await pool.query(
-        'INSERT INTO bedrijven (bedrijfsnaam, email, sector) VALUES (?, ?, ?)',
-        [naam, email, sector]
+        'INSERT INTO bedrijven (bedrijfsnaam, email, wachtwoord, sector) VALUES (?, ?, ?, ?)',
+        [naam, email, hashedPassword, sector]
       );
       return res.json({ message: 'Bedrijf geregistreerd', id: result.insertId });
 

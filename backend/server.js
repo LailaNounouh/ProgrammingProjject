@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs');
 const homeRouter = require('./routes/home');
 const registerRouter = require('./routes/register');
 const newsletterRouter = require('./routes/newsletter');
+const loginRouter = require('./routes/login'); // ✅ toegevoegd
 
 const app = express();
 app.use(cors());
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use('/api', homeRouter);
 app.use('/api/register', registerRouter);
 app.use('/api/newsletter', newsletterRouter);
+app.use('/api/login', loginRouter); // ✅ toegevoegd
 
 // API: Alle bedrijven ophalen
 app.get('/api/bedrijven', async (req, res) => {
@@ -27,8 +29,6 @@ app.get('/api/bedrijven', async (req, res) => {
     res.status(500).json({ error: 'Database fout bij ophalen bedrijven' });
   }
 });
-
-// Oude visitor registratie route is verwijderd omdat dit nu in registerRouter zit
 
 // Testroute
 app.get('/', (req, res) => {
