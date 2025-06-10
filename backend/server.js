@@ -17,7 +17,7 @@ app.use(express.json());
 app.use('/api', homeRouter);
 app.use('/api/register', registerRouter);
 app.use('/api/newsletter', newsletterRouter);
-app.use('/api/login', loginRouter); // ✅ toegevoegd
+app.use('/api/login', loginRouter);
 
 // API: Alle bedrijven ophalen
 app.get('/api/bedrijven', async (req, res) => {
