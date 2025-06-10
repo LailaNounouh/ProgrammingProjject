@@ -4,6 +4,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/algemenelayout/Layout";
 import StudentenLayout from "./components/studentenlayout/StudentenLayout";
 import BedrijvenLayout from "./components/bedrijvenlayout/BedrijvenLayout"
+import AdminLayout from "./components/adminlayout/AdminLayout"
+//import SeekerLayout from "./components/seekerlayout/SeekerLayout"
+
 
 import Home from "./pages/Algemeen/Home";
 import Login from "./pages/Algemeen/login/Login";
@@ -11,6 +14,7 @@ import Register from "./pages/Algemeen/register/Register";
 import Notfound from "./pages/Algemeen/NotFound";
 import About from "./pages/Algemeen/About";
 import Contact from "./pages/Algemeen/Contact";
+
 
 import StudentDashboard from "./pages/Student/StudentenDashboard";
 // import BedrijfDashboard from "./pages/Bedrijven/BedrijvenDashboard";
@@ -27,6 +31,9 @@ export default function App() {
           <Route path="/contact" element={<Layout><Contact /></Layout>} />
 
           <Route path="/student" element={<StudentenLayout><StudentDashboard /></StudentenLayout>} />
+          <Route path="/student/bedrijven" element={<StudentenLayout><BedrijvenDashboard /></StudentenLayout>} />
+          <Route path="/student/standen" element={<StudentenLayout><StandenOverzicht /></StudentenLayout>} />
+          <Route path="/student/afspraak" element={<StudentenLayout><AfspraakFormulier /></StudentenLayout>} />
 
           <Route path="*" element={<Notfound />} />
         </Routes>
