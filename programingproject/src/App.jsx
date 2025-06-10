@@ -18,11 +18,12 @@ import Contact from "./pages/Algemeen/Contact";
 import Afspraken from "./pages/Modules/AfsprakenModule";
 import Standen from "./pages/Modules/StandenModule";
 import Bedrijven from "./pages/Modules/BedrijvenModule";
+import Gebruikers from "./pages/Modules/GebruikersModule";
 
 import StudentDashboard from "./pages/Student/StudentenDashboard";
 import SeekerDashboard from "./pages/Seeker/SeekerDashboard"
 // import BedrijfDashboard from "./pages/Bedrijven/BedrijvenDashboard";
-// import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 
 
 export default function App() {
@@ -43,6 +44,9 @@ export default function App() {
           <Route path="/seeker" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
           <Route path="/bedrijven" element={<SeekerLayout><Bedrijven /></SeekerLayout>} />
           <Route path="/standen" element={<SeekerLayout><Standen /></SeekerLayout>} />
+
+          <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+          <Route path="/admin/gebruikers" element={<AdminLayout><Gebruikers /></AdminLayout>} />
 
           <Route path="*" element={<Notfound />} />
         </Routes>
