@@ -1,7 +1,7 @@
 import React from "react"; 
 import AdminHeader from "./AdminHeader.jsx";
 
-const AdminLayout = ({ children }) => { //De naam zou AdminLayout moeten zijn WANT DE FUNCTIE ZAL PROBEREN ZICHZELF TE GEBRUIKEN
+const AdminLayout = ({ children }) => { 
   return (
     <div>
       <AdminHeader />
@@ -10,4 +10,4 @@ const AdminLayout = ({ children }) => { //De naam zou AdminLayout moeten zijn WA
   );
 };
 
-export default AdminHeader;
+export default AdminLayout;
