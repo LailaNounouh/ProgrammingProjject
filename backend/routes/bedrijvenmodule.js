@@ -1,41 +1,30 @@
-// bedrijvenmodule.js
-const express = require('express');
-const router = express.Router();
-const db = require('./db'); // jouw database connectie, pas pad aan indien nodig
+// modules/bedrijfsmodule.js
+const db = require("../db");
 
-// GET /bedrijvenmodule - haal alle bedrijven met alle velden op
-router.get('/', (req, res) => {
+async function getAlleBedrijven() {
   const sql = `
     SELECT 
-      id,
-      bedrijfsnaam,
-      email,
-      straat,
-      nummer,
-      postcode,
-      gemeente,
-      telefoonnummer,
-      btw_nummer,
-      naam_contactpersoon,
-      email_contactpersoon,
-      po_nummer,
-      naam_contactpersoon_vertegenwoordiger,
-      email_contactpersoon_vertegenwoordiger,
-      website,
-      linkedin,
+      id, 
+      bedrijfsnaam, 
+      straat, 
+      nummer, 
+      postcode, 
+      gemeente, 
+      beschrijving, 
       logo_url,
-      sector_id,
-      beschrijving
+      sector_naam
     FROM bedrijven
   `;
 
-  db.query(sql, (err, results) => {
-    if (err) {
-      console.error('Fout bij ophalen bedrijven:', err);
-      return res.status(500).json({ error: 'Interne serverfout' });
-    }
-    res.json(results);
-  });
-});
+  try {
+    const [rows] = await db.query(sql);
+    return rows;
+  } catch (err) {
+    console.error("Fout bij ophalen bedrijven uit database:", err);
+    throw err;
+  }
+}
 
-module.exports = router;
+module.exports = {
+  getAlleBedrijven,
+};

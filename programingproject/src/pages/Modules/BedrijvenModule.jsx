@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { baseUrl } from "../../config";
+import "./BedrijvenModule.css";
 
 export default function Bedrijven() {
   const [bedrijven, setBedrijven] = useState([]);
@@ -29,18 +30,62 @@ export default function Bedrijven() {
         <div className="bedrijven-grid">
           {bedrijven.map((bedrijf) => (
             <div key={bedrijf.id} className="bedrijf-kaart">
-              {bedrijf.logo_url && (
+              {bedrijf.logo_url ? (
                 <img
                   src={bedrijf.logo_url}
                   alt={`Logo van ${bedrijf.bedrijfsnaam}`}
                   className="bedrijf-logo"
                 />
+              ) : (
+                <div className="logo-placeholder">Geen logo</div>
               )}
+
               <h3>{bedrijf.bedrijfsnaam}</h3>
-              <p>{bedrijf.beschrijving || "Geen beschrijving beschikbaar."}</p>
-              <p>
-                {bedrijf.straat ?? ""} {bedrijf.nummer ?? ""}, {bedrijf.postcode ?? ""} {bedrijf.gemeente ?? ""}
+
+              <p className="bedrijf-beschrijving">
+                {bedrijf.beschrijving || "Geen beschrijving beschikbaar."}
               </p>
+
+              <p className="bedrijf-adres">
+                {bedrijf.straat ?? ""} {bedrijf.nummer ?? ""},{" "}
+                {bedrijf.postcode ?? ""} {bedrijf.gemeente ?? ""}
+              </p>
+
+              {bedrijf.email && (
+                <p>
+                  <strong>Email:</strong> {bedrijf.email}
+                </p>
+              )}
+
+              {bedrijf.telefoon && (
+                <p>
+                  <strong>Telefoon:</strong> {bedrijf.telefoon}
+                </p>
+              )}
+
+              {bedrijf.website && (
+                <p>
+                  <strong>Website:</strong>{" "}
+                  <a href={bedrijf.website} target="_blank" rel="noopener noreferrer">
+                    {bedrijf.website}
+                  </a>
+                </p>
+              )}
+
+              {bedrijf.linkedin && (
+                <p>
+                  <strong>LinkedIn:</strong>{" "}
+                  <a href={bedrijf.linkedin} target="_blank" rel="noopener noreferrer">
+                    {bedrijf.linkedin}
+                  </a>
+                </p>
+              )}
+
+              {bedrijf.sector_naam && (
+                <p>
+                  <strong>Sector:</strong> {bedrijf.sector_naam}
+                </p>
+              )}
             </div>
           ))}
         </div>
