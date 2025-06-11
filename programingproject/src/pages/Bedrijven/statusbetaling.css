@@ -1,0 +1,23 @@
+.payment-status-page {
+    padding: 2rem;
+}
+
+.payment-status {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+.payment-card {
+    border-left: 4px solid var(--success-color);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--secondary-color);
+}
+
+.payment-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
