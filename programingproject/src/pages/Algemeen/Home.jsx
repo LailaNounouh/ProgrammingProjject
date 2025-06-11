@@ -72,7 +72,7 @@ export default function Home() {
   
   <div className="info-box">
     <h2>Welkom bij Career Launch Day 2026</h2>
-    <p>Ontdek workshops, netwerkmogelijkheden en carrière-inspiratie voor studenten en bedrijven.</p>
+    <p>Ontdek, ontmoet en lanceer je carrière!</p>
   </div>
           
       <main className="content">
