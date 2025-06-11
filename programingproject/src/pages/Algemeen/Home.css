@@ -26,6 +26,35 @@ body, html, .app {
   color: white;
 }
 
+.hero-section {
+  position: relative;
+  height: 350px; 
+  width: 100%;
+  background-image: url('/afbeelding/AfbCareerLaunch.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 169, 181, 0.5); 
+  z-index: 1;
+}
+
+.hero-section header {
+  position: relative;
+  z-index: 2;
+  color: white;
+  text-align: center;
+  width: 100%;
+}
+
 .logo {
   height: 40px;
   position: absolute;
