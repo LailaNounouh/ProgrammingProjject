@@ -1,20 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './AdminHeader.css';
-import LogoutButton from '../../button/logoutbutton.jsx';
 
-export default function AdminHeader() {
+const AdminHeader = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <header className="admin-header">
-      <h2>Admin</h2>
-      <nav>
+    <header className="header">
+      <Link to="/" className="logo-link">
+        <div className="logo">
+          erasmus<br />
+          <small>Hogeschool Brussel</small>
+        </div>
+      </Link>
+
+      <h1 className="admin-title">Admin</h1>
+
+      <nav className={isOpen ? 'open' : ''}>
         <ul>
-          <li><Link to="/admin/dashboard">Dashboard</Link></li>
-          <li><Link to="/admin/users">Gebruikers</Link></li>
-          <li><Link to="/admin/settings">Instellingen</Link></li>
+          <li><Link to="/admin/bedrijven">Deelnemende bedrijven</Link></li>
+          <li><Link to="/admin/standen">Beheer van standen</Link></li>
+          <li><Link to="/admin/users">Beheer van gebruikers</Link></li>
+          <li><Link to="/admin/stats">Statistieken</Link></li>
         </ul>
       </nav>
-      <LogoutButton />
+
+      <div className="hamburger" onClick={() => setIsOpen(!isOpen)}>≡</div>
     </header>
   );
-}
+};
+
+export default AdminHeader;
