@@ -6,12 +6,12 @@ import './StudentenHeader.css';
 const StudentenHeader = () => {
   return (
     <header className="header">
-      <Link to="/" className="logo-link">
+       <Link to="/" className="logo-link">
         <img 
-          src={`${import.meta.env.BASE_URL}afbeelding/erasmuslogo.png`}
-          alt="Erasmus logo"
+          src="./public/afbeelding/logo-ehb.png" 
+          alt="Logo" 
           className="logo"
-        />
+          />
       </Link>
       <nav>
         <ul>

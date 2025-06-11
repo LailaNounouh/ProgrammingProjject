@@ -8,10 +8,11 @@ const AdminHeader = () => {
   return (
     <header className="header">
       <Link to="/" className="logo-link">
-        <div className="logo">
-          erasmus<br />
-          <small>Hogeschool Brussel</small>
-        </div>
+        <img 
+          src="./public/afbeelding/logo-ehb.png" 
+          alt="Logo" 
+          className="logo"
+          />
       </Link>
 
       <h1 className="admin-title">Admin</h1>
