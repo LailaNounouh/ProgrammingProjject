@@ -7,36 +7,17 @@ function BedrijvenDashboard() {
   const [betalingen, setBetalingen] = useState([]);
   const [afspraken, setAfspraken] = useState([]);
 
+  // Mock data voor demo
   useEffect(() => {
+    // Dit zou vervangen worden door echte API calls
     setBetalingen([
       { id: 1, factuur: "F2023-0456", status: "Betaald", bedrag: 1200, datum: "20-04-2023" }
     ]);
-    setAfspraken([]);
+    
+    setAfspraken([]); // Geen afspraken momenteel
   }, []);
 
-  return (
-    <div className="bedrijven-dashboard">
-      {<header className="dashboard-header">
-  <div className="header-left">
-    <h1>Ingelogd bedrijf</h1>
-    <p>NovaTech - IT Services</p>
-  </div>
-  <div className="header-right">
-    <div className="search-box">
-      <FaSearch className="search-icon" />
-      <input type="text" placeholder="Zoeken..." />
-    </div>
-    <div className="notification-bell">
-      <FaBell />
-      <span className="notification-badge">3</span>
-    </div>
-    <div className="user-avatar">NT</div>
-  </div>
-</header>
-}
-    
-    <main>
-  {activeTab === 'dashboard' && (
+  const renderDashboard = () => (
     <div className="dashboard-content">
       <div className="welcome-banner">
         <h1>Welkom terug, NovaTech!</h1>
@@ -118,11 +99,33 @@ function BedrijvenDashboard() {
         </div>
       </div>
     </div>
-  )}
-  {}
-</main>
+  );
 
-</div>
+  return (
+    <div className="bedrijven-dashboard">
+      <header className="dashboard-header">
+        <div className="header-left">
+          <h1>Ingelogd bedrijf</h1>
+          <p>NovaTech - IT Services</p>
+        </div>
+        <div className="header-right">
+          <div className="search-box">
+            <FaSearch className="search-icon" />
+            <input type="text" placeholder="Zoeken..." />
+          </div>
+          <div className="notification-bell">
+            <FaBell />
+            <span className="notification-badge">3</span>
+          </div>
+          <div className="user-avatar">NT</div>
+        </div>
+      </header>
+
+      <main>
+        {activeTab === 'dashboard' && renderDashboard()}
+        {/* Andere tabs zouden hier gerenderd worden */}
+      </main>
+    </div>
   );
 }
 
