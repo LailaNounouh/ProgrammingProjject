@@ -1,0 +1,87 @@
+/* Contact.css */
+.contact {
+  max-width: 480px;
+  margin: 50px auto 80px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.contact-content h1 {
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #007B8A; /* fris blauwgroen */
+  text-align: center;
+}
+
+.contact-content p {
+  font-size: 1rem;
+  margin-bottom: 25px;
+  text-align: center;
+  color: #555;
+  line-height: 1.5;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+  padding: 12px 15px;
+  border: 1.8px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: #007B8A;
+  box-shadow: 0 0 6px rgba(0, 123, 138, 0.4);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-size: 1rem;
+}
+
+button[type="submit"] {
+  background-color: #007B8A;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #005f66;
+}
+
+@media (max-width: 500px) {
+  .contact {
+    margin: 20px;
+    padding: 20px;
+  }
+}
