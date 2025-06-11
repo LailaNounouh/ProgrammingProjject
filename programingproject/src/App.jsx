@@ -36,6 +36,7 @@ export default function App() {
           
           <Route path="/seeker" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
           <Route path="/student" element={<StudentenLayout><StudentDashboard /></StudentenLayout>} />
+          <Route path="/student/Bedrijven" element={<StudentenLayout><BedrijvenModule/></StudentenLayout>} />
           <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
           <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
 

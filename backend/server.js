@@ -9,6 +9,9 @@ const registerRouter = require('./routes/register');
 const newsletterRouter = require('./routes/newsletter');
 const loginRouter = require('./routes/login');
 
+// Import bedrijvenmodule router
+const bedrijvenModuleRouter = require('./bedrijvenmodule');
+
 const app = express();
 
 // CORS met opties
@@ -30,10 +33,13 @@ apiRouter.use('/register', registerRouter);
 apiRouter.use('/newsletter', newsletterRouter);
 apiRouter.use('/login', loginRouter);
 
-// Route om bedrijven op te halen
+// Gebruik bedrijvenmodule voor alles met /bedrijvenmodule
+apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
+
+// Optioneel: oude route vervangen zodat /bedrijven ook werkt (met minimaal id en naam)
 apiRouter.get('/bedrijven', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT company_id AS id, company_name AS name FROM companies');
+    const [rows] = await pool.query('SELECT id, bedrijfsnaam FROM bedrijven');
     res.json(rows);
   } catch (err) {
     console.error(err);
