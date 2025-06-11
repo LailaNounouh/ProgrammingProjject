@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Home.css';
+import { baseUrl } from '../../config';
 
 export default function Home() {
   const [formData, setFormData] = useState({
@@ -33,7 +34,7 @@ export default function Home() {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/registratie', {
+      const response = await fetch(`${baseUrl}/registratie`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,42 +64,44 @@ export default function Home() {
     <div className="home">
       <main className="content">
         <div className="hero-section">
-           <img 
-      src="/afbeelding/AfbCareerLaunch.png"  
-      alt="Career Launch Background" 
-      className="hero-bg-image"
-    />
-    <div className="hero-overlay"></div>
-          
-        <header>
-          <h1>Welkom bij de Career Launch Day 2026</h1>
-          <div className="subtitle">Ontdek, ontmoet en lanceer je carrière!</div>
-        </header>
+          <img 
+            src="/afbeelding/AfbCareerLaunch.png"  
+            alt="Career Launch Background" 
+            className="hero-bg-image"
+          />
+          <div className="hero-overlay"></div>
+
+          <header>
+            <h1>Welkom bij de Career Launch Day 2026</h1>
+            <div className="subtitle">Ontdek, ontmoet en lanceer je carrière!</div>
+          </header>
         </div>
 
         <div className="description">
           <p>Op <span className="highlight">Vrijdag 13 maart 2026</span> organiseert de Erasmus Hogeschool Brussel 
-          een inspirerende Career Launch Day voor alle studenten van de opleidingen Design & Technologie. 
-          Tijdens deze dag krijg je de kans om kennis te maken met toonaangevende bedrijven, 
-          deel te nemen aan interactieve workshops en je netwerk uit te breiden met professionals uit het werkveld.</p>
+            een inspirerende Career Launch Day voor alle studenten van de opleidingen Design & Technologie. 
+            Tijdens deze dag krijg je de kans om kennis te maken met toonaangevende bedrijven, 
+            deel te nemen aan interactieve workshops en je netwerk uit te breiden met professionals uit het werkveld.
+          </p>
           
           <p>Of je nu op zoek bent naar een stage, een eerste job, of gewoon inspiratie wilt opdoen voor je toekomst: 
             de Career Launch Day is dé plek om je carrière een vliegende start te geven!</p>
 
-          <p>De Career Launch Day brengt studenten uit zes topopleidingen samen:
+          <p>De Career Launch Day brengt studenten uit zes topopleidingen samen:</p>
           <ul className="opleidingen-lijst">
-          <li>Bachelor in de Multimedia & Creatieve Technologie</li>
-          <li>Bachelor in de Toegepaste Informatica</li>
-          <li>Graduaat Elektromechanische Systemen</li>
-          <li>Graduaat Internet of Things</li>
-          <li>Graduaat Programmeren</li>
-          <li>Graduaat Systeem- & Netwerkbeheer</li>
-          </ul>  </p>  
+            <li>Bachelor in de Multimedia & Creatieve Technologie</li>
+            <li>Bachelor in de Toegepaste Informatica</li>
+            <li>Graduaat Elektromechanische Systemen</li>
+            <li>Graduaat Internet of Things</li>
+            <li>Graduaat Programmeren</li>
+            <li>Graduaat Systeem- & Netwerkbeheer</li>
+          </ul>
           
           <p>Het event biedt je de mogelijkheid om jezelf te presenteren aan een breed groep potentiële werkgevers, 
             stageplaatsen te ontdekken, bachelorproefpartners te vinden en waardevolle contacten te leggen met bedrijven 
             uit de technische en IT-sector. Tijdens de interactieve workshops doe je praktische vaardigheden op en 
-            krijg je de kans om te leren van experts uit de industrie.</p>
+            krijg je de kans om te leren van experts uit de industrie.
+          </p>
         </div>
 
         <div className="cta-box">
