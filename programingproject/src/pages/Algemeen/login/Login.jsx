@@ -46,6 +46,7 @@ export default function Login() {
           <option value="student">Student</option>
           <option value="werkzoekende">Werkzoekende</option>
           <option value="bedrijf">Bedrijf</option>
+          <option value="admin">Admin</option> {/* ✅ Toegevoegd */}
         </select>
 
         <input

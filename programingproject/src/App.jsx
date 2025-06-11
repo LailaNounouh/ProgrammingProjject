@@ -3,8 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Layout from "./components/algemenelayout/Layout";
 import StudentenLayout from "./components/studentenlayout/StudentenLayout";
-import BedrijvenLayout from "./components/bedrijvenlayout/BedrijvenLayout";
-import AdminLayout from "./components/adminlayout/AdminLayout";
+import BedrijvenLayout from "./components/bedrijvenlayout/BedrijvenLayout"
 
 import Home from "./pages/Algemeen/Home";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
