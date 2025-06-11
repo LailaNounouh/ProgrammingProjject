@@ -62,19 +62,20 @@ export default function Home() {
 
   return (
     <div className="home">
-      <img 
-            src="/afbeelding/AfbCarreerLaunch.png" 
-            alt="Career Launch Day banner" 
-            className="banner-image"
-          />
+      <div className="banner-container">
+    <img 
+      src="/afbeelding/AfbCarreerLaunch.png" 
+      alt="Career Launch Day banner" 
+      className="banner-image"
+    />
+  </div>
+  
+  <div className="info-box">
+    <h2>Welkom bij Career Launch Day 2026</h2>
+    <p>Ontdek workshops, netwerkmogelijkheden en carrière-inspiratie voor studenten en bedrijven.</p>
+  </div>
           
       <main className="content">
-          <header>
-            <h1>Welkom bij de Career Launch Day 2026</h1>
-            <div className="subtitle">Ontdek, ontmoet en lanceer je carrière!</div>
-          </header>
-
-
         <div className="description">
           <p>Op <span className="highlight">Vrijdag 13 maart 2026</span> organiseert de Erasmus Hogeschool Brussel 
             een inspirerende Career Launch Day voor alle studenten van de opleidingen Design & Technologie. 
