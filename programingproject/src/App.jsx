@@ -36,6 +36,7 @@ export default function App() {
         <Route path="/about" element={<Layout><About /></Layout>} />
         <Route path="/contact" element={<Layout><Contact /></Layout>} />
 
+        {/* Seeker */}
         <Route
           path="/seeker"
           element={
@@ -45,6 +46,7 @@ export default function App() {
           }
         />
 
+        {/* Student */}
         <Route
           path="/student"
           element={
@@ -70,6 +72,7 @@ export default function App() {
           }
         />
 
+        {/* Admin */}
         <Route
           path="/admin"
           element={
@@ -103,6 +106,7 @@ export default function App() {
           }
         />
 
+        {/* Bedrijf */}
         <Route
           path="/bedrijf"
           element={

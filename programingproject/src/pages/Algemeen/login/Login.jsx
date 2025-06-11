@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import "./Login.css";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthProvider";
 import { baseUrl } from "../../../config";
 
 export default function Login() {
-  const navigate = useNavigate();
+  const { login } = useAuth(); 
   const [email, setEmail] = useState("");
   const [wachtwoord, setWachtwoord] = useState("");
   const [type, setType] = useState("student");
@@ -26,7 +26,8 @@ export default function Login() {
       if (!response.ok) {
         setError(data.error || "Ongeldige inloggegevens");
       } else {
-        navigate(`/${type}`);
+   
+        login(email, wachtwoord);
       }
     } catch (err) {
       setError("Fout bij verbinding met de server");
@@ -46,7 +47,7 @@ export default function Login() {
           <option value="student">Student</option>
           <option value="werkzoekende">Werkzoekende</option>
           <option value="bedrijf">Bedrijf</option>
-          <option value="admin">Admin</option> {/* ✅ Toegevoegd */}
+          <option value="admin">Admin</option>
         </select>
 
         <input
