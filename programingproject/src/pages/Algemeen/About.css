@@ -1,0 +1,21 @@
+.about {
+  /* Optioneel: als je extra spacing rondom wilt */
+  padding-bottom: 50px;
+}
+
+.about-content p {
+  margin-bottom: 15px;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.about-content .highlight {
+  color: #00a9b5; /* dezelfde accentkleur als andere highlights */
+}
+
+.subtitle {
+  color: #007a84; /* iets donkerder blauw voor subtitel */
+  font-weight: 600;
+  margin-top: -10px;
+  margin-bottom: 20px;
+}
