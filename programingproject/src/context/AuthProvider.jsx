@@ -1,31 +1,26 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
 
+  // Optioneel: haal user uit localStorage bij laden app
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
   }, []);
 
-  const login = (email, password) => {
-    const role = getRoleByEmail(email);
-    const userData = { email, role };
+  const login = (userData) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
-    navigate(`/${role}`);
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
-    navigate('/login');
   };
 
   return (
@@ -33,14 +28,8 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => useContext(AuthContext);
-
-const getRoleByEmail = (email) => {
-  if (email.includes('student.ehb.be')) return 'student';
-  if (email.includes('bedrijf')) return 'bedrijf';
-  if (email.includes('admin')) return 'admin';
-  return 'seeker';
-};
-
+export function useAuth() {
+  return useContext(AuthContext);
+}

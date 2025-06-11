@@ -1,82 +1,69 @@
-import React, { useState } from "react";
-import "./Login.css";
-import { useAuth } from "../../../context/AuthProvider";
-import { baseUrl } from "../../../config";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthProvider';
+import { baseUrl } from '../../../config';
 
 export default function Login() {
-  const { login } = useAuth(); 
-  const [email, setEmail] = useState("");
-  const [wachtwoord, setWachtwoord] = useState("");
-  const [type, setType] = useState("student");
-  const [error, setError] = useState("");
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const [email, setEmail] = useState('');
+  const [wachtwoord, setWachtwoord] = useState('');
+  const [error, setError] = useState(null);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setError(null);
 
     try {
       const response = await fetch(`${baseUrl}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password: wachtwoord, type }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, wachtwoord }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || "Ongeldige inloggegevens");
-      } else {
-   
-        login(email, wachtwoord);
+        setError(data.error || 'Login mislukt');
+        return;
       }
-    } catch (err) {
-      setError("Fout bij verbinding met de server");
+
+      // Stel user data in vanuit API response (voorbeeld)
+      // Zorg dat API user data teruggeeft met minimaal 'role'
+      login(data.user);
+
+      // Na login naar dashboard sturen, afhankelijk van rol
+      if (data.user.role === 'student') navigate('/student');
+      else if (data.user.role === 'admin') navigate('/admin');
+      else if (data.user.role === 'bedrijf') navigate('/bedrijf');
+      else if (data.user.role === 'seeker') navigate('/seeker');
+      else navigate('/'); // fallback
+
+    } catch {
+      setError('Server niet bereikbaar');
     }
   };
 
   return (
-    <div className="login-container">
-      <h2>Inloggen</h2>
-      <form onSubmit={handleLogin}>
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          required
-          className="login-select"
-        >
-          <option value="student">Student</option>
-          <option value="werkzoekende">Werkzoekende</option>
-          <option value="bedrijf">Bedrijf</option>
-          <option value="admin">Admin</option>
-        </select>
-
-        <input
-          type="email"
-          placeholder="E-mailadres"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Wachtwoord"
-          value={wachtwoord}
-          onChange={(e) => setWachtwoord(e.target.value)}
-          required
-        />
-
-        <button type="submit">Inloggen</button>
-
-        {error && <div className="error">{error}</div>}
-      </form>
-
-      <div className="register-container">
-        <p>
-          Heb je nog geen account? <a href="/register">Registreer hier</a>
-        </p>
-      </div>
-
-      <div className="login-image">Afbeelding</div>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <h3>Login</h3>
+      <input
+        type="email"
+        placeholder="E-mailadres"
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+        required
+      />
+      <input
+        type="password"
+        placeholder="Wachtwoord"
+        value={wachtwoord}
+        onChange={e => setWachtwoord(e.target.value)}
+        required
+      />
+      <button type="submit">Inloggen</button>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+    </form>
   );
 }

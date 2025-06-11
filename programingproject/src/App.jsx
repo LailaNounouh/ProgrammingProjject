@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthProvider";
-import ProtectedRoute from './Auth/ProtectedRoute';
+import ProtectedRoute from './components/protection/ProtectedRoute';
 
 import Layout from "./components/layout/algemenelayout/Layout";
 import StudentenLayout from "./components/layout/studentenlayout/StudentenLayout";
