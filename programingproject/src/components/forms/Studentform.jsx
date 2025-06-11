@@ -12,12 +12,11 @@ export default function StudentForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setError(null);
     setSuccess(null);
 
-    // Simpele validatie
-    if (!naam || !email || !studie || !wachtwoord) {  
+    // Validatie
+    if (!naam || !email || !studie || !wachtwoord) {
       setError('Alle velden zijn verplicht');
       return;
     }
@@ -31,7 +30,7 @@ export default function StudentForm() {
           naam,
           email,
           studie,
-          wachtwoord, // let op: je backend moet wachtwoord verwerken
+          wachtwoord,
         }),
       });
 
@@ -41,6 +40,7 @@ export default function StudentForm() {
         setError(data.error || 'Er is een fout opgetreden');
       } else {
         setSuccess('Registratie succesvol!');
+        // Reset formulier
         setNaam('');
         setEmail('');
         setStudie('');
@@ -54,6 +54,7 @@ export default function StudentForm() {
   return (
     <form onSubmit={handleSubmit}>
       <h3>Registratie - Student</h3>
+
       <input
         type="text"
         placeholder="Naam"
@@ -82,6 +83,7 @@ export default function StudentForm() {
         onChange={(e) => setWachtwoord(e.target.value)}
         required
       />
+
       <button type="submit">Registreer</button>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}

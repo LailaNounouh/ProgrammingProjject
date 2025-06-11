@@ -3,13 +3,14 @@ import './About.css';
 
 function About() {
   return (
-    <div className="about">
-      <header className="about-header">
+    <div className="home">
+      <header>
         <h1>Over Career Launch</h1>
+        <p className="subtitle">Verbind studenten, werkzoekenden en bedrijven</p>
       </header>
-      <section className="about-content">
+      <section className="description">
         <p>
-          Career Launch is een initiatief om studenten en werkzoekenden te verbinden met bedrijven die actief zijn in diverse sectoren. 
+          <span className="highlight">Career Launch</span> is een initiatief om studenten en werkzoekenden te verbinden met bedrijven die actief zijn in diverse sectoren. 
           Ons doel is om kansen te creëren, netwerken te versterken en carrières te lanceren.
         </p>
         <p>
@@ -17,7 +18,7 @@ function About() {
           Bedrijven kunnen op hun beurt nieuwe talenten ontdekken en hun missie delen met gemotiveerde kandidaten.
         </p>
         <p>
-          Met onze digitale matchingtool zorgen we ervoor dat iedereen snel en efficiënt de juiste connecties kan maken.
+          Met onze <span className="highlight">digitale matchingtool</span> zorgen we ervoor dat iedereen snel en efficiënt de juiste connecties kan maken.
         </p>
       </section>
     </div>

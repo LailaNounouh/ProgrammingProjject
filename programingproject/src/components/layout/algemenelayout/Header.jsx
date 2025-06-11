@@ -6,10 +6,10 @@ const Header = () => {
   return (
     <header className="header">
       <img 
-        src={`${import.meta.env.BASE_URL}afbeelding/erasmuslogo.png`}
-        alt="Erasmus logo"
+        src="./public/afbeelding/logo-ehb.png" 
+        alt="Logo" 
         className="logo"
-      />
+        />
       <nav>
         <ul>
           <li><Link to="/">Home</Link></li>

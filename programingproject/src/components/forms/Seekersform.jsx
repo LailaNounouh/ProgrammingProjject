@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { baseUrl } from "../../config";
 
 export default function SeekersForm() {
   const [naam, setNaam] = useState('');
@@ -21,7 +22,7 @@ export default function SeekersForm() {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/register', {
+      const response = await fetch(`${baseUrl}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -52,6 +53,7 @@ export default function SeekersForm() {
   return (
     <form onSubmit={handleSubmit}>
       <h3>Registratie - Werkzoekende</h3>
+
       <input
         type="text"
         placeholder="Naam"

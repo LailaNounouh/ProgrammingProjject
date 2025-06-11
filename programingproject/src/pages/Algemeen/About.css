@@ -1,33 +1,21 @@
 .about {
-  margin-top: 100px;
-  padding: 20px;
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
-  font-family: Arial, sans-serif;
-}
-
-.about-header {
-  background-color: #00a9b5;
-  padding: 20px;
-  border-radius: 8px;
-  color: white;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-.about-header h1 {
-  margin: 0;
-  font-size: 2rem;
-}
-
-.about-content {
-  margin-top: 30px;
-  line-height: 1.6;
-  font-size: 1.1rem;
-  color: #333;
+  /* Optioneel: als je extra spacing rondom wilt */
+  padding-bottom: 50px;
 }
 
 .about-content p {
+  margin-bottom: 15px;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.about-content .highlight {
+  color: #00a9b5; /* dezelfde accentkleur als andere highlights */
+}
+
+.subtitle {
+  color: #007a84; /* iets donkerder blauw voor subtitel */
+  font-weight: 600;
+  margin-top: -10px;
   margin-bottom: 20px;
 }

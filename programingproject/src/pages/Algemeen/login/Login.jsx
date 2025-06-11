@@ -15,7 +15,7 @@ export default function Login() {
     setError("");
 
     try {
-      const response = await fetch(`${baseUrl}/api/login`, {
+      const response = await fetch(`${baseUrl}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password: wachtwoord, type }),
@@ -46,6 +46,7 @@ export default function Login() {
           <option value="student">Student</option>
           <option value="werkzoekende">Werkzoekende</option>
           <option value="bedrijf">Bedrijf</option>
+          <option value="admin">Admin</option> {/* ✅ Toegevoegd */}
         </select>
 
         <input

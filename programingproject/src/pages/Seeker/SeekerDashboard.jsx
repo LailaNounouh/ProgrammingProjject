@@ -4,6 +4,8 @@ import './SeekerDashboard.css';
 
 function App() {
   const [bedrijven, setBedrijven] = useState([]);
+  const [linkedinUrl, setLinkedinUrl] = useState('');
+  const [melding, setMelding] = useState('');
 
   useEffect(() => {
     fetch("http://localhost:3000/api/bedrijven")
@@ -21,7 +23,16 @@ function App() {
             type="url"
             id="linkedin"
             placeholder="URL naar LinkedIn profiel"
+            value={linkedinUrl}
+            onChange={(e) => setLinkedinUrl(e.target.value)}
           />
+          <button onClick={() => {
+            console.log("LinkedIn URL opgeslagen:", linkedinUrl);
+            setMelding("LinkedIn-link is opgeslagen!");
+          }}>
+            Opslaan
+          </button>
+          {melding && <p style={{ color: 'green' }}>{melding}</p>}
         </section>
 
         <section id="bedrijven" className="bedrijven-section">
