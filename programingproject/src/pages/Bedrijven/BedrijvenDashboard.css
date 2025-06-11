@@ -110,3 +110,123 @@ body {
   font-weight: bold;
   cursor: pointer;
 }
+/* Hoofdcontent */
+.dashboard-content {
+  padding: 2rem;
+}
+
+.welcome-banner {
+  margin-bottom: 2rem;
+}
+
+.welcome-banner h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-dark);
+}
+
+.welcome-banner p {
+  color: var(--text-light);
+  margin: 0;
+}
+
+/* Kaartgrid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.dashboard-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  color: white;
+}
+
+.bg-blue { background-color: var(--primary-blue); }
+.bg-green { background-color: var(--success-green); }
+.bg-orange { background-color: var(--warning-orange); }
+.bg-purple { background-color: var(--purple); }
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.dashboard-card p {
+  color: var(--text-light);
+  margin-bottom: 1.5rem;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  color: var(--primary-blue);
+  font-weight: 500;
+}
+
+.card-footer svg {
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+}
+
+/* Afspraken specifieke stijlen */
+.afspraken-status {
+  margin-bottom: 1rem;
+}
+
+.no-appointments {
+  color: var(--text-light);
+  font-style: italic;
+  padding: 0.5rem 0;
+}
+
+/* Responsief design */
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .header-right {
+    width: 100%;
+    margin-top: 1rem;
+    justify-content: space-between;
+  }
+
+  .search-box {
+    flex-grow: 1;
+    margin-right: 1rem;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
