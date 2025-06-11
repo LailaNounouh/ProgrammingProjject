@@ -62,13 +62,8 @@ export default function Home() {
   return (
     <div className="home">
       <main className="content">
-        <div className="hero-section">
-           <img 
-      src="/afbeelding/AfbCareerLaunch.png"  
-      alt="Career Launch Background" 
-      className="hero-bg-image"
-    />
-    <div className="hero-overlay"></div>
+       <div className="hero-section">
+       <div className="hero-overlay"></div>
           
         <header>
           <h1>Welkom bij de Career Launch Day 2026</h1>
