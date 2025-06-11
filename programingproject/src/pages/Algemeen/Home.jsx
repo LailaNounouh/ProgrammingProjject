@@ -62,6 +62,12 @@ export default function Home() {
 
   return (
     <div className="home">
+      <img 
+            src="/afbeelding/AfbCarreerLaunch.png" 
+            alt="Career Launch Day banner" 
+            className="banner-image"
+          />
+          
       <main className="content">
           <header>
             <h1>Welkom bij de Career Launch Day 2026</h1>
