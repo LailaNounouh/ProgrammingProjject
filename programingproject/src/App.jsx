@@ -22,8 +22,9 @@ import Gebruikers from "./pages/Modules/GebruikersModule";
 
 import StudentDashboard from "./pages/Student/StudentenDashboard";
 import SeekerDashboard from "./pages/Seeker/SeekerDashboard"
-// import BedrijfDashboard from "./pages/Bedrijven/BedrijvenDashboard";
+import BedrijfDashboard from "./pages/Bedrijven/BedrijvenDashboard";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
+import BedrijvenDashboard from "./pages/Bedrijven/BedrijvenDashboard";
 
 
 export default function App() {
@@ -40,6 +41,8 @@ export default function App() {
           <Route path="/student/bedrijven" element={<StudentenLayout><Bedrijven /></StudentenLayout>} />
           <Route path="/student/standen" element={<StudentenLayout><Standen /></StudentenLayout>} />
           <Route path="/student/afspraak" element={<StudentenLayout><Afspraken /></StudentenLayout>} />
+
+          <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
 
           <Route path="/seeker" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
           <Route path="/bedrijven" element={<SeekerLayout><Bedrijven /></SeekerLayout>} />
