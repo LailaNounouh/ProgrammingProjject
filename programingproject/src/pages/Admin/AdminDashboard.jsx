@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './AdminDashboard.css';
 
 function App() {
@@ -18,6 +18,26 @@ function App() {
 
   const actieveStanden = 9;
   const aantalGebruikers = 156;
+
+  const [sectoren, setSectoren] = useState([
+    { naam: "ICT", zichtbaar: true },
+    { naam: "Marketing", zichtbaar: true },
+    { naam: "Onderwijs", zichtbaar: true }
+  ]);
+  const [nieuweSector, setNieuweSector] = useState('');
+
+  const voegSectorToe = () => {
+    if (nieuweSector.trim() !== '' && !sectoren.find(s => s.naam === nieuweSector)) {
+      setSectoren([...sectoren, { naam: nieuweSector, zichtbaar: true }]);
+      setNieuweSector('');
+    }
+  };
+
+  const toggleZichtbaarheid = (index) => {
+    const nieuweSectoren = [...sectoren];
+    nieuweSectoren[index].zichtbaar = !nieuweSectoren[index].zichtbaar;
+    setSectoren(nieuweSectoren);
+  };
 
   return (
     <div className="admin-dashboard">
@@ -91,6 +111,27 @@ function App() {
           <h3>Statistieken</h3>
           <p>Gebruikers: {aantalGebruikers}</p>
           <p>Actieve standen: {actieveStanden}</p>
+        </section>
+
+        <section className="sectoren-section">
+          <h2>Sectoren beheren</h2>
+          <ul>
+            {sectoren.map((sector, index) => (
+              <li key={index}>
+                {sector.naam} ({sector.zichtbaar ? 'zichtbaar' : 'verborgen'})
+                <button onClick={() => toggleZichtbaarheid(index)}>
+                  {sector.zichtbaar ? 'Verberg' : 'Toon'}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <input
+            type="text"
+            placeholder="Nieuwe sector"
+            value={nieuweSector}
+            onChange={(e) => setNieuweSector(e.target.value)}
+          />
+          <button onClick={voegSectorToe}>Voeg toe</button>
         </section>
       </main>
     </div>
