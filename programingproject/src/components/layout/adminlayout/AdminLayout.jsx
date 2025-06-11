@@ -1,11 +1,13 @@
-import React from "react";
-import AdminHeader from "./AdminHeader";
+import React from "react"; 
+import AdminHeader from "./AdminHeader.jsx";
 
-const AdminLayout = ({ children }) => (
-  <div>
-    <AdminHeader />
-    <main>{children}</main>
-  </div>
-);
+const AdminHeader = ({ children }) => {
+  return (
+    <div>
+      <AdminHeader />
+      <main>{children}</main>
+    </div>
+  );
+};
 
-export default AdminLayout;
+export default AdminHeader;
