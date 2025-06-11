@@ -114,8 +114,9 @@ body {
 
 /* Hoofdcontent */
 .dashboard-content {
-  padding: 2rem;
+  padding: 3rem;
   flex: 1;
+  margin-top: 3rem;
 }
 
 .welcome-banner {
