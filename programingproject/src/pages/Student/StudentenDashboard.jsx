@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import './StudentenDashboard.css';
+import { baseUrl } from "../../config";
 
 function App() {
   const [bedrijven, setBedrijven] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/bedrijven")
-      .then((res) => res.json())
-      .then((data) => setBedrijven(data))
-      .catch((error) => console.error("Fout bij laden bedrijven:", error));
+    async function fetchBedrijven() {
+      try {
+        const response = await fetch(`${baseUrl}/bedrijven`);
+        const data = await response.json();
+        setBedrijven(data);
+      } catch (error) {
+        console.error("Fout bij laden bedrijven:", error);
+      }
+    }
+
+    fetchBedrijven();
   }, []);
 
   return (
@@ -33,7 +41,7 @@ function App() {
               bedrijven.map((bedrijf, index) => (
                 <div className="bedrijf-kaart" key={index}>
                   <div className="logo-placeholder"></div>
-                  <p>{String(bedrijf.name || bedrijf.id)}</p>
+                  <p>{bedrijf.name || bedrijf.id}</p>
                   <a href="#">Meer info</a>
                 </div>
               ))
@@ -44,7 +52,6 @@ function App() {
         <section id="standen" className="standen-section">
           <h2>Standen:</h2>
           <div className="standen-grid">
-            {/* Voorbeeldstructuur */}
             <div className="stand bedrijf"></div>
             <div className="stand bedrijf"></div>
             <div className="stand bedrijf"></div>
@@ -55,8 +62,11 @@ function App() {
             <div className="stand">Onthaal</div>
             <div className="stand bedrijf"></div>
             <div className="stand bedrijf"></div>
-            {/* Voeg eventueel meer toe volgens het plan */}
           </div>
+        </section>
+
+        <section id="afspraak">
+          {/* Afspraak maken sectie - voeg inhoud toe indien gewenst */}
         </section>
       </main>
     </div>
@@ -64,7 +74,3 @@ function App() {
 }
 
 export default App;
-
-        <section id="afspraak">
-          {/* Afspraak maken sectie - voeg inhoud toe indien gewenst */}
-        </section>
