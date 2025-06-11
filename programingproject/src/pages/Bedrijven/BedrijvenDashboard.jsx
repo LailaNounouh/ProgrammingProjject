@@ -16,7 +16,24 @@ function BedrijvenDashboard() {
 
   return (
     <div className="bedrijven-dashboard">
-      {}
+      {<header className="dashboard-header">
+  <div className="header-left">
+    <h1>Ingelogd bedrijf</h1>
+    <p>NovaTech - IT Services</p>
+  </div>
+  <div className="header-right">
+    <div className="search-box">
+      <FaSearch className="search-icon" />
+      <input type="text" placeholder="Zoeken..." />
+    </div>
+    <div className="notification-bell">
+      <FaBell />
+      <span className="notification-badge">3</span>
+    </div>
+    <div className="user-avatar">NT</div>
+  </div>
+</header>
+}
     </div>
   );
 }
