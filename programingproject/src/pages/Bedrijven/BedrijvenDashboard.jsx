@@ -13,7 +13,7 @@ function BedrijvenDashboard() {
     setBetalingen([
       { id: 1, factuur: "F2023-0456", status: "Betaald", bedrag: 1200, datum: "20-04-2023" }
     ]);
-    
+     
     setAfspraken([]); // Geen afspraken momenteel
   }, []);
 
