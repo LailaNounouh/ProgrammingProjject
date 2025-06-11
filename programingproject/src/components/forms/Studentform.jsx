@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { baseUrl } from "../../config";
 
 export default function StudentForm() {
   const [naam, setNaam] = useState('');
@@ -16,13 +17,13 @@ export default function StudentForm() {
     setSuccess(null);
 
     // Simpele validatie
-    if (!naam || !email || !studie || !wachtwoord) {
+    if (!naam || !email || !studie || !wachtwoord) {  
       setError('Alle velden zijn verplicht');
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/register', {
+      const response = await fetch(`${baseUrl}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
