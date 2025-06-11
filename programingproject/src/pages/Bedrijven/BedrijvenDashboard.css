@@ -1,0 +1,27 @@
+:root {
+  --primary-blue: #4a6bff;
+  --light-blue: #e6e9ff;
+  --dark-blue: #3a5bef;
+  --success-green: #28a745;
+  --warning-orange: #ff9f1c;
+  --purple: #6c63ff;
+  --text-dark: #2c3e50;
+  --text-light: #7f8c8d;
+  --border-color: #ecf0f1;
+  --white: #ffffff;
+}
+
+/* Basisstijlen */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+  color: var(--text-dark);
+}
+
+.bedrijven-dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
