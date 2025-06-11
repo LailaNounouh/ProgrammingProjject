@@ -64,7 +64,7 @@ export default function Home() {
     <div className="home">
       <div className="banner-container">
     <img 
-      src="/afbeelding/AfbCarreerLaunch.png" 
+      src="/afbeelding/CareerLaunch.png" 
       alt="Career Launch Day banner" 
       className="banner-image"
     />
