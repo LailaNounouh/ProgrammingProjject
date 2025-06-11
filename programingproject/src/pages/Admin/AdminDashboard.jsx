@@ -1,175 +1,99 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './AdminDashboard.css';
 
-export default function AdminDashboard() {
-const [page, setPage] = useState('dashboard');
-const [searchTerm, setSearchTerm] = useState('');
-const [searchCategory, setSearchCategory] = useState('studenten'); // of 'werkzoekenden', 'bedrijven'
+function App() {
+  const bedrijven = [
+    { naam: 'Microsoft' },
+    { naam: 'Cisco' },
+    { naam: 'Sopra Steria' },
+    { naam: 'Webdoos' }
+  ];
 
-// Voorbeeldgegevens
-const studenten = [
-{ naam: 'Amina', skills: 'Engels, HTML, CSS, JavaScript' },
-{ naam: 'Jeroen', skills: 'Python, Data Science' },
-];
+  const gebruikers = [
+    { id: 1, rol: 'bedrijf' },
+    { id: 2, rol: 'werkzoekende' },
+    { id: 3, rol: 'student' },
+    { id: 4, rol: 'bedrijf' }
+  ];
 
-const werkzoekenden = [
-{ naam: 'Lisa', skills: 'Grafisch ontwerp, Photoshop' },
-{ naam: 'Mark', skills: 'Java, Spring Boot' },
-];
+  const actieveStanden = 9;
+  const aantalGebruikers = 156;
 
-const bedrijven = [
-{ naam: 'Nova Tech', sector: 'IT & Technologie' },
-{ naam: 'Greenline Logistics', sector: 'Transport' },
-];
+  return (
+    <div className="admin-dashboard">
+      <main className="admin-main">
 
-// Filter functies
-const filterData = () => {
-const lowerSearch = searchTerm.toLowerCase();
+        <section className="bedrijven-section">
+          <h2>Deelnemende bedrijven:</h2>
+          <button className="filter-button">Filter ⌄</button>
+          <div className="bedrijven-grid">
+            {bedrijven.map((bedrijf, index) => (
+              <div key={index} className="bedrijf-card">
+                <div className="bedrijf-image" />
+                <strong>{bedrijf.naam}</strong>
+                <p>• Meer info</p>
+              </div>
+            ))}
+          </div>
+          <button className="bewerken-button">bewerk</button>
+        </section>
 
-if (searchCategory === 'studenten') {
-return studenten.filter(s =>
-s.naam.toLowerCase().includes(lowerSearch) ||
-s.skills.toLowerCase().includes(lowerSearch)
-);
-} else if (searchCategory === 'werkzoekenden') {
-return werkzoekenden.filter(w =>
-w.naam.toLowerCase().includes(lowerSearch) ||
-w.skills.toLowerCase().includes(lowerSearch)
-);
-} else if (searchCategory === 'bedrijven') {
-return bedrijven.filter(b =>
-b.naam.toLowerCase().includes(lowerSearch) ||
-b.sector.toLowerCase().includes(lowerSearch)
-);
+        <section className="standen-section">
+          <h2>Beheer van Standen:</h2>
+          <div className="plattegrond">
+            <div className="stand bezet"><div className="status-circle">−</div></div>
+            <div className="stand bezet"><div className="status-circle">−</div></div>
+            <div className="buffet">Buffet</div>
+            <div className="stand bezet"><div className="status-circle">−</div></div>
+            <div className="stand bezet"><div className="status-circle">−</div></div>
+            <div className="stand vrij"><div className="status-circle">+</div></div>
+            <div className="stand vrij"><div className="status-circle">+</div></div>
+            <div className="stand vrij"><div className="status-circle">+</div></div>
+            <div className="stand bezet"><div className="status-circle">−</div></div>
+            <div className="stand vrij"><div className="status-circle">+</div></div>
+            <div className="stand bezet"><div className="status-circle">−</div></div>
+            <div className="onthaal">Onthaal</div>
+            <div className="stand bezet"><div className="status-circle">−</div></div>
+            <div className="stand bezet"><div className="status-circle">−</div></div>
+            <div className="stand vrij"><div className="status-circle">+</div></div>
+          </div>
+
+          <div className="legend">
+            <span><div className="dot red"></div>= bezet</span>
+            <span><div className="dot green"></div>= vrij</span>
+          </div>
+
+          <button className="bewerken-button">bewerk</button>
+        </section>
+
+        <section className="gebruikers-section">
+          <h2>Gebruikers beheren</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Rol</th>
+              </tr>
+            </thead>
+            <tbody>
+              {gebruikers.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.rol}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button className="bewerken-button">bewerk</button>
+        </section>
+
+        <section className="statistieken-section">
+          <h3>Statistieken</h3>
+          <p>Gebruikers: {aantalGebruikers}</p>
+          <p>Actieve standen: {actieveStanden}</p>
+        </section>
+      </main>
+    </div>
+  );
 }
-return [];
-};
-
-const handleNav = (newPage) => {
-setPage(newPage);
-setSearchTerm('');
-};
-
-const filteredResults = filterData();
-
-return (
-<div className="app-container">
-<main className="main-content">
-{page === 'dashboard' && (
-<section>
-<header>
-<h1>Ingelogd bedrijf</h1>
-<h2>Bedrijf</h2>
-</header>
-{/* Zoekcategorie selecteren */}
-<div className="search-category-selector">
-<button
-className={searchCategory === 'studenten' ? 'active' : ''}
-onClick={() => setSearchCategory('studenten')}
->
-Studenten
-</button>
-<button
-className={searchCategory === 'werkzoekenden' ? 'active' : ''}
-onClick={() => setSearchCategory('werkzoekenden')}
->
-Werkzoekenden
-</button>
-<button
-className={searchCategory === 'bedrijven' ? 'active' : ''}
-onClick={() => setSearchCategory('bedrijven')}
->
-Bedrijven
-</button>
-</div>
-{/* Zoekbalk */}
-<div className="search-container">
-<input
-type="text"
-placeholder={`Zoek in ${searchCategory}...`}
-value={searchTerm}
-onChange={(e) => setSearchTerm(e.target.value)}
-/>
-</div>
-{/* Resultaten tonen */}
-<div className="search-results">
-{searchCategory === 'studenten' && (
-filteredResults.length > 0 ? (
-filteredResults.map((s, index) => (
-<div key={index} className="result-item">
-<h3>Student: {s.naam}</h3>
-<p>Skills: {s.skills}</p>
-</div>
-))
-) : (
-<p>Geen studenten gevonden.</p>
-)
-)}
-{searchCategory === 'werkzoekenden' && (
-filteredResults.length > 0 ? (
-filteredResults.map((w, index) => (
-<div key={index} className="result-item">
-<h3>Werkzoekende: {w.naam}</h3>
-<p>Skills: {w.skills}</p>
-</div>
-))
-) : (
-<p>Geen werkzoekenden gevonden.</p>
-)
-)}
-{searchCategory === 'bedrijven' && (
-filteredResults.length > 0 ? (
-filteredResults.map((b, index) => (
-<div key={index} className="result-item">
-<h3>Bedrijf: {b.naam}</h3>
-<p>Sectie: {b.sector}</p>
-</div>
-))
-) : (
-<p>Geen bedrijven gevonden.</p>
-)
-)}
-</div>
-{/* Overzicht kaarten */}
-<div className="card-container">
-{/* Je kaarten hier, indien nodig */}
-</div>
-</section>
-)}
-
-{page === 'betaling' && (
-<section>
-<header>
-<h1>Staat van betaling</h1>
-</header>
-{/* ... */}
-<button
-onClick={() => handleNav('dashboard')}>Terug naar overzicht</button>
-</section>
-)}
-
-{/* Andere pagina's */}
-{page === 'beschikbaarheid' && (
-<section>
-{/* ... */}
-<button onClick={() => handleNav('dashboard')}>Terug naar overzicht</button>
-</section>
-)}
-
-{page === 'afspraken' && (
-<section>
-{/* ... */}
-<button onClick={() => handleNav('dashboard')}>Terug naar overzicht</button>
-</section>
-)}
-
-{page === 'instellingen' && (
-<section>
-{/* ... */}
-<button onClick={() => handleNav('dashboard')}>Terug naar overzicht</button>
-</section>
-)}
-</main>
-</div>
-);
-}
+export default App

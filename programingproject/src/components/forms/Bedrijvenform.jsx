@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { baseUrl } from "../../config";
 
 export default function BedrijfForm() {
   const [bedrijfsnaam, setBedrijfsnaam] = useState('');
@@ -18,16 +19,13 @@ export default function BedrijfForm() {
       return;
     }
 
-    // Let op: backend verwacht "naam" als veld, maar jouw tabel heet "bedrijfsnaam"
-    // Stuur in JSON "naam" mee met de waarde van bedrijfsnaam!
-
     try {
-      const response = await fetch('http://localhost:3000/api/register', {
+      const response = await fetch(`${baseUrl}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'bedrijf',
-          naam: bedrijfsnaam,  // backend checkt op "naam"
+          naam: bedrijfsnaam, // backend verwacht "naam"
           email,
           sector,
           wachtwoord,
