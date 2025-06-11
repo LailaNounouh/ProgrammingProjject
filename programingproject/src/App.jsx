@@ -19,7 +19,10 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import SeekerDashboard from "./pages/Seeker/SeekerDashboard";
 import BedrijvenDashboard from "./pages/Bedrijven/BedrijvenDashboard";
 
-
+import AfsprakenModule from "./pages/Modules/AfsprakenModule";
+import BedrijvenModule from "./pages/Modules/BedrijvenModule";
+import GebruikersModule from "./pages/Modules/GebruikersModule";
+import StandenModule from "./pages/Modules/StandenModule";
 
 export default function App() {
   return (
