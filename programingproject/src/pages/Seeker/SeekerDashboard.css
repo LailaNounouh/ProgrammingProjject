@@ -68,12 +68,21 @@ main {
   box-sizing: border-box;
 }
 
+.bedrijven-section {
+  margin-top: 30px;
+  margin-bottom: 40px;
+}
+
 .bedrijven-section h2 {
   margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  text-align: center;
 }
 
 .filter-button {
-  margin-bottom: 10px;
+  display: block;
+  margin: 10px auto;
   padding: 6px 12px;
 }
 
@@ -88,10 +97,12 @@ main {
 
 .bedrijf-kaart {
   background: white;
-  padding: 15px;
+  padding: 20px;
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  width: 45%;
+  width: 100%;
+  max-width: 300px;
+  margin: 10px auto;
   text-align: center;
 }
 
@@ -117,6 +128,11 @@ main {
 
 .standen-section {
   margin-top: 30px;
+}
+
+.standen-section h2 {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .standen-grid {
