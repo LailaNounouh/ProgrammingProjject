@@ -26,6 +26,35 @@ body, html, .app {
   color: white;
 }
 
+.logo {
+  height: 40px;
+  position: absolute;
+  top: 10px;
+  left: 20px;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 10px;
+}
+
+.nav-menu a {
+  background-color: #c0c0c0;
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 10px 20px;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.nav-menu a:hover {
+  background-color: #aaa;
+}
+
+main {
+  padding: 15px;
+}
+
 /* layout */
 header {
   padding: 20px 0;
@@ -88,35 +117,6 @@ h1 {
   text-align: center;
   font-weight: bold;
   font-size: 1.2rem;
-}
-
-.logo {
-  height: 40px;
-  position: absolute;
-  top: 10px;
-  left: 20px;
-}
-
-.nav-menu {
-  display: flex;
-  gap: 10px;
-}
-
-.nav-menu a {
-  background-color: #c0c0c0;
-  color: white;
-  font-weight: bold;
-  text-decoration: none;
-  padding: 10px 20px;
-  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
-}
-
-.nav-menu a:hover {
-  background-color: #aaa;
-}
-
-main {
-  padding: 15px;
 }
 
 .linkedin-section {
