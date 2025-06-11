@@ -1,7 +1,7 @@
 import React from "react"; 
 import AdminHeader from "./AdminHeader.jsx";
 
-const AdminHeader = ({ children }) => {
+const AdminLayout = ({ children }) => {
   return (
     <div>
       <AdminHeader />
@@ -10,4 +10,4 @@ const AdminHeader = ({ children }) => {
   );
 };
 
-export default AdminHeader;
+export default AdminLayout;
