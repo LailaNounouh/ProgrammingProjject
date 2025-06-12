@@ -10,7 +10,7 @@ const newsletterRouter = require('./routes/newsletter');
 const loginRouter = require('./routes/login');
 
 // Correcte import bedrijvenmodule router (let op juiste bestandsnaam en extensie)
-const bedrijvenModuleRouter = require('./bedrijvenmodule');
+const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
 
 const app = express();
 
