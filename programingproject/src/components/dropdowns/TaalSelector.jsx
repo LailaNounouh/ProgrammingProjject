@@ -24,7 +24,7 @@ export default function CodeertaalSelector() {
  return (
    <div className="codeertaal-selector">
      <h3>Codeertalen</h3>
-     <div className="inputs">
+      <div className="inputs">
        <select value={taal} onChange={(e) => setTaal(e.target.value)}>
          <option value="">Kies codeertaal</option>
          {codeerOpties.map((t, i) => <option key={i} value={t}>{t}</option>)}

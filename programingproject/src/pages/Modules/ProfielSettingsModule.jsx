@@ -7,6 +7,7 @@ import SoftSkillsSelector from "../../components/dropdowns/SoftSkillsSelector";
 import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
 
 import { baseUrl } from "../../config";
+import { useProfile } from "../../context/ProfileContext";
 
 export default function ProfielSettingsModule() {
   const [formData, setFormData] = useState({
@@ -17,6 +18,7 @@ export default function ProfielSettingsModule() {
   });
 
   const [profilePicture, setProfilePicture] = useState(null);
+  const { fetchProfile } = useProfile();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,6 +52,7 @@ export default function ProfielSettingsModule() {
 
       if (!response.ok) throw new Error("Fout bij verzenden");
 
+      await fetchProfile(); // update profiel na verzenden
       alert("Profiel opgeslagen!");
     } catch (error) {
       alert("Er ging iets mis bij het verzenden.");
@@ -126,6 +129,7 @@ export default function ProfielSettingsModule() {
             />
           </div>
         </section>
+
         <section className="form-group">
           <h2>Talenkennis</h2>
           <TaalSelector />

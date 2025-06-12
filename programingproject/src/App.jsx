@@ -25,25 +25,35 @@ import StandenModule from "./pages/Modules/StandenModule";
 import ProfielSettingsModule from "./pages/Modules/ProfielSettingsModule";
 import ProfielModule from "./pages/Modules/ProfielModule";
 
+import { ProfileProvider } from "./context/ProfileContext";
+
 export default function App() {
   return (
     <Routes>
+      {/* Algemene pagina's */}
       <Route path="/" element={<Layout><Home /></Layout>} />
       <Route path="/login" element={<Layout><Login /></Layout>} />
       <Route path="/register" element={<Layout><Register /></Layout>} />
       <Route path="/about" element={<Layout><About /></Layout>} />
       <Route path="/contact" element={<Layout><Contact /></Layout>} />
+      <Route path="*" element={<Notfound />} />
 
+      {/* Seeker */}
       <Route path="/seeker" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
 
+      {/* Student */}
       <Route path="/student" element={<StudentenLayout><StudentDashboard /></StudentenLayout>} />
-      <Route path="/student/bedrijven" element={<StudentenLayout><BedrijvenModule/></StudentenLayout>} />
-      <Route path="/student/instellingen" element={<StudentenLayout><ProfielSettingsModule/></StudentenLayout>} />
-      <Route path="/student/profiel" element={<StudentenLayout><ProfielModule/></StudentenLayout>} />
+      <Route path="/student/bedrijven" element={<StudentenLayout><BedrijvenModule /></StudentenLayout>} />
 
+      <Route path="/student/instellingen" element={<StudentenLayout><ProfileProvider><ProfielSettingsModule /></ProfileProvider></StudentenLayout>} />
+
+      <Route path="/student/profiel" element={<StudentenLayout><ProfileProvider><ProfielModule /></ProfileProvider></StudentenLayout>} />
+
+      {/* Admin */}
       <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+
+      {/* Bedrijven */}
       <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
-      <Route path="*" element={<Notfound />} />
     </Routes>
   );
 }
