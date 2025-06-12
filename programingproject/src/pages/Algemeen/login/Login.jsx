@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 import { baseUrl } from "../../../config";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [wachtwoord, setWachtwoord] = useState("");
   const [type, setType] = useState("student");
@@ -26,6 +29,8 @@ export default function Login() {
       if (!response.ok) {
         setError(data.error || "Ongeldige inloggegevens");
       } else {
+        // Simuleer bewaarde user in context
+        login({ role: type, email: email }); // ✅ type bestaat nu
         navigate(`/${type}`);
       }
     } catch (err) {
@@ -46,7 +51,7 @@ export default function Login() {
           <option value="student">Student</option>
           <option value="werkzoekende">Werkzoekende</option>
           <option value="bedrijf">Bedrijf</option>
-          <option value="admin">Admin</option> {/* ✅ Toegevoegd */}
+          <option value="admin">Admin</option>
         </select>
 
         <input
