@@ -4,6 +4,7 @@ body, html {
   font-family: Arial, sans-serif;
   background-color: #1a1a1a;
   color: #333;
+  
 }
 
 .admin-dashboard {
@@ -54,6 +55,9 @@ body, html {
 /* Main */
 .admin-main {
   padding: 20px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Bedrijven sectie */
@@ -216,6 +220,7 @@ body, html {
 /* Gebruikersbeheer */
 .gebruikers-section {
   margin-top: 30px;
+  text-align: left;
 }
 
 .gebruikers-section table {
@@ -237,4 +242,13 @@ body, html {
   padding: 15px;
   margin-top: 30px;
   border-radius: 8px;
+  text-align: left;
+}
+
+.bedrijven-section h2,
+.standen-section h2,
+.gebruikers-section h2,
+.statistieken-section h3,
+.sectoren-section h2 {
+  text-align: left !important;
 }
