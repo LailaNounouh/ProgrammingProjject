@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import StudentForm from '../../../components/forms/StudentForm';
 import WerkzoekendeForm from '../../../components/forms/Seekersform';
 import BedrijfForm from './../../../components/forms/Bedrijvenform';
+import './Register.css';
 
 export default function RegistratiePagina() {
   const [selectedType, setSelectedType] = useState('');
