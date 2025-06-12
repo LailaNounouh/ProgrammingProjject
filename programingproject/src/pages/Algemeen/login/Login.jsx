@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
 import { baseUrl } from "../../../config";
-localStorage.setItem("userType", type);
+import { useAuth } from "../../../context/AuthProvider";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -25,16 +24,20 @@ export default function Login() {
         body: JSON.stringify({ email, password: wachtwoord, type }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        setError(errorData.error || "Ongeldige inloggegevens");
+        return;
+      }
+
       const data = await response.json();
 
-      if (!response.ok) {
-        setError(data.error || "Ongeldige inloggegevens");
-      } else {
-        // Simuleer bewaarde user in context
-        login({ role: type, email: email }); // ✅ type bestaat nu
-        navigate(`/${type}`);
-      }
+
+      login(email, wachtwoord, type);
+
+      navigate(`/${type}`);
     } catch (err) {
+      console.error("Verbindingsfout of JSON fout:", err);
       setError("Fout bij verbinding met de server");
     }
   };
@@ -85,3 +88,4 @@ export default function Login() {
     </div>
   );
 }
+

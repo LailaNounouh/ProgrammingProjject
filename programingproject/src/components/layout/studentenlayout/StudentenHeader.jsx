@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import LogoutButton from '../../button/logoutbutton.jsx';
+import LogoutButton from '../../button/logoutbutton'; 
 import './StudentenHeader.css';
 
 const userType = localStorage.getItem('userType')
+
 const StudentenHeader = () => {
  return (
    <header className="header">

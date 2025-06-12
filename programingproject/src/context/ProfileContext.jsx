@@ -1,12 +1,16 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { baseUrl } from "../config";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { baseUrl } from '../config';
+
 
 const ProfileContext = createContext();
 
+
 export const useProfile = () => useContext(ProfileContext);
+
 
 export const ProfileProvider = ({ children }) => {
   const [profile, setProfile] = useState(null);
+
 
   const fetchProfile = async () => {
     try {
@@ -14,13 +18,15 @@ export const ProfileProvider = ({ children }) => {
       const data = await response.json();
       setProfile(data);
     } catch (error) {
-      console.error("Fout bij ophalen profiel:", error);
+      console.error('Fout bij ophalen profiel:', error);
     }
   };
+
 
   useEffect(() => {
     fetchProfile();
   }, []);
+
 
   return (
     <ProfileContext.Provider value={{ profile, setProfile, fetchProfile }}>
@@ -28,3 +34,5 @@ export const ProfileProvider = ({ children }) => {
     </ProfileContext.Provider>
   );
 };
+
+
