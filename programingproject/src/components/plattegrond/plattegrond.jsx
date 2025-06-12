@@ -1,158 +1,118 @@
-import React, { useState, useEffect, useRef } from "react";
-import { ReactSVGPanZoom } from "react-svg-pan-zoom";
-
-const defaultStanden = [
-  { id: 1, name: "Bedrijf A", x: 300, y: 200, width: 100, height: 40, color: "#f4a261" },
-  { id: 2, name: "Bedrijf B", x: 450, y: 200, width: 100, height: 40, color: "#e76f51" },
-];
+import React, { useState, useRef, useEffect } from 'react';
+import { ReactSVGPanZoom } from 'react-svg-pan-zoom';
 
 const Plattegrond = () => {
   const Viewer = useRef(null);
-  const [standen, setStanden] = useState(() => {
-    const saved = localStorage.getItem("standen");
-    return saved ? JSON.parse(saved) : defaultStanden;
-  });
+  const [standen, setStanden] = useState([]);
+  const [selected, setSelected] = useState(null);
+
+  const handleAddStand = (event) => {
+    const point = Viewer.current.getSVGPoint(event.clientX, event.clientY);
+    const id = Date.now();
+    const newStand = {
+      id,
+      name: 'Nieuw',
+      x: point.x,
+      y: point.y,
+      width: 100,
+      height: 40,
+      color: '#27ae60',
+    };
+    setStanden([...standen, newStand]);
+  };
+
+  const handleDrag = (event) => {
+    if (!selected) return;
+    const point = Viewer.current.getSVGPoint(event.clientX, event.clientY);
+    setStanden((prev) =>
+      prev.map((s) =>
+        s.id === selected ? { ...s, x: point.x - 50, y: point.y - 20 } : s
+      )
+    );
+  };
+
+  const handleDrop = () => setSelected(null);
 
   useEffect(() => {
-    localStorage.setItem("standen", JSON.stringify(standen));
+    localStorage.setItem('standen', JSON.stringify(standen));
   }, [standen]);
 
-  const [newStand, setNewStand] = useState({
-    name: "",
-    x: 300,
-    y: 200,
-    width: 100,
-    height: 40,
-    color: "#f4a261",
-  });
-
-  const handleAddStand = (e) => {
-    e.preventDefault();
-    const id = Date.now();
-    setStanden([...standen, { id, ...newStand }]);
-    setNewStand({ name: "", x: 300, y: 200, width: 100, height: 40, color: "#f4a261" });
-  };
-
-  const handleClick = (name) => {
-    alert(`Je klikte op ${name}`);
-  };
-
   return (
-    <div style={{ padding: 20 }}>
-      <div style={{ width: "100%", height: "60vh", border: "1px solid #ccc" }}>
+    <div style={{ display: 'flex', padding: 20 }}>
+      <div
+        style={{ width: '70%', height: '80vh', border: '1px solid #ccc' }}
+        onMouseMove={handleDrag}
+        onMouseUp={handleDrop}
+      >
         <ReactSVGPanZoom
           width={900}
-          height={600}
+          height={700}
           ref={Viewer}
           tool="auto"
           detectAutoPan={false}
-          miniaturePosition="none"
+          onClick={handleAddStand}
         >
-          <svg viewBox="0 0 900 600" width="900" height="600">
-            <image
-              href="/images/plattegrond-kaai.png" 
-              x="0"
-              y="0"
-              width="900"
-              height="600"
-            />
+          <svg viewBox="0 0 900 700" width="900" height="700">
+            {/* Inkom */}
+            <rect x="30" y="100" width="60" height="500" fill="#f0f0f0" stroke="black" />
+            <text x="40" y="90">Inkom</text>
 
-            {standen.map(({ id, name, x, y, width, height, color }) => (
-              <g key={id} onClick={() => handleClick(name)} style={{ cursor: "pointer" }}>
-                <rect x={x} y={y} width={width} height={height} fill={color} stroke="black" strokeWidth="1" rx="8" ry="8" />
+            {/* Toiletten */}
+            <rect x="30" y="100" width="20" height="40" fill="red" />
+            <rect x="30" y="560" width="20" height="40" fill="red" />
+
+            {/* Aula's */}
+            <rect x="100" y="100" width="300" height="150" fill="#cce5ff" stroke="black" />
+            <text x="250" y="190" textAnchor="middle">Aula 1</text>
+            <rect x="400" y="100" width="300" height="150" fill="#cce5ff" stroke="black" />
+            <text x="550" y="190" textAnchor="middle">Aula 2</text>
+            <rect x="100" y="450" width="300" height="150" fill="#cce5ff" stroke="black" />
+            <text x="250" y="540" textAnchor="middle">Aula 3</text>
+            <rect x="400" y="450" width="300" height="150" fill="#cce5ff" stroke="black" />
+            <text x="550" y="540" textAnchor="middle">Aula 4</text>
+
+            {/* Gang */}
+            <rect x="100" y="250" width="600" height="200" fill="#e0e0e0" stroke="black" />
+            <text x="400" y="350" textAnchor="middle">Gang</text>
+
+            {/* Buiten met bar */}
+            <rect x="720" y="100" width="140" height="500" fill="#fff" stroke="black" />
+            <text x="790" y="350" textAnchor="middle">Buitenruimte</text>
+            <path d="M720,500 L860,600" stroke="gold" strokeWidth="3" />
+
+            {/* Dynamische standen */}
+            {standen.map((stand) => (
+              <g
+                key={stand.id}
+                onMouseDown={() => setSelected(stand.id)}
+                style={{ cursor: 'move' }}
+              >
+                <rect
+                  x={stand.x}
+                  y={stand.y}
+                  width={stand.width}
+                  height={stand.height}
+                  fill={stand.color}
+                  stroke="black"
+                  rx="6"
+                />
                 <text
-                  x={x + width / 2}
-                  y={y + height / 2 + 6}
-                  fontSize="14"
-                  fontWeight="bold"
-                  fill="white"
+                  x={stand.x + stand.width / 2}
+                  y={stand.y + stand.height / 2 + 5}
                   textAnchor="middle"
-                  pointerEvents="none"
+                  fill="white"
+                  fontWeight="bold"
                 >
-                  {name}
+                  {stand.name}
                 </text>
               </g>
             ))}
           </svg>
         </ReactSVGPanZoom>
       </div>
-
-      <div style={{ marginTop: 20, maxWidth: 600 }}>
-        <h2>Admin: Stand toevoegen</h2>
-        <form onSubmit={handleAddStand}>
-          <label>
-            Naam:
-            <input
-              type="text"
-              value={newStand.name}
-              onChange={(e) => setNewStand({ ...newStand, name: e.target.value })}
-              required
-              style={{ marginLeft: 8 }}
-            />
-          </label>
-          <br />
-          <label>
-            X:
-            <input
-              type="number"
-              value={newStand.x}
-              onChange={(e) => setNewStand({ ...newStand, x: Number(e.target.value) })}
-              style={{ marginLeft: 8, width: 60 }}
-              required
-            />
-          </label>
-          <label style={{ marginLeft: 20 }}>
-            Y:
-            <input
-              type="number"
-              value={newStand.y}
-              onChange={(e) => setNewStand({ ...newStand, y: Number(e.target.value) })}
-              style={{ marginLeft: 8, width: 60 }}
-              required
-            />
-          </label>
-          <br />
-          <label>
-            Breedte:
-            <input
-              type="number"
-              value={newStand.width}
-              onChange={(e) => setNewStand({ ...newStand, width: Number(e.target.value) })}
-              style={{ marginLeft: 8, width: 60 }}
-              required
-            />
-          </label>
-          <label style={{ marginLeft: 20 }}>
-            Hoogte:
-            <input
-              type="number"
-              value={newStand.height}
-              onChange={(e) => setNewStand({ ...newStand, height: Number(e.target.value) })}
-              style={{ marginLeft: 8, width: 60 }}
-              required
-            />
-          </label>
-          <br />
-          <label>
-            Kleur:
-            <input
-              type="color"
-              value={newStand.color}
-              onChange={(e) => setNewStand({ ...newStand, color: e.target.value })}
-              style={{ marginLeft: 8 }}
-              required
-            />
-          </label>
-          <br />
-          <button type="submit" style={{ marginTop: 10 }}>
-            Stand toevoegen
-          </button>
-        </form>
-      </div>
     </div>
   );
 };
 
 export default Plattegrond;
-
 
