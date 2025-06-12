@@ -21,8 +21,8 @@ import BedrijvenDashboard from "./pages/Bedrijven/BedrijvenDashboard";
 
 import AfsprakenModule from "./pages/Modules/AfsprakenModule";
 import BedrijvenModule from "./pages/Modules/BedrijvenModule";
-import GebruikersModule from "./pages/Modules/GebruikersModule";
 import StandenModule from "./pages/Modules/StandenModule";
+import ProfielModule from "./pages/Modules/ProfielModule";
 
 export default function App() {
   return (
@@ -36,10 +36,10 @@ export default function App() {
           
           <Route path="/seeker" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
           <Route path="/student" element={<StudentenLayout><StudentDashboard /></StudentenLayout>} />
-          <Route path="/student/Bedrijven" element={<StudentenLayout><BedrijvenModule/></StudentenLayout>} />
+          <Route path="/student/bedrijven" element={<StudentenLayout><BedrijvenModule/></StudentenLayout>} />
+          <Route path="/student/profiel" element={<StudentenLayout><ProfielModule/></StudentenLayout>} />
           <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
           <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
-
           <Route path="*" element={<Notfound />} />
         </Routes>
     </Router>
