@@ -1,9 +1,17 @@
+:root {
+  --primary-padding: 2rem;
+  --border-radius: 8px;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --color-white: #ffffff;
+  --color-text: #333;
+  --color-text-light: #666;
+}
+
 .afspraak-overzicht {
-  padding: 2rem;
+  padding: var(--primary-padding);
   max-width: 1200px;
   margin: 0 auto;
 }
-
 
 .afspraak-overzicht__header {
   margin-bottom: 2rem;
@@ -11,29 +19,20 @@
 
 .afspraak-overzicht__titel {
   font-size: 1.8rem;
-  color: #333;
+  color: var(--color-text);
 }
 
 .afspraak-overzicht__geen-afspraken {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background: var(--color-white);
+  border-radius: var(--border-radius);
+  padding: var(--primary-padding);
+  box-shadow: var(--box-shadow);
   text-align: center;
-  color: #666;
+  color: var(--color-text-light);
   font-size: 1.1rem;
-}.afspraak-overzicht {
-  padding: 2rem;
 }
-
-.afspraak-overzicht__header {
-  margin-bottom: 1.5rem;
-}
-
-.afspraak-overzicht__geen-afspraken {
-  background: white;
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  text-align: center;
+.afspraak-lijst {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
