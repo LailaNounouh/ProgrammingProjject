@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+
 import { FaEuroSign, FaCalendarAlt, FaMapMarkerAlt, FaCog, FaChevronRight, FaSearch, FaBell } from 'react-icons/fa';
 import './BedrijvenDashboard.css';
-
+import { useNavigate } from 'react-router-dom';
 function BedrijvenDashboard() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [betalingen, setBetalingen] = useState([]);
   const [afspraken, setAfspraken] = useState([]);
@@ -26,7 +28,7 @@ function BedrijvenDashboard() {
 
       <div className="card-grid">
         {/* Betalingskaart */}
-        <div className="dashboard-card" onClick={() => setActiveTab('betalingen')}>
+        <div className="dashboard-card" onClick={() => navigate('/bedrijf/betaling')}>
           <div className="card-header">
             <div className="card-icon bg-blue">
               <FaEuroSign />

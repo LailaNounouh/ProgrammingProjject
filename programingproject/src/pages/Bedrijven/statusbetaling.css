@@ -1,23 +1,43 @@
 .payment-status-page {
     padding: 2rem;
-}
-
-.payment-status {
+  }
+  
+  .payment-status {
     background: white;
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     margin-bottom: 2rem;
-}
-.payment-card {
+  }
+  
+  .payment-card {
     border-left: 4px solid var(--success-color);
     padding: 1rem;
     margin-bottom: 1rem;
     background-color: var(--secondary-color);
-}
-
-.payment-info {
+  }
+  
+  .payment-info {
     display: flex;
     justify-content: space-between;
     margin-bottom: 0.5rem;
-}
+  }
+  
+  .status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  
+  .status-paid {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: var(--success-color);
+  }
+  
+  .divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 2rem 0;
+  }
+  
