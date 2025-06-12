@@ -1,3 +1,4 @@
+/* Algemeen */
 body, html, .app {
   margin: 0;
   padding: 0;
@@ -12,25 +13,13 @@ body, html, .app {
   margin-top: 100px;
 }
 
-.header {
-  background-color: #00a9b5;
-  padding: 10px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  color: white;
-}
-
+/* Afbeelding */
 .banner-container {
   width: 100%;
   text-align: center;
   margin: 0 auto;
   position: relative;
+  background-color: #f0f0f0;
 }
 
 .banner-image {
@@ -41,13 +30,15 @@ body, html, .app {
   display: block;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  object-fit: contain;
 }
 
+/* Titel */
 .info-box {
   max-width: 800px;
   margin: -50px auto 50px auto;
   padding: 30px;
-  background-color: white;
+  background-color: #d3d9e0;
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   position: relative;
@@ -55,36 +46,24 @@ body, html, .app {
   text-align: center;
 }
 
-.logo {
-  height: 40px;
-  position: absolute;
-  top: 10px;
-  left: 20px;
+.info-box h1 {
+  font-size: 2.5rem; 
+  color: #00a9b5;
+  margin-bottom: 15px;
 }
 
-.nav-menu {
-  display: flex;
-  gap: 10px;
-}
-
-.nav-menu a {
-  background-color: #c0c0c0;
-  color: white;
+.info-box h2 {
+  font-size: 1.5rem; 
   font-weight: bold;
-  text-decoration: none;
-  padding: 10px 20px;
-  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+  color: #333;
+  margin-bottom: 0;
 }
 
-.nav-menu a:hover {
-  background-color: #aaa;
-}
-
+/* layout */
 main {
   padding: 15px;
 }
 
-/* layout */
 header {
   padding: 0;
   border-bottom: 1px solid #eee;
@@ -117,7 +96,7 @@ h1 {
   font-weight: bold;
 }
 
-/* opleidinglijst */
+/* opleiding lijst */
 .opleidingen-lijst {
   margin: 12px 0;
   padding-left: 24px;
@@ -151,17 +130,6 @@ h1 {
   font-size: 1.2rem;
 }
 
-.linkedin-section {
-  margin-bottom: 20px;
-}
-
-.linkedin-section input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  box-sizing: border-box;
-}
-
 /* FAQ */
 .faq-section h2 {
   margin-top: 0;
@@ -190,6 +158,7 @@ h1 {
   margin-right: auto;
 }
 
+/* Formulier */
 .form-section {
   margin-top: 30px;
   background-color: #00a9b5; 
@@ -259,6 +228,19 @@ form button:hover {
 .form-section button[type="submit"]:hover {
   background-color: #BF393E; 
   color: white; 
+}
+
+
+
+.linkedin-section {
+  margin-bottom: 20px;
+}
+
+.linkedin-section input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  box-sizing: border-box;
 }
 
 .bedrijven-lijst {
