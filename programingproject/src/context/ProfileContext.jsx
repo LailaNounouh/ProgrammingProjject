@@ -10,7 +10,7 @@ export const ProfileProvider = ({ children }) => {
 
   const fetchProfile = async () => {
     try {
-      const response = await fetch(`${baseUrl}/api/profile`);
+      const response = await fetch(`${baseUrl}/profile`);
       const data = await response.json();
       setProfile(data);
     } catch (error) {

@@ -3,6 +3,7 @@ import "./Login.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { baseUrl } from "../../../config";
+localStorage.setItem("userType", type);
 
 export default function Login() {
   const navigate = useNavigate();
