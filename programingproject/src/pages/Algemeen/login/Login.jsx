@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
 import { baseUrl } from "../../../config";
+import { useAuth } from "../../../context/AuthProvider";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [wachtwoord, setWachtwoord] = useState("");
   const [type, setType] = useState("student");
@@ -21,13 +24,18 @@ export default function Login() {
         body: JSON.stringify({ email, password: wachtwoord, type }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        setError(errorData.error || "Ongeldige inloggegevens");
+        return;
+      }
+
       const data = await response.json();
 
-      if (!response.ok) {
-        setError(data.error || "Ongeldige inloggegevens");
-      } else {
-        navigate(`/${type}`);
-      }
+
+      login(email, wachtwoord, type);
+
+      navigate(`/${type}`);
     } catch (err) {
       console.error("Login fout:", err);
       setError("Er is een verbindingsfout met de server.");
@@ -49,6 +57,7 @@ export default function Login() {
           <option value="student">Student</option>
           <option value="werkzoekende">Werkzoekende</option>
           <option value="bedrijf">Bedrijf</option>
+          <option value="admin">Admin</option>
           <option value="admin">Admin</option>
         </select>
 
@@ -87,3 +96,4 @@ export default function Login() {
     </div>
   );
 }
+
