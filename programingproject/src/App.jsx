@@ -40,7 +40,7 @@ export default function App() {
           <Route path="/student/Bedrijven" element={<StudentenLayout><BedrijvenModule/></StudentenLayout>} />
           <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
           <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
-          <Route path="/bedrijf/betaling" element={<BedrijvenLayout><StatusBetaling /></BedrijvenLayout>} />
+          <Route path="/bedrijf/betaling" element={<BedrijvenLayout><StatusBetaling/></BedrijvenLayout>} />
           <Route path="*" element={<Notfound />} />
         </Routes>
     </Router>
