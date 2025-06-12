@@ -1,6 +1,6 @@
 // backend/bedrijvenmodule.js
 const express = require('express');
-const pool = require('./db');
+const pool = require('../db');
 
 const router = express.Router();
 
