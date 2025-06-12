@@ -27,6 +27,7 @@ router.post('/', async (req, res) => {
 
       const hashedPassword = await bcrypt.hash(wachtwoord, 10);
 
+      // Alleen basisinfo opslaan bij registratie, jobstudent enz. worden later beheerd
       const [result] = await pool.query(
         `INSERT INTO Studenten 
          (naam, email, wachtwoord, studie, jobstudent, werkzoekend, stage_gewenst) 
@@ -43,7 +44,6 @@ router.post('/', async (req, res) => {
 
       const hashedPassword = await bcrypt.hash(wachtwoord, 10);
 
-      // Naam is optioneel volgens DB, maar je maakt het verplicht in validatie hierboven
       const [result] = await pool.query(
         `INSERT INTO Werkzoekenden (naam, email, wachtwoord) VALUES (?, ?, ?)`,
         [naam, email, hashedPassword]
@@ -56,7 +56,6 @@ router.post('/', async (req, res) => {
         return res.status(400).json({ error: 'Sector (ID) is verplicht voor bedrijven' });
       }
 
-      // Insert bedrijf met verplichte velden (naam verplicht, email optioneel)
       const [result] = await pool.query(
         `INSERT INTO Bedrijven (naam, email) VALUES (?, ?)`,
         [naam, email || null]
@@ -64,13 +63,13 @@ router.post('/', async (req, res) => {
 
       const bedrijfId = result.insertId;
 
-      // Sector koppelen
       await pool.query(
         `INSERT INTO Bedrijf_Sector (bedrijf_id, sector_id) VALUES (?, ?)`,
         [bedrijfId, sector]
       );
 
       return res.status(201).json({ message: 'Bedrijf geregistreerd', id: bedrijfId });
+
     } else {
       return res.status(400).json({ error: 'Ongeldig registratie-type opgegeven' });
     }
