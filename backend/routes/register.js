@@ -3,14 +3,24 @@ const router = express.Router();
 const pool = require('../db');
 const bcrypt = require('bcryptjs');
 
+// POST /register
 router.post('/', async (req, res) => {
   try {
-    const { type, naam, email, wachtwoord, studie, vaardigheden, sector } = req.body;
+    const {
+      type,       // 'student', 'werkzoekende', of 'bedrijf'
+      naam,
+      email,
+      wachtwoord,
+      studie,
+      sector
+    } = req.body;
 
+    // Algemene validatie
     if (!type || !naam || !email) {
-      return res.status(400).json({ error: 'Type, naam en email zijn verplicht' });
+      return res.status(400).json({ error: 'Type, naam en e-mailadres zijn verplicht' });
     }
 
+    // Student registreren
     if (type === 'student') {
       if (!wachtwoord || !studie) {
         return res.status(400).json({ error: 'Wachtwoord en studie zijn verplicht voor studenten' });
@@ -24,12 +34,16 @@ router.post('/', async (req, res) => {
         [naam, email, hashedPassword, studie]
       );
 
-      return res.json({ message: 'Student geregistreerd', id: result.insertId });
+      return res.status(201).json({ message: 'Student geregistreerd', id: result.insertId });
 
-    } else if (type === 'werkzoekende') {
+    }
+
+    // Werkzoekende registreren
+    else if (type === 'werkzoekende') {
       if (!wachtwoord) {
         return res.status(400).json({ error: 'Wachtwoord is verplicht voor werkzoekenden' });
       }
+
       const hashedPassword = await bcrypt.hash(wachtwoord, 10);
 
       const [result] = await pool.query(
@@ -38,14 +52,13 @@ router.post('/', async (req, res) => {
         [naam, email, hashedPassword]
       );
 
-      return res.json({ message: 'Werkzoekende geregistreerd', id: result.insertId });
+      return res.status(201).json({ message: 'Werkzoekende geregistreerd', id: result.insertId });
+    }
 
-    } else if (type === 'bedrijf') {
-      // Voor bedrijven is wachtwoord niet van toepassing
-      // sector kan meerdere zijn, maar hier enkel 1 sector id verwacht
-      
+    // Bedrijf registreren
+    else if (type === 'bedrijf') {
       if (!sector) {
-        return res.status(400).json({ error: 'Sector is verplicht voor bedrijven' });
+        return res.status(400).json({ error: 'Sector (ID) is verplicht voor bedrijven' });
       }
 
       const [result] = await pool.query(
@@ -56,20 +69,22 @@ router.post('/', async (req, res) => {
 
       const bedrijfId = result.insertId;
 
-      // Koppel sector (sector moet een id zijn)
+      // Sector koppelen (1 sector_id verwacht, integer)
       await pool.query(
         `INSERT INTO Bedrijf_Sector (bedrijf_id, sector_id) VALUES (?, ?)`,
         [bedrijfId, sector]
       );
 
-      return res.json({ message: 'Bedrijf geregistreerd', id: bedrijfId });
+      return res.status(201).json({ message: 'Bedrijf geregistreerd', id: bedrijfId });
+    }
 
-    } else {
-      return res.status(400).json({ error: 'Ongeldig type' });
+    // Ongeldig type
+    else {
+      return res.status(400).json({ error: 'Ongeldig registratie-type opgegeven' });
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Serverfout bij registratie' });
+    console.error('❌ Registratiefout:', error);
+    return res.status(500).json({ error: 'Serverfout bij registratie' });
   }
 });
 
