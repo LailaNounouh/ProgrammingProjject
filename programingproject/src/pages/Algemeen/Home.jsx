@@ -151,24 +151,27 @@ export default function Home() {
               value={formData.email}
               onChange={handleChange}
             />
-            <label>
+            <div className="checkbox-group">
+             <label className="checkbox-option">
               <input
                 type="checkbox"
                 name="isCompany"
                 checked={formData.isCompany}
                 onChange={handleChange}
               />
-              Ik ben een bedrijf.
+               <span>Ik ben een bedrijf</span>
             </label>
-            <label>
+            <label className="checkbox-option">
               <input
                 type="checkbox"
                 name="isStudent"
                 checked={formData.isStudent}
                 onChange={handleChange}
               />
-              Ik ben een student.
+              <span>Ik ben een student</span>
             </label>
+            </div>
+
             <button type="submit">Registreren</button>
           </form>
           {status && <p className="status">{status}</p>}  
