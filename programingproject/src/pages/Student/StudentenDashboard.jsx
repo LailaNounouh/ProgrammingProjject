@@ -5,6 +5,7 @@ import { baseUrl } from "../../config";
 function StudentenDashboard() {
   const [bedrijven, setBedrijven] = useState([]);
   const [filterSector, setFilterSector] = useState('all');
+  const [linkedinUrl, setLinkedinUrl] = useState('');
   const [error, setError] = useState(null);
 
   useEffect(() => {

@@ -1,14 +1,14 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthProvider";
+import { ProfileProvider } from "./context/ProfileContext";
 
 import Layout from "./components/layout/algemenelayout/Layout";
 import StudentenLayout from "./components/layout/studentenlayout/StudentenLayout";
 import BedrijvenLayout from "./components/layout/bedrijvenlayout/BedrijvenLayout";
-import BedrijvenLayout from "./components/layout/bedrijvenlayout/BedrijvenLayout";
 import AdminLayout from "./components/layout/adminlayout/AdminLayout";
 import SeekerLayout from "./components/layout/seekerlayout/SeekerLayout";
-import SeekerLayout from "./components/layout/seekerlayout/SeekerLayout";
+
 
 import Home from "./pages/Algemeen/Home";
 import Login from "./pages/Algemeen/login/Login";
@@ -29,7 +29,7 @@ import StandenModule from "./pages/Modules/StandenModule";
 import ProfielSettingsModule from "./pages/Modules/ProfielSettingsModule";
 import ProfielModule from "./pages/Modules/ProfielModule";
 
-import { ProfileProvider } from "./context/ProfileContext";
+
 
 export default function App() {
   return (
