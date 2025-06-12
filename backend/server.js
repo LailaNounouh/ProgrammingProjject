@@ -1,3 +1,4 @@
+require('dotenv').config(); // Vergeet deze niet om env variabelen te laden
 const express = require('express');
 const pool = require('./db');
 const cors = require('cors');
@@ -9,8 +10,8 @@ const registerRouter = require('./routes/register');
 const newsletterRouter = require('./routes/newsletter');
 const loginRouter = require('./routes/login');
 
-// Import bedrijvenmodule router
-const bedrijvenModuleRouter = require('./bedrijvenmodule');
+// Import bedrijvenmodule router (zorg dat dit pad klopt)
+const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
 
 const app = express();
 
@@ -39,7 +40,7 @@ apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
 // Optioneel: oude route vervangen zodat /bedrijven ook werkt (met minimaal id en naam)
 apiRouter.get('/bedrijven', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT id, bedrijfsnaam FROM bedrijven');
+    const [rows] = await pool.promise().query('SELECT id, bedrijfsnaam FROM bedrijven');
     res.json(rows);
   } catch (err) {
     console.error(err);
