@@ -1,5 +1,29 @@
 .afspraak-overzicht {
   padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+
+.afspraak-overzicht__header {
+  margin-bottom: 2rem;
+}
+
+.afspraak-overzicht__titel {
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.afspraak-overzicht__geen-afspraken {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+}.afspraak-overzicht {
+  padding: 2rem;
 }
 
 .afspraak-overzicht__header {
