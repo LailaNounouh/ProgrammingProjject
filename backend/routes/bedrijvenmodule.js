@@ -1,19 +1,21 @@
-// modules/bedrijfsmodule.js
 const db = require("../db");
 
 async function getAlleBedrijven() {
   const sql = `
     SELECT 
-      id, 
-      bedrijfsnaam, 
-      straat, 
-      nummer, 
-      postcode, 
-      gemeente, 
-      beschrijving, 
-      logo_url,
-      sector_naam
-    FROM bedrijven
+      b.bedrijf_id, 
+      b.naam, 
+      b.straat, 
+      b.nummer, 
+      b.postcode, 
+      b.gemeente, 
+      b.logo_url,
+      GROUP_CONCAT(s.naam SEPARATOR ', ') AS sectoren
+    FROM Bedrijven b
+    LEFT JOIN Bedrijf_Sector bs ON b.bedrijf_id = bs.bedrijf_id
+    LEFT JOIN Sectoren s ON bs.sector_id = s.sector_id
+    GROUP BY b.bedrijf_id, b.naam, b.straat, b.nummer, b.postcode, b.gemeente, b.logo_url
+    ORDER BY b.naam;
   `;
 
   try {

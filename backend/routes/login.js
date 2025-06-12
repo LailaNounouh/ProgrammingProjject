@@ -12,16 +12,14 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    let table, passwordField;
+    let table;
     if (type === 'student') {
-      table = 'students';
-      passwordField = 'wachtwoord';
+      table = 'Studenten';
     } else if (type === 'werkzoekende') {
-      table = 'werkzoekende';
-      passwordField = 'wachtwoord';
+      table = 'Werkzoekenden';
     } else if (type === 'bedrijf') {
-      table = 'bedrijven';
-      passwordField = 'wachtwoord';
+      // Bedrijven hebben geen wachtwoord, dus login niet ondersteund
+      return res.status(400).json({ error: 'Bedrijven kunnen niet inloggen via deze route' });
     } else {
       return res.status(400).json({ error: 'Ongeldig type gebruiker' });
     }
@@ -32,11 +30,14 @@ router.post('/', async (req, res) => {
     }
 
     const user = rows[0];
-    const isMatch = await bcrypt.compare(password, user[passwordField]);
+    const isMatch = await bcrypt.compare(password, user.wachtwoord);
 
     if (!isMatch) {
       return res.status(401).json({ error: 'Ongeldig wachtwoord' });
     }
+
+    // Verwijder wachtwoord uit response voor veiligheid
+    delete user.wachtwoord;
 
     res.json({ message: 'Succesvol ingelogd', user });
   } catch (err) {
@@ -44,6 +45,5 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Serverfout bij inloggen' });
   }
 });
-
 
 module.exports = router;
