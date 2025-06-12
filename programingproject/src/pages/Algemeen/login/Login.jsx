@@ -29,15 +29,18 @@ export default function Login() {
         navigate(`/${type}`);
       }
     } catch (err) {
-      setError("Fout bij verbinding met de server");
+      console.error("Login fout:", err);
+      setError("Er is een verbindingsfout met de server.");
     }
   };
 
   return (
     <div className="login-container">
       <h2>Inloggen</h2>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleLogin} className="login-form">
+        <label htmlFor="type">Ik ben een:</label>
         <select
+          id="type"
           value={type}
           onChange={(e) => setType(e.target.value)}
           required
@@ -46,17 +49,22 @@ export default function Login() {
           <option value="student">Student</option>
           <option value="werkzoekende">Werkzoekende</option>
           <option value="bedrijf">Bedrijf</option>
-          <option value="admin">Admin</option> {/* ✅ Toegevoegd */}
+          <option value="admin">Admin</option>
         </select>
 
+        <label htmlFor="email">E-mailadres</label>
         <input
+          id="email"
           type="email"
           placeholder="E-mailadres"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
+
+        <label htmlFor="password">Wachtwoord</label>
         <input
+          id="password"
           type="password"
           placeholder="Wachtwoord"
           value={wachtwoord}
@@ -71,7 +79,7 @@ export default function Login() {
 
       <div className="register-container">
         <p>
-          Heb je nog geen account? <a href="/register">Registreer hier</a>
+          Nog geen account? <a href="/register">Registreer hier</a>
         </p>
       </div>
 
