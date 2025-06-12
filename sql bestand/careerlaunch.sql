@@ -436,3 +436,62 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- Tabel voor de QR-code check-in systeem
+
+-- Tabel voor deelnemers aan het event
+
+CREATE TABLE IF NOT EXISTS event_participants (
+  participant_id INT AUTO_INCREMENT PRIMARY KEY,
+  participant_type ENUM('student', 'werkzoekende') NOT NULL,
+  reference_id INT NOT NULL,
+  event_date DATE NOT NULL,
+  registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  status ENUM('registered', 'checked_in', 'no_show') DEFAULT 'registered',
+  qr_code_generated BOOLEAN DEFAULT FALSE,
+  INDEX idx_participant_type_ref (participant_type, reference_id),
+  INDEX idx_event_date (event_date),
+  INDEX idx_status (status)
+);
+
+--Tabel voor de QR-code
+
+CREATE TABLE IF NOT EXISTS qr_codes (
+  qr_id INT AUTO_INCREMENT PRIMARY KEY,
+  participant_id INT NOT NULL,
+  qr_token VARCHAR(255) UNIQUE NOT NULL,
+  qr_data_url TEXT NOT NULL,
+  generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  expires_at TIMESTAMP NULL,
+  is_active BOOLEAN DEFAULT TRUE,
+  used_count INT DEFAULT 0,
+  FOREIGN KEY (participant_id) REFERENCES event_participants(participant_id) ON DELETE CASCADE,
+  INDEX idx_qr_token (qr_token),
+  INDEX idx_participant_id (participant_id),
+  INDEX idx_active (is_active)
+);
+
+--Tabel voor de check-ins
+
+CREATE TABLE IF NOT EXISTS check_ins (
+  check_in_id INT AUTO_INCREMENT PRIMARY KEY,
+  participant_id INT NOT NULL,
+  qr_id INT NOT NULL,
+  check_in_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  check_in_location VARCHAR(100) DEFAULT 'main_entrance',
+  verified_by VARCHAR(100) DEFAULT 'system',
+  device_info TEXT NULL,
+  ip_address VARCHAR(45) NULL,
+  FOREIGN KEY (participant_id) REFERENCES event_participants(participant_id) ON DELETE CASCADE,
+  FOREIGN KEY (qr_id) REFERENCES qr_codes(qr_id) ON DELETE CASCADE,
+  INDEX idx_participant_id (participant_id),
+  INDEX idx_check_in_time (check_in_time),
+  INDEX idx_location (check_in_location)
+);
+
+--Dummy data
+-- één student en één werkzoekende
+INSERT INTO event_participants (participant_type, reference_id, event_date)
+VALUES 
+  ('student', 1, '2025-07-01'),
+  ('werkzoekende', 1, '2025-07-01');
