@@ -18,6 +18,7 @@ import StudentDashboard from "./pages/Student/StudentenDashboard";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import SeekerDashboard from "./pages/Seeker/SeekerDashboard";
 import BedrijvenDashboard from "./pages/Bedrijven/BedrijvenDashboard";
+import StatusBetaling from './pages/Bedrijven/statusbetaling';
 
 import AfsprakenModule from "./pages/Modules/AfsprakenModule";
 import BedrijvenModule from "./pages/Modules/BedrijvenModule";
@@ -39,7 +40,7 @@ export default function App() {
           <Route path="/student/Bedrijven" element={<StudentenLayout><BedrijvenModule/></StudentenLayout>} />
           <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
           <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
-
+          <Route path="/bedrijf/betaling" element={<BedrijvenLayout><StatusBetaling/></BedrijvenLayout>} />
           <Route path="*" element={<Notfound />} />
         </Routes>
     </Router>
