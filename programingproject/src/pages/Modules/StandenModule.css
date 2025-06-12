@@ -1,0 +1,35 @@
+.standen-module {
+  padding: 1rem;
+}
+.grid {
+  display: grid;
+  grid-template-rows: repeat(var(--rows), 100px);
+  grid-template-columns: repeat(var(--cols), 100px);
+  gap: 8px;
+  background: #ddd;
+  padding: 8px;
+}
+.cell {
+  background: #bbb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.cell:hover {
+  transform: scale(1.05);
+}
+.active {
+  background: #4aa;
+  color: white;
+}
+.detail-box {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  background: #f8f8f8;
+}
+
