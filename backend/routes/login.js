@@ -17,6 +17,8 @@ router.post('/', async (req, res) => {
       table = 'Studenten';
     } else if (type === 'werkzoekende') {
       table = 'Werkzoekenden';
+    } else if (type === 'admin') {
+      table = 'Admins';
     } else if (type === 'bedrijf') {
       // Bedrijven hebben geen wachtwoord, dus login niet ondersteund
       return res.status(400).json({ error: 'Bedrijven kunnen niet inloggen via deze route' });
@@ -30,13 +32,14 @@ router.post('/', async (req, res) => {
     }
 
     const user = rows[0];
-    const isMatch = await bcrypt.compare(password, user.wachtwoord);
 
+    // Vergelijk het gehashte wachtwoord
+    const isMatch = await bcrypt.compare(password, user.wachtwoord);
     if (!isMatch) {
       return res.status(401).json({ error: 'Ongeldig wachtwoord' });
     }
 
-    // Verwijder wachtwoord uit response voor veiligheid
+    // Verwijder het wachtwoord voor de response
     delete user.wachtwoord;
 
     res.json({ message: 'Succesvol ingelogd', user });

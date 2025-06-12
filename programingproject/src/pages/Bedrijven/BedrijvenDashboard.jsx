@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from 'react';
-
-import { FaEuroSign, FaCalendarAlt, FaMapMarkerAlt, FaCog, FaChevronRight, FaSearch, FaBell } from 'react-icons/fa';
+import { FaEuroSign, FaCalendarAlt, FaMapMarkerAlt, FaCog, FaChevronRight } from 'react-icons/fa';
 import './BedrijvenDashboard.css';
 import { useNavigate } from 'react-router-dom';
+
 function BedrijvenDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [betalingen, setBetalingen] = useState([]);
   const [afspraken, setAfspraken] = useState([]);
 
-  // Mock data voor demo
   useEffect(() => {
-    // Dit zou vervangen worden door echte API calls
     setBetalingen([
       { id: 1, factuur: "F2023-0456", status: "Betaald", bedrag: 1200, datum: "20-04-2023" }
     ]);
-     
     setAfspraken([]); // Geen afspraken momenteel
   }, []);
 
@@ -43,7 +40,7 @@ function BedrijvenDashboard() {
         </div>
 
         {/* Afsprakenkaart */}
-        <div className="dashboard-card" onClick={() => setActiveTab('afspraken')}>
+        <div className="dashboard-card" onClick={() => navigate('/bedrijf/afspraken')}>
           <div className="card-header">
             <div className="card-icon bg-green">
               <FaCalendarAlt />
@@ -105,8 +102,6 @@ function BedrijvenDashboard() {
 
   return (
     <div className="bedrijven-dashboard">
-     
-
       <main>
         {activeTab === 'dashboard' && renderDashboard()}
         {/* Andere tabs zouden hier gerenderd worden */}
