@@ -59,31 +59,6 @@ export default function App() {
           <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
         </Routes>
       </AuthProvider>
-    <Router>
-      <Routes>
-        <Route path="/" element={<Layout><Home /></Layout>} />
-        <Route path="/login" element={<Layout><Login /></Layout>} />
-        <Route path="/register" element={<Layout><Register /></Layout>} />
-        <Route path="/about" element={<Layout><About /></Layout>} />
-        <Route path="/contact" element={<Layout><Contact /></Layout>} />
-
-        <Route path="/seeker" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
-        <Route path="/student" element={<StudentenLayout><StudentDashboard /></StudentenLayout>} />
-        <Route path="/student/bedrijven" element={<StudentenLayout><BedrijvenModule /></StudentenLayout>} />
-
-        <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
-
-        <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
-        <Route path="/bedrijf/betaling" element={<BedrijvenLayout><StatusBetaling /></BedrijvenLayout>} />
-        <Route path="/bedrijf/afspraken" element={<BedrijvenLayout><AfsprakenModule /></BedrijvenLayout>} />
-
-        
-        <Route path="/admin/gebruikers" element={<AdminLayout><GebruikersModule /></AdminLayout>} />
-        <Route path="/admin/standen" element={<AdminLayout><StandenModule /></AdminLayout>} />
-
-        <Route path="*" element={<Notfound />} />
-      </Routes>
-    </Router>
   );
 }
 
