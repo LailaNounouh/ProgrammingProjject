@@ -13,12 +13,20 @@ export default function Home() {
   const [status, setStatus] = useState(null);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const { name, value, type, checked } = e.target;
+  if (type === 'radio' && name === 'userType') {
+    setFormData({
+      ...formData,
+      isCompany: value === 'company',
+      isStudent: value === 'student',
+    });
+  } else {
     setFormData({
       ...formData,
       [name]: type === 'checkbox' ? checked : value,
     });
-  };
+  }
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
