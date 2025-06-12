@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
 import { baseUrl } from "../../../config";
+localStorage.setItem("userType", type);
 
 export default function Login() {
   const navigate = useNavigate();
