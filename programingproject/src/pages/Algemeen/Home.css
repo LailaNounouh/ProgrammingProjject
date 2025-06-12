@@ -1,3 +1,4 @@
+/* Algemeen */
 body, html, .app {
   margin: 0;
   padding: 0;
@@ -12,7 +13,7 @@ body, html, .app {
   margin-top: 100px;
 }
 
-/* Afbeelding en titel */
+/* Afbeelding */
 .banner-container {
   width: 100%;
   text-align: center;
@@ -32,6 +33,7 @@ body, html, .app {
   object-fit: contain;
 }
 
+/* Titel */
 .info-box {
   max-width: 800px;
   margin: -50px auto 50px auto;
@@ -94,7 +96,7 @@ h1 {
   font-weight: bold;
 }
 
-/* opleidinglijst */
+/* opleiding lijst */
 .opleidingen-lijst {
   margin: 12px 0;
   padding-left: 24px;
@@ -128,17 +130,6 @@ h1 {
   font-size: 1.2rem;
 }
 
-.linkedin-section {
-  margin-bottom: 20px;
-}
-
-.linkedin-section input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  box-sizing: border-box;
-}
-
 /* FAQ */
 .faq-section h2 {
   margin-top: 0;
@@ -167,6 +158,7 @@ h1 {
   margin-right: auto;
 }
 
+/* Formulier */
 .form-section {
   margin-top: 30px;
   background-color: #00a9b5; 
@@ -236,6 +228,19 @@ form button:hover {
 .form-section button[type="submit"]:hover {
   background-color: #BF393E; 
   color: white; 
+}
+
+
+
+.linkedin-section {
+  margin-bottom: 20px;
+}
+
+.linkedin-section input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  box-sizing: border-box;
 }
 
 .bedrijven-lijst {
