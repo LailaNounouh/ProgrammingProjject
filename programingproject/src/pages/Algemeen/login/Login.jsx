@@ -58,7 +58,6 @@ export default function Login() {
           <option value="werkzoekende">Werkzoekende</option>
           <option value="bedrijf">Bedrijf</option>
           <option value="admin">Admin</option>
-          <option value="admin">Admin</option>
         </select>
 
         <label htmlFor="email">E-mailadres</label>
@@ -69,7 +68,7 @@ export default function Login() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-        />
+        />  
 
         <label htmlFor="password">Wachtwoord</label>
         <input
