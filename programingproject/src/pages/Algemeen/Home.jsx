@@ -154,8 +154,9 @@ export default function Home() {
             <div className="checkbox-group">
              <label className="checkbox-option">
               <input
-                type="checkbox"
-                name="isCompany"
+                type="radio"
+                name="userType"
+                value="company"
                 checked={formData.isCompany}
                 onChange={handleChange}
               />
@@ -163,8 +164,9 @@ export default function Home() {
             </label>
             <label className="checkbox-option">
               <input
-                type="checkbox"
-                name="isStudent"
+                type="radio"
+                name="userType"
+                value="student"
                 checked={formData.isStudent}
                 onChange={handleChange}
               />
