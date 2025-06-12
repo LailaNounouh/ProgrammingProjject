@@ -8,10 +8,11 @@ const homeRouter = require('./routes/home');
 const registerRouter = require('./routes/register');
 const newsletterRouter = require('./routes/newsletter');
 const loginRouter = require('./routes/login');
+const profilerouter = require('./routes/profile');
 
 // Correcte import bedrijvenmodule router (let op juiste bestandsnaam en extensie)
 const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
-
+const loginModuleRouter = require('./routes/loginmodule'); 
 const app = express();
 
 const corsOptions = {
@@ -30,9 +31,12 @@ apiRouter.use('/', homeRouter);
 apiRouter.use('/register', registerRouter);
 apiRouter.use('/newsletter', newsletterRouter);
 apiRouter.use('/login', loginRouter);
+apiRouter.use('/profiel', profilerouter);
 
 // Gebruik bedrijvenmodule router onder /bedrijvenmodule
 apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
+// Gebruik loginmodule router onder /loginmodule
+apiRouter.use('/loginmodule', loginModuleRouter);
 
 // Optioneel: route /bedrijven (met alleen id en bedrijfsnaam)
 apiRouter.get('/bedrijven', async (req, res) => {

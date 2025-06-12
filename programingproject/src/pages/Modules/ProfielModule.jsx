@@ -3,13 +3,14 @@ import "./ProfielModule.css";
 import { useProfile } from "../../context/ProfileContext";
 
 export default function ProfielModule() {
-  const { profile } = useProfile();
+  const { profile, loading } = useProfile();
 
-  if (!profile) return <p>Loading...</p>;
+  if (loading) return <p>Profiel wordt geladen...</p>;
+  if (!profile) return <p>Geen profiel gevonden.</p>;
 
   return (
     <div className="account-pagina">
-      <h1>{profile.naam}</h1>
+      <h1>{profile.naam || "Naam onbekend"}</h1>
 
       <div className="account-header">
         <img
@@ -17,7 +18,7 @@ export default function ProfielModule() {
           alt={`Profielfoto van ${profile.naam}`}
           className="account-foto"
         />
-        <p className="account-about">{profile.aboutMe}</p>
+        <p className="account-about">{profile.aboutMe || "Geen beschrijving."}</p>
       </div>
 
       <div className="account-details">
@@ -25,16 +26,32 @@ export default function ProfielModule() {
         <p><strong>Telefoon:</strong> {profile.telefoon}</p>
 
         <h3>Talenkennis</h3>
-        <ul>{(profile.talen || []).map((taal) => <li key={taal}>{taal}</li>)}</ul>
+        <ul>
+          {(profile.talen || []).map((taal, i) => (
+            <li key={i}>{taal.naam} — {taal.niveau}</li>
+          ))}
+        </ul>
 
         <h3>Programmeertalen</h3>
-        <ul>{(profile.programmeertalen || []).map((code) => <li key={code}>{code}</li>)}</ul>
+        <ul>
+          {(profile.programmeertalen || []).map((code, i) => (
+            <li key={i}>{code.taal} — {code.niveau}</li>
+          ))}
+        </ul>
 
         <h3>Soft Skills</h3>
-        <ul>{(profile.softSkills || []).map((skill) => <li key={skill}>{skill}</li>)}</ul>
+        <ul>
+          {(profile.softSkills || []).map((skill, i) => (
+            <li key={i}>{skill}</li>
+          ))}
+        </ul>
 
         <h3>Hard Skills</h3>
-        <ul>{(profile.hardSkills || []).map((skill) => <li key={skill}>{skill}</li>)}</ul>
+        <ul>
+          {(profile.hardSkills || []).map((skill, i) => (
+            <li key={i}>{skill}</li>
+          ))}
+        </ul>
       </div>
     </div>
   );
