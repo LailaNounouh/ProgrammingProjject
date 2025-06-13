@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './AdminDashboard.css';
+import Plattegrond from '../../components/plattegrond/Plattegrond';
 
 function App() {
   const bedrijven = [
@@ -72,22 +73,9 @@ function App() {
         <section className="standen-section">
           <h2>Beheer van Standen:</h2>
           <div className="plattegrond">
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="buffet">Buffet</div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand vrij"><div className="status-circle">+</div></div>
-            <div className="stand vrij"><div className="status-circle">+</div></div>
-            <div className="stand vrij"><div className="status-circle">+</div></div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand vrij"><div className="status-circle">+</div></div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="onthaal">Onthaal</div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand vrij"><div className="status-circle">+</div></div>
-          </div>
+  <Plattegrond />
+</div>
+
 
           <div className="legend">
             <span><div className="dot red"></div>= bezet</span>
