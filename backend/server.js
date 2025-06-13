@@ -8,9 +8,8 @@ const homeRouter = require('./routes/home');
 const registerRouter = require('./routes/register');
 const newsletterRouter = require('./routes/newsletter');
 const loginRouter = require('./routes/login');
-
-// Correcte import bedrijvenmodule router (let op juiste bestandsnaam en extensie)
 const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
+const sectorenRouter = require('./routes/sectoren'); 
 
 const app = express();
 
@@ -30,20 +29,8 @@ apiRouter.use('/', homeRouter);
 apiRouter.use('/register', registerRouter);
 apiRouter.use('/newsletter', newsletterRouter);
 apiRouter.use('/login', loginRouter);
-
-// Gebruik bedrijvenmodule router onder /bedrijvenmodule
 apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
-
-// Optioneel: route /bedrijven (met alleen id en bedrijfsnaam)
-apiRouter.get('/bedrijven', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT id, bedrijfsnaam FROM bedrijven');
-    res.json(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database fout bij ophalen bedrijven' });
-  }
-});
+apiRouter.use('/sectoren', sectorenRouter);
 
 app.use('/api', apiRouter);
 
