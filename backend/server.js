@@ -35,7 +35,7 @@ apiRouter.use('/sectoren', sectorenRouter);
 // Optioneel: route /bedrijven (met alleen id en bedrijfsnaam)
 apiRouter.get('/bedrijven', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT id, bedrijfsnaam FROM bedrijven');
+    const [rows] = await pool.query('SELECT bedrijf_id, bedrijfsnaam FROM Bedrijven');
     res.json(rows);
   } catch (err) {
     console.error(err);
