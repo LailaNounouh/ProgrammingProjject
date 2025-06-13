@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../db");
 
-// Middleware om de ingelogde gebruiker op basis van email en rol op te halen
 router.get("/", async (req, res) => {
   const { email, rol } = req.query;
 
@@ -28,7 +27,7 @@ router.get("/", async (req, res) => {
     }
 
     const profiel = rows[0];
-    delete profiel.wachtwoord; // beveiliging
+    delete profiel.wachtwoord;
 
     res.json(profiel);
   } catch (err) {
@@ -37,4 +36,4 @@ router.get("/", async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = router; // ✅ DIT is essentieel
