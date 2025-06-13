@@ -51,6 +51,10 @@ router.post('/', upload.single('bestand'), async (req, res) => {
         return res.status(400).json({ error: 'Wachtwoord en studie zijn verplicht voor studenten' });
       }
 
+      if (!email.endsWith('@student.ehb.be')) {
+        return res.status(400).json({ error: 'Alleen EHB student e-mailadressen zijn toegestaan.' });
+      }
+
       const hashedPassword = await bcrypt.hash(wachtwoord, 10);
 
       const [result] = await pool.query(
