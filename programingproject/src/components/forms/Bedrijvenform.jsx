@@ -86,7 +86,7 @@ export default function BedrijfForm() {
       <input type="text" placeholder="Naam contactpersoon beurs *" required />
       <input type="email" placeholder="E-mail contactpersoon beurs *" required />
       <input type="url" placeholder="Website of LinkedIn van uw bedrijf *" required />
-      <input type="file" required />
+      <input type="file" />
       <input type="password" placeholder="Wachtwoord *" value={wachtwoord} onChange={(e) => setWachtwoord(e.target.value)} required />
 
       <button type="submit">Verder</button>
