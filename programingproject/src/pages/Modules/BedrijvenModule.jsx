@@ -10,9 +10,19 @@ export default function Bedrijven() {
       try {
         const response = await fetch(`${baseUrl}/bedrijven`);
         const data = await response.json();
-        setBedrijven(data);
+
+        // Check of data een array is of een object met een array erin
+        if (Array.isArray(data)) {
+          setBedrijven(data);
+        } else if (Array.isArray(data.bedrijven)) {
+          setBedrijven(data.bedrijven);
+        } else {
+          console.error("Ongeldig formaat van API-response:", data);
+          setBedrijven([]);
+        }
       } catch (error) {
         console.error("Fout bij ophalen bedrijven:", error);
+        setBedrijven([]);
       }
     }
 
@@ -29,18 +39,18 @@ export default function Bedrijven() {
       ) : (
         <div className="bedrijven-grid">
           {bedrijven.map((bedrijf) => (
-            <div key={bedrijf.id} className="bedrijf-kaart">
+            <div key={bedrijf.bedrijf_id} className="bedrijf-kaart">
               {bedrijf.logo_url ? (
                 <img
                   src={bedrijf.logo_url}
-                  alt={`Logo van ${bedrijf.bedrijfsnaam}`}
+                  alt={`Logo van ${bedrijf.naam}`}
                   className="bedrijf-logo"
                 />
               ) : (
                 <div className="logo-placeholder">Geen logo</div>
               )}
 
-              <h3>{bedrijf.bedrijfsnaam}</h3>
+              <h3>{bedrijf.naam}</h3>
 
               <p className="bedrijf-beschrijving">
                 {bedrijf.beschrijving || "Geen beschrijving beschikbaar."}
@@ -57,26 +67,21 @@ export default function Bedrijven() {
                 </p>
               )}
 
-              {bedrijf.telefoon && (
+              {bedrijf.telefoonnummer && (
                 <p>
-                  <strong>Telefoon:</strong> {bedrijf.telefoon}
+                  <strong>Telefoon:</strong> {bedrijf.telefoonnummer}
                 </p>
               )}
 
-              {bedrijf.website && (
+              {bedrijf.website_of_linkedin && (
                 <p>
                   <strong>Website:</strong>{" "}
-                  <a href={bedrijf.website} target="_blank" rel="noopener noreferrer">
-                    {bedrijf.website}
-                  </a>
-                </p>
-              )}
-
-              {bedrijf.linkedin && (
-                <p>
-                  <strong>LinkedIn:</strong>{" "}
-                  <a href={bedrijf.linkedin} target="_blank" rel="noopener noreferrer">
-                    {bedrijf.linkedin}
+                  <a
+                    href={bedrijf.website_of_linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {bedrijf.website_of_linkedin}
                   </a>
                 </p>
               )}

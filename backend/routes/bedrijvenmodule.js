@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
     const [rows] = await pool.query('SELECT * FROM bedrijven');
     res.json(rows);
   } catch (err) {
-    console.error(err);
+    console.error("DB-fout bij ophalen bedrijven:", err.message); // duidelijke foutmelding
     res.status(500).json({ error: 'Database fout bij ophalen bedrijven' });
   }
 });
