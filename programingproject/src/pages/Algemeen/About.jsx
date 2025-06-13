@@ -3,16 +3,15 @@ import './About.css';
 
 function About() {
   return (
-    <div className="about-content">
+    <div className="about-page">
       
-      <header className="haeder-bar">
-        <div className="header-content">
+       <div className="header-box">
         <h1>Over Career Launch</h1>
         <p className="subtitle">Verbind studenten, werkzoekenden en bedrijven</p>
-      </div>
-      </header>
+       </div>
 
-      <section className="description">
+      <div className="content-box">
+       
         <p>
           <span className="highlight">Career Launch</span> is opgericht met één duidelijk doel: 
           het verbinden van talentvolle studenten en werkzoekenden met bedrijven die hen verder willen helpen. 
@@ -31,7 +30,7 @@ function About() {
         <p>
           Onze missie is helder: <span className="highlight">carrières lanceren</span> door verbindingen te maken die écht het verschil maken.
         </p>
-      </section>
+      </div>
     </div>
   );
 }

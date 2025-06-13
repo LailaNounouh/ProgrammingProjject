@@ -1,50 +1,48 @@
 body {
   margin: 0;
-  padding: 0;
+  padding: 20px;
+  background-color: #f5f5f5;
+  font-family: sans-serif;
 }
 
-.about-content {
-  padding: 0 20px;
-  max-width: 100%;
+.about-page {
+  max-width: 800px;
   margin: 0 auto;
-  color: #333;
 }
 
-.header-bar {
-  background-color: #00a9b5; /* kleur van je balk */
-  width: 100%;
-  min-height: 100px; 
-  display: flex;
-  align-items: center; /* verticaal centreren */
-  justify-content: center; /* horizontaal centreren */
-  border-radius: 8px;
-  margin: 20px 0;
-}
-
-.header-content h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: white;
-  text-transform: uppercase;
-  margin: 0 0 10px 0;
-}
-
-.header-content {
+.header-box {
+  background: #00a9b5;
+  padding: 30px;
+  border-radius: 8px 8px 0 0;
   text-align: center;
+  color: white;
+  margin-bottom: 0;
 }
 
-.subtitle {
-  color: #007a84; /* iets donkerder blauw voor subtitel */
+.header-box h1 {
+  font-size: 2.3rem;
+  margin: 0 0 10px 0;
+  font-weight: 700;
+}
+
+.haeder-box .subtitle {
+  color: #333; 
   font-weight: 600;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   margin: 0;
 }
 
-.description {
+.content-box {
+  background: white;
+  padding: 30px;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.content-box p {
   font-size: 1.1rem;
   line-height: 1.6;
-  text-align: left;
-  padding: 0 20px;
+  margin-bottom: 20px;
 }
 
 .highlight {
