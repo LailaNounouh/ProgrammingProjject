@@ -5,7 +5,7 @@ const db = require('../database'); // pas aan naar jouw db connectie
 
 router.get('/', async (req, res) => {
   try {
-    const [sectoren] = await db.query('SELECT * FROM sectoren');
+    const [sectoren] = await db.query('SELECT * FROM Sectoren');
     res.json(sectoren);
   } catch (err) {
     console.error(err);
