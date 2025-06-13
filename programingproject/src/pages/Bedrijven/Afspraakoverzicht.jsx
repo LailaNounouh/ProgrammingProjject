@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiGithub, FiLinkedin, FiCalendar, FiClock, FiBook, FiAward, FiRefreshCw } from 'react-icons/fi';
-import './AfspraakOverzicht.css';
+import './Afspraakoverzicht.css';
 
 const AfspraakOverzicht = () => {
   const [afspraken, setAfspraken] = useState([]);
