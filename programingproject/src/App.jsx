@@ -23,6 +23,11 @@ import SeekerDashboard from "./pages/Seeker/SeekerDashboard";
 import BedrijvenDashboard from "./pages/Bedrijven/BedrijvenDashboard";
 import StatusBetaling from './pages/Bedrijven/statusbetaling';
 
+// import scanner
+import EventQRGenerator from ".//pages/qrAdmin";
+import QRCheckIn from "./pages/QRCheckIn";
+
+
 import AfsprakenModule from "./pages/Modules/AfsprakenModule";
 import BedrijvenModule from "./pages/Modules/BedrijvenModule";
 import StandenModule from "./pages/Modules/StandenModule";
@@ -57,6 +62,11 @@ export default function App() {
 
           {/* Bedrijven */}
           <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
+
+          <Route path="/qr-checkin" element={<Layout><QRCheckIn /></Layout>} />
+        
+
+      
         </Routes>
       </AuthProvider>
   );
