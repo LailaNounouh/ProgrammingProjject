@@ -4,6 +4,7 @@ body, html {
   font-family: Arial, sans-serif;
   background-color: #1a1a1a;
   color: #333;
+  
 }
 
 .admin-dashboard {
@@ -54,6 +55,9 @@ body, html {
 /* Main */
 .admin-main {
   padding: 20px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Bedrijven sectie */
@@ -73,20 +77,21 @@ body, html {
 
 .bedrijven-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 15px;
-  background-color: #a8a8a8;
+  grid-template-columns: repeat(2, 1fr); /* exact 2 kolommen */
+  gap: 40px;
+  background-color: #7a7a7a; /* donkergrijs */
   padding: 20px;
   border-radius: 8px;
 }
 
 .bedrijf-card {
-  background-color: #f1f1f1;
-  padding: 15px;
+  background-color: #d0d0d0; /* lichtgrijs kaartje */
+  padding: 20px;
   border-radius: 8px;
   text-align: center;
   font-size: 14px;
 }
+
 
 .bedrijf-image {
   background-color: #e0e0e0;
@@ -123,6 +128,20 @@ body, html {
   border-radius: 8px;
   justify-content: start;
 }
+
+.bedrijven-header,
+.bedrijven-footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.bedrijven-footer {
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
 
 /* Algemene standvorm */
 .stand {
@@ -216,6 +235,7 @@ body, html {
 /* Gebruikersbeheer */
 .gebruikers-section {
   margin-top: 30px;
+  text-align: left;
 }
 
 .gebruikers-section table {
@@ -237,4 +257,54 @@ body, html {
   padding: 15px;
   margin-top: 30px;
   border-radius: 8px;
+  text-align: left;
+}
+
+.bedrijven-section h2,
+.standen-section h2,
+.gebruikers-section h2,
+.statistieken-section h3,
+.sectoren-section h2 {
+  text-align: left !important;
+} 
+
+.bedrijven-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* twee kolommen */
+  gap: 30px;
+  background-color: #7a7a7a;
+  padding: 20px;
+  border-radius: 10px;
+
+  /* ✅ Scroll instellen */
+  max-height: 400px;       /* vaste hoogte instellen */
+  overflow-y: auto;        /* verticale scroll activeren */
+  scrollbar-width: thin;   /* voor Firefox */
+}
+
+/* Scrollbar voor Chrome/Edge/Safari */
+.bedrijven-grid::-webkit-scrollbar {
+  width: 12px;
+}
+
+.bedrijven-grid::-webkit-scrollbar-track {
+  background: #b0b0b0;
+  border-radius: 6px;
+}
+
+.bedrijven-grid::-webkit-scrollbar-thumb {
+  background-color: white;
+  border-radius: 6px;
+}
+
+/* Zorg dat de bedrijf-kaarten netjes gecentreerd zijn */
+.bedrijf-card {
+  background-color: #d0d0d0;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
