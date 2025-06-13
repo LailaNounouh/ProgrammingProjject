@@ -9,7 +9,7 @@ const registerRouter = require('./routes/register');
 const newsletterRouter = require('./routes/newsletter');
 const loginRouter = require('./routes/login');
 const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
-const sectorenRouter = require('./routes/sectoren'); // ✅ Nieuw toegevoegd
+const sectorenRouter = require('./routes/sectoren'); 
 
 const app = express();
 
@@ -30,7 +30,7 @@ apiRouter.use('/register', registerRouter);
 apiRouter.use('/newsletter', newsletterRouter);
 apiRouter.use('/login', loginRouter);
 apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
-apiRouter.use('/sectoren', sectorenRouter); // ✅ Sectoren endpoint
+apiRouter.use('/sectoren', sectorenRouter);
 
 // Optioneel: route /bedrijven (met alleen id en bedrijfsnaam)
 apiRouter.get('/bedrijven', async (req, res) => {

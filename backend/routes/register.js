@@ -2,20 +2,47 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const bcrypt = require('bcryptjs');
+const multer = require('multer');
+const path = require('path');
 
-// POST /register
-router.post('/', async (req, res) => {
+// Configureer multer opslag (bestanden in /uploads, originele naam)
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    // Unieke naam toevoegen met timestamp + originele extensie
+    const ext = path.extname(file.originalname);
+    cb(null, file.fieldname + '-' + Date.now() + ext);
+  }
+});
+const upload = multer({ storage: storage });
+
+// POST /register, met file upload (optioneel)
+router.post('/', upload.single('bestand'), async (req, res) => {
   try {
     const {
-      type,       // 'student', 'werkzoekende', of 'bedrijf'
+      type,       // 'student', 'werkzoekende', 'bedrijf'
       naam,
       email,
       wachtwoord,
       studie,
-      sector
+      sector,
+      straat,
+      nummer,
+      postcode,
+      gemeente,
+      telefoonnummer,
+      btw_nummer,
+      contactpersoon_facturatie,
+      email_facturatie,
+      po_nummer,
+      contactpersoon_beurs,
+      email_beurs,
+      website
     } = req.body;
 
-    // Algemene validatie
+    // Validatie algemene verplichte velden
     if (!type || !naam || !email) {
       return res.status(400).json({ error: 'Type, naam en e-mailadres zijn verplicht' });
     }
@@ -27,7 +54,6 @@ router.post('/', async (req, res) => {
 
       const hashedPassword = await bcrypt.hash(wachtwoord, 10);
 
-      // Alleen basisinfo opslaan bij registratie, jobstudent enz. worden later beheerd
       const [result] = await pool.query(
         `INSERT INTO Studenten 
          (naam, email, wachtwoord, studie, jobstudent, werkzoekend, stage_gewenst) 
@@ -52,17 +78,44 @@ router.post('/', async (req, res) => {
       return res.status(201).json({ message: 'Werkzoekende geregistreerd', id: result.insertId });
 
     } else if (type === 'bedrijf') {
-      if (!sector) {
-        return res.status(400).json({ error: 'Sector (ID) is verplicht voor bedrijven' });
+      // Verplicht voor bedrijven
+      if (!wachtwoord || !sector || !straat || !nummer || !postcode || !gemeente || !telefoonnummer || !btw_nummer || !contactpersoon_facturatie || !email_facturatie || !contactpersoon_beurs || !email_beurs || !website) {
+        return res.status(400).json({ error: 'Niet alle verplichte velden zijn ingevuld voor bedrijf' });
       }
 
+      const hashedPassword = await bcrypt.hash(wachtwoord, 10);
+
+      // Filepad (optioneel)
+      const bestandPad = req.file ? req.file.path : null;
+
+      // 1. Insert in Bedrijven
       const [result] = await pool.query(
-        `INSERT INTO Bedrijven (naam, email) VALUES (?, ?)`,
-        [naam, email || null]
+        `INSERT INTO Bedrijven 
+         (naam, email, wachtwoord, straat, nummer, postcode, gemeente, telefoonnummer, btw_nummer, contactpersoon_facturatie, email_facturatie, po_nummer, contactpersoon_beurs, email_beurs, website, bestand) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          naam,
+          email,
+          hashedPassword,
+          straat,
+          nummer,
+          postcode,
+          gemeente,
+          telefoonnummer,
+          btw_nummer,
+          contactpersoon_facturatie,
+          email_facturatie,
+          po_nummer || null,
+          contactpersoon_beurs,
+          email_beurs,
+          website,
+          bestandPad
+        ]
       );
 
       const bedrijfId = result.insertId;
 
+      // 2. Link bedrijf aan sector in koppel tabel
       await pool.query(
         `INSERT INTO Bedrijf_Sector (bedrijf_id, sector_id) VALUES (?, ?)`,
         [bedrijfId, sector]
