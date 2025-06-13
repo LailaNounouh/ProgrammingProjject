@@ -124,6 +124,9 @@ const AfspraakOverzicht = () => {
   return (
     <div className="afspraken-container">
       <div className="afspraken-header">
+        <button onClick={() => navigate('/bedrijf')} className="terug-button">
+          <FiArrowLeft /> Terug naar Dashboard
+        </button>
         <div className="header-content">
           <h1>Afsprakenbeheer</h1>
           <p className="subtitle">Overzicht van sollicitatiegesprekken met studenten</p>

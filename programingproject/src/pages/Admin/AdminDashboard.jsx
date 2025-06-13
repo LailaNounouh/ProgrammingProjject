@@ -6,7 +6,9 @@ function App() {
     { naam: 'Microsoft' },
     { naam: 'Cisco' },
     { naam: 'Sopra Steria' },
-    { naam: 'Webdoos' }
+    { naam: 'Webdoos' },
+     { naam: 'Amazon' },
+  { naam: 'Google' }
   ];
 
   const gebruikers = [
@@ -44,19 +46,28 @@ function App() {
       <main className="admin-main">
 
         <section className="bedrijven-section">
-          <h2>Deelnemende bedrijven:</h2>
-          <button className="filter-button">Filter ⌄</button>
-          <div className="bedrijven-grid">
-            {bedrijven.map((bedrijf, index) => (
-              <div key={index} className="bedrijf-card">
-                <div className="bedrijf-image" />
-                <strong>{bedrijf.naam}</strong>
-                <p>• Meer info</p>
-              </div>
-            ))}
-          </div>
-          <button className="bewerken-button">bewerk</button>
-        </section>
+  <h2>Deelnemende bedrijven:</h2>
+
+  <div className="bedrijven-header">
+    <button className="filter-button">Filter ⌄</button>
+  </div>
+
+  <div className="bedrijven-grid">
+    {bedrijven.map((bedrijf, index) => (
+      <div key={index} className="bedrijf-card">
+        <div className="bedrijf-image" />
+        <strong>{bedrijf.naam}</strong>
+        <p>• Meer info</p>
+      </div>
+    ))}
+  </div>
+
+  <div className="bedrijven-footer">
+    <button className="bewerken-button">bewerk</button>
+  </div>
+</section>
+
+
 
         <section className="standen-section">
           <h2>Beheer van Standen:</h2>

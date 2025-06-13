@@ -35,7 +35,24 @@ body {
   flex-wrap: wrap;
   gap: 1rem;
 }
+.terug-button {
+  position: absolute;
+  top: -2rem; 
+  left: 2rem;
+  background: var(--primary-color);
+  color: #f3f8f8;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 10;
+}
 
+.terug-button:hover {
+  background: #bebebe;
+}
 
 
 

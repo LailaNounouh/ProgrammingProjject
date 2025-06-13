@@ -3,22 +3,31 @@ import './About.css';
 
 function About() {
   return (
-    <div className="home">
-      <header>
+    <div className="container">
+      <header className="header">
         <h1>Over Career Launch</h1>
         <p className="subtitle">Verbind studenten, werkzoekenden en bedrijven</p>
       </header>
+      <div className="divider"></div>
+      
       <section className="description">
         <p>
-          <span className="highlight">Career Launch</span> is een initiatief om studenten en werkzoekenden te verbinden met bedrijven die actief zijn in diverse sectoren. 
-          Ons doel is om kansen te creëren, netwerken te versterken en carrières te lanceren.
+          <span className="highlight">Career Launch</span> is opgericht met één duidelijk doel: 
+          het verbinden van talentvolle studenten en werkzoekenden met bedrijven die hen verder willen helpen. 
+          Wij geloven dat de juiste ontmoeting het startpunt is van een succesvolle carrière.
         </p>
         <p>
-          Op ons event krijg je als bezoeker de kans om kennis te maken met bedrijven, je profiel te versterken en eventueel een stage of job te vinden.
-          Bedrijven kunnen op hun beurt nieuwe talenten ontdekken en hun missie delen met gemotiveerde kandidaten.
+          Met onze evenementen en digitale matchingtool creëren we een platform waar jij als bezoeker niet alleen bedrijven leert kennen, 
+          maar ook actief aan je toekomst werkt.
+          Of je nu op zoek bent naar een stage, een eerste baan of inspiratie voor je loopbaan, bij Career Launch krijg je de tools en 
+          kansen om je ambities waar te maken.
         </p>
         <p>
-          Met onze <span className="highlight">digitale matchingtool</span> zorgen we ervoor dat iedereen snel en efficiënt de juiste connecties kan maken.
+          Voor bedrijven biedt Career Launch een unieke kans om gemotiveerd talent te ontmoeten en hun organisatie op een authentieke manier te presenteren. 
+          Zo bouwen we samen aan een netwerk waarin kansen en talent elkaar vinden.
+        </p>
+        <p>
+          Onze missie is helder: <span className="highlight">carrières lanceren</span> door verbindingen te maken die écht het verschil maken.
         </p>
       </section>
     </div>

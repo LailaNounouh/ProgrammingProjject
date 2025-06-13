@@ -13,12 +13,20 @@ export default function Home() {
   const [status, setStatus] = useState(null);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const { name, value, type, checked } = e.target;
+  if (type === 'radio' && name === 'userType') {
+    setFormData({
+      ...formData,
+      isCompany: value === 'company',
+      isStudent: value === 'student',
+    });
+  } else {
     setFormData({
       ...formData,
       [name]: type === 'checkbox' ? checked : value,
     });
-  };
+  }
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -154,8 +162,9 @@ export default function Home() {
             <div className="checkbox-group">
              <label className="checkbox-option">
               <input
-                type="checkbox"
-                name="isCompany"
+                type="radio"
+                name="userType"
+                value="company"
                 checked={formData.isCompany}
                 onChange={handleChange}
               />
@@ -163,8 +172,9 @@ export default function Home() {
             </label>
             <label className="checkbox-option">
               <input
-                type="checkbox"
-                name="isStudent"
+                type="radio"
+                name="userType"
+                value="student"
                 checked={formData.isStudent}
                 onChange={handleChange}
               />
