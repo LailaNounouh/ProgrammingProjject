@@ -30,7 +30,7 @@ apiRouter.use('/newsletter', newsletterRouter);
 apiRouter.use('/login', loginRouter);
 apiRouter.use('/studentenaccount', studentenaccountRouter);
 apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
-apiRouter.use('/profiel', profielRouter); // 👈 Toegevoegd
+apiRouter.use('/profiel', profielRouter);
 
 app.use('/api', apiRouter);
 

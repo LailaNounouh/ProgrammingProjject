@@ -8,14 +8,14 @@ export const useProfile = () => useContext(ProfileContext);
 
 export const ProfileProvider = ({ children }) => {
   const [profile, setProfile] = useState(null);
-  const { user } = useAuth();
+  const { user } = useAuth(); // verwacht { email, rol }
 
   const fetchProfile = async () => {
-    if (!user?.email) return;
+    if (!user?.email || !user?.rol) return;
 
     try {
-      const email = encodeURIComponent(user.email);
-      const response = await fetch(`${baseUrl}/studentenaccount/${email}`);
+      const query = `email=${encodeURIComponent(user.email)}&rol=${encodeURIComponent(user.rol)}`;
+      const response = await fetch(`${baseUrl}/profiel?${query}`);
 
       if (!response.ok) {
         throw new Error(`Fout bij ophalen profiel: ${response.status}`);
@@ -25,6 +25,7 @@ export const ProfileProvider = ({ children }) => {
       setProfile(data);
     } catch (error) {
       console.error("Fout bij ophalen profiel:", error);
+      setProfile(null);
     }
   };
 
