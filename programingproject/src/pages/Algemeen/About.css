@@ -13,10 +13,16 @@ body {
 .header-box {
   background: #00a9b5;
   padding: 30px;
-  border-radius: 8px 8px 0 0;
+  border-radius: 8px;
   text-align: center;
   color: white;
-  margin-bottom: 0;
+  margin: 0 auto;
+  width: 80%;
+  max-width: 600px;
+  position: relative;
+  top: 20px;
+  z-index: 2;
+
 }
 
 .header-box h1 {
@@ -33,9 +39,9 @@ body {
 }
 
 .content-box {
-  background: white;
+  background: #d3d9e0;
   padding: 30px;
-  border-radius: 0 0 8px 8px;
+  border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
