@@ -28,6 +28,8 @@ function App() {
     { naam: "Onderwijs", zichtbaar: true }
   ]);
   const [nieuweSector, setNieuweSector] = useState('');
+const [bewerkModus, setBewerkModus] = useState(false);
+
 
   const voegSectorToe = () => {
     if (nieuweSector.trim() !== '' && !sectoren.find(s => s.naam === nieuweSector)) {
@@ -73,7 +75,7 @@ function App() {
         <section className="standen-section">
           <h2>Beheer van Standen:</h2>
           <div className="plattegrond">
-  <Plattegrond />
+  <Plattegrond bewerkModus={bewerkModus} />
 </div>
 
 
@@ -82,7 +84,12 @@ function App() {
             <span><div className="dot green"></div>= vrij</span>
           </div>
 
-          <button className="bewerken-button">bewerk</button>
+          <button
+  className="bewerken-button"
+  onClick={() => setBewerkModus(!bewerkModus)}
+>
+  {bewerkModus ? 'Opslaan' : 'Bewerk'}
+</button>
         </section>
 
         <section className="gebruikers-section">
