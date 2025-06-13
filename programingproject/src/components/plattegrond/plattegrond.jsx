@@ -1,15 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 
-const bedrijven = [
-  "Microsoft", "Google", "Amazon", "Apple",
-  "Meta", "Netflix", "Adobe", "Cisco",
-  "Intel", "IBM", "Salesforce", "Spotify",
-  "Oracle", "Nvidia", "Dell", "Siemens"
-];
+const Plattegrond = ({ bewerkModus }) => {
+  const [bedrijven, setBedrijven] = useState([
+    "Microsoft", "Google", "Amazon", "Apple",
+    "Meta", "Netflix", "Adobe", "Cisco",
+    "Intel", "IBM", "Salesforce", "Spotify",
+    "Oracle", "Nvidia", "Dell", "Siemens"
+  ]);
 
-const Plattegrond = () => {
-  const tafelsBoven = bedrijven.slice(0, 8);
-  const tafelsOnder = bedrijven.slice(8, 16);
+  const handleChange = (index, value) => {
+  const nieuweLijst = [...bedrijven];
+  nieuweLijst[index] = value;
+  setBedrijven(nieuweLijst);
+};
+
+const tafelsBoven = bedrijven.slice(0, 8);
+const tafelsOnder = bedrijven.slice(8, 16);
+
 
   return (
     <div className="plattegrond-container">
@@ -29,26 +36,51 @@ const Plattegrond = () => {
           const tafelWidth = 500 / 8;
           const x = 150 + index * tafelWidth;
           const y = 310;
+          const bovenOfOnder = 'boven';
           return (
             <g key={bedrijf}>
               <rect x={x} y={y} width={tafelWidth - 5} height="40" fill="#c8e6c9" stroke="black" strokeWidth="1" />
-              <text x={x + (tafelWidth / 2) - 2} y={y + 25} fontSize="10" textAnchor="middle" fill="black">{bedrijf}</text>
+              {bewerkModus ? (
+  <foreignObject x={x} y={y} width={tafelWidth - 5} height="40">
+    <input
+      type="text"
+      value={bedrijf}
+      onChange={(e) => handleChange(index + (bovenOfOnder === 'onder' ? 8 : 0), e.target.value)}
+      style={{ width: "100%", height: "100%", fontSize: "10px", textAlign: "center" }}
+    />
+  </foreignObject>
+) : (
+  <text x={x + (tafelWidth / 2) - 2} y={y + 25} fontSize="10" textAnchor="middle" fill="black">{bedrijf}</text>
+)}
+
             </g>
           );
         })}
 
         {/* Tafels onder */}
         {tafelsOnder.map((bedrijf, index) => {
-          const tafelWidth = 500 / 8;
-          const x = 150 + index * tafelWidth;
-          const y = 640;
-          return (
-            <g key={bedrijf}>
-              <rect x={x} y={y} width={tafelWidth - 5} height="40" fill="#ffe082" stroke="black" strokeWidth="1" />
-              <text x={x + (tafelWidth / 2) - 2} y={y + 25} fontSize="10" textAnchor="middle" fill="black">{bedrijf}</text>
-            </g>
-          );
-        })}
+  const tafelWidth = 500 / 8;
+  const x = 150 + index * tafelWidth;
+  const y = 640;
+  const bovenOfOnder = 'onder';
+  return (
+    <g key={bedrijf}>
+      <rect x={x} y={y} width={tafelWidth - 5} height="40" fill="#ffe082" stroke="black" strokeWidth="1" />
+      {bewerkModus ? (
+        <foreignObject x={x} y={y} width={tafelWidth - 5} height="40">
+          <input
+            type="text"
+            value={bedrijf}
+            onChange={(e) => handleChange(index + 8, e.target.value)} // +8 omdat dit de tweede rij is
+            style={{ width: "100%", height: "100%", fontSize: "10px", textAlign: "center" }}
+          />
+        </foreignObject>
+      ) : (
+        <text x={x + (tafelWidth / 2) - 2} y={y + 25} fontSize="10" textAnchor="middle" fill="black">{bedrijf}</text>
+      )}
+    </g>
+  );
+})}
 
         {/* Auditoria boven */}
         <rect x="150" y="100" width="250" height="200" fill="#e0f7fa" stroke="black" strokeWidth="2" />
