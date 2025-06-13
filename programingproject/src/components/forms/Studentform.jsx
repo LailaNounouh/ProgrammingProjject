@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { baseUrl } from "../../config";
 
 export default function StudentForm() {
@@ -9,6 +10,8 @@ export default function StudentForm() {
 
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,7 +48,10 @@ export default function StudentForm() {
       if (!response.ok) {
         setError(data.error || 'Er is een fout opgetreden tijdens de registratie.');
       } else {
-        setSuccess('✅ Registratie succesvol!');
+        setSuccess('✅ Registratie succesvol! Je wordt doorgestuurd naar de loginpagina...');
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000);
         // Reset formuliervelden
         setNaam('');
         setEmail('');
