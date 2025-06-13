@@ -29,19 +29,8 @@ apiRouter.use('/', homeRouter);
 apiRouter.use('/register', registerRouter);
 apiRouter.use('/newsletter', newsletterRouter);
 apiRouter.use('/login', loginRouter);
-apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
+apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter); // <-- alles gaat via deze router
 apiRouter.use('/sectoren', sectorenRouter);
-
-// Optioneel: route /bedrijven (met alleen id en bedrijfsnaam)
-apiRouter.get('/bedrijven', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT bedrijf_id, bedrijfsnaam FROM Bedrijven');
-    res.json(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database fout bij ophalen bedrijven' });
-  }
-});
 
 app.use('/api', apiRouter);
 
