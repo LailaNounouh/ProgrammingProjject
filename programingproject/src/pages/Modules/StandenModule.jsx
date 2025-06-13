@@ -1,48 +1,59 @@
-import React, { useState } from 'react';
-import './StandenModule.css';
-import Plattegrond from "../../components/plattegrond/plattegrond";
+import React, { useState } from "react";
+import Plattegrond from "../../components/plattegrond/Plattegrond";
 
-
-const mockStands = [
-  { id: 1, name: 'Buffet', row: 1, col: 2 },
-  { id: 2, name: 'Onthaal', row: 2, col: 1 },
-  { id: 3, name: 'Stand A', row: 0, col: 0 },
-  { id: 4, name: 'Stand B', row: 0, col: 3 },
-  // ...evt. extra mock standen
-];
-
-export default function StandenModule() {
-  const rows = 4, cols = 4;
-  const [selected, setSelected] = useState(null);
-
-  function handleClick(stand) {
-    setSelected(stand);
-  }
+const StudentPlattegrond = () => {
+  const [vergroot, setVergroot] = useState(false);
 
   return (
-    
-    <div className="standen-module">
-      <h1> <Plattegrond /></h1>
-      <h2>Interactieve Plattegrond – Campus Kaai</h2>
-      <div className="grid" style={{ '--rows': rows, '--cols': cols }}>
-        {mockStands.map(s => (
-          <div
-            key={s.id}
-            className={`cell stand ${selected?.id === s.id ? 'active' : ''}`}
-            style={{ gridRow: s.row + 1, gridColumn: s.col + 1 }}
-            onClick={() => handleClick(s)}
-          >
-            {s.name}
-          </div>
-        ))}
-      </div>
-      {selected && (
-        <div className="detail-box">
-          <h3>{selected.name}</h3>
-          <p>Details en acties hier voor {selected.name}.</p>
-          <button onClick={() => setSelected(null)}>Sluit</button>
+    <div style={{ textAlign: "center", marginTop: 40 }}>
+      <button
+        onClick={() => setVergroot(!vergroot)}
+        style={{
+          padding: "12px 24px",
+          fontSize: 16,
+          marginBottom: 30,
+          cursor: "pointer",
+          backgroundColor: "#00a9b5",
+          color: "white",
+          border: "none",
+          borderRadius: 8,
+        }}
+      >
+        {vergroot ? "Sluit plattegrond" : "Vergroot volledig"}
+      </button>
+
+      <div
+        style={{
+          width: vergroot ? "95vw" : "1200px",
+          maxWidth: "95vw",
+          margin: "0 auto",
+          padding: "0px", // <-- geen extra ruimte
+          border: "1px solid #ccc",
+          borderRadius: 10,
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          overflow: "hidden",
+          transition: "all 0.3s ease",
+         }}
+        >
+        {/* SVG staat bovenaan */}
+        <div style={{ maxHeight: vergroot ? "none" : "1200px", overflow: "auto" }}>
+          <Plattegrond />
         </div>
-      )}
+
+        {/* Ruimte onder de kaart voor standinfo */}
+        <div style={{ marginTop: 40, textAlign: "left" }}>
+          <h3>ℹ️ Informatie over standen</h3>
+          <p>Selecteer een stand op de kaart of bekijk hieronder de beschikbare bedrijven.</p>
+          {/* Hier komt bv. <StandenInfo /> of dynamische content */}
+          <ul>
+            <li><strong>Bedrijf A</strong>: Webdevelopment & stages</li>
+            <li><strong>Bedrijf B</strong>: AI consultancy & demo's</li>
+            <li><strong>Startup C</strong>: VR/AR prototyping</li>
+          </ul>
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default StudentPlattegrond;
