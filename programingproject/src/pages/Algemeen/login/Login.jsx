@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
 import { baseUrl } from "../../../config";
+import { useAuth } from "../../../context/AuthProvider";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [wachtwoord, setWachtwoord] = useState("");
   const [type, setType] = useState("student");
@@ -21,23 +24,31 @@ export default function Login() {
         body: JSON.stringify({ email, password: wachtwoord, type }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        setError(errorData.error || "Ongeldige inloggegevens");
+        return;
+      }
+
       const data = await response.json();
 
-      if (!response.ok) {
-        setError(data.error || "Ongeldige inloggegevens");
-      } else {
-        navigate(`/${type}`);
-      }
+
+      login(email, wachtwoord, type);
+
+      navigate(`/${type}`);
     } catch (err) {
-      setError("Fout bij verbinding met de server");
+      console.error("Login fout:", err);
+      setError("Er is een verbindingsfout met de server.");
     }
   };
 
   return (
     <div className="login-container">
       <h2>Inloggen</h2>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleLogin} className="login-form">
+        <label htmlFor="type">Ik ben een:</label>
         <select
+          id="type"
           value={type}
           onChange={(e) => setType(e.target.value)}
           required
@@ -46,17 +57,22 @@ export default function Login() {
           <option value="student">Student</option>
           <option value="werkzoekende">Werkzoekende</option>
           <option value="bedrijf">Bedrijf</option>
-          <option value="admin">Admin</option> {/* ✅ Toegevoegd */}
+          <option value="admin">Admin</option>
         </select>
 
+        <label htmlFor="email">E-mailadres</label>
         <input
+          id="email"
           type="email"
           placeholder="E-mailadres"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-        />
+        />  
+
+        <label htmlFor="password">Wachtwoord</label>
         <input
+          id="password"
           type="password"
           placeholder="Wachtwoord"
           value={wachtwoord}
@@ -71,7 +87,7 @@ export default function Login() {
 
       <div className="register-container">
         <p>
-          Heb je nog geen account? <a href="/register">Registreer hier</a>
+          Nog geen account? <a href="/register">Registreer hier</a>
         </p>
       </div>
 
@@ -79,3 +95,4 @@ export default function Login() {
     </div>
   );
 }
+

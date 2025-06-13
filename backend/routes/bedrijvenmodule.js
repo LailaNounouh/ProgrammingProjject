@@ -1,30 +1,17 @@
-// modules/bedrijfsmodule.js
-const db = require("../db");
+// backend/bedrijvenmodule.js
+const express = require('express');
+const pool = require('../db');
 
-async function getAlleBedrijven() {
-  const sql = `
-    SELECT 
-      id, 
-      bedrijfsnaam, 
-      straat, 
-      nummer, 
-      postcode, 
-      gemeente, 
-      beschrijving, 
-      logo_url,
-      sector_naam
-    FROM bedrijven
-  `;
+const router = express.Router();
 
+router.get('/', async (req, res) => {
   try {
-    const [rows] = await db.query(sql);
-    return rows;
+    const [rows] = await pool.query('SELECT * FROM bedrijven');
+    res.json(rows);
   } catch (err) {
-    console.error("Fout bij ophalen bedrijven uit database:", err);
-    throw err;
+    console.error(err);
+    res.status(500).json({ error: 'Database fout bij ophalen bedrijven' });
   }
-}
+});
 
-module.exports = {
-  getAlleBedrijven,
-};
+module.exports = router;

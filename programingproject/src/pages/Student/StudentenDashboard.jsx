@@ -1,36 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './StudentenDashboard.css';
 import { baseUrl } from "../../config";
 
-function App() {
+function StudentenDashboard() {
   const [bedrijven, setBedrijven] = useState([]);
-  const [filterSector, setFilterSector] = useState('all'); // filtering op sector
+  const [filterSector, setFilterSector] = useState('all');
+  const [linkedinUrl, setLinkedinUrl] = useState('');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function fetchBedrijven() {
       try {
         const response = await fetch(`${baseUrl}/bedrijven`);
+        if (!response.ok) {
+          throw new Error(`HTTP-fout! status: ${response.status}`);
+        }
         const data = await response.json();
         setBedrijven(data);
+        setError(null);
       } catch (error) {
         console.error("Fout bij laden bedrijven:", error);
+        setError("Fout bij laden bedrijven, probeer later opnieuw.");
       }
     }
+
     fetchBedrijven();
   }, []);
 
-  // Alle unieke sectoren uit bedrijven halen
   const alleSectoren = React.useMemo(() => {
     const sectorSet = new Set();
     bedrijven.forEach(b => {
-      if (b.sector_naam) {
-        sectorSet.add(b.sector_naam);
-      }
+      if (b.sector_naam) sectorSet.add(b.sector_naam);
     });
     return Array.from(sectorSet).sort();
   }, [bedrijven]);
 
-  // Filter bedrijven op sector
   const gefilterdeBedrijven = filterSector === 'all'
     ? bedrijven
     : bedrijven.filter(b => b.sector_naam === filterSector);
@@ -44,13 +48,14 @@ function App() {
             type="url"
             id="linkedin"
             placeholder="URL naar LinkedIn profiel"
+            value={linkedinUrl}
+            onChange={e => setLinkedinUrl(e.target.value)}
           />
         </section>
 
         <section id="bedrijven" className="bedrijven-section">
           <h2>Deelnemende bedrijven:</h2>
 
-          {/* Dropdown filter */}
           <label htmlFor="sectorFilter">Filter op sector:</label>
           <select
             id="sectorFilter"
@@ -65,7 +70,9 @@ function App() {
           </select>
 
           <div className="bedrijven-lijst">
-            {bedrijven.length === 0 ? (
+            {error ? (
+              <p className="error">{error}</p>
+            ) : bedrijven.length === 0 ? (
               <p>Bedrijven worden geladen...</p>
             ) : gefilterdeBedrijven.length === 0 ? (
               <p>Geen bedrijven gevonden in deze sector.</p>
@@ -106,11 +113,10 @@ function App() {
         </section>
 
         <section id="afspraak">
-          {/* Afspraak maken sectie - voeg inhoud toe indien gewenst */}
         </section>
       </main>
     </div>
   );
 }
 
-export default App;
+export default StudentenDashboard;

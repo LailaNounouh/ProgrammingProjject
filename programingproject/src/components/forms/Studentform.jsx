@@ -15,39 +15,40 @@ export default function StudentForm() {
     setError(null);
     setSuccess(null);
 
-    // Validatie
     if (!naam || !email || !studie || !wachtwoord) {
-      setError('Alle velden zijn verplicht');
+      setError('Alle velden zijn verplicht.');
       return;
     }
 
     try {
       const response = await fetch(`${baseUrl}/register`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           type: 'student',
           naam,
           email,
-          studie,
           wachtwoord,
+          studie, // wordt meegegeven als extra veld
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || 'Er is een fout opgetreden');
+        setError(data.error || 'Er is een fout opgetreden tijdens de registratie.');
       } else {
-        setSuccess('Registratie succesvol!');
-        // Reset formulier
+        setSuccess('✅ Registratie succesvol!');
+        // Reset formuliervelden
         setNaam('');
         setEmail('');
         setStudie('');
         setWachtwoord('');
       }
     } catch (err) {
-      setError('Server niet bereikbaar');
+      setError('❌ Server niet bereikbaar.');
     }
   };
 
