@@ -11,11 +11,12 @@ export const ProfileProvider = ({ children }) => {
   const { user } = useAuth();
 
   const fetchProfile = async () => {
-    if (!user?.email) return;
+    if (!user?.email || !user?.role) return;
 
     try {
       const email = encodeURIComponent(user.email);
-      const response = await fetch(`${baseUrl}/studentenaccount/${email}`);
+      const rol = encodeURIComponent(user.role);
+      const response = await fetch(`${baseUrl}/api/profiel?email=${email}&rol=${rol}`);
 
       if (!response.ok) {
         throw new Error(`Fout bij ophalen profiel: ${response.status}`);
