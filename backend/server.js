@@ -29,7 +29,7 @@ apiRouter.use('/', homeRouter);
 apiRouter.use('/register', registerRouter);
 apiRouter.use('/newsletter', newsletterRouter);
 apiRouter.use('/login', loginRouter);
-apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter); // <-- alles gaat via deze router
+apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
 apiRouter.use('/sectoren', sectorenRouter);
 
 app.use('/api', apiRouter);
