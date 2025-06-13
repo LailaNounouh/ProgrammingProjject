@@ -20,6 +20,11 @@ export default function StudentForm() {
       return;
     }
 
+    if (!email.endsWith('@student.ehb.be')) {
+      setError('Gebruik een geldig EHB student e-mailadres (bijv. naam@student.ehb.be).');
+      return;
+    }
+
     try {
       const response = await fetch(`${baseUrl}/register`, {
         method: 'POST',
