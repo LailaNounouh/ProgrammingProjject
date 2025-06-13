@@ -11,7 +11,6 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
-    // Unieke naam toevoegen met timestamp + originele extensie
     const ext = path.extname(file.originalname);
     cb(null, file.fieldname + '-' + Date.now() + ext);
   }
@@ -39,7 +38,7 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       po_nummer,
       contactpersoon_beurs,
       email_beurs,
-      website
+      website_of_linkedin // aangepast hier
     } = req.body;
 
     // Validatie algemene verplichte velden
@@ -79,7 +78,7 @@ router.post('/', upload.single('bestand'), async (req, res) => {
 
     } else if (type === 'bedrijf') {
       // Verplicht voor bedrijven
-      if (!wachtwoord || !sector || !straat || !nummer || !postcode || !gemeente || !telefoonnummer || !btw_nummer || !contactpersoon_facturatie || !email_facturatie || !contactpersoon_beurs || !email_beurs || !website) {
+      if (!wachtwoord || !sector || !straat || !nummer || !postcode || !gemeente || !telefoonnummer || !btw_nummer || !contactpersoon_facturatie || !email_facturatie || !contactpersoon_beurs || !email_beurs || !website_of_linkedin) {
         return res.status(400).json({ error: 'Niet alle verplichte velden zijn ingevuld voor bedrijf' });
       }
 
@@ -91,7 +90,7 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       // 1. Insert in Bedrijven
       const [result] = await pool.query(
         `INSERT INTO Bedrijven 
-         (naam, email, wachtwoord, straat, nummer, postcode, gemeente, telefoonnummer, btw_nummer, contactpersoon_facturatie, email_facturatie, po_nummer, contactpersoon_beurs, email_beurs, website, bestand) 
+         (naam, email, wachtwoord, straat, nummer, postcode, gemeente, telefoonnummer, btw_nummer, contactpersoon_facturatie, email_facturatie, po_nummer, contactpersoon_beurs, email_beurs, website_of_linkedin, logo_url) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           naam,
@@ -108,7 +107,7 @@ router.post('/', upload.single('bestand'), async (req, res) => {
           po_nummer || null,
           contactpersoon_beurs,
           email_beurs,
-          website,
+          website_of_linkedin,
           bestandPad
         ]
       );
