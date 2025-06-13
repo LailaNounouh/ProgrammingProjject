@@ -38,10 +38,10 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       po_nummer,
       contactpersoon_beurs,
       email_beurs,
-      website_of_linkedin // aangepast hier
+      website_of_linkedin
     } = req.body;
 
-    // Validatie algemene verplichte velden
+    // Algemene verplichte velden: type, naam, email
     if (!type || !naam || !email) {
       return res.status(400).json({ error: 'Type, naam en e-mailadres zijn verplicht' });
     }
@@ -77,9 +77,9 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       return res.status(201).json({ message: 'Werkzoekende geregistreerd', id: result.insertId });
 
     } else if (type === 'bedrijf') {
-      // Verplicht voor bedrijven
-      if (!wachtwoord || !sector || !straat || !nummer || !postcode || !gemeente || !telefoonnummer || !btw_nummer || !contactpersoon_facturatie || !email_facturatie || !contactpersoon_beurs || !email_beurs || !website_of_linkedin) {
-        return res.status(400).json({ error: 'Niet alle verplichte velden zijn ingevuld voor bedrijf' });
+      // Alleen e-mail en wachtwoord verplicht voor bedrijven
+      if (!wachtwoord || !email) {
+        return res.status(400).json({ error: 'E-mail en wachtwoord zijn verplicht voor bedrijven' });
       }
 
       const hashedPassword = await bcrypt.hash(wachtwoord, 10);
@@ -87,38 +87,40 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       // Filepad (optioneel)
       const bestandPad = req.file ? req.file.path : null;
 
-      // 1. Insert in Bedrijven
+      // Insert in Bedrijven, overige velden optioneel (null als leeg)
       const [result] = await pool.query(
         `INSERT INTO Bedrijven 
          (naam, email, wachtwoord, straat, nummer, postcode, gemeente, telefoonnummer, btw_nummer, contactpersoon_facturatie, email_facturatie, po_nummer, contactpersoon_beurs, email_beurs, website_of_linkedin, logo_url) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-          naam,
+          naam || null,
           email,
           hashedPassword,
-          straat,
-          nummer,
-          postcode,
-          gemeente,
-          telefoonnummer,
-          btw_nummer,
-          contactpersoon_facturatie,
-          email_facturatie,
+          straat || null,
+          nummer || null,
+          postcode || null,
+          gemeente || null,
+          telefoonnummer || null,
+          btw_nummer || null,
+          contactpersoon_facturatie || null,
+          email_facturatie || null,
           po_nummer || null,
-          contactpersoon_beurs,
-          email_beurs,
-          website_of_linkedin,
-          bestandPad
+          contactpersoon_beurs || null,
+          email_beurs || null,
+          website_of_linkedin || null,
+          bestandPad || null
         ]
       );
 
       const bedrijfId = result.insertId;
 
-      // 2. Link bedrijf aan sector in koppel tabel
-      await pool.query(
-        `INSERT INTO Bedrijf_Sector (bedrijf_id, sector_id) VALUES (?, ?)`,
-        [bedrijfId, sector]
-      );
+      // Link bedrijf aan sector in koppel tabel, alleen als sector is ingevuld
+      if (sector) {
+        await pool.query(
+          `INSERT INTO Bedrijf_Sector (bedrijf_id, sector_id) VALUES (?, ?)`,
+          [bedrijfId, sector]
+        );
+      }
 
       return res.status(201).json({ message: 'Bedrijf geregistreerd', id: bedrijfId });
 
