@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ProfielSettingsModule.css";
 
 import TaalSelector from "../../components/dropdowns/TaalSelector";
@@ -8,8 +8,12 @@ import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
 
 import { baseUrl } from "../../config";
 import { useProfile } from "../../context/ProfileContext";
+import { useAuth } from "../../context/AuthProvider";
 
 export default function ProfielSettingsModule() {
+  const { profile, fetchProfile } = useProfile();
+  const { user } = useAuth();
+
   const [formData, setFormData] = useState({
     naam: "",
     email: "",
@@ -18,7 +22,19 @@ export default function ProfielSettingsModule() {
   });
 
   const [profilePicture, setProfilePicture] = useState(null);
-  const { fetchProfile } = useProfile();
+
+  useEffect(() => {
+    if (profile && user) {
+      setFormData({
+        naam: profile.naam || "",
+        email: user.email || "",
+        telefoon: profile.telefoon || "",
+        aboutMe: profile.aboutMe || "",
+      });
+    }
+  }, [profile, user]);
+
+  if (!profile || !user) return <p>Loading profiel...</p>;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,7 +68,7 @@ export default function ProfielSettingsModule() {
 
       if (!response.ok) throw new Error("Fout bij verzenden");
 
-      await fetchProfile(); // update profiel na verzenden
+      await fetchProfile(); // vernieuw profiel
       alert("Profiel opgeslagen!");
     } catch (error) {
       alert("Er ging iets mis bij het verzenden.");
@@ -82,14 +98,15 @@ export default function ProfielSettingsModule() {
           </div>
 
           <div className="form-field">
-            <label htmlFor="email">E-mail</label>
+            <label htmlFor="email">E-mailadres</label>
             <input
               type="email"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              required
+              readOnly={user?.role === "student"}
+              required={user?.role !== "student"}
             />
           </div>
 

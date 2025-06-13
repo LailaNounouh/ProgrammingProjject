@@ -2,28 +2,23 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { baseUrl } from '../config';
 
-
 const AuthContext = createContext();
-
 
 export const useAuth = () => useContext(AuthContext);
 
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false); // belangrijk voor wachten tot useEffect klaar is
   const navigate = useNavigate();
 
-
-  
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    setAuthReady(true); // aangeven dat auth-status is ingeladen
   }, []);
 
-
-  // Login functie
   const login = async (email, password, type) => {
     try {
       const response = await fetch(`${baseUrl}/login`, {
@@ -32,28 +27,22 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ email, password, type }),
       });
 
-
       const data = await response.json();
-
 
       if (!response.ok) {
         throw new Error(data.error || 'Ongeldige inloggegevens');
       }
 
-
-      
       const userData = {
         email: data.user.email,
         id: data.user.id,
-        role: type, 
+        role: type,
       };
-
 
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
       navigate(`/${type}`);
       return { success: true };
-
 
     } catch (error) {
       console.error('Login fout:', error.message);
@@ -61,21 +50,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-
-  // Logout functie
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
     navigate('/login');
   };
 
-
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, authReady }}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-
-
