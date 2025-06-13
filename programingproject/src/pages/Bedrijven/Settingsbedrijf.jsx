@@ -52,6 +52,50 @@ const handleChange = (e) => {
         className="formulier-input"
       />
     </div>
+    <div className="formulier-groep">
+  <label className="formulier-label">Straat</label>
+  <input
+    type="text"
+    name="straat"
+    value={bedrijfsgegevens.straat}
+    onChange={handleChange}
+    className="formulier-input"
+  />
+</div>
+
+<div className="formulier-rij">
+  <div className="formulier-groep">
+    <label className="formulier-label">Huisnummer</label>
+    <input
+      type="text"
+      name="nummer"
+      value={bedrijfsgegevens.nummer}
+      onChange={handleChange}
+      className="formulier-input"
+    />
+  </div>
+  <div className="formulier-groep">
+    <label className="formulier-label">Postcode</label>
+    <input
+      type="text"
+      name="postcode"
+      value={bedrijfsgegevens.postcode}
+      onChange={handleChange}
+      className="formulier-input"
+    />
+  </div>
+  <div className="formulier-groep">
+    <label className="formulier-label">Gemeente</label>
+    <input
+      type="text"
+      name="gemeente"
+      value={bedrijfsgegevens.gemeente}
+      onChange={handleChange}
+      className="formulier-input"
+    />
+  </div>
+</div>
+
   </section>
 </form>
 
