@@ -25,5 +25,34 @@ const Settingsbedrijf = () => {
     </div>
   );
 };
+const [bedrijfsgegevens, setBedrijfsgegevens] = React.useState({
+  bedrijfsnaam: "",
+  sector: "",
+  straat: "",
+  nummer: "",
+  postcode: "",
+  gemeente: ""
+});
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setBedrijfsgegevens((prev) => ({ ...prev, [name]: value }));
+};
+<form className="bedrijfsformulier">
+  <section className="form-sectie">
+    <h2 className="sectie-titel">Bedrijfsgegevens</h2>
+
+    <div className="formulier-groep">
+      <label className="formulier-label">Bedrijfsnaam</label>
+      <input
+        type="text"
+        name="bedrijfsnaam"
+        value={bedrijfsgegevens.bedrijfsnaam}
+        onChange={handleChange}
+        className="formulier-input"
+      />
+    </div>
+  </section>
+</form>
 
 export default Settingsbedrijf;
