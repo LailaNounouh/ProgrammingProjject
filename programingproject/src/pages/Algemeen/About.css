@@ -29,12 +29,13 @@ body {
   font-size: 2.3rem;
   margin: 0 0 10px 0;
   font-weight: 700;
+  color: white;
 }
 
-.haeder-box .subtitle {
-  color: #333; 
+.header-box .subtitle {
+  color: #424242; 
   font-weight: 600;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   margin: 0;
 }
 
@@ -43,6 +44,7 @@ body {
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: black;
 }
 
 .content-box p {
