@@ -1,21 +1,43 @@
-.about {
-  /* Optioneel: als je extra spacing rondom wilt */
-  padding-bottom: 50px;
+.about-content {
+  padding: 40px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  color: #333;
 }
 
-.about-content p {
-  margin-bottom: 15px;
-  font-size: 1.05rem;
+.header h1 {
+  margin-bottom: 10px;
+  font-size: 2.5rem;
   line-height: 1.6;
-}
-
-.about-content .highlight {
-  color: #00a9b5; /* dezelfde accentkleur als andere highlights */
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
 }
 
 .subtitle {
   color: #007a84; /* iets donkerder blauw voor subtitel */
   font-weight: 600;
   margin-top: -10px;
+  margin-bottom: 30px;
+  font-size: 1.2rem;
+}
+.divider {
+  height: 2px;
+  background-color: #00a9b5;
+  margin: 20px 0 30px;
+  width:100%;
+}
+
+.description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.description p {
   margin-bottom: 20px;
+}
+
+.highlight {
+  color: #00a9b5; /* dezelfde accentkleur als andere highlights */
+  font-weight: 600;
 }

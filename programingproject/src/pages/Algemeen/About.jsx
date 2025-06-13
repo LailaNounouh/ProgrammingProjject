@@ -3,13 +3,13 @@ import './About.css';
 
 function About() {
   return (
-    <div className="container">
+    <div className="about-container">
       <header className="header">
         <h1>Over Career Launch</h1>
         <p className="subtitle">Verbind studenten, werkzoekenden en bedrijven</p>
       </header>
       <div className="divider"></div>
-      
+
       <section className="description">
         <p>
           <span className="highlight">Career Launch</span> is opgericht met één duidelijk doel: 
