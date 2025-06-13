@@ -32,17 +32,6 @@ apiRouter.use('/login', loginRouter);
 apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
 apiRouter.use('/sectoren', sectorenRouter);
 
-// Optioneel: route /bedrijven (met alleen id en bedrijfsnaam)
-apiRouter.get('/bedrijven', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT id, bedrijfsnaam FROM bedrijven');
-    res.json(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database fout bij ophalen bedrijven' });
-  }
-});
-
 app.use('/api', apiRouter);
 
 // Root route

@@ -22,6 +22,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import SeekerDashboard from "./pages/Seeker/SeekerDashboard";
 import BedrijvenDashboard from "./pages/Bedrijven/BedrijvenDashboard";
 import StatusBetaling from './pages/Bedrijven/statusbetaling';
+import AfspraakOverzicht from "./pages/Bedrijven/Afspraakoverzicht";
  
 import AfsprakenModule from "./pages/Modules/AfsprakenModule";
 import BedrijvenModule from "./pages/Modules/BedrijvenModule";
@@ -57,9 +58,9 @@ export default function App() {
  
           {/* Bedrijven */}
           <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
+          <Route path="/bedrijf/betaling" element={<BedrijvenLayout><StatusBetaling /></BedrijvenLayout>} />
+          <Route path="/bedrijf/afspraken" element={<BedrijvenLayout><AfspraakOverzicht /></BedrijvenLayout>} />
         </Routes>
       </AuthProvider>
   );
 }
-
-
