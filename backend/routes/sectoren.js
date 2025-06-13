@@ -1,7 +1,7 @@
 // routes/sectoren.js
 const express = require('express');
 const router = express.Router();
-const db = require('../database'); // pas aan naar jouw db connectie
+const db = require('../db');
 
 router.get('/', async (req, res) => {
   try {
