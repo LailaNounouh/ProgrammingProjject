@@ -16,3 +16,22 @@
 .instellingen-header {
   text-align: center;
 }
+.terug-knop {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  background: #2563eb;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.terug-knop:hover {
+  background-color: #1d4ed8;
+}
