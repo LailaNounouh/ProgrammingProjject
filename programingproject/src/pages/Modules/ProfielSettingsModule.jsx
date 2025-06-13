@@ -21,8 +21,6 @@ export default function ProfielSettingsModule() {
     aboutMe: "",
   });
 
-  const [profilePicture, setProfilePicture] = useState(null);
-
   useEffect(() => {
     if (profile && user) {
       setFormData({
@@ -44,32 +42,22 @@ export default function ProfielSettingsModule() {
     }));
   };
 
-  const handleFileChange = (e) => {
-    setProfilePicture(e.target.files[0]);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = new FormData();
-    data.append("naam", formData.naam);
-    data.append("email", formData.email);
-    data.append("telefoon", formData.telefoon);
-    data.append("aboutMe", formData.aboutMe);
-    if (profilePicture) {
-      data.append("profilePicture", profilePicture);
-    }
-
     try {
-      const response = await fetch(`${baseUrl}/api/profile`, {
+      const response = await fetch(`${baseUrl}/api/profiel`, {
         method: "POST",
-        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) throw new Error("Fout bij verzenden");
 
       await fetchProfile(); // vernieuw profiel
-      alert("Profiel opgeslagen!");
+      alert("Profiel succesvol opgeslagen!");
     } catch (error) {
       alert("Er ging iets mis bij het verzenden.");
       console.error(error);
@@ -106,7 +94,7 @@ export default function ProfielSettingsModule() {
               value={formData.email}
               onChange={handleChange}
               readOnly={user?.role === "student"}
-              required={user?.role !== "student"}
+              required
             />
           </div>
 
@@ -119,17 +107,6 @@ export default function ProfielSettingsModule() {
               value={formData.telefoon}
               onChange={handleChange}
               required
-            />
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="profilePicture">Profielfoto</label>
-            <input
-              type="file"
-              id="profilePicture"
-              name="profilePicture"
-              accept="image/*"
-              onChange={handleFileChange}
             />
           </div>
 
