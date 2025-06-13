@@ -31,8 +31,12 @@ apiRouter.use('/register', registerRouter);
 apiRouter.use('/newsletter', newsletterRouter);
 apiRouter.use('/login', loginRouter);
 apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
+<<<<<<< HEAD
 apiRouter.use('/sectoren', sectorenRouter);
 apiRouter.use('/profiel', profielRouter);
+=======
+apiRouter.use('/profiel', profielRouter); // 👈 Toegevoegd
+>>>>>>> parent of 9e14949 (server.jssss)
 
 app.use('/api', apiRouter);
 

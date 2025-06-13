@@ -8,7 +8,7 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [authReady, setAuthReady] = useState(false);
+  const [authReady, setAuthReady] = useState(false); // belangrijk voor wachten tot useEffect klaar is
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-    setAuthReady(true);
+    setAuthReady(true); // aangeven dat auth-status is ingeladen
   }, []);
 
   const login = async (email, password, type) => {
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
       const userData = {
         email: data.user.email,
         id: data.user.id,
-        rol: type, // 👈 aangepast: 'rol' in plaats van 'role'
+        role: type,
       };
 
       setUser(userData);
