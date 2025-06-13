@@ -3,12 +3,14 @@ import './About.css';
 
 function About() {
   return (
-    <div className="about-container">
-      <header className="header">
+    <div className="about-content">
+      
+      <header className="haeder-bar">
+        <div className="header-content">
         <h1>Over Career Launch</h1>
         <p className="subtitle">Verbind studenten, werkzoekenden en bedrijven</p>
+      </div>
       </header>
-      <div className="divider"></div>
 
       <section className="description">
         <p>

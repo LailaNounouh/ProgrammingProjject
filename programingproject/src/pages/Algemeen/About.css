@@ -1,40 +1,50 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
 .about-content {
-  padding: 40px 20px;
-  max-width: 800px;
+  padding: 0 20px;
+  max-width: 100%;
   margin: 0 auto;
   color: #333;
 }
 
-.header h1 {
-  margin-bottom: 10px;
+.header-bar {
+  background-color: #00a9b5; /* kleur van je balk */
+  width: 100%;
+  min-height: 100px; 
+  display: flex;
+  align-items: center; /* verticaal centreren */
+  justify-content: center; /* horizontaal centreren */
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.header-content h1 {
   font-size: 2.5rem;
-  line-height: 1.6;
   font-weight: 700;
   color: white;
   text-transform: uppercase;
+  margin: 0 0 10px 0;
+}
+
+.header-content {
+  text-align: center;
 }
 
 .subtitle {
   color: #007a84; /* iets donkerder blauw voor subtitel */
   font-weight: 600;
-  margin-top: -10px;
-  margin-bottom: 30px;
   font-size: 1.2rem;
-}
-.divider {
-  height: 2px;
-  background-color: #00a9b5;
-  margin: 20px 0 30px;
-  width:100%;
+  margin: 0;
 }
 
 .description {
   font-size: 1.1rem;
   line-height: 1.6;
-}
-
-.description p {
-  margin-bottom: 20px;
+  text-align: left;
+  padding: 0 20px;
 }
 
 .highlight {
