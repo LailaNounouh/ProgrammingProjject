@@ -1,0 +1,48 @@
+.account-pagina {
+  max-width: 800px;
+  margin: auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.account-pagina h1 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.account-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.account-foto {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+}
+
+.account-about {
+  font-style: italic;
+  color: #555;
+}
+
+.account-details p {
+  margin: 0.5rem 0;
+}
+
+.account-details h3 {
+  margin-top: 1.5rem;
+  color: #333;
+}
+
+.account-details ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}

@@ -1,30 +1,31 @@
-// routes/newsletter.js
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
 // POST /api/newsletter/registratie
 router.post('/registratie', async (req, res) => {
-  const { naam, email, role } = req.body;
+  const { naam, email, rol } = req.body;
 
-  if (!naam || !email || !role) {
+  if (!naam || !email || !rol) {
     return res.status(400).json({ error: 'Naam, e-mail en rol zijn verplicht.' });
   }
 
   try {
-    // Optioneel: controleer op duplicaten
-    const [existing] = await pool.query('SELECT id FROM newsletter_subscribers WHERE email = ?', [email]);
+    const [existing] = await pool.query(
+      'SELECT abonnement_id FROM Nieuwsbrief_Abonnementen WHERE email = ?',
+      [email]
+    );
+
     if (existing.length > 0) {
       return res.status(400).json({ error: 'E-mail is al ingeschreven.' });
     }
 
-    // Voeg toe aan database
     await pool.query(
-      'INSERT INTO newsletter_subscribers (naam, email, rol) VALUES (?, ?, ?)',
-      [naam, email, role]
+      'INSERT INTO Nieuwsbrief_Abonnementen (naam, email, rol) VALUES (?, ?, ?)',
+      [naam, email, rol]
     );
 
-    console.log('📧 Nieuwsbriefinschrijving:', { naam, email, role });
+    console.log('📧 Nieuwsbriefinschrijving:', { naam, email, rol });
     res.status(201).json({ message: 'Inschrijving succesvol!' });
   } catch (error) {
     console.error('❌ Fout bij inschrijving:', error);
