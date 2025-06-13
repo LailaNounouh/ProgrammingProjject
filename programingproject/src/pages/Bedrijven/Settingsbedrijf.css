@@ -35,3 +35,14 @@
 .terug-knop:hover {
   background-color: #1d4ed8;
 }
+.opslaan-knop {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  width: 100%;
+  font-size: 1.1rem;
+  margin-top: 1.5rem;
+  cursor: pointer;
+}
