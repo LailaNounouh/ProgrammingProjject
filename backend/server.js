@@ -11,7 +11,7 @@ const newsletterRouter = require('./routes/newsletter');
 const loginRouter = require('./routes/login');
 const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
 const sectorenRouter = require('./routes/sectoren');
-const profileRouter = require('./routes/profile'); // toegevoegd
+const profileRouter = require('./routes/profiel'); // toegevoegd
 
 const app = express();
 
@@ -36,7 +36,7 @@ apiRouter.use('/newsletter', newsletterRouter);
 apiRouter.use('/login', loginRouter);
 apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
 apiRouter.use('/sectoren', sectorenRouter);
-apiRouter.use('/profile', profileRouter);  // nieuwe route toegevoegd
+apiRouter.use('/profiel', profielRouter);  // nieuwe route toegevoegd
 
 app.use('/api', apiRouter);
 
