@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './AdminDashboard.css';
+import Plattegrond from '../../components/plattegrond/Plattegrond';
 
 function App() {
   const bedrijven = [
@@ -27,6 +28,8 @@ function App() {
     { naam: "Onderwijs", zichtbaar: true }
   ]);
   const [nieuweSector, setNieuweSector] = useState('');
+const [bewerkModus, setBewerkModus] = useState(false);
+
 
   const voegSectorToe = () => {
     if (nieuweSector.trim() !== '' && !sectoren.find(s => s.naam === nieuweSector)) {
@@ -72,29 +75,21 @@ function App() {
         <section className="standen-section">
           <h2>Beheer van Standen:</h2>
           <div className="plattegrond">
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="buffet">Buffet</div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand vrij"><div className="status-circle">+</div></div>
-            <div className="stand vrij"><div className="status-circle">+</div></div>
-            <div className="stand vrij"><div className="status-circle">+</div></div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand vrij"><div className="status-circle">+</div></div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="onthaal">Onthaal</div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand vrij"><div className="status-circle">+</div></div>
-          </div>
+  <Plattegrond bewerkModus={bewerkModus} />
+</div>
+
 
           <div className="legend">
             <span><div className="dot red"></div>= bezet</span>
             <span><div className="dot green"></div>= vrij</span>
           </div>
 
-          <button className="bewerken-button">bewerk</button>
+          <button
+  className="bewerken-button"
+  onClick={() => setBewerkModus(!bewerkModus)}
+>
+  {bewerkModus ? 'Opslaan' : 'Bewerk'}
+</button>
         </section>
 
         <section className="gebruikers-section">
