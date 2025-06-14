@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Plattegrond = ({ bewerkModus }) => {
+ const Plattegrond = ({ bewerkModus = false }) => {
   const [bedrijven, setBedrijven] = useState([
     "Microsoft", "Google", "Amazon", "Apple",
     "Meta", "Netflix", "Adobe", "Cisco",
@@ -36,23 +36,21 @@ const tafelsOnder = bedrijven.slice(8, 16);
           const tafelWidth = 500 / 8;
           const x = 150 + index * tafelWidth;
           const y = 310;
-          const bovenOfOnder = 'boven';
           return (
             <g key={bedrijf}>
               <rect x={x} y={y} width={tafelWidth - 5} height="40" fill="#c8e6c9" stroke="black" strokeWidth="1" />
               {bewerkModus ? (
-  <foreignObject x={x} y={y} width={tafelWidth - 5} height="40">
-    <input
-      type="text"
-      value={bedrijf}
-      onChange={(e) => handleChange(index + (bovenOfOnder === 'onder' ? 8 : 0), e.target.value)}
-      style={{ width: "100%", height: "100%", fontSize: "10px", textAlign: "center" }}
-    />
-  </foreignObject>
-) : (
-  <text x={x + (tafelWidth / 2) - 2} y={y + 25} fontSize="10" textAnchor="middle" fill="black">{bedrijf}</text>
-)}
-
+                <foreignObject x={x} y={y} width={tafelWidth - 5} height="40">
+                  <input
+                    type="text"
+                    value={bedrijf}
+                    onChange={(e) => handleChange(index, e.target.value)}
+                    style={{ width: "100%", height: "100%", fontSize: "10px", textAlign: "center" }}
+                  />
+                </foreignObject>
+              ) : (
+                <text x={x + (tafelWidth / 2) - 2} y={y + 25} fontSize="10" textAnchor="middle" fill="black">{bedrijf}</text>
+              )}
             </g>
           );
         })}
@@ -62,7 +60,6 @@ const tafelsOnder = bedrijven.slice(8, 16);
   const tafelWidth = 500 / 8;
   const x = 150 + index * tafelWidth;
   const y = 640;
-  const bovenOfOnder = 'onder';
   return (
     <g key={bedrijf}>
       <rect x={x} y={y} width={tafelWidth - 5} height="40" fill="#ffe082" stroke="black" strokeWidth="1" />

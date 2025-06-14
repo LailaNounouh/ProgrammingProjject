@@ -1,0 +1,74 @@
+.standen-module {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.standen-module h2 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.info-text {
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.plattegrond-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+.legenda {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.legenda h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.legenda-items {
+  display: flex;
+  gap: 2rem;
+}
+
+.legenda-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legenda-kleur {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.legenda-kleur.bedrijf {
+  background-color: #c8e6c9;
+  border: 1px solid black;
+}
+
+.legenda-kleur.faciliteit {
+  background-color: #e0f7fa;
+  border: 1px solid black;
+}
+
+/* Zorg ervoor dat de plattegrond responsief is */
+@media (max-width: 768px) {
+  .standen-module {
+    padding: 1rem;
+  }
+
+  .legenda-items {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
