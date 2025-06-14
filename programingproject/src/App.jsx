@@ -46,7 +46,7 @@ export default function App() {
           <Route path="*" element={<Notfound />} />
  
           {/* Seeker */}
-          <Route path="/seeker" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
+          <Route path="/werkzoekende" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
  
           {/* Student */}
           <Route path="/student" element={<StudentenLayout><StudentDashboard /></StudentenLayout>} />

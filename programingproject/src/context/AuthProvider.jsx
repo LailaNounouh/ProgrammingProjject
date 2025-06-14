@@ -10,7 +10,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // ✅ Herstel gebruiker bij herladen van de pagina
   useEffect(() => {
     try {
       const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -23,45 +22,61 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // ✅ Login functie
+  
   const login = async (email, password, type) => {
-    try {
-      const response = await fetch(`${baseUrl}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, type }),
-      });
+  try {
+    const response = await fetch(`${baseUrl}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, type }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Ongeldige inloggegevens');
-      }
-
-      const userData = {
-        email: data.user.email,
-        id: data.user.id,
-        role: type,
-      };
-
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
-
-      // ✅ Redirect naar correcte pagina
-      if (['student', 'bedrijf', 'werkzoekende', 'admin'].includes(type)) {
-        navigate(`/${type}`);
-      } else {
-        navigate('/');
-      }
-
-      return { success: true };
-    } catch (error) {
-      console.error('Login fout:', error.message);
-      return { success: false, message: error.message };
+    if (!response.ok) {
+      throw new Error(data.error || 'Ongeldige inloggegevens');
     }
-  };
 
-  // ✅ Logout functie
+    const userData = {
+      email: data.user.email,
+      id: data.user.id,
+      role: type,
+      ...(type === 'bedrijf' && {
+        bedrijfsnaam: data.user.bedrijfsnaam,
+        sector: data.user.sector,
+        website: data.user.website,
+        telefoonnummer: data.user.telefoonnummer,
+        gemeente: data.user.gemeente
+      })
+    };
+
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+
+    switch(type) {
+      case 'student':
+        navigate('/student');
+        break;
+      case 'bedrijf':
+        navigate('/bedrijf');
+        break;
+      case 'werkzoekende':
+        navigate('/werkzoekende');
+        break;
+      case 'admin':
+        navigate('/admin');
+        break;
+      default:
+        navigate('/');
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Login fout:', error);
+    return { success: false, message: error.message };
+  }
+};
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');

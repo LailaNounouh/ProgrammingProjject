@@ -1,51 +1,87 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../db');
+const db = require('../db');
 const bcrypt = require('bcryptjs');
 
-// POST /api/login
 router.post('/', async (req, res) => {
   const { email, password, type } = req.body;
+  console.log('Login poging:', { email, type }); 
 
   if (!email || !password || !type) {
     return res.status(400).json({ error: 'Email, wachtwoord en type zijn verplicht' });
   }
 
   try {
-    let table;
-    if (type === 'student') {
-      table = 'Studenten';
-    } else if (type === 'werkzoekende') {
-      table = 'Werkzoekenden';
-    } else if (type === 'admin') {
-      table = 'Admins';
-    } else if (type === 'bedrijf') {
-      // Bedrijven hebben geen wachtwoord, dus login niet ondersteund
-      return res.status(400).json({ error: 'Bedrijven kunnen niet inloggen via deze route' });
+    let query;
+    let params = [email];
+
+  
+    if (type === 'bedrijf') {
+      query = `
+        SELECT 
+          id,
+          email,
+          wachtwoord,
+          naam as bedrijfsnaam,
+          sector,
+          website_of_linkedin,
+          telefoonnummer,
+          gemeente
+        FROM Bedrijven 
+        WHERE email = ?
+      `;
     } else {
-      return res.status(400).json({ error: 'Ongeldig type gebruiker' });
+      query = `
+        SELECT id, email, wachtwoord, naam
+        FROM ${type === 'student' ? 'Studenten' : 
+              type === 'werkzoekende' ? 'Werkzoekenden' : 
+              'Admins'} 
+        WHERE email = ?
+      `;
     }
 
-    const [rows] = await pool.query(`SELECT * FROM ${table} WHERE email = ?`, [email]);
+    const [rows] = await db.query(query, params);
+    
     if (rows.length === 0) {
-      return res.status(401).json({ error: 'Gebruiker niet gevonden' });
+      return res.status(401).json({ 
+        error: `${type === 'bedrijf' ? 'Bedrijf' : 'Gebruiker'} niet gevonden` 
+      });
     }
 
     const user = rows[0];
+    const validPassword = await bcrypt.compare(password, user.wachtwoord);
 
-    // Vergelijk het gehashte wachtwoord
-    const isMatch = await bcrypt.compare(password, user.wachtwoord);
-    if (!isMatch) {
+    if (!validPassword) {
       return res.status(401).json({ error: 'Ongeldig wachtwoord' });
     }
 
-    // Verwijder het wachtwoord voor de response
+
     delete user.wachtwoord;
 
-    res.json({ message: 'Succesvol ingelogd', user });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Serverfout bij inloggen' });
+    const responseData = {
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        type: type,
+        ...(type === 'bedrijf' ? {
+          bedrijfsnaam: user.bedrijfsnaam,
+          sector: user.sector,
+          website: user.website_of_linkedin,
+          telefoonnummer: user.telefoonnummer,
+          gemeente: user.gemeente
+        } : {
+          naam: user.naam
+        })
+      }
+    };
+
+    console.log('Login succesvol:', responseData); 
+    res.json(responseData);
+
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Server error bij inloggen' });
   }
 });
 
