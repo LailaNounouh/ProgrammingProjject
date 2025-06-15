@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const path = require('path');
 
 // Routers
+const authRouter = require('./routes/auth');
 const homeRouter = require('./routes/home');
 const registerRouter = require('./routes/register');
 const newsletterRouter = require('./routes/newsletter');
@@ -12,6 +13,9 @@ const loginRouter = require('./routes/login');
 const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
 const sectorenRouter = require('./routes/sectoren');
 const profielRouter = require('./routes/profiel'); 
+
+const attendanceRouter = require('./routes/attendance');
+
 
 const app = express();
 
@@ -38,6 +42,8 @@ apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
 apiRouter.use('/sectoren', sectorenRouter);
 apiRouter.use('/profiel', profielRouter);  // nieuwe route toegevoegd
 
+apiRouter.use('/attendance', attendanceRouter); // route voor aanwezigheid
+
 app.use('/api', apiRouter);
 
 // Root route
@@ -51,6 +57,7 @@ app.use((req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+const HOST = '::1';
 app.listen(PORT, () => {
   console.log(`Server draait op poort ${PORT}`);
 });

@@ -24,11 +24,13 @@ const AdminHeader = () => {
           <li><Link to="/admin/standen">Beheer van standen</Link></li>
           <li><Link to="/admin/users">Beheer van gebruikers</Link></li>
           <li><Link to="/admin/stats">Statistieken</Link></li>
+          <li><Link to="/admin/attendance">Aanwezigheid</Link></li>
         </ul>
       </nav>
 
       <div className="hamburger" onClick={() => setIsOpen(!isOpen)}>≡</div>
     </header>
+    
   );
 };
 
