@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import './AdminDashboard.css';
+import Plattegrond from '../../components/plattegrond/Plattegrond';
 
 function App() {
   const bedrijven = [
     { naam: 'Microsoft' },
     { naam: 'Cisco' },
     { naam: 'Sopra Steria' },
-    { naam: 'Webdoos' }
+    { naam: 'Webdoos' },
+     { naam: 'Amazon' },
+  { naam: 'Google' }
   ];
 
   const gebruikers = [
@@ -25,6 +28,8 @@ function App() {
     { naam: "Onderwijs", zichtbaar: true }
   ]);
   const [nieuweSector, setNieuweSector] = useState('');
+const [bewerkModus, setBewerkModus] = useState(false);
+
 
   const voegSectorToe = () => {
     if (nieuweSector.trim() !== '' && !sectoren.find(s => s.naam === nieuweSector)) {
@@ -44,46 +49,47 @@ function App() {
       <main className="admin-main">
 
         <section className="bedrijven-section">
-          <h2>Deelnemende bedrijven:</h2>
-          <button className="filter-button">Filter ⌄</button>
-          <div className="bedrijven-grid">
-            {bedrijven.map((bedrijf, index) => (
-              <div key={index} className="bedrijf-card">
-                <div className="bedrijf-image" />
-                <strong>{bedrijf.naam}</strong>
-                <p>• Meer info</p>
-              </div>
-            ))}
-          </div>
-          <button className="bewerken-button">bewerk</button>
-        </section>
+  <h2>Deelnemende bedrijven:</h2>
+
+  <div className="bedrijven-header">
+    <button className="filter-button">Filter ⌄</button>
+  </div>
+
+  <div className="bedrijven-grid">
+    {bedrijven.map((bedrijf, index) => (
+      <div key={index} className="bedrijf-card">
+        <div className="bedrijf-image" />
+        <strong>{bedrijf.naam}</strong>
+        <p>• Meer info</p>
+      </div>
+    ))}
+  </div>
+
+  <div className="bedrijven-footer">
+    <button className="bewerken-button">bewerk</button>
+  </div>
+</section>
+
+
 
         <section className="standen-section">
           <h2>Beheer van Standen:</h2>
           <div className="plattegrond">
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="buffet">Buffet</div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand vrij"><div className="status-circle">+</div></div>
-            <div className="stand vrij"><div className="status-circle">+</div></div>
-            <div className="stand vrij"><div className="status-circle">+</div></div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand vrij"><div className="status-circle">+</div></div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="onthaal">Onthaal</div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand bezet"><div className="status-circle">−</div></div>
-            <div className="stand vrij"><div className="status-circle">+</div></div>
-          </div>
+  <Plattegrond bewerkModus={bewerkModus} />
+</div>
+
 
           <div className="legend">
             <span><div className="dot red"></div>= bezet</span>
             <span><div className="dot green"></div>= vrij</span>
           </div>
 
-          <button className="bewerken-button">bewerk</button>
+          <button
+  className="bewerken-button"
+  onClick={() => setBewerkModus(!bewerkModus)}
+>
+  {bewerkModus ? 'Opslaan' : 'Bewerk'}
+</button>
         </section>
 
         <section className="gebruikers-section">

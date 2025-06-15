@@ -83,7 +83,7 @@ function BedrijvenDashboard() {
         </div>
 
         {/* Instellingenkaart */}
-        <div className="dashboard-card" onClick={() => setActiveTab('instellingen')}>
+        <div className="dashboard-card" onClick={() => navigate('/bedrijf/Settingsbedrijf')}>
           <div className="card-header">
             <div className="card-icon bg-purple">
               <FaCog />

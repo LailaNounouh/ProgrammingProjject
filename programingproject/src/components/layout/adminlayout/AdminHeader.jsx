@@ -6,16 +6,17 @@ const AdminHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="header">
-      <Link to="/" className="logo-link">
-        <img 
-          src="./public/afbeelding/logo-ehb.png" 
-          alt="Logo" 
-          className="logo"
+    <header className="admin-header">
+      <div className="logo-container">
+        <Link to="/" className="logo-link">
+          <img 
+            src="/afbeelding/logo-ehb.png"
+            alt="Logo" 
+            className="logo"
           />
-      </Link>
-
-      <h1 className="admin-title">Admin</h1>
+        </Link>
+        
+      </div>
 
       <nav className={isOpen ? 'open' : ''}>
         <ul>

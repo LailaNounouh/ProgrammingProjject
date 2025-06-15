@@ -1,0 +1,224 @@
+/* Settingsbedrijf.css - Aangepaste versie */
+
+.instellingen-pagina {
+  background-color: #f5f7fa;
+  min-height: 100vh;
+  padding: 2rem;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.instellingen-container {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 3rem;
+  position: relative;
+}
+
+/* Terugknop - Duidelijke positie */
+.terug-knop {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+ background: var(--primary-color);
+  color: #f3f8f8;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none; 
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 10;
+  outline: none;
+}
+
+.terug-knop:hover {
+   background: #bebebe;
+}
+
+.terug-icoon {
+  font-size: 1.2rem;
+}
+
+/* Header stijlen */
+.instellingen-header {
+  margin-bottom: 2.5rem;
+  text-align: center;
+  padding-top: 1rem;
+}
+
+.instellingen-header h1 {
+  color: #1e293b;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.instellingen-subtitel {
+  color: #64748b;
+  font-size: 1.1rem;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Formulier container */
+.bedrijfsformulier {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Gelijkvormige secties */
+.form-sectie {
+  background-color: #f8fafc;
+  border-radius: 10px;
+  padding: 2rem;
+  border: 1px solid #e2e8f0;
+}
+
+/* Dubbele secties container */
+.dubbele-secties {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.kleine-sectie {
+  flex: 1;
+  height: auto;
+}
+
+.sectie-inhoud {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: space-between;
+  height: 100%;
+}
+
+/* Titel stijl */
+.sectie-titel {
+  color: #2563eb;
+  font-size: 1.4rem;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0.8rem;
+  border-bottom: 2px solid #e2e8f0;
+  font-weight: 600;
+}
+
+/* Formulier groepen */
+.formulier-groep {
+  margin-bottom: 1.8rem;
+}
+
+.formulier-label {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 500;
+  color: #334155;
+  font-size: 1rem;
+}
+
+.formulier-label.required::after {
+  content: " *";
+  color: #dc2626;
+}
+
+/* Input velden */
+.formulier-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s;
+  background-color: white;
+  box-sizing: border-box;
+  height: 50px;
+}
+
+.small-input {
+  min-width: 0; /* Voorkomt dat kleine inputs uit de container breken */
+}
+
+.formulier-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Select dropdown */
+select.formulier-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%2364748b' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.2em;
+  padding-right: 2.5rem;
+}
+
+/* Rij layout */
+.formulier-rij {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.formulier-rij .formulier-groep {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+/* Opslaan knop */
+.opslaan-knop {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 1.2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 1rem;
+  transition: all 0.2s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.opslaan-knop:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive aanpassingen */
+@media (max-width: 768px) {
+  .instellingen-pagina {
+    padding: 1rem;
+  }
+  
+  .instellingen-container {
+    padding: 1.5rem;
+  }
+  
+  .terug-knop {
+    position: static;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .formulier-rij {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .dubbele-secties {
+    flex-direction: column;
+  }
+  
+  .instellingen-header h1 {
+    font-size: 1.8rem;
+  }
+}

@@ -11,7 +11,7 @@ function StudentenDashboard() {
   useEffect(() => {
     async function fetchBedrijven() {
       try {
-        const response = await fetch(`${baseUrl}/bedrijven`);
+        const response = await fetch(`${baseUrl}/bedrijvenmodule`);
         if (!response.ok) {
           throw new Error(`HTTP-fout! status: ${response.status}`);
         }
@@ -27,7 +27,7 @@ function StudentenDashboard() {
     fetchBedrijven();
   }, []);
 
-  const alleSectoren = React.useMemo(() => {
+  const alleSectoren = useMemo(() => {
     const sectorSet = new Set();
     bedrijven.forEach(b => {
       if (b.sector_naam) sectorSet.add(b.sector_naam);
@@ -78,18 +78,20 @@ function StudentenDashboard() {
               <p>Geen bedrijven gevonden in deze sector.</p>
             ) : (
               gefilterdeBedrijven.map((bedrijf, index) => (
-                <div className="bedrijf-kaart" key={index}>
+                <div className="bedrijf-kaart" key={`${bedrijf.naam}-${index}`}>
                   {bedrijf.logo_url ? (
                     <img
                       src={bedrijf.logo_url}
-                      alt={`${bedrijf.bedrijfsnaam} logo`}
+                      alt={`${bedrijf.naam} logo`}
                       className="bedrijf-logo"
                     />
                   ) : (
                     <div className="logo-placeholder">Geen logo</div>
                   )}
-                  <p>{bedrijf.bedrijfsnaam || bedrijf.name || bedrijf.id}</p>
-                  <a href="#">Meer info</a>
+                  <p>{bedrijf.naam}</p>
+                  <a href={`/bedrijven/${bedrijf.naam}`} className="meer-info-link">
+                    Meer info
+                  </a>
                 </div>
               ))
             )}
@@ -113,6 +115,7 @@ function StudentenDashboard() {
         </section>
 
         <section id="afspraak">
+          {/* Placeholder voor toekomstige afsprakenmodule */}
         </section>
       </main>
     </div>

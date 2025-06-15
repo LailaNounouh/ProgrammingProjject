@@ -1,0 +1,43 @@
+.bedrijven-lijst {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.bedrijf-item {
+  display: flex;
+  flex-direction: row; /* Logo links, tekst rechts */
+  align-items: flex-start;
+  gap: 1rem;
+  background: #eee;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.bedrijf-logo {
+  max-height: 60px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.bedrijf-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.bedrijf-info h3 {
+  margin: 0;
+}
+
+.bedrijf-info h3 a {
+  color: #0077cc;
+  text-decoration: none;
+}
+
+.bedrijf-info h3 a:hover {
+  text-decoration: underline;
+}

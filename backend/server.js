@@ -2,15 +2,16 @@ const express = require('express');
 const pool = require('./db');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
+const path = require('path');
 
 // Routers
 const homeRouter = require('./routes/home');
 const registerRouter = require('./routes/register');
 const newsletterRouter = require('./routes/newsletter');
 const loginRouter = require('./routes/login');
-
-// Correcte import bedrijvenmodule router (let op juiste bestandsnaam en extensie)
 const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
+const sectorenRouter = require('./routes/sectoren');
+const profielRouter = require('./routes/profiel'); 
 
 const app = express();
 
@@ -22,6 +23,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
+// Statische map voor uploads (foto's e.d.)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Maak apiRouter aan
 const apiRouter = express.Router();
 
@@ -30,20 +34,9 @@ apiRouter.use('/', homeRouter);
 apiRouter.use('/register', registerRouter);
 apiRouter.use('/newsletter', newsletterRouter);
 apiRouter.use('/login', loginRouter);
-
-// Gebruik bedrijvenmodule router onder /bedrijvenmodule
 apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
-
-// Optioneel: route /bedrijven (met alleen id en bedrijfsnaam)
-apiRouter.get('/bedrijven', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT id, bedrijfsnaam FROM bedrijven');
-    res.json(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Database fout bij ophalen bedrijven' });
-  }
-});
+apiRouter.use('/sectoren', sectorenRouter);
+apiRouter.use('/profiel', profielRouter);  // nieuwe route toegevoegd
 
 app.use('/api', apiRouter);
 

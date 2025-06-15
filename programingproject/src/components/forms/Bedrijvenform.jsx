@@ -4,21 +4,36 @@ import { baseUrl } from "../../config";
 export default function BedrijfForm() {
   const [bedrijfsnaam, setBedrijfsnaam] = useState('');
   const [email, setEmail] = useState('');
-  const [sector, setSector] = useState('');
   const [wachtwoord, setWachtwoord] = useState('');
+  const [sector, setSector] = useState('');
+  const [straat, setStraat] = useState('');
+  const [nummer, setNummer] = useState('');
+  const [postcode, setPostcode] = useState('');
+  const [gemeente, setGemeente] = useState('');
+  const [telefoonnummer, setTelefoonnummer] = useState('');
+  const [btwNummer, setBtwNummer] = useState('');
+  const [contactpersoonFacturatie, setContactpersoonFacturatie] = useState('');
+  const [emailFacturatie, setEmailFacturatie] = useState('');
+  const [poNummer, setPoNummer] = useState('');
+  const [contactpersoonBeurs, setContactpersoonBeurs] = useState('');
+  const [emailBeurs, setEmailBeurs] = useState('');
+  const [website, setWebsite] = useState('');
+  const [sectoren, setSectoren] = useState([]);
+
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [sectoren, setSectoren] = useState([]);
 
   useEffect(() => {
     fetch(`${baseUrl}/sectoren`)
       .then(res => res.json())
       .then(data => {
-        // Filter enkel zichtbare sectoren
         const zichtbare = data.filter(sector => sector.zichtbaar);
         setSectoren(zichtbare);
       })
-      .catch(() => setSectoren([]));
+      .catch((err) => {
+        console.error('Fout bij ophalen sectoren:', err);
+        setSectoren([]);
+      });
   }, []);
 
   const handleSubmit = async (e) => {
@@ -26,8 +41,8 @@ export default function BedrijfForm() {
     setError(null);
     setSuccess(null);
 
-    if (!bedrijfsnaam || !email || !sector || !wachtwoord) {
-      setError('Alle velden zijn verplicht');
+    if (!bedrijfsnaam || !email || !sector || !wachtwoord || !straat || !nummer || !postcode || !gemeente || !telefoonnummer || !btwNummer || !contactpersoonFacturatie || !emailFacturatie || !contactpersoonBeurs || !emailBeurs || !website) {
+      setError('Alle verplichte velden moeten ingevuld zijn');
       return;
     }
 
@@ -37,10 +52,22 @@ export default function BedrijfForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'bedrijf',
-          naam: bedrijfsnaam, // backend verwacht "naam"
+          naam: bedrijfsnaam,
           email,
-          sector,
           wachtwoord,
+          sector: parseInt(sector),
+          straat,
+          nummer,
+          postcode,
+          gemeente,
+          telefoonnummer,
+          btw_nummer: btwNummer,
+          contactpersoon_facturatie: contactpersoonFacturatie,
+          email_facturatie: emailFacturatie,
+          po_nummer: poNummer,
+          contactpersoon_beurs: contactpersoonBeurs,
+          email_beurs: emailBeurs,
+          website
         }),
       });
 
@@ -50,10 +77,23 @@ export default function BedrijfForm() {
         setError(data.error || 'Er is een fout opgetreden');
       } else {
         setSuccess('Registratie succesvol!');
+        // Velden resetten
         setBedrijfsnaam('');
         setEmail('');
-        setSector('');
         setWachtwoord('');
+        setSector('');
+        setStraat('');
+        setNummer('');
+        setPostcode('');
+        setGemeente('');
+        setTelefoonnummer('');
+        setBtwNummer('');
+        setContactpersoonFacturatie('');
+        setEmailFacturatie('');
+        setPoNummer('');
+        setContactpersoonBeurs('');
+        setEmailBeurs('');
+        setWebsite('');
       }
     } catch (err) {
       setError('Server niet bereikbaar');
@@ -65,28 +105,30 @@ export default function BedrijfForm() {
       <h3>Bedrijfsgegevens</h3>
 
       <input type="text" placeholder="Bedrijfsnaam *" value={bedrijfsnaam} onChange={(e) => setBedrijfsnaam(e.target.value)} required />
+
       <select value={sector} onChange={(e) => setSector(e.target.value)} required>
         <option value="">Kies een sector *</option>
-        {sectoren.map((s, index) => (
-          <option key={index} value={s.naam}>
-            {s.naam}
-          </option>
+        {sectoren.map((s) => (
+          <option key={s.sector_id} value={s.sector_id}>{s.naam}</option>
         ))}
       </select>
-      <input type="text" placeholder="Straat *" required />
-      <input type="text" placeholder="Nummer *" required />
-      <input type="text" placeholder="Postcode *" required />
-      <input type="text" placeholder="Gemeente *" required />
-      <input type="tel" placeholder="Telefoonnummer *" required />
+
+      <input type="text" placeholder="Straat *" value={straat} onChange={(e) => setStraat(e.target.value)} required />
+      <input type="text" placeholder="Nummer *" value={nummer} onChange={(e) => setNummer(e.target.value)} required />
+      <input type="text" placeholder="Postcode *" value={postcode} onChange={(e) => setPostcode(e.target.value)} required />
+      <input type="text" placeholder="Gemeente *" value={gemeente} onChange={(e) => setGemeente(e.target.value)} required />
+      <input type="tel" placeholder="Telefoonnummer *" value={telefoonnummer} onChange={(e) => setTelefoonnummer(e.target.value)} required />
+
       <input type="email" placeholder="E-mailadres *" value={email} onChange={(e) => setEmail(e.target.value)} required />
-      <input type="text" placeholder="BTW-nummer *" required />
-      <input type="text" placeholder="Naam contactpersoon facturatie *" required />
-      <input type="email" placeholder="E-mail contactpersoon facturatie *" required />
-      <input type="text" placeholder="PO nummer" />
-      <input type="text" placeholder="Naam contactpersoon beurs *" required />
-      <input type="email" placeholder="E-mail contactpersoon beurs *" required />
-      <input type="url" placeholder="Website of LinkedIn van uw bedrijf *" required />
-      <input type="file" required />
+
+      <input type="text" placeholder="BTW-nummer *" value={btwNummer} onChange={(e) => setBtwNummer(e.target.value)} required />
+      <input type="text" placeholder="Naam contactpersoon facturatie *" value={contactpersoonFacturatie} onChange={(e) => setContactpersoonFacturatie(e.target.value)} required />
+      <input type="email" placeholder="E-mail contactpersoon facturatie *" value={emailFacturatie} onChange={(e) => setEmailFacturatie(e.target.value)} required />
+      <input type="text" placeholder="PO nummer" value={poNummer} onChange={(e) => setPoNummer(e.target.value)} />
+      <input type="text" placeholder="Naam contactpersoon beurs *" value={contactpersoonBeurs} onChange={(e) => setContactpersoonBeurs(e.target.value)} required />
+      <input type="email" placeholder="E-mail contactpersoon beurs *" value={emailBeurs} onChange={(e) => setEmailBeurs(e.target.value)} required />
+      <input type="url" placeholder="Website of LinkedIn van uw bedrijf *" value={website} onChange={(e) => setWebsite(e.target.value)} required />
+
       <input type="password" placeholder="Wachtwoord *" value={wachtwoord} onChange={(e) => setWachtwoord(e.target.value)} required />
 
       <button type="submit">Verder</button>

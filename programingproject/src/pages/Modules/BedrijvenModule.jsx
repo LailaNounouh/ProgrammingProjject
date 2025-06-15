@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { baseUrl } from "../../config";
 import "./BedrijvenModule.css";
 
@@ -8,11 +9,18 @@ export default function Bedrijven() {
   useEffect(() => {
     async function fetchBedrijven() {
       try {
-        const response = await fetch(`${baseUrl}/bedrijven`);
+        const response = await fetch(`${baseUrl}/bedrijvenmodule`);
         const data = await response.json();
-        setBedrijven(data);
+
+        if (Array.isArray(data)) {
+          setBedrijven(data);
+        } else {
+          console.error("Ongeldig formaat van API-response:", data);
+          setBedrijven([]);
+        }
       } catch (error) {
         console.error("Fout bij ophalen bedrijven:", error);
+        setBedrijven([]);
       }
     }
 
@@ -27,68 +35,58 @@ export default function Bedrijven() {
       {bedrijven.length === 0 ? (
         <p>Bedrijven worden geladen...</p>
       ) : (
-        <div className="bedrijven-grid">
+        <ul className="bedrijven-lijst">
           {bedrijven.map((bedrijf) => (
-            <div key={bedrijf.id} className="bedrijf-kaart">
-              {bedrijf.logo_url ? (
+            <li key={`${bedrijf.naam}-${bedrijf.email}`} className="bedrijf-item">
+              {bedrijf.logo_url && (
                 <img
                   src={bedrijf.logo_url}
-                  alt={`Logo van ${bedrijf.bedrijfsnaam}`}
+                  alt={`Logo van ${bedrijf.naam}`}
                   className="bedrijf-logo"
                 />
-              ) : (
-                <div className="logo-placeholder">Geen logo</div>
               )}
 
-              <h3>{bedrijf.bedrijfsnaam}</h3>
+              <div className="bedrijf-info">
+                <h3>
+                  <Link to={`/bedrijf/${encodeURIComponent(bedrijf.naam)}`}>
+                    {bedrijf.naam}
+                  </Link>
+                </h3>
 
-              <p className="bedrijf-beschrijving">
-                {bedrijf.beschrijving || "Geen beschrijving beschikbaar."}
-              </p>
-
-              <p className="bedrijf-adres">
-                {bedrijf.straat ?? ""} {bedrijf.nummer ?? ""},{" "}
-                {bedrijf.postcode ?? ""} {bedrijf.gemeente ?? ""}
-              </p>
-
-              {bedrijf.email && (
                 <p>
-                  <strong>Email:</strong> {bedrijf.email}
+                  <strong>Adres:</strong>{" "}
+                  {bedrijf.straat ?? ""} {bedrijf.nummer ?? ""},{" "}
+                  {bedrijf.postcode ?? ""} {bedrijf.gemeente ?? ""}
                 </p>
-              )}
 
-              {bedrijf.telefoon && (
-                <p>
-                  <strong>Telefoon:</strong> {bedrijf.telefoon}
-                </p>
-              )}
+                {bedrijf.email && (
+                  <p>
+                    <strong>Email:</strong> {bedrijf.email}
+                  </p>
+                )}
 
-              {bedrijf.website && (
-                <p>
-                  <strong>Website:</strong>{" "}
-                  <a href={bedrijf.website} target="_blank" rel="noopener noreferrer">
-                    {bedrijf.website}
-                  </a>
-                </p>
-              )}
+                {bedrijf.telefoonnummer && (
+                  <p>
+                    <strong>Telefoon:</strong> {bedrijf.telefoonnummer}
+                  </p>
+                )}
 
-              {bedrijf.linkedin && (
-                <p>
-                  <strong>LinkedIn:</strong>{" "}
-                  <a href={bedrijf.linkedin} target="_blank" rel="noopener noreferrer">
-                    {bedrijf.linkedin}
-                  </a>
-                </p>
-              )}
-
-              {bedrijf.sector_naam && (
-                <p>
-                  <strong>Sector:</strong> {bedrijf.sector_naam}
-                </p>
-              )}
-            </div>
+                {bedrijf.website_of_linkedin && (
+                  <p>
+                    <strong>Website:</strong>{" "}
+                    <a
+                      href={bedrijf.website_of_linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {bedrijf.website_of_linkedin}
+                    </a>
+                  </p>
+                )}
+              </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );

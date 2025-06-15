@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ProfielSettingsModule.css";
 
 import TaalSelector from "../../components/dropdowns/TaalSelector";
@@ -10,6 +10,8 @@ import { baseUrl } from "../../config";
 import { useProfile } from "../../context/ProfileContext";
 
 export default function ProfielSettingsModule() {
+  const { profile, fetchProfile } = useProfile();
+
   const [formData, setFormData] = useState({
     naam: "",
     email: "",
@@ -18,7 +20,17 @@ export default function ProfielSettingsModule() {
   });
 
   const [profilePicture, setProfilePicture] = useState(null);
-  const { fetchProfile } = useProfile();
+
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        naam: profile.naam || "",
+        email: profile.email || "",
+        telefoon: profile.telefoon || "",
+        aboutMe: profile.aboutMe || "",
+      });
+    }
+  }, [profile]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,18 +57,18 @@ export default function ProfielSettingsModule() {
     }
 
     try {
-      const response = await fetch(`${baseUrl}/api/profile`, {
+      const response = await fetch(`${baseUrl}/studentenaccount`, {
         method: "POST",
         body: data,
       });
 
-      if (!response.ok) throw new Error("Fout bij verzenden");
+      if (!response.ok) throw new Error("Fout bij opslaan van profiel");
 
-      await fetchProfile(); // update profiel na verzenden
-      alert("Profiel opgeslagen!");
+      await fetchProfile();
+      alert("Profiel succesvol opgeslagen!");
     } catch (error) {
-      alert("Er ging iets mis bij het verzenden.");
-      console.error(error);
+      console.error("Fout bij verzenden:", error);
+      alert(`Er ging iets mis: ${error.message}`);
     }
   };
 
