@@ -28,8 +28,8 @@ router.post('/', async (req, res) => {
           b.telefoonnummer,
           b.gemeente
         FROM Bedrijven b
-        JOIN Bedrijf_Sector bs ON b.bedrijf_id = bs.bedrijf_id
-        JOIN Sectoren s ON bs.sector_id = s.sector_id 
+        LEFT JOIN Bedrijf_Sector bs ON b.bedrijf_id = bs.bedrijf_id
+        LEFT JOIN Sectoren s ON bs.sector_id = s.sector_id 
         WHERE b.email = ?
         GROUP BY b.bedrijf_id
         LIMIT 1
