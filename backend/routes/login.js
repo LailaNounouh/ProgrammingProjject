@@ -19,19 +19,12 @@ router.post('/', async (req, res) => {
       // Gebruik GROUP_CONCAT voor sectoren en LIMIT 1
       query = `
         SELECT 
-          b.bedrijf_id AS id,
-          b.email,
-          b.wachtwoord,
-          b.naam AS bedrijfsnaam,
-          GROUP_CONCAT(s.naam SEPARATOR ', ') AS sectoren,
-          b.website_of_linkedin,
-          b.telefoonnummer,
-          b.gemeente
-        FROM Bedrijven b
-        JOIN Bedrijf_Sector bs ON b.bedrijf_id = bs.bedrijf_id
-        JOIN Sectoren s ON bs.sector_id = s.sector_id 
-        WHERE b.email = ?
-        GROUP BY b.bedrijf_id
+          bedrijf_id AS id,
+          email,
+          wachtwoord,
+          naam AS bedrijfsnaam,
+        FROM Bedrijven
+        WHERE email = ?
         LIMIT 1
       `;
     } else if (type === 'student') {
