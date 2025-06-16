@@ -1,12 +1,15 @@
+// src/modules/profiel/ProfielModule.jsx
 import React from "react";
 import "./ProfielModule.css";
 import { useProfile } from "../../context/ProfileContext";
 import { baseUrl } from "../../config";
 
 export default function ProfielModule() {
-  const { profile } = useProfile();
+  const { profile, loading, error } = useProfile();
 
-  if (!profile) return <p>Profiel wordt geladen...</p>;
+  if (loading) return <p>Profiel wordt geladen...</p>;
+  if (error) return <p style={{ color: "red" }}>Fout: {error}</p>;
+  if (!profile) return <p>Geen profiel beschikbaar. Log in om je gegevens te zien.</p>;
 
   const {
     naam,
@@ -39,38 +42,22 @@ export default function ProfielModule() {
 
         <h3>Talenkennis</h3>
         <ul>
-          {talen.length > 0 ? (
-            talen.map((taal, index) => <li key={`taal-${index}`}>{taal}</li>)
-          ) : (
-            <li>Geen talen opgegeven</li>
-          )}
+          {talen.length > 0 ? talen.map((taal, i) => <li key={i}>{taal}</li>) : <li>Geen talen opgegeven</li>}
         </ul>
 
         <h3>Programmeertalen</h3>
         <ul>
-          {programmeertalen.length > 0 ? (
-            programmeertalen.map((code, index) => <li key={`code-${index}`}>{code}</li>)
-          ) : (
-            <li>Geen programmeertalen opgegeven</li>
-          )}
+          {programmeertalen.length > 0 ? programmeertalen.map((code, i) => <li key={i}>{code}</li>) : <li>Geen programmeertalen opgegeven</li>}
         </ul>
 
         <h3>Soft Skills</h3>
         <ul>
-          {softSkills.length > 0 ? (
-            softSkills.map((skill, index) => <li key={`soft-${index}`}>{skill}</li>)
-          ) : (
-            <li>Geen soft skills opgegeven</li>
-          )}
+          {softSkills.length > 0 ? softSkills.map((s, i) => <li key={i}>{s}</li>) : <li>Geen soft skills opgegeven</li>}
         </ul>
 
         <h3>Hard Skills</h3>
         <ul>
-          {hardSkills.length > 0 ? (
-            hardSkills.map((skill, index) => <li key={`hard-${index}`}>{skill}</li>)
-          ) : (
-            <li>Geen hard skills opgegeven</li>
-          )}
+          {hardSkills.length > 0 ? hardSkills.map((s, i) => <li key={i}>{s}</li>) : <li>Geen hard skills opgegeven</li>}
         </ul>
       </div>
     </div>
