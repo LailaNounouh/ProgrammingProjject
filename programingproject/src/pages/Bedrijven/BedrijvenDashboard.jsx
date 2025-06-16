@@ -65,9 +65,9 @@ function BedrijvenDashboard() {
     iconClass: "bg-blue"
   },
   {
-    title: "Opleidingsmatch",
+    title: "Afspraakoverzicht",
     icon: <FaCalendarAlt />,
-    onClick: () => navigate ('<bedrijf/afspraken'),
+    onClick: () => navigate('/bedrijf/afspraken'),
     iconClass: "bg-green",
     showAfspraken: true 
   },
