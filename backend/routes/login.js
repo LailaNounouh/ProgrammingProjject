@@ -10,7 +10,7 @@ router.post('/', async (req, res) => {
   if (!email || !password || !type) {
     return res.status(400).json({ error: 'Email, wachtwoord en type zijn verplicht' });
   }
-
+// test om dit op te lossen
   try {
     let query;
     let params = [email];
