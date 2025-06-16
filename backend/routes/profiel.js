@@ -68,7 +68,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
       if (foto_url) {
         await pool.query(
           `UPDATE Studenten
-           SET naam = ?, telefoon = ?, aboutMe = ?, foto_url = ?, github_url = ?, linkedin_url = ?, updated_at = NOW()
+           SET naam = ?, telefoon = ?, aboutMe = ?, foto_url = ?, github_url = ?, linkedin_url = ?
            WHERE email = ?`,
           [
             naam || null,
