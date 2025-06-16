@@ -166,51 +166,54 @@ h1 {
 }
 
 /* Formulier */
-.form-section {
+.home .form-section {
   margin: 40px auto;
   background-color: #00a9b5; 
   padding: 40px;
   border-radius: 12px;
   color: white;
+  align-items: center;
 }
 
-form {
+.home form {
   display: flex;
   flex-direction: column;
   max-width: 100%;
+   align-items: center;
 }
 
-form input[type="text"],
-form input[type="email"] {
+.home .form-section input[type="text"],
+.home .form-section input[type="email"] {
   padding: 14px 16px;
   margin-bottom: 15px;
   border: 1px solid #ddd;
   border-radius: 6px;
-  width: 100%;
+  width: 320px;
   box-sizing: border-box;
   font-size: 1rem;
   transition: all 0.3s;
 }
 
-.form-section h3 {
+.home .form-section h3 {
   margin: 0 0 25px 0;
   color: white;
   text-align: center; 
   font-size: 1.8rem;
 }
 
-.form-group {
+.home .form-group {
   margin-bottom: 20px;
+
 }
 
-.checkbox-group {
+.home .checkbox-group {
   margin: 20px 0;
   display: flex;
   flex-direction: column; 
   gap: 10px; 
 }
 
-.checkbox-option {
+.home .checkbox-option {
   display: flex;
   align-items: center;
   margin-bottom: 12px;
@@ -220,12 +223,12 @@ form input[type="email"] {
   cursor: pointer;
 }
 
-.checkbox-option:hover {
+.home .checkbox-option:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-.checkbox-option input[type="checkbox"],
-.checkbox-option input[type="radio"] {
+.home .checkbox-option input[type="checkbox"],
+.home .checkbox-option input[type="radio"] {
   width: 20px;
   height: 20px;
   margin: 0 12px 0 0; 
@@ -234,20 +237,20 @@ form input[type="email"] {
   flex-shrink: 0;
 }
 
-.checkbox-option span {
+.home .checkbox-option span {
   font-weight: normal;
   color: white;
   line-height: 1.4; 
 }
 
-.form-group label {
+.home .form-group label {
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
   color: #555;
 }
 
-form button {
+.home form button {
   padding: 12px 20px;
   background-color: white;
   color:  #00a9b5;
@@ -260,7 +263,7 @@ form button {
   transition: all 0.3s;
 }
 
-form button:hover {
+.home form button:hover {
   background-color: #f0f0f0;
   transform: translateY(-2px);
 }
