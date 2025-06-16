@@ -9,6 +9,50 @@
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
 }
 
+.contact-container h1 {
+  color: #2c3e50;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #00a9b5;
+  font-weight: 700;
+}
+
+.contact-form-section h2 {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+/* Contact info */
+.contact-info {
+  padding: 1.5rem 0;
+}
+
+.contact-info p {
+  margin: 0.8rem 0;
+  line-height: 1.6;
+  color: #555;
+} 
+
+.contact-details {
+  margin: 1.5rem 0;
+}
+
+.contact-details p {
+  margin: 0.8rem 0;
+  padding: 0.5rem 0;
+}
+
+.contact-details strong {
+  color: #2c3e50;
+  font-weight: 600;
+  min-width: 90px;
+  display: inline-block;
+}
+
+/* Knop "verzenden" */
 button[type="submit"] {
   background-color: #D64045;
   color: white;
