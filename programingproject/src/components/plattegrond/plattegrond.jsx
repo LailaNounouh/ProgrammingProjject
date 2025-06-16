@@ -1,22 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Plattegrond = ({ bewerkModus }) => {
-  const [bedrijven, setBedrijven] = useState([
-    "Microsoft", "Google", "Amazon", "Apple",
-    "Meta", "Netflix", "Adobe", "Cisco",
-    "Intel", "IBM", "Salesforce", "Spotify",
-    "Oracle", "Nvidia", "Dell", "Siemens"
-  ]);
+  const [bedrijven, setBedrijven] = useState([]);
+  const [selectedInfo, setSelectedInfo] = useState(null); // Voor het weergeven van info onder de kaart
+  const maxPlaatsen = 16; // Maximum aantal plaatsen op de plattegrond
 
-  const handleChange = (index, value) => {
-  const nieuweLijst = [...bedrijven];
-  nieuweLijst[index] = value;
-  setBedrijven(nieuweLijst);
-};
+  useEffect(() => {
+    async function fetchBedrijven() {
+      try {
+        const response = await fetch("/api/bedrijvenmodule");
+        const data = await response.json();
 
-const tafelsBoven = bedrijven.slice(0, 8);
-const tafelsOnder = bedrijven.slice(8, 16);
+        if (Array.isArray(data)) {
+          setBedrijven(data.map((bedrijf) => bedrijf.naam));
+        } else {
+          console.error("Ongeldig formaat van API-response:", data);
+          setBedrijven([]);
+        }
+      } catch (error) {
+        console.error("Fout bij ophalen bedrijven:", error);
+        setBedrijven([]);
+      }
+    }
 
+    fetchBedrijven();
+  }, []);
+
+  const plaatsen = [...bedrijven, ...Array(maxPlaatsen - bedrijven.length).fill(null)];
+
+  const tafelsBoven = plaatsen.slice(0, 8);
+  const tafelsOnder = plaatsen.slice(8, 16);
+
+  const handleTableClick = (bedrijf) => {
+    if (!bedrijf) {
+      setSelectedInfo("Deze plaats heeft voorlopig nog geen bedrijf.");
+    } else {
+      setSelectedInfo(`Bedrijf: ${bedrijf}`);
+    }
+  };
 
   return (
     <div className="plattegrond-container">
@@ -36,51 +57,30 @@ const tafelsOnder = bedrijven.slice(8, 16);
           const tafelWidth = 500 / 8;
           const x = 150 + index * tafelWidth;
           const y = 310;
-          const bovenOfOnder = 'boven';
           return (
-            <g key={bedrijf}>
-              <rect x={x} y={y} width={tafelWidth - 5} height="40" fill="#c8e6c9" stroke="black" strokeWidth="1" />
-              {bewerkModus ? (
-  <foreignObject x={x} y={y} width={tafelWidth - 5} height="40">
-    <input
-      type="text"
-      value={bedrijf}
-      onChange={(e) => handleChange(index + (bovenOfOnder === 'onder' ? 8 : 0), e.target.value)}
-      style={{ width: "100%", height: "100%", fontSize: "10px", textAlign: "center" }}
-    />
-  </foreignObject>
-) : (
-  <text x={x + (tafelWidth / 2) - 2} y={y + 25} fontSize="10" textAnchor="middle" fill="black">{bedrijf}</text>
-)}
-
+            <g key={`boven-${index}`} onClick={() => handleTableClick(bedrijf)}>
+              <rect x={x} y={y} width={tafelWidth - 5} height="40" fill={bedrijf ? "#c8e6c9" : "#ffcccb"} stroke="black" strokeWidth="1" />
+              <text x={x + (tafelWidth / 2) - 2} y={y + 25} fontSize="10" textAnchor="middle" fill="black">
+                {bedrijf || "X"}
+              </text>
             </g>
           );
         })}
 
         {/* Tafels onder */}
         {tafelsOnder.map((bedrijf, index) => {
-  const tafelWidth = 500 / 8;
-  const x = 150 + index * tafelWidth;
-  const y = 640;
-  const bovenOfOnder = 'onder';
-  return (
-    <g key={bedrijf}>
-      <rect x={x} y={y} width={tafelWidth - 5} height="40" fill="#ffe082" stroke="black" strokeWidth="1" />
-      {bewerkModus ? (
-        <foreignObject x={x} y={y} width={tafelWidth - 5} height="40">
-          <input
-            type="text"
-            value={bedrijf}
-            onChange={(e) => handleChange(index + 8, e.target.value)} // +8 omdat dit de tweede rij is
-            style={{ width: "100%", height: "100%", fontSize: "10px", textAlign: "center" }}
-          />
-        </foreignObject>
-      ) : (
-        <text x={x + (tafelWidth / 2) - 2} y={y + 25} fontSize="10" textAnchor="middle" fill="black">{bedrijf}</text>
-      )}
-    </g>
-  );
-})}
+          const tafelWidth = 500 / 8;
+          const x = 150 + index * tafelWidth;
+          const y = 640;
+          return (
+            <g key={`onder-${index}`} onClick={() => handleTableClick(bedrijf)}>
+              <rect x={x} y={y} width={tafelWidth - 5} height="40" fill={bedrijf ? "#ffe082" : "#ffcccb"} stroke="black" strokeWidth="1" />
+              <text x={x + (tafelWidth / 2) - 2} y={y + 25} fontSize="10" textAnchor="middle" fill="black">
+                {bedrijf || "X"}
+              </text>
+            </g>
+          );
+        })}
 
         {/* Auditoria boven */}
         <rect x="150" y="100" width="250" height="200" fill="#e0f7fa" stroke="black" strokeWidth="2" />
@@ -96,6 +96,12 @@ const tafelsOnder = bedrijven.slice(8, 16);
         <rect x="400" y="700" width="250" height="200" fill="#e0f7fa" stroke="black" strokeWidth="2" />
         <text x="525" y="820" fontSize="20" textAnchor="middle" fill="black">Auditorium 4</text>
       </svg>
+
+      {/* Extra informatie onder de kaart */}
+      <div className="extra-info">
+        <h3>Informatie over de geselecteerde tafel:</h3>
+        <p>{selectedInfo || "Klik op een tafel om meer informatie te zien."}</p>
+      </div>
     </div>
   );
 };
