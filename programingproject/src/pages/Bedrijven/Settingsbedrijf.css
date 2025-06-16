@@ -1,4 +1,4 @@
-/* Settingsbedrijf.css - Aangepaste versie */
+
 
 .instellingen-pagina {
   background-color: #f5f7fa;
@@ -86,8 +86,15 @@
 }
 
 .kleine-sectie {
-  flex: 1;
   height: auto;
+}
+
+.dubbele-secties .kleine-sectie:first-child {
+  flex: 2; /* iets breder naar links */
+}
+
+.dubbele-secties .kleine-sectie:last-child {
+  flex: 2; /* iets breder naar rechts */
 }
 
 .sectie-inhoud {
