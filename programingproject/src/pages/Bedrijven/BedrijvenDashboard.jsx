@@ -95,16 +95,9 @@ function BedrijvenDashboard() {
               <h3 className="card-title">{card.title}</h3>
             </div>
             {card.description && <p className="card-description">{card.description}</p>}
-            {card.showAfspraken && (
-              <div className="afspraken-list">
-                <p>Overzicht Afspraken</p>
-                {afspraken.map((afspraak, i) => (
-                  <div key={i} className="afspraak-item">
-                    {afspraak.student} - {afspraak.datum} {afspraak.tijd && `om ${afspraak.tijd}`}
-                  </div>
-                ))}
-              </div>
-            )}
+         {card.showAfspraken && (
+  <p className="card-description">Bekijk geplande afspraken</p>
+)}
             <div className="card-footer">
               <span>Direct naar {card.title.toLowerCase()}</span>
               <FaChevronRight className="chevron-icon" />
