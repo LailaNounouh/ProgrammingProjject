@@ -40,34 +40,31 @@ export default function Contact() {
         <h2>Contactformulier</h2>
       <form className="contact-form" onSubmit={(e) => e.preventDefault()}>
         <div className="form-group">
-         <label htmlFor="name">Naam</label>
           <input 
             type="text" 
             id="name" 
             name="name" 
-            placeholder="Vul uw naam in" 
+            placeholder="Naam" 
             required 
           />
         </div>
     
         <div className="form-group">
-          <label htmlFor="email">E-mail</label>
             <input 
              type="email" 
              id="email" 
              name="email" 
-             placeholder="Vul uw e-mailadres in" 
+             placeholder="E-mailadres" 
              required 
             />
         </div>
 
         <div className="form-group">
-          <label htmlFor="subject">Onderwerp</label>
             <input 
               type="text" 
               id="subject" 
               name="subject" 
-              placeholder="Waarover gaat uw vraag?" 
+              placeholder="Onderwerp" 
               required 
             />
         </div>
