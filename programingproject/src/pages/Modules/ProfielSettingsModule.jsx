@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./ProfielSettingsModule.css";
 
-import { useProfile } from "../../context/ProfileContext";  // <-- toevoegen
+import { useProfile } from "../../context/ProfileContext";
 
 import TaalSelector from "../../components/dropdowns/TaalSelector";
 import CodeertaalSelector from "../../components/dropdowns/CodeerTaalSelector";
@@ -53,14 +53,17 @@ export default function ProfielSettingsModule() {
     e.preventDefault();
 
     const data = new FormData();
-    data.append("naam", formData.naam);
-    data.append("email", formData.email);
-    data.append("telefoon", formData.telefoon);
-    data.append("aboutMe", formData.aboutMe);
-    data.append("github", formData.github);
-    data.append("linkedin", formData.linkedin);
-    if (profilePicture) {
-      data.append("profilePicture", profilePicture);
+    if (formData.naam) data.append("naam", formData.naam);
+    if (formData.email) data.append("email", formData.email);
+    if (formData.telefoon) data.append("telefoon", formData.telefoon);
+    if (formData.aboutMe) data.append("aboutMe", formData.aboutMe);
+    if (formData.github) data.append("github", formData.github);
+    if (formData.linkedin) data.append("linkedin", formData.linkedin);
+    if (profilePicture) data.append("profilePicture", profilePicture);
+
+    // Voeg type toe als het in de profile context zit
+    if (profile?.type) {
+      data.append("type", profile.type); // bijv. "student" of "werkzoekende"
     }
 
     try {
@@ -96,7 +99,6 @@ export default function ProfielSettingsModule() {
               name="naam"
               value={formData.naam}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -108,7 +110,6 @@ export default function ProfielSettingsModule() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -120,7 +121,6 @@ export default function ProfielSettingsModule() {
               name="telefoon"
               value={formData.telefoon}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -144,7 +144,6 @@ export default function ProfielSettingsModule() {
               onChange={handleChange}
               rows="4"
               placeholder="Vertel iets over jezelf..."
-              required
             />
           </div>
 
