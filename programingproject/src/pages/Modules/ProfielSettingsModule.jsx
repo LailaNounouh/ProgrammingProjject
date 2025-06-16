@@ -1,30 +1,30 @@
 import React, { useEffect, useState } from "react";
-import "./ProfielSettingsModule.css";
 import { useProfile } from "../../context/ProfileContext";
 import { useAuth } from "../../context/AuthProvider";
-
-import TaalSelector from "../../components/dropdowns/TaalSelector";
-import CodeertaalSelector from "../../components/dropdowns/CodeerTaalSelector";
-import SoftSkillsSelector from "../../components/dropdowns/SoftSkillsSelector";
-import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
-
-import { baseUrl } from "../../config";
+import  CodeerTaalSelector  from "../../components/dropdowns/CodeerTaalSelector";
+import  TaalSelector  from "../../components/dropdowns/TaalSelector";
+import  HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
+import  SoftSkillsSelector  from "../../components/dropdowns/SoftSkillsSelector";
+import "./ProfielSettingsModule.css";
 
 const ProfielSettingsModule = () => {
   const { gebruiker } = useAuth();
   const { profiel, fetchProfiel, updateProfiel, loading } = useProfile();
+
   const [formData, setFormData] = useState({
     naam: "",
     email: "",
+    studie: "",
     telefoon: "",
-    aboutMe: "",
-    github: "",
+    beschrijving: "",
     linkedin: "",
+    codeertaal: [],
+    talen: [],
+    hardSkills: [],
+    softSkills: [],
   });
 
-  const [profilePicture, setProfilePicture] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [messageType, setMessageType] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (gebruiker?.id) {
@@ -37,181 +37,163 @@ const ProfielSettingsModule = () => {
       setFormData({
         naam: profiel.naam || "",
         email: profiel.email || "",
+        studie: profiel.studie || "",
         telefoon: profiel.telefoon || "",
-        aboutMe: profiel.aboutMe || "",
-        github: profiel.github || "",
+        beschrijving: profiel.beschrijving || "",
         linkedin: profiel.linkedin || "",
+        codeertaal: profiel.codeertaal || [],
+        talen: profiel.talen || [],
+        hardSkills: profiel.hardSkills || [],
+        softSkills: profiel.softSkills || [],
       });
     }
   }, [profiel]);
 
-  if (loading) return <div>Laden...</div>;
-  if (!gebruiker) return <div>Je moet ingelogd zijn om je profiel te bekijken</div>;
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const data = new FormData();
-    data.append("naam", formData.naam);
-    data.append("email", formData.email);
-    data.append("telefoon", formData.telefoon);
-    data.append("aboutMe", formData.aboutMe);
-    data.append("github", formData.github);
-    data.append("linkedin", formData.linkedin);
-    if (profilePicture) data.append("profilePicture", profilePicture);
-    if (profiel?.type) data.append("type", profiel.type);
-
-    try {
-      const response = await fetch(`${baseUrl}/profiel`, {
-        method: "POST",
-        body: data,
-      });
-
-      if (!response.ok) throw new Error("Fout bij opslaan van profiel");
-
-      await fetchProfiel();
-      setMessage("Profiel succesvol opgeslagen!");
-      setMessageType("success");
-
-      setTimeout(() => {
-        setMessage(null);
-        setMessageType(null);
-      }, 5000);
-    } catch (error) {
-      console.error("Fout bij verzenden:", error);
-      setMessage(`Er ging iets mis: ${error.message}`);
-      setMessageType("error");
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleInputChange = (name, value) => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleFileChange = (e) => {
-    setProfilePicture(e.target.files[0]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const editableData = {
+        telefoon: formData.telefoon,
+        beschrijving: formData.beschrijving,
+        linkedin: formData.linkedin,
+        skills: formData.skills,
+        talen: formData.talen,
+      };
+
+      const result = await updateProfiel(editableData);
+      
+      if (result.success) {
+        alert('Profiel succesvol bijgewerkt!');
+      } else {
+        throw new Error(result.error || 'Kon profiel niet updaten');
+      }
+    } catch (error) {
+      console.error('Fout bij bijwerken profiel:', error);
+      alert('Er ging iets mis bij het bijwerken van je profiel');
+    }
   };
 
+  if (loading) {
+    return <div className="profiel-settings"><div className="loading">Profiel laden...</div></div>;
+  }
+
+  if (!gebruiker) {
+    return <div className="profiel-settings"><div className="error">Je moet ingelogd zijn om je profiel te bewerken.</div></div>;
+  }
+
   return (
-    <div className="profiel-module">
-      <h1>Mijn Profiel</h1>
-      <p>Vul je persoonlijke en professionele informatie in.</p>
+    <div className="profiel-settings">
+      <h2>Profiel Instellingen</h2>
+      <form onSubmit={handleSubmit} noValidate>
+        {/* Persoonlijke gegevens */}
+        <div className="form-section">
+          <h3>Persoonlijke Informatie</h3>
+          {["naam", "email", "studie"].map((field) => (
+            <div className="form-group" key={field}>
+              <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+              <input
+                id={field}
+                type="text"
+                value={formData[field]}
+                readOnly
+                disabled
+                className="readonly-field"
+              />
+            </div>
+          ))}
+        </div>
 
-      <form className="template-form" onSubmit={handleSubmit}>
-        <section className="form-group">
-          <h2>Persoonlijke Gegevens</h2>
-
-          <div className="form-field">
-            <label htmlFor="naam">Naam</label>
-            <input
-              type="text"
-              id="naam"
-              name="naam"
-              value={formData.naam}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="email">E-mail</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="form-field">
+        {/* Contact */}
+        <div className="form-section">
+          <h3>Contact Informatie</h3>
+          <div className="form-group">
             <label htmlFor="telefoon">Telefoonnummer</label>
             <input
               type="tel"
               id="telefoon"
-              name="telefoon"
               value={formData.telefoon}
-              onChange={handleChange}
+              onChange={(e) => handleInputChange("telefoon", e.target.value)}
+              placeholder="Bijv. +32 123 456 789"
             />
           </div>
-
-          <div className="form-field">
-            <label htmlFor="profilePicture">Profielfoto</label>
-            <input
-              type="file"
-              id="profilePicture"
-              name="profilePicture"
-              accept="image/*"
-              onChange={handleFileChange}
-            />
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="aboutMe">Over mij</label>
-            <textarea
-              id="aboutMe"
-              name="aboutMe"
-              value={formData.aboutMe}
-              onChange={handleChange}
-              rows="4"
-              placeholder="Vertel iets over jezelf..."
-            />
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="github">GitHub Link</label>
-            <input
-              type="url"
-              id="github"
-              name="github"
-              value={formData.github}
-              onChange={handleChange}
-              placeholder="https://github.com/jouwnaam"
-            />
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="linkedin">LinkedIn Link</label>
+          <div className="form-group">
+            <label htmlFor="linkedin">LinkedIn</label>
             <input
               type="url"
               id="linkedin"
-              name="linkedin"
               value={formData.linkedin}
-              onChange={handleChange}
-              placeholder="https://linkedin.com/in/jouwprofiel"
+              onChange={(e) => handleInputChange("linkedin", e.target.value)}
+              placeholder="https://www.linkedin.com/in/jouwnaam"
             />
           </div>
-        </section>
+        </div>
 
-        <section className="form-group">
-          <h2>Talenkennis</h2>
-          <TaalSelector />
-        </section>
+        {/* Vaardigheden */}
+        <div className="form-section">
+          <h3>Vaardigheden</h3>
+          <div className="form-group">
+            <label>Codeertalen</label>
+            <CodeerTaalSelector
+              selectedSkills={formData.codeertaal}
+              onChange={(selected) => handleInputChange("codeertaal", selected)}
+            />
+          </div>
+          <div className="form-group">
+            <label>Talen</label>
+            <TaalSelector
+              selectedTalen={formData.talen}
+              onChange={(selected) => handleInputChange("talen", selected)}
+            />
+          </div>
+          <div className="form-group">
+            <label>Hard Skills</label>
+            <HardSkillsSelector
+              selectedOpleiding={formData.hardSkills}
+              onChange={(selected) => handleInputChange("hardSkills", selected)}
+            />
+          </div>
+          <div className="form-group">
+            <label>Soft Skills</label>
+            <SoftSkillsSelector
+              selectedErvaring={formData.softSkills}
+              onChange={(selected) => handleInputChange("softSkills", selected)}
+            />
+          </div>
+        </div>
 
-        <section className="form-group">
-          <h2>Programmeertalen</h2>
-          <CodeertaalSelector />
-        </section>
+        {/* Beschrijving */}
+        <div className="form-section">
+          <h3>Over Mij</h3>
+          <div className="form-group">
+            <label htmlFor="beschrijving">Beschrijving</label>
+            <textarea
+              id="beschrijving"
+              rows="4"
+              maxLength="1000"
+              value={formData.beschrijving}
+              onChange={(e) => handleInputChange("beschrijving", e.target.value)}
+              placeholder="Vertel iets over jezelf..."
+            />
+            <small className="char-count">
+              {formData.beschrijving.length}/1000 karakters
+            </small>
+          </div>
+        </div>
 
-        <section className="form-group">
-          <h2>Soft Skills</h2>
-          <SoftSkillsSelector />
-        </section>
-
-        <section className="form-group">
-          <h2>Hard Skills</h2>
-          <HardSkillsSelector />
-        </section>
-
-        <div className="form-footer">
-          <button type="submit">Opslaan</button>
+        {/* Submit */}
+        <div className="form-actions">
+          <button type="submit" className="save-button" disabled={isSubmitting}>
+            {isSubmitting ? "Opslaan..." : "Opslaan"}
+          </button>
         </div>
       </form>
-
-      {message && <div className={`notification ${messageType}`}>{message}</div>}
     </div>
   );
 };

@@ -17,32 +17,44 @@ export const ProfileProvider = ({ children }) => {
     }
 
     try {
-      const response = await fetch(`http://10.2.160.211:3000/api/profiel/${gebruiker.id}`, {
-        credentials: 'include'
-      });
-
-      if (!response.ok) {
-        throw new Error('Kon profiel niet laden');
+      const storedProfile = localStorage.getItem('userProfile');
+      if (storedProfile) {
+        setProfiel(JSON.parse(storedProfile));
       }
-
-      const data = await response.json();
-      setProfiel(data);
+      setLoading(false);
     } catch (error) {
       console.error('Fout bij laden profiel:', error);
-    } finally {
       setLoading(false);
     }
   };
 
+  const updateProfiel = async (updatedData) => {
+    try {
+      // Update local storage
+      const currentProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+      const newProfile = { ...currentProfile, ...updatedData };
+      localStorage.setItem('userProfile', JSON.stringify(newProfile));
+      
+      // Update state
+      setProfiel(newProfile);
+      return { success: true };
+    } catch (error) {
+      console.error('Fout bij updaten profiel:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  useEffect(() => {
+    fetchProfiel();
+  }, [gebruiker]);
+
   return (
-    <ProfileContext.Provider 
-      value={{ 
-        profiel, 
-        fetchProfiel, // Note the correct function name here
-        loading,
-        isProfielGeladen: !!profiel 
-      }}
-    >
+    <ProfileContext.Provider value={{ 
+      profiel, 
+      fetchProfiel,
+      updateProfiel,
+      loading 
+    }}>
       {children}
     </ProfileContext.Provider>
   );
