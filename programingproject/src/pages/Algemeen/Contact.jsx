@@ -40,9 +40,23 @@ export default function Contact() {
         <h2>Contactformulier</h2>
       <form className="contact-form" onSubmit={(e) => e.preventDefault()}>
         <div className="contact-form-group">
-          <input type="text" placeholder="Naam" />
-          <input type="email" placeholder="E-mailadres" />
-          <input type="text" placeholder="Onderwerp" /> 
+          <input 
+            type="text" 
+            placeholder="Naam"
+            className="small-input" 
+          />
+
+          <input 
+            type="email" 
+            placeholder="E-mailadres" 
+            className="small-input"
+          />
+
+          <input 
+            type="text" 
+            placeholder="Onderwerp"
+            className="small-input" 
+          /> 
         </div>
 
         <div className="form-group form-group-wide">

@@ -115,6 +115,11 @@
   align-items: flex-start;
 }
 
+.small-input {
+  max-width: 400px;  /* of een andere breedte die je mooi vindt */
+  width: 100%;
+}
+
 .form-group-wide {
   width: 800px;         /* Breder voor bericht */
   max-width: 98%;
