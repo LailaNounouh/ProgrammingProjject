@@ -1,18 +1,29 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ProfielModule.css";
 import { useProfile } from "../../context/ProfileContext";
+import { useAuth } from "../../context/AuthProvider";
 import { baseUrl } from "../../config";
 
-export default function ProfielModule() {
-  const { profile, loading, error, fetchProfile } = useProfile();
+const ProfielModule = () => {
+  const { gebruiker, checkAuthStatus } = useAuth();
+  const { profiel, fetchProfiel, loading } = useProfile();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchProfile(); // Haalt het profiel op uit de backend (database)
-  }, [fetchProfile]);
+    if (!checkAuthStatus()) {
+      navigate("/login");
+      return;
+    }
 
-  if (loading) return <p>Profiel wordt geladen...</p>;
-  if (error) return <p style={{ color: "red" }}>Fout: {error}</p>;
-  if (!profile) return <p>Geen profiel beschikbaar. Log in om je gegevens te zien.</p>;
+    if (gebruiker?.id) {
+      fetchProfiel(); // Haalt het profiel op uit de backend (database)
+    }
+  }, [gebruiker, fetchProfiel, checkAuthStatus, navigate]);
+
+  if (loading) return <div>Profiel wordt geladen...</div>;
+  if (!gebruiker) return <div>Je moet ingelogd zijn om je profiel te bekijken</div>;
+  if (!profiel) return <div>Geen profiel gevonden</div>;
 
   const {
     naam,
@@ -26,7 +37,7 @@ export default function ProfielModule() {
     programmeertalen = [],
     softSkills = [],
     hardSkills = [],
-  } = profile;
+  } = profiel;
 
   return (
     <div className="account-pagina">
@@ -85,4 +96,6 @@ export default function ProfielModule() {
       </div>
     </div>
   );
-}
+};
+
+export default ProfielModule;

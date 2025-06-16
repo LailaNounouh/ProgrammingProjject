@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./ProfielSettingsModule.css";
 import { useProfile } from "../../context/ProfileContext";
+import { useAuth } from "../../context/AuthProvider";
 
 import TaalSelector from "../../components/dropdowns/TaalSelector";
 import CodeertaalSelector from "../../components/dropdowns/CodeerTaalSelector";
@@ -9,9 +10,9 @@ import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
 
 import { baseUrl } from "../../config";
 
-export default function ProfielSettingsModule() {
-  const { profile, fetchProfile } = useProfile();
-
+const ProfielSettingsModule = () => {
+  const { gebruiker } = useAuth();
+  const { profiel, fetchProfiel, updateProfiel, loading } = useProfile();
   const [formData, setFormData] = useState({
     naam: "",
     email: "",
@@ -26,32 +27,26 @@ export default function ProfielSettingsModule() {
   const [messageType, setMessageType] = useState(null);
 
   useEffect(() => {
-    // Profiel ophalen als die nog niet bestaat
-    if (!profile) {
-      fetchProfile();
-    } else {
+    if (gebruiker?.id) {
+      fetchProfiel();
+    }
+  }, [gebruiker]);
+
+  useEffect(() => {
+    if (profiel) {
       setFormData({
-        naam: profile.naam || "",
-        email: profile.email || "",
-        telefoon: profile.telefoon || "",
-        aboutMe: profile.aboutMe || "",
-        github: profile.github || "",
-        linkedin: profile.linkedin || "",
+        naam: profiel.naam || "",
+        email: profiel.email || "",
+        telefoon: profiel.telefoon || "",
+        aboutMe: profiel.aboutMe || "",
+        github: profiel.github || "",
+        linkedin: profiel.linkedin || "",
       });
     }
-  }, [profile, fetchProfile]);
+  }, [profiel]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleFileChange = (e) => {
-    setProfilePicture(e.target.files[0]);
-  };
+  if (loading) return <div>Laden...</div>;
+  if (!gebruiker) return <div>Je moet ingelogd zijn om je profiel te bekijken</div>;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,7 +59,7 @@ export default function ProfielSettingsModule() {
     data.append("github", formData.github);
     data.append("linkedin", formData.linkedin);
     if (profilePicture) data.append("profilePicture", profilePicture);
-    if (profile?.type) data.append("type", profile.type);
+    if (profiel?.type) data.append("type", profiel.type);
 
     try {
       const response = await fetch(`${baseUrl}/profiel`, {
@@ -74,7 +69,7 @@ export default function ProfielSettingsModule() {
 
       if (!response.ok) throw new Error("Fout bij opslaan van profiel");
 
-      await fetchProfile();
+      await fetchProfiel();
       setMessage("Profiel succesvol opgeslagen!");
       setMessageType("success");
 
@@ -87,6 +82,18 @@ export default function ProfielSettingsModule() {
       setMessage(`Er ging iets mis: ${error.message}`);
       setMessageType("error");
     }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    setProfilePicture(e.target.files[0]);
   };
 
   return (
@@ -207,4 +214,6 @@ export default function ProfielSettingsModule() {
       {message && <div className={`notification ${messageType}`}>{message}</div>}
     </div>
   );
-}
+};
+
+export default ProfielSettingsModule;

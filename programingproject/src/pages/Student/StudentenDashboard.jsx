@@ -1,100 +1,110 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import Plattegrond from '../../components/plattegrond/plattegrond';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthProvider';
 import './StudentenDashboard.css';
-import { baseUrl } from '../../config';
 
-const StudentenDashboard = () => {
+const StudentDashboard = () => {
+  const { gebruiker } = useAuth();
   const [bedrijven, setBedrijven] = useState([]);
-  const [filterSector, setFilterSector] = useState('all');
-  const [error, setError] = useState(null);
+  const [afspraken, setAfspraken] = useState([]);
 
   useEffect(() => {
-    async function fetchBedrijven() {
+    // Haal deelnemende bedrijven op
+    const fetchBedrijven = async () => {
       try {
-        const response = await fetch(`${baseUrl}/bedrijvenmodule`);
-        if (!response.ok) {
-          throw new Error(`HTTP-fout! status: ${response.status}`);
+        const response = await fetch('http://10.2.160.211:3000/api/bedrijvenmodule');
+        if (response.ok) {
+          const data = await response.json();
+          setBedrijven(data.slice(0, 5)); // Toon alleen de eerste 5 bedrijven
         }
-        const data = await response.json();
-        setBedrijven(data);
-        setError(null);
       } catch (error) {
-        console.error("Fout bij laden bedrijven:", error);
-        setError("Fout bij laden bedrijven, probeer later opnieuw.");
+        console.error('Fout bij ophalen bedrijven:', error);
       }
-    }
+    };
+
+    // Haal afspraken op alleen als gebruiker bestaat
+    const fetchAfspraken = async () => {
+      if (!gebruiker?.id) return; // Stop als er geen gebruiker is
+
+      try {
+        const response = await fetch(`http://10.2.160.211:3000/api/afspraken/${gebruiker.id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setAfspraken(data);
+        }
+      } catch (error) {
+        console.error('Fout bij ophalen afspraken:', error);
+      }
+    };
+
     fetchBedrijven();
-  }, []);
-
-  const alleSectoren = useMemo(() => {
-    const sectorSet = new Set();
-    bedrijven.forEach(b => {
-      if (b.sector_naam) sectorSet.add(b.sector_naam);
-    });
-    return Array.from(sectorSet).sort();
-  }, [bedrijven]);
-
-  const gefilterdeBedrijven = filterSector === 'all'
-    ? bedrijven
-    : bedrijven.filter(b => b.sector_naam === filterSector);
+    fetchAfspraken();
+  }, [gebruiker]); 
 
   return (
-    <div className="app">
-      <main>
+    <div className="dashboard-container">
 
-        <section id="bedrijven" className="bedrijven-section">
-          <h2>Deelnemende bedrijven:</h2>
-          <label htmlFor="sectorFilter">Filter op sector:</label>
-          <select
-            id="sectorFilter"
-            value={filterSector}
-            onChange={e => setFilterSector(e.target.value)}
-            className="filter-select"
-          >
-            <option value="all">Alle sectoren</option>
-            {alleSectoren.map((sector, idx) => (
-              <option key={idx} value={sector}>{sector}</option>
-            ))}
-          </select>
+      <div className="welcome-section">
+        <h1>Welkom{gebruiker ? `, ${gebruiker.naam}` : ' op het dashboard'}</h1>
+        <p>Hier is een overzicht van de jobbeurs</p>
+      </div>
 
-          <div className="bedrijven-lijst">
-            {error ? (
-              <p className="error">{error}</p>
-            ) : bedrijven.length === 0 ? (
-              <p>Bedrijven worden geladen...</p>
-            ) : gefilterdeBedrijven.length === 0 ? (
-              <p>Geen bedrijven gevonden in deze sector.</p>
-            ) : (
-              gefilterdeBedrijven.map((bedrijf, index) => (
-                <div className="bedrijf-kaart" key={`${bedrijf.naam}-${index}`}>
-                  {bedrijf.logo_url ? (
-                    <img
-                      src={bedrijf.logo_url}
-                      alt={`${bedrijf.naam} logo`}
-                      className="bedrijf-logo"
-                    />
-                  ) : (
-                    <div className="logo-placeholder">Geen logo</div>
-                  )}
-                  <p>{bedrijf.naam}</p>
-                  <a href={`/bedrijven/${bedrijf.naam}`} className="meer-info-link">
-                    Meer info
-                  </a>
+      <div className="dashboard-grid">
+        <div className="dashboard-card">
+          <div className="card-header">
+            <h2>Deelnemende Bedrijven</h2>
+            <Link to="/student/bedrijven" className="view-all">
+              Bekijk alles →
+            </Link>
+          </div>
+          <div className="bedrijven-list">
+            {bedrijven.length > 0 ? (
+              bedrijven.map((bedrijf, index) => (
+                <div key={`bedrijf-${bedrijf.id || index}`} className="bedrijf-item">
+                  <span>{bedrijf.naam}</span>
+                  <span className="bedrijf-sector">{bedrijf.sector}</span>
                 </div>
               ))
+            ) : (
+              <p>Laden van bedrijven...</p>
             )}
           </div>
-        </section>
+        </div>
 
-        <section id="plattegrond" className="plattegrond-section">
-          <h2>Plattegrond:</h2>
-          <div className="plattegrond-container">
-            <Plattegrond bewerkModus={false} />
+        {gebruiker && (
+          <div className="dashboard-card">
+            <div className="card-header">
+              <h2>Komende Afspraken</h2>
+              <Link to="/student/afspraken" className="view-all">
+                Bekijk alles →
+              </Link>
+            </div>
+            <div className="afspraken-list">
+              {afspraken.length > 0 ? (
+                afspraken.map((afspraak, index) => (
+                  <div key={`afspraak-${afspraak.id || index}`} className="afspraak-item">
+                    <div className="afspraak-info">
+                      <span className="afspraak-bedrijf">{afspraak.bedrijf_naam}</span>
+                      <span className="afspraak-tijd">
+                        {new Date(afspraak.datum_tijd).toLocaleString('nl-BE')}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="geen-afspraken">
+                  Je hebt nog geen afspraken gepland.
+                  <Link to="/student/afspraken" className="maak-afspraak">
+                    Plan een afspraak
+                  </Link>
+                </p>
+              )}
+            </div>
           </div>
-        </section>
-      </main>
+        )}
+      </div>
     </div>
   );
 };
 
-export default StudentenDashboard;
+export default StudentDashboard;

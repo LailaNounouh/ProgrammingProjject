@@ -35,26 +35,18 @@ router.get("/:email", async (req, res) => {
 // GET profiel ophalen via ID
 router.get("/:id", async (req, res) => {
   try {
-    const query = `
-      SELECT 
-        id,
-        naam,
-        email,
-        studie,
-        created_at
-      FROM Studenten
-      WHERE id = ?
-    `;
+    const [rows] = await pool.query("SELECT * FROM Studenten WHERE id = ?", [req.params.id]);
 
-    const [student] = await db.query(query, [req.params.id]);
-
-    if (student.length === 0) {
+    if (rows.length === 0) {
       return res.status(404).json({ error: "Profiel niet gevonden" });
     }
 
-    res.json(student[0]);
+    const profiel = rows[0];
+    delete profiel.wachtwoord; // Verwijder gevoelige data
+
+    res.json(profiel);
   } catch (error) {
-    console.error("Error bij ophalen profiel:", error);
+    console.error("Database error:", error);
     res.status(500).json({ error: "Server error" });
   }
 });
