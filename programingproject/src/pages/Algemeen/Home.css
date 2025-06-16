@@ -265,6 +265,7 @@ form button:hover {
   transform: translateY(-2px);
 }
 
+/* Knop "Registreren" */
 .form-section button[type="submit"] {
   background-color: #D64045;
   color: white;
