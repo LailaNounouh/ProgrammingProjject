@@ -43,8 +43,7 @@ function BedrijvenDashboard() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showNotifications]);
 
-  //commit test
-  // Fake notificaties
+  
   const notifications = [
     {
       id: 1,
@@ -70,7 +69,7 @@ function BedrijvenDashboard() {
     icon: <FaCalendarAlt />,
     onClick: () => setActiveTab('afspraken'),
     iconClass: "bg-green",
-    showAfspraken: true // Extra veld om afspraken te tonen
+    showAfspraken: true 
   },
   {
     title: "Beschikbaarheid van standen",
@@ -87,6 +86,11 @@ function BedrijvenDashboard() {
     iconClass: "bg-purple"
   }
 ];
+/*filter om kaarten te kunnen zien */
+const filteredCards = dashboardCards.filter(card =>
+  card.title.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
 
   const renderDashboard = () => (
     <>
