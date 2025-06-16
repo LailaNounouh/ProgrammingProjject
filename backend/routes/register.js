@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
 
-// Configureer multer opslag (bestanden in /uploads, originele naam)
+// Multer-configuratie voor bestand upload
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
@@ -17,11 +17,11 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// POST /register, met file upload (optioneel)
+// POST /register route
 router.post('/', upload.single('bestand'), async (req, res) => {
   try {
     const {
-      type,       // 'student', 'werkzoekende', 'bedrijf'
+      type,       // 'student', 'werkzoekende', 'bedrijf', 'admin'
       naam,
       email,
       wachtwoord,
@@ -41,17 +41,17 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       website_of_linkedin
     } = req.body;
 
-    // Algemene verplichte velden: type, naam, email
+    // Basiscontrole
     if (!type || !naam || !email) {
       return res.status(400).json({ error: 'Type, naam en e-mailadres zijn verplicht' });
     }
 
-        if (type === 'admin') {
-      if (!wachtwoord || !email || !naam) {
-        return res.status(400).json({ error: 'Naam, e-mail en wachtwoord zijn verplicht voor admin' });
+    // 🔐 Admin-registratie (maar één keer mogelijk)
+    if (type === 'admin') {
+      if (!wachtwoord) {
+        return res.status(400).json({ error: 'Wachtwoord is verplicht voor admin' });
       }
 
-      // Controleer of er al een admin bestaat
       const [admins] = await pool.query(`SELECT * FROM Admins LIMIT 1`);
       if (admins.length > 0) {
         return res.status(403).json({ error: 'Er is al een admin geregistreerd' });
@@ -67,7 +67,7 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       return res.status(201).json({ message: 'Admin geregistreerd', id: result.insertId });
     }
 
-
+    // 👩‍🎓 Student
     if (type === 'student') {
       if (!wachtwoord || !studie) {
         return res.status(400).json({ error: 'Wachtwoord en studie zijn verplicht voor studenten' });
@@ -87,8 +87,10 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       );
 
       return res.status(201).json({ message: 'Student geregistreerd', id: result.insertId });
+    }
 
-    } else if (type === 'werkzoekende') {
+    // 👨‍🔧 Werkzoekende
+    if (type === 'werkzoekende') {
       if (!wachtwoord) {
         return res.status(400).json({ error: 'Wachtwoord is verplicht voor werkzoekenden' });
       }
@@ -101,19 +103,17 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       );
 
       return res.status(201).json({ message: 'Werkzoekende geregistreerd', id: result.insertId });
+    }
 
-    } else if (type === 'bedrijf') {
-      // Alleen e-mail en wachtwoord verplicht voor bedrijven
-      if (!wachtwoord || !email) {
-        return res.status(400).json({ error: 'E-mail en wachtwoord zijn verplicht voor bedrijven' });
+    // 🏢 Bedrijf
+    if (type === 'bedrijf') {
+      if (!wachtwoord) {
+        return res.status(400).json({ error: 'Wachtwoord is verplicht voor bedrijven' });
       }
 
       const hashedPassword = await bcrypt.hash(wachtwoord, 10);
-
-      // Filepad (optioneel)
       const bestandPad = req.file ? req.file.path : null;
 
-      // Insert in Bedrijven, overige velden optioneel (null als leeg)
       const [result] = await pool.query(
         `INSERT INTO Bedrijven 
          (naam, email, wachtwoord, straat, nummer, postcode, gemeente, telefoonnummer, btw_nummer, contactpersoon_facturatie, email_facturatie, po_nummer, contactpersoon_beurs, email_beurs, website_of_linkedin, logo_url) 
@@ -140,7 +140,6 @@ router.post('/', upload.single('bestand'), async (req, res) => {
 
       const bedrijfId = result.insertId;
 
-      // Link bedrijf aan sector in koppel tabel, alleen als sector is ingevuld
       if (sector) {
         await pool.query(
           `INSERT INTO Bedrijf_Sector (bedrijf_id, sector_id) VALUES (?, ?)`,
@@ -149,10 +148,11 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       }
 
       return res.status(201).json({ message: 'Bedrijf geregistreerd', id: bedrijfId });
-
-    } else {
-      return res.status(400).json({ error: 'Ongeldig registratie-type opgegeven' });
     }
+
+    // ❌ Geen geldig type
+    return res.status(400).json({ error: 'Ongeldig registratie-type opgegeven' });
+
   } catch (error) {
     console.error('❌ Registratiefout:', error);
     return res.status(500).json({ error: 'Serverfout bij registratie' });
