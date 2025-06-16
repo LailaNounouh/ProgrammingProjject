@@ -46,6 +46,28 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       return res.status(400).json({ error: 'Type, naam en e-mailadres zijn verplicht' });
     }
 
+        if (type === 'admin') {
+      if (!wachtwoord || !email || !naam) {
+        return res.status(400).json({ error: 'Naam, e-mail en wachtwoord zijn verplicht voor admin' });
+      }
+
+      // Controleer of er al een admin bestaat
+      const [admins] = await pool.query(`SELECT * FROM Admins LIMIT 1`);
+      if (admins.length > 0) {
+        return res.status(403).json({ error: 'Er is al een admin geregistreerd' });
+      }
+
+      const hashedPassword = await bcrypt.hash(wachtwoord, 10);
+
+      const [result] = await pool.query(
+        `INSERT INTO Admins (naam, email, wachtwoord) VALUES (?, ?, ?)`,
+        [naam, email, hashedPassword]
+      );
+
+      return res.status(201).json({ message: 'Admin geregistreerd', id: result.insertId });
+    }
+
+
     if (type === 'student') {
       if (!wachtwoord || !studie) {
         return res.status(400).json({ error: 'Wachtwoord en studie zijn verplicht voor studenten' });
