@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import './StudentenDashboard.css';
+import React, { useState, useEffect, useMemo } from "react";
+import "./StudentenDashboard.css";
 import { baseUrl } from "../../config";
 
 function StudentenDashboard() {
   const [bedrijven, setBedrijven] = useState([]);
-  const [filterSector, setFilterSector] = useState('all');
-  const [linkedinUrl, setLinkedinUrl] = useState('');
+  const [filterSector, setFilterSector] = useState("all");
+  const [linkedinUrl, setLinkedinUrl] = useState("");
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -29,15 +29,16 @@ function StudentenDashboard() {
 
   const alleSectoren = useMemo(() => {
     const sectorSet = new Set();
-    bedrijven.forEach(b => {
+    bedrijven.forEach((b) => {
       if (b.sector_naam) sectorSet.add(b.sector_naam);
     });
     return Array.from(sectorSet).sort();
   }, [bedrijven]);
 
-  const gefilterdeBedrijven = filterSector === 'all'
-    ? bedrijven
-    : bedrijven.filter(b => b.sector_naam === filterSector);
+  const gefilterdeBedrijven =
+    filterSector === "all"
+      ? bedrijven
+      : bedrijven.filter((b) => b.sector_naam === filterSector);
 
   return (
     <div className="app">
@@ -49,7 +50,7 @@ function StudentenDashboard() {
             id="linkedin"
             placeholder="URL naar LinkedIn profiel"
             value={linkedinUrl}
-            onChange={e => setLinkedinUrl(e.target.value)}
+            onChange={(e) => setLinkedinUrl(e.target.value)}
           />
         </section>
 
@@ -60,12 +61,14 @@ function StudentenDashboard() {
           <select
             id="sectorFilter"
             value={filterSector}
-            onChange={e => setFilterSector(e.target.value)}
+            onChange={(e) => setFilterSector(e.target.value)}
             className="filter-select"
           >
             <option value="all">Alle sectoren</option>
             {alleSectoren.map((sector, idx) => (
-              <option key={idx} value={sector}>{sector}</option>
+              <option key={idx} value={sector}>
+                {sector}
+              </option>
             ))}
           </select>
 
@@ -89,7 +92,11 @@ function StudentenDashboard() {
                     <div className="logo-placeholder">Geen logo</div>
                   )}
                   <p>{bedrijf.naam}</p>
-                  <a href={`/bedrijven/${bedrijf.naam}`} className="meer-info-link">
+                  <a
+                    href={`/afsprakenmodule?naam=${encodeURIComponent(bedrijf.naam)}&beschrijving=${encodeURIComponent(bedrijf.beschrijving || "")}&logo=${encodeURIComponent(bedrijf.logo_url || "")}`}
+                    className="meer-info-link"
+                  >
+                    {" "}
                     Meer info
                   </a>
                 </div>
