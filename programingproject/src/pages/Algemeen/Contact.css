@@ -1,7 +1,7 @@
 .contact-container {
   max-width: 1000px;
   margin: 2rem auto;
-  padding: 2rem;
+  padding: 1.5rem;
   font-family: 'Arial', sans-serif;
   color: #333;
   background-color: #fff;
@@ -18,9 +18,15 @@
   font-weight: 700;
 }
 
+.contact-intro {
+  font-size: 1.2rem; 
+  font-weight: 500; 
+  margin-bottom: 0.8rem; 
+}
+
 .contact-form-section h2 {
   color: #2c3e50;
-  font-size: 1.5rem;
+  font-size: 2rem;
   margin-bottom: 1.5rem;
   font-weight: 600;
 }
@@ -59,13 +65,31 @@
   border: none;
 }
 
+/* Layout contactgegevens + google maps */
+.contact-details-container {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  margin: 1.5rem 0;
+}
+
+.contact-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.address-section {
+  margin-top: 1rem;
+}
+
 /* Google maps */
 .google-maps {
-  margin: 2rem 0;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #e0e0e0;
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-width: 0;
 }
 
 .google-maps iframe {
@@ -79,23 +103,23 @@
 .contact-form-section {
   margin-top: 2.5rem;
   padding: 2rem;
-  background-color: #f8f9fa;
+  background-color: #00a9b5;
   border-radius: 8px;
 }
 
 .contact-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.2rem;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
   font-weight: 600;
   color: #2c3e50;
 }
@@ -103,11 +127,11 @@
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 1rem;
+  padding: 0.9rem;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 1rem;
-  background-color: #fff;
+  background-color: #d3d9e0;
   transition: all 0.2s ease;
 }
 
@@ -121,6 +145,7 @@
 .form-group textarea {
   min-height: 150px;
   resize: vertical;
+  box-sizing: border-box;
 }
 
 /* Knop "verzenden" */
