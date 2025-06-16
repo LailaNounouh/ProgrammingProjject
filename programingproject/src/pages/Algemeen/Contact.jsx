@@ -17,9 +17,6 @@ export default function Contact() {
         
         <div className="address-section">
           <p><strong>Adres:</strong> Nijverheidskaai 5, 1000 Brussel</p>
-          <p>Nijverheidskaai 5</p>
-          <p>Nijverheidskaai 5, 1080 Sint-Jans-Molenbeek</p>
-          <p className="link">Route</p>
           <p className="link">Grotere kaart bekijken</p>
           
           <div className="google-maps">
@@ -59,17 +56,6 @@ export default function Contact() {
         id="email" 
         name="email" 
         placeholder="Vul uw e-mailadres in" 
-        required 
-      />
-    </div>
-    
-    <div className="form-group">
-      <label htmlFor="subject">Onderwerp</label>
-      <input 
-        type="text" 
-        id="subject" 
-        name="subject" 
-        placeholder="Waarover gaat uw vraag?" 
         required 
       />
     </div>
