@@ -49,8 +49,7 @@ export default function Login() {
             <option value="werkzoekende">Werkzoekende</option>
             <option value="admin">Admin</option>
           </select>
-        </label>
-
+        </div>
         <label>
           Email:
           <input
