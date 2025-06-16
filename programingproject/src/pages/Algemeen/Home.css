@@ -99,7 +99,7 @@ h1 {
   font-weight: bold;
 }
 
-/* opleiding lijst */
+/* 0pleiding lijst */
 .opleidingen-lijst {
   margin: 12px 0;
   padding-left: 24px;
@@ -159,6 +159,10 @@ h1 {
   margin-bottom: 20px; 
   margin-left: auto;
   margin-right: auto;
+}
+
+.faq-question {
+  font-weight: bold;
 }
 
 /* Formulier */
@@ -264,9 +268,18 @@ form button:hover {
 .form-section button[type="submit"] {
   background-color: #D64045;
   color: white;
-  border: 2px solid #00a9b5; 
-  font-weight: bold;
+  border: none; 
+  font-weight: 600;
   transition: all 0.3s;
+  padding: 1rem 7rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+  margin-left: auto; 
+  margin-right: auto; 
+  display: block;
+  width: fit-content;
 }
 
 .form-section button[type="submit"]:hover {
@@ -274,69 +287,3 @@ form button:hover {
   color: white; 
 }
 
-
-
-
-
-
-.linkedin-section {
-  margin-bottom: 20px;
-}
-
-.linkedin-section input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  box-sizing: border-box;
-}
-
-.bedrijven-lijst {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  background: #aaa;
-  padding: 10px;
-  overflow-y: auto;
-  max-height: 300px;
-}
-
-.bedrijf-kaart {
-  background: #ccc;
-  padding: 10px;
-  width: 45%;
-  text-align: center;
-}
-
-.logo-placeholder {
-  width: 60px;
-  height: 60px;
-  background: white;
-  border-radius: 50%;
-  margin: 0 auto 10px auto;
-}
-
-.standen-section {
-  margin-top: 30px;
-}
-
-.standen-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 5px;
-  background: white;
-  padding: 10px;
-}
-
-.stand {
-  background-color: #ddd;
-  aspect-ratio: 1 / 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-}
-
-.stand.bedrijf {
-  background-color: #00a9b5;
-  border-radius: 50%;
-}
