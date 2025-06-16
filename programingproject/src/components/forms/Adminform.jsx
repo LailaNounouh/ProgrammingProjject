@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { baseUrl } from "../../config";
 
 export default function AdminRegisterPage() {
   const [adminExists, setAdminExists] = useState(null);
@@ -8,7 +9,7 @@ export default function AdminRegisterPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("/api/admin/exists")
+    fetch(`${baseUrl}/register`)
       .then((res) => res.json())
       .then((data) => setAdminExists(data.exists))
       .catch(() => setAdminExists(false));
@@ -20,7 +21,7 @@ export default function AdminRegisterPage() {
     setError("");
 
     try {
-      const res = await fetch("/api/admin/register", {
+      const res = await fetch(`${baseUrl}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

@@ -47,7 +47,7 @@ router.post('/', upload.single('bestand'), async (req, res) => {
     }
 
     // 🔐 Admin-registratie (maar één keer mogelijk)
-    if (type === 'admin') {
+    if (type === 'Admin') {
       if (!wachtwoord) {
         return res.status(400).json({ error: 'Wachtwoord is verplicht voor admin' });
       }
@@ -60,7 +60,7 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       const hashedPassword = await bcrypt.hash(wachtwoord, 10);
 
       const [result] = await pool.query(
-        `INSERT INTO Admins (naam, email, wachtwoord) VALUES (?, ?, ?)`,
+        `INSERT INTO Admins (email, wachtwoord) VALUES (?, ?)`,
         [naam, email, hashedPassword]
       );
 
