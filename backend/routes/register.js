@@ -51,9 +51,10 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       const hashedPassword = await bcrypt.hash(wachtwoord, 10);
 
       const [result] = await pool.query(
-        'INSERT INTO Admins (email, wachtwoord) VALUES (?, ?)',
-        [email, hashedPassword]
+        'INSERT INTO Admins (naam, email, wachtwoord) VALUES (?, ?, ?)',
+        ['admin', email, hashedPassword]
       );
+
 
       return res.status(201).json({ message: 'Admin geregistreerd', id: result.insertId });
     }
