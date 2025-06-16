@@ -23,6 +23,7 @@ import SeekerDashboard from "./pages/Seeker/SeekerDashboard";
 import BedrijvenDashboard from "./pages/Bedrijven/BedrijvenDashboard";
 import StatusBetaling from './pages/Bedrijven/statusbetaling';
 import AfspraakOverzicht from "./pages/Bedrijven/Afspraakoverzicht";
+import Settingsbedrijf from "./pages/Bedrijven/Settingsbedrijf";
  
 import AfsprakenModule from "./pages/Modules/AfsprakenModule";
 import BedrijvenModule from "./pages/Modules/BedrijvenModule";
@@ -45,7 +46,7 @@ export default function App() {
           <Route path="*" element={<Notfound />} />
  
           {/* Seeker */}
-          <Route path="/seeker" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
+          <Route path="/werkzoekende" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
  
           {/* Student */}
           <Route path="/student" element={<StudentenLayout><StudentDashboard /></StudentenLayout>} />
@@ -60,7 +61,82 @@ export default function App() {
           <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
           <Route path="/bedrijf/betaling" element={<BedrijvenLayout><StatusBetaling /></BedrijvenLayout>} />
           <Route path="/bedrijf/afspraken" element={<BedrijvenLayout><AfspraakOverzicht /></BedrijvenLayout>} />
+          <Route path="/bedrijf/Settingsbedrijf" element={<BedrijvenLayout><Settingsbedrijf /></BedrijvenLayout>} />
         </Routes>
       </AuthProvider>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

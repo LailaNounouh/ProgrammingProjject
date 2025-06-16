@@ -13,30 +13,37 @@ body {
 .header-box {
   background: #00a9b5;
   padding: 30px;
-  border-radius: 8px 8px 0 0;
+  border-radius: 8px;
   text-align: center;
   color: white;
-  margin-bottom: 0;
+  margin: 0 auto;
+  width: 80%;
+  max-width: 600px;
+  position: relative;
+  top: 20px;
+  z-index: 2;
 }
 
 .header-box h1 {
   font-size: 2.3rem;
   margin: 0 0 10px 0;
   font-weight: 700;
+  color: white;
 }
 
-.haeder-box .subtitle {
-  color: #333; 
+.header-box .subtitle {
+  color: #424242; 
   font-weight: 600;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   margin: 0;
 }
 
 .content-box {
-  background: white;
+  background: #d3d9e0;
   padding: 30px;
-  border-radius: 0 0 8px 8px;
+  border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: black;
 }
 
 .content-box p {
