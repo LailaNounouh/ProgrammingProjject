@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 
 router.post('/', async (req, res) => {
   const { email, password, type } = req.body;
-  console.log('Login poging:', { email, type }); 
+  console.log('Login poging:', { email, type });
 
   if (!email || !password || !type) {
     return res.status(400).json({ error: 'Email, wachtwoord en type zijn verplicht' });
@@ -15,14 +15,13 @@ router.post('/', async (req, res) => {
     let query;
     let params = [email];
 
-  
     if (type === 'bedrijf') {
       query = `
         SELECT 
           id,
           email,
           wachtwoord,
-          naam as bedrijfsnaam,
+          naam AS bedrijfsnaam,
           sector,
           website_of_linkedin,
           telefoonnummer,
@@ -30,21 +29,45 @@ router.post('/', async (req, res) => {
         FROM Bedrijven 
         WHERE email = ?
       `;
-    } else {
+    } else if (type === 'student') {
       query = `
-        SELECT id, email, wachtwoord, naam
-        FROM ${type === 'student' ? 'Studenten' : 
-              type === 'werkzoekende' ? 'Werkzoekenden' : 
-              'Admins'} 
+        SELECT 
+          student_id AS id, 
+          email, 
+          wachtwoord, 
+          naam 
+        FROM Studenten 
         WHERE email = ?
       `;
+    } else if (type === 'werkzoekende') {
+      query = `
+        SELECT 
+          werkzoekende_id AS id,  -- Pas aan als dit in je DB anders heet
+          email, 
+          wachtwoord, 
+          naam 
+        FROM Werkzoekenden 
+        WHERE email = ?
+      `;
+    } else if (type === 'admin') {
+      query = `
+        SELECT 
+          admin_id AS id,  -- Pas aan als dit in je DB anders heet
+          email, 
+          wachtwoord, 
+          naam 
+        FROM Admins 
+        WHERE email = ?
+      `;
+    } else {
+      return res.status(400).json({ error: 'Ongeldig type gebruiker' });
     }
 
     const [rows] = await db.query(query, params);
-    
+
     if (rows.length === 0) {
-      return res.status(401).json({ 
-        error: `${type === 'bedrijf' ? 'Bedrijf' : 'Gebruiker'} niet gevonden` 
+      return res.status(401).json({
+        error: `${type === 'bedrijf' ? 'Bedrijf' : 'Gebruiker'} niet gevonden`
       });
     }
 
@@ -55,7 +78,6 @@ router.post('/', async (req, res) => {
       return res.status(401).json({ error: 'Ongeldig wachtwoord' });
     }
 
-
     delete user.wachtwoord;
 
     const responseData = {
@@ -64,21 +86,22 @@ router.post('/', async (req, res) => {
         id: user.id,
         email: user.email,
         type: type,
-        ...(type === 'bedrijf' ? {
-          bedrijfsnaam: user.bedrijfsnaam,
-          sector: user.sector,
-          website: user.website_of_linkedin,
-          telefoonnummer: user.telefoonnummer,
-          gemeente: user.gemeente
-        } : {
-          naam: user.naam
-        })
-      }
+        ...(type === 'bedrijf'
+          ? {
+              bedrijfsnaam: user.bedrijfsnaam,
+              sector: user.sector,
+              website: user.website_of_linkedin,
+              telefoonnummer: user.telefoonnummer,
+              gemeente: user.gemeente,
+            }
+          : {
+              naam: user.naam,
+            }),
+      },
     };
 
-    console.log('Login succesvol:', responseData); 
+    console.log('Login succesvol:', responseData);
     res.json(responseData);
-
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Server error bij inloggen' });
