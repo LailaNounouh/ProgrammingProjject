@@ -61,28 +61,32 @@ function BedrijvenDashboard() {
       icon: <FaEuroSign />,
       description: "Bekijk uw betalingsstatus en facturen",
       onClick: () => navigate('/bedrijf/betaling'),
-      iconClass: "bg-blue"
+      iconClass: "bg-blue",
+      spacing: "4px"
     },
     {
       title: "Afspraakoverzicht",
       icon: <FaCalendarAlt />,
       onClick: () => navigate('/bedrijf/afspraken'),
       iconClass: "bg-green",
-      showAfspraken: true
+      showAfspraken: true,
+      spacing: "6px"
     },
     {
       title: "Beschikbaarheid van standen",
       icon: <FaMapMarkerAlt />,
       description: "Beheer uw standlocaties en reserveringen",
       onClick: () => setActiveTab('standen'),
-      iconClass: "bg-orange"
+      iconClass: "bg-orange",
+      spacing: "8px"
     },
     {
       title: "Bedrijfsinstellingen",
       icon: <FaCog />,
       description: "Beheer uw bedrijfsgegevens en voorkeuren",
       onClick: () => navigate('/bedrijf/Settingsbedrijf'),
-      iconClass: "bg-purple"
+      iconClass: "bg-purple",
+      spacing: "4px"
     }
   ];
 
@@ -140,8 +144,10 @@ function BedrijvenDashboard() {
         {filteredCards.map((card, index) => (
           <div key={index} className="dashboard-card" onClick={card.onClick}>
             <div className="card-header">
-              <div className={`card-icon ${card.iconClass}`}>{card.icon}</div>
-              <h3>{card.title}</h3>
+              <div className={`card-icon ${card.iconClass}`} style={{ marginRight: card.spacing }}>
+                {card.icon}
+              </div>
+              <h3 className="card-title">{card.title}</h3>
             </div>
             {card.description && <p>{card.description}</p>}
             {card.showAfspraken && (
