@@ -3,6 +3,7 @@ const pool = require('./db');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const path = require('path');
+const multer = require('multer');
 
 // Routers
 const homeRouter = require('./routes/home');
@@ -11,7 +12,7 @@ const newsletterRouter = require('./routes/newsletter');
 const loginRouter = require('./routes/login');
 const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
 const sectorenRouter = require('./routes/sectoren');
-const profielRouter = require('./routes/profiel'); 
+const profielRouter = require('./routes/profiel');
 
 const app = express();
 
@@ -26,6 +27,63 @@ app.use(express.json());
 // Statische map voor uploads (foto's e.d.)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// --- Multer configuratie voor profielfoto upload ---
+const uploadFolder = path.join(__dirname, 'uploads');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadFolder);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  // Alleen afbeeldingen toestaan
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Alleen afbeeldingen zijn toegestaan!'), false);
+  }
+};
+
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 }, // max 5MB
+});
+
+// --- Nieuwe route voor profiel opslaan inclusief upload ---
+app.post('/api/studentenaccount', upload.single('profilePicture'), async (req, res) => {
+  try {
+    // Uit formData:
+    const { naam, email, telefoon, aboutMe, github, linkedin, type } = req.body;
+    let profilePictureUrl = null;
+
+    if (req.file) {
+      // URL van de geüploade afbeelding
+      profilePictureUrl = `/uploads/${req.file.filename}`;
+    }
+
+    // TODO: Voeg hier je database insert of update code toe.
+    // Bijvoorbeeld met pool.query:
+    /*
+    await pool.query(
+      `UPDATE studenten SET naam=$1, telefoon=$2, aboutMe=$3, github=$4, linkedin=$5, profilePicture=$6, type=$7 WHERE email=$8`,
+      [naam, telefoon, aboutMe, github, linkedin, profilePictureUrl, type, email]
+    );
+    */
+
+    // Voorbeeldreactie:
+    res.status(200).json({ message: 'Profiel succesvol opgeslagen!' });
+  } catch (error) {
+    console.error('Fout bij opslaan profiel:', error);
+    res.status(500).json({ error: 'Er ging iets mis bij het opslaan van het profiel.' });
+  }
+});
+
 // Maak apiRouter aan
 const apiRouter = express.Router();
 
@@ -36,7 +94,7 @@ apiRouter.use('/newsletter', newsletterRouter);
 apiRouter.use('/login', loginRouter);
 apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
 apiRouter.use('/sectoren', sectorenRouter);
-apiRouter.use('/profiel', profielRouter);  // nieuwe route toegevoegd
+apiRouter.use('/profiel', profielRouter);
 
 app.use('/api', apiRouter);
 

@@ -11,16 +11,12 @@ export default function Contact() {
 
       <div className="divider"></div>
           
-     <div className="contact-details">
-        <h2>E-mail: info@careerlaunch.be</h2>
+      <div className="contact-details">
+        <p><strong>E-mail:</strong> info@careerlaunch.be</p>
         <p><strong>Telefoon:</strong> +32 123 45 67 89</p>
         
         <div className="address-section">
           <p><strong>Adres:</strong> Nijverheidskaai 5, 1000 Brussel</p>
-          <p>Nijverheidskaai 5</p>
-          <p>Nijverheidskaai 5, 1080 Sint-Jans-Molenbeek</p>
-          <p className="link">Route</p>
-          <p className="link">Grotere kaart bekijken</p>
           
           <div className="google-maps">
             <iframe 
@@ -39,55 +35,44 @@ export default function Contact() {
       <div className="divider"></div>
 
       <div className="contact-form-section">
-  <h2>Contactformulier</h2>
-  <form className="contact-form" onSubmit={(e) => e.preventDefault()}>
-    <div className="form-group">
-      <label htmlFor="name">Naam</label>
-      <input 
-        type="text" 
-        id="name" 
-        name="name" 
-        placeholder="Vul uw naam in" 
-        required 
-      />
-    </div>
+        <h2>Contactformulier</h2>
+      <form className="contact-form" onSubmit={(e) => e.preventDefault()}>
+        <div className="form-group">
+         <label htmlFor="name">Naam</label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            placeholder="Vul uw naam in" 
+            required 
+          />
+        </div>
     
-    <div className="form-group">
-      <label htmlFor="email">E-mail</label>
-      <input 
-        type="email" 
-        id="email" 
-        name="email" 
-        placeholder="Vul uw e-mailadres in" 
-        required 
-      />
-    </div>
+        <div className="form-group">
+          <label htmlFor="email">E-mail</label>
+           <input 
+             type="email" 
+             id="email" 
+             name="email" 
+             placeholder="Vul uw e-mailadres in" 
+             required 
+            />
+        </div>
     
-    <div className="form-group">
-      <label htmlFor="subject">Onderwerp</label>
-      <input 
-        type="text" 
-        id="subject" 
-        name="subject" 
-        placeholder="Waarover gaat uw vraag?" 
-        required 
-      />
-    </div>
+        <div className="form-group">
+          <label htmlFor="message">Bericht</label>
+            <textarea 
+              id="message" 
+              name="message" 
+              placeholder="Typ hier uw bericht..." 
+              rows="5"
+              required
+            ></textarea>
+        </div>
     
-    <div className="form-group">
-      <label htmlFor="message">Bericht</label>
-      <textarea 
-        id="message" 
-        name="message" 
-        placeholder="Typ hier uw bericht..." 
-        rows="5"
-        required
-      ></textarea>
+        <button type="submit" className="submit-button">Verzenden</button>
+      </form>
+     </div>
     </div>
-    
-    <button type="submit" className="submit-button">Verzenden</button>
-  </form>
-</div>
-</div>
   );
 } 
