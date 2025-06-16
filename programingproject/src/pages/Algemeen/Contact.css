@@ -59,13 +59,31 @@
   border: none;
 }
 
+/* Layout contactgegevens + google maps */
+.contact-details-container {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  margin: 1.5rem 0;
+}
+
+.contact-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.address-section {
+  margin-top: 1rem;
+}
+
 /* Google maps */
 .google-maps {
-  margin: 2rem 0;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #e0e0e0;
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-width: 0;
 }
 
 .google-maps iframe {
@@ -79,7 +97,7 @@
 .contact-form-section {
   margin-top: 2.5rem;
   padding: 2rem;
-  background-color: #f8f9fa;
+  background-color: #00a9b5;
   border-radius: 8px;
 }
 
@@ -107,7 +125,7 @@
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 1rem;
-  background-color: #fff;
+  background-color: #d3d9e0;
   transition: all 0.2s ease;
 }
 
