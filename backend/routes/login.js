@@ -16,22 +16,18 @@ router.post('/', async (req, res) => {
     let params = [email];
 
     if (type === 'bedrijf') {
-      // Gebruik GROUP_CONCAT voor sectoren en LIMIT 1
+      // Alleen checken op email en wachtwoord van bedrijf, geen join
       query = `
         SELECT 
-          b.bedrijf_id AS id,
-          b.email,
-          b.wachtwoord,
-          b.naam AS bedrijfsnaam,
-          GROUP_CONCAT(s.naam SEPARATOR ', ') AS sectoren,
-          b.website_of_linkedin,
-          b.telefoonnummer,
-          b.gemeente
-        FROM Bedrijven b
-        JOIN Bedrijf_Sector bs ON b.bedrijf_id = bs.bedrijf_id
-        JOIN Sectoren s ON bs.sector_id = s.sector_id 
-        WHERE b.email = ?
-        GROUP BY b.bedrijf_id
+          bedrijf_id AS id,
+          email,
+          wachtwoord,
+          naam AS bedrijfsnaam,
+          website_of_linkedin,
+          telefoonnummer,
+          gemeente
+        FROM Bedrijven
+        WHERE email = ?
         LIMIT 1
       `;
     } else if (type === 'student') {
@@ -99,7 +95,6 @@ router.post('/', async (req, res) => {
         ...(type === 'bedrijf'
           ? {
               bedrijfsnaam: user.bedrijfsnaam,
-              sectoren: user.sectoren?.split(', ').map(s => s.trim()),
               website: user.website_of_linkedin,
               telefoonnummer: user.telefoonnummer,
               gemeente: user.gemeente,
