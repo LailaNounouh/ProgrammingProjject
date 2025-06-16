@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "./ProfielSettingsModule.css";
-
 import { useProfile } from "../../context/ProfileContext";
 
 import TaalSelector from "../../components/dropdowns/TaalSelector";
@@ -23,9 +22,14 @@ export default function ProfielSettingsModule() {
   });
 
   const [profilePicture, setProfilePicture] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [messageType, setMessageType] = useState(null);
 
   useEffect(() => {
-    if (profile) {
+    // Profiel ophalen als die nog niet bestaat
+    if (!profile) {
+      fetchProfile();
+    } else {
       setFormData({
         naam: profile.naam || "",
         email: profile.email || "",
@@ -35,7 +39,7 @@ export default function ProfielSettingsModule() {
         linkedin: profile.linkedin || "",
       });
     }
-  }, [profile]);
+  }, [profile, fetchProfile]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,21 +57,17 @@ export default function ProfielSettingsModule() {
     e.preventDefault();
 
     const data = new FormData();
-    if (formData.naam) data.append("naam", formData.naam);
-    if (formData.email) data.append("email", formData.email);
-    if (formData.telefoon) data.append("telefoon", formData.telefoon);
-    if (formData.aboutMe) data.append("aboutMe", formData.aboutMe);
-    if (formData.github) data.append("github", formData.github);
-    if (formData.linkedin) data.append("linkedin", formData.linkedin);
+    data.append("naam", formData.naam);
+    data.append("email", formData.email);
+    data.append("telefoon", formData.telefoon);
+    data.append("aboutMe", formData.aboutMe);
+    data.append("github", formData.github);
+    data.append("linkedin", formData.linkedin);
     if (profilePicture) data.append("profilePicture", profilePicture);
-
-    // Voeg type toe als het in de profile context zit
-    if (profile?.type) {
-      data.append("type", profile.type); // bijv. "student" of "werkzoekende"
-    }
+    if (profile?.type) data.append("type", profile.type);
 
     try {
-      const response = await fetch(`${baseUrl}/studentenaccount`, {
+      const response = await fetch(`${baseUrl}/profiel`, {
         method: "POST",
         body: data,
       });
@@ -75,10 +75,17 @@ export default function ProfielSettingsModule() {
       if (!response.ok) throw new Error("Fout bij opslaan van profiel");
 
       await fetchProfile();
-      alert("Profiel succesvol opgeslagen!");
+      setMessage("Profiel succesvol opgeslagen!");
+      setMessageType("success");
+
+      setTimeout(() => {
+        setMessage(null);
+        setMessageType(null);
+      }, 5000);
     } catch (error) {
       console.error("Fout bij verzenden:", error);
-      alert(`Er ging iets mis: ${error.message}`);
+      setMessage(`Er ging iets mis: ${error.message}`);
+      setMessageType("error");
     }
   };
 
@@ -196,6 +203,8 @@ export default function ProfielSettingsModule() {
           <button type="submit">Opslaan</button>
         </div>
       </form>
+
+      {message && <div className={`notification ${messageType}`}>{message}</div>}
     </div>
   );
 }

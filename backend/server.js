@@ -13,6 +13,7 @@ const loginRouter = require('./routes/login');
 const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
 const sectorenRouter = require('./routes/sectoren');
 const profielRouter = require('./routes/profiel');
+const adminRouter = require('./routes/admin');
 
 const app = express();
 
@@ -95,6 +96,7 @@ apiRouter.use('/login', loginRouter);
 apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
 apiRouter.use('/sectoren', sectorenRouter);
 apiRouter.use('/profiel', profielRouter);
+apiRouter.use('/admin', adminRouter);
 
 app.use('/api', apiRouter);
 

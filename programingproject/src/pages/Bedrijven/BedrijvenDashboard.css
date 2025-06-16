@@ -11,7 +11,6 @@
   --white: #ffffff;
 }
 
-/* Basisstijlen */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
@@ -26,105 +25,13 @@ body {
   min-height: 100vh;
 }
 
-/* Header stijlen */
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: var(--white);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.header-left h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: var(--primary-blue);
-}
-
-.header-left p {
-  margin: 0;
-  color: var(--text-light);
-  font-size: 0.9rem;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.search-box {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.search-box input {
-  padding: 0.5rem 1rem 0.5rem 2rem;
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
-  outline: none;
-  transition: all 0.3s;
-}
-
-.search-box input:focus {
-  border-color: var(--primary-blue);
-}
-
-.search-icon {
-  position: absolute;
-  left: 0.8rem;
-  color: var(--text-light);
-}
-
-.notification-bell {
-  position: relative;
-  cursor: pointer;
-  color: var(--text-dark);
-}
-
-.notification-badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background-color: var(--primary-blue);
-  color: white;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  background-color: var(--primary-blue);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* Hoofdcontent */
-.dashboard-content {
-  padding: 3rem;
-  flex: 1;
-  margin-top: 3rem;
-}
-
+/* Welkom-balk */
 .welcome-banner {
   background-color: var(--white);
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .welcome-banner h1 {
@@ -138,12 +45,161 @@ body {
   margin: 0;
 }
 
+/* Zoekbalk en toolbar */
+.dashboard-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem 1rem 2rem;
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  margin-bottom: 2rem;
+  gap: 1.5rem;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 300px;
+  max-width: 350px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.5rem 1rem 0.5rem 2rem;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  outline: none;
+  transition: all 0.3s;
+  background: #f8f9fa;
+}
+
+.search-box input:focus {
+  border-color: var(--primary-blue);
+  background: #fff;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.8rem;
+  color: var(--text-light);
+  font-size: 1rem;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.notification-bell {
+  position: relative;
+  cursor: pointer;
+  color: var(--text-dark);
+  font-size: 1.3rem;
+  outline: none;
+}
+
+.notification-bell:focus {
+  box-shadow: 0 0 0 2px var(--primary-blue);
+  border-radius: 50%;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: var(--primary-blue);
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.notification-popup {
+  position: absolute;
+  right: 0;
+  top: 2.2rem;
+  width: 320px;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  padding: 1rem;
+  z-index: 2000;
+  animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px);}
+  to   { opacity: 1; transform: translateY(0);}
+}
+
+.notification-popup h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+.notification-popup ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-popup li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.98rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-popup li:last-child {
+  border-bottom: none;
+}
+
+.notif-time {
+  color: var(--text-light);
+  font-size: 0.85em;
+  margin-top: 2px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background-color: var(--primary-blue);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+/* Hoofdcontent */
+.dashboard-content {
+  padding: 2rem 2rem 2rem 2rem;
+  flex: 1;
+  margin-top: 0;
+}
+
 /* Kaartgrid */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
-  margin-top: 1.5rem;
 }
 
 .dashboard-card {
@@ -175,6 +231,7 @@ body {
   justify-content: center;
   margin-right: 1rem;
   color: white;
+  font-size: 1.3rem;
 }
 
 .bg-blue { background-color: var(--primary-blue); }
@@ -215,26 +272,40 @@ body {
   padding: 0.5rem 0;
 }
 
+.upcoming-appointments {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.appointment-item {
+  font-size: 0.95rem;
+  color: var(--text-dark);
+}
+
 /* Responsief design */
+@media (max-width: 900px) {
+  .dashboard-content,
+  .dashboard-toolbar {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
 @media (max-width: 768px) {
-  .dashboard-header {
+  .dashboard-toolbar {
     flex-direction: column;
-    align-items: flex-start;
-    padding: 1rem;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 1rem 0.5rem;
   }
-
-  .header-right {
-    width: 100%;
-    margin-top: 1rem;
-    justify-content: space-between;
+  .toolbar-actions {
+    gap: 1rem;
+    margin-top: 0.5rem;
   }
-
-  .search-box {
-    flex-grow: 1;
-    margin-right: 1rem;
+  .dashboard-content {
+    padding: 1rem 0.5rem;
   }
-
-  /* Aangepast voor 2 kolommen op mobiel */
   .card-grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }

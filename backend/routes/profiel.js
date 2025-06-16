@@ -35,7 +35,7 @@ router.get("/:email", async (req, res) => {
 // POST profiel bijwerken + foto uploaden
 router.post("/", upload.single("profilePicture"), async (req, res) => {
   const { naam, email, telefoon, aboutMe, github, linkedin } = req.body;
-  const foto_url = req.file ? req.file.path : null;
+  const nieuweFotoUrl = req.file ? req.file.path : null;
 
   if (!email) {
     return res.status(400).json({ error: "Email is verplicht" });
@@ -43,6 +43,8 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
 
   try {
     const [rows] = await pool.query("SELECT * FROM Studenten WHERE email = ?", [email]);
+
+    let finalFotoUrl = nieuweFotoUrl;
 
     if (rows.length === 0) {
       // Nieuwe student: wachtwoord verplicht, hier tijdelijk default wachtwoord
@@ -57,47 +59,40 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
           email,
           telefoon || null,
           aboutMe || null,
-          foto_url,
+          finalFotoUrl,
           github || null,
           linkedin || null,
           defaultPassword,
         ]
       );
     } else {
-      // Update bestaande student
-      if (foto_url) {
-        await pool.query(
-          `UPDATE Studenten
-           SET naam = ?, telefoon = ?, aboutMe = ?, foto_url = ?, github_url = ?, linkedin_url = ?, updated_at = NOW()
-           WHERE email = ?`,
-          [
-            naam || null,
-            telefoon || null,
-            aboutMe || null,
-            foto_url,
-            github || null,
-            linkedin || null,
-            email,
-          ]
-        );
-      } else {
-        await pool.query(
-          `UPDATE Studenten
-           SET naam = ?, telefoon = ?, aboutMe = ?, github_url = ?, linkedin_url = ?, updated_at = NOW()
-           WHERE email = ?`,
-          [
-            naam || null,
-            telefoon || null,
-            aboutMe || null,
-            github || null,
-            linkedin || null,
-            email,
-          ]
-        );
+      // Bestaande student, foto behouden indien niet meegegeven
+      if (!finalFotoUrl) {
+        finalFotoUrl = rows[0].foto_url; // behoud huidige foto
       }
+
+      await pool.query(
+        `UPDATE Studenten
+         SET naam = ?, telefoon = ?, aboutMe = ?, foto_url = ?, github_url = ?, linkedin_url = ?
+         WHERE email = ?`,
+        [
+          naam || null,
+          telefoon || null,
+          aboutMe || null,
+          finalFotoUrl,
+          github || null,
+          linkedin || null,
+          email,
+        ]
+      );
     }
 
-    res.json({ success: true, message: "Profiel opgeslagen" });
+    const [updatedRows] = await pool.query("SELECT * FROM Studenten WHERE email = ?", [email]);
+    const updatedStudent = updatedRows[0];
+    delete updatedStudent.wachtwoord;
+
+    res.json({ success: true, student: updatedStudent });
+
   } catch (err) {
     console.error("Fout bij opslaan profiel:", err);
     res.status(500).json({ error: err.message || "Fout bij opslaan profiel" });
