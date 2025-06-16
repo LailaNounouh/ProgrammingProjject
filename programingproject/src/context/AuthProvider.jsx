@@ -10,86 +10,69 @@ export const AuthProvider = ({ children }) => {
   const [gebruiker, setGebruiker] = useState(null);
   const navigate = useNavigate();
 
+  // Herstel gebruiker bij pagina herladen
   useEffect(() => {
-    try {
-      const opgeslagenGebruiker = JSON.parse(localStorage.getItem('gebruiker'));
-      if (opgeslagenGebruiker?.email) {
-        setGebruiker(opgeslagenGebruiker);
+    const opgeslagen = localStorage.getItem('gebruiker');
+    if (opgeslagen) {
+      try {
+        const parsed = JSON.parse(opgeslagen);
+        if (parsed && parsed.email && parsed.id) {
+          setGebruiker(parsed);
+        }
+      } catch (err) {
+        console.warn("Ongeldige gebruikersdata in localStorage");
+        localStorage.removeItem('gebruiker');
       }
-    } catch (err) {
-      console.warn("Ongeldige gebruikersdata in localStorage");
-      localStorage.removeItem('gebruiker');
     }
   }, []);
 
+  // Login functie
   const inloggen = async (email, wachtwoord, type) => {
     try {
-      console.log('Verstuur login verzoek:', { email, type });
-
       const response = await fetch(`${baseUrl}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email, 
-          password: wachtwoord,
-          type
-        }),
-        credentials: 'include'
+        credentials: 'include',
+        body: JSON.stringify({ email, password: wachtwoord, type }),
       });
 
       const data = await response.json();
-      console.log('Server response:', data);
 
       if (!response.ok) {
-        throw new Error(data.error || 'Inloggen mislukt');
+        return { success: false, bericht: data.error || 'Inloggen mislukt' };
       }
 
       const gebruikersData = {
         id: data.user.id,
         email: data.user.email,
+        naam: data.user.naam || data.user.bedrijfsnaam || '',
         type: type,
-        naam: data.user.naam
       };
 
       setGebruiker(gebruikersData);
       localStorage.setItem('gebruiker', JSON.stringify(gebruikersData));
 
-      switch(type) {
-        case 'student':
-          navigate('/student');
-          break;
-        case 'bedrijf':
-          navigate('/bedrijf');
-          break;
-        case 'werkzoekende':
-          navigate('/werkzoekende');
-          break;
-        case 'admin':
-          navigate('/admin');
-          break;
-        default:
-          navigate('/');
-      }
-
+      navigate(`/${type}`);
       return { success: true };
-    } catch (error) {
-      console.error('Inlogfout:', error);
-      return { success: false, bericht: error.message };
+    } catch (err) {
+      console.error('Inlogfout:', err);
+      return { success: false, bericht: 'Er trad een fout op tijdens het inloggen' };
     }
   };
 
+  // Logout functie
   const uitloggen = () => {
-    console.log('Uitloggen...');
     setGebruiker(null);
+    localStorage.removeItem('gebruiker');
     navigate('/login');
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      gebruiker, 
-      inloggen, 
-      uitloggen, 
-      isIngelogd: () => !!gebruiker 
+    <AuthContext.Provider value={{
+      gebruiker,
+      inloggen,
+      uitloggen,
+      isIngelogd: () => !!gebruiker
     }}>
       {children}
     </AuthContext.Provider>

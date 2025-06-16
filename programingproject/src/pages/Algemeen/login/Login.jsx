@@ -1,44 +1,73 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { baseUrl } from '../../../config';
+import { baseUrl } from "../../../config";
 import "./Login.css";
+<<<<<<< HEAD
 import { useAuth } from "../../../context/AuthProvider";
+=======
+>>>>>>> 3306cd2df0847bcd1c606de2d5182f06e5a27bf5
 
 export default function Login() {
-  const navigate = useNavigate();
-  const { inloggen } = useAuth();
   const [email, setEmail] = useState("");
   const [wachtwoord, setWachtwoord] = useState("");
   const [type, setType] = useState("student");
-  const [foutmelding, setFoutmelding] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setFoutmelding("");
+    setError("");
+    setSuccess("");
 
     try {
-      const resultaat = await inloggen(email, wachtwoord, type);
+      const response = await fetch(`${baseUrl}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: wachtwoord, type }),
+      });
 
-      if (resultaat.success) {
-        navigate(`/${type}`);
+      const data = await response.json();
+
+      if (data.success && data.user) {
+        const userData = {
+          id: data.user.id,
+          email: data.user.email,
+          role: type,
+          ...data.user,
+        };
+
+        localStorage.setItem("user", JSON.stringify(userData));
+        setSuccess("Login geslaagd!");
+
+        setTimeout(() => {
+          if (type === "admin") navigate("/Admin");
+          else if (type === "bedrijf") navigate("/Bedrijf");
+          else if (type === "student") navigate("/Student");
+          else if (type === "werkzoekende") navigate("/werkzoekende");
+          else navigate("/");
+        }, 1000);
       } else {
-        setFoutmelding(resultaat.bericht || "Inloggen mislukt");
+        setError(data.error || "Login mislukt.");
       }
     } catch (err) {
       console.error("Login fout:", err);
-      setFoutmelding("Er is een fout opgetreden bij het inloggen");
+      setError("Serverfout tijdens inloggen.");
     }
   };
 
   return (
     <div className="login-container">
-      <h2>Inloggen</h2>
-      <form onSubmit={handleSubmit} className="login-form">
+      <form className="login-form" onSubmit={handleSubmit}>
+        <h2>Inloggen</h2>
+
+        {error && <div className="login-error">{error}</div>}
+        {success && <div className="login-success">{success}</div>}
+
         <div className="form-group">
-          <label htmlFor="type">Account type:</label>
+          <label htmlFor="type">Accounttype:</label>
           <select
             id="type"
-            name="type"
             value={type}
             onChange={(e) => setType(e.target.value)}
             required
@@ -49,41 +78,36 @@ export default function Login() {
             <option value="admin">Admin</option>
           </select>
         </div>
-        <label>
-          Email:
+
+        <div className="form-group">
+          <label htmlFor="email">E-mailadres:</label>
           <input
             type="email"
             id="email"
-            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            autoComplete="username"
             required
           />
-        </label>
+        </div>
 
-        <label>
-          Wachtwoord:
+        <div className="form-group">
+          <label htmlFor="wachtwoord">Wachtwoord:</label>
           <input
             type="password"
             id="wachtwoord"
-            name="wachtwoord"
             value={wachtwoord}
             onChange={(e) => setWachtwoord(e.target.value)}
+            autoComplete="current-password"
             required
           />
-        </label>
+        </div>
 
-        <button type="submit">Inloggen</button>
+        <button type="submit" className="login-button">Inloggen</button>
 
         <div className="register-link">
           Nog geen account? <Link to="/register">Registreer hier</Link>
         </div>
-
-        <button type="submit" className="login-button">
-          Inloggen
-        </button>
-
-        {foutmelding && <div className="error-message">{foutmelding}</div>}
       </form>
     </div>
   );
