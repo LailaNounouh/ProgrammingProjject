@@ -2,7 +2,7 @@ const express = require('express');
 const pool = require('../db');
 const router = express.Router();
 
-// Haal bedrijfsinformatie op voor afspraakmodule
+// ✅ 1. Haal bedrijfsinformatie op voor afspraakmodule
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -10,7 +10,13 @@ router.get('/:id', async (req, res) => {
       SELECT 
         bedrijf_id,
         naam,
-        beschrijving,
+        straat,
+        nummer,
+        postcode,
+        gemeente,
+        telefoonnummer,
+        email,
+        website_of_linkedin,
         logo_url
       FROM Bedrijven
       WHERE bedrijf_id = ?
@@ -22,9 +28,34 @@ router.get('/:id', async (req, res) => {
 
     res.json(rows[0]);
   } catch (err) {
-    console.error("Fout bij ophalen afspraakbedrijf:", err.message);
-    res.status(500).json({ error: 'Databasefout bij ophalen afspraakbedrijf' });
+    console.error("Fout bij ophalen bedrijfsinfo:", err.message);
+    res.status(500).json({ error: 'Databasefout bij ophalen bedrijf' });
   }
 });
 
-module.exports = router;
+// ✅ 2. Voeg een nieuwe afspraak toe
+router.post('/', async (req, res) => {
+  const { student_id, bedrijf_id, datum, tijdstip, opmerking } = req.body;
+
+  if (!student_id || !bedrijf_id || !datum || !tijdstip) {
+    return res.status(400).json({ error: 'Vul alle verplichte velden in' });
+  }
+
+  try {
+    const [result] = await pool.query(`
+      INSERT INTO Afspraken (student_id, bedrijf_id, datum, tijdstip, opmerking)
+      VALUES (?, ?, ?, ?, ?)
+    `, [student_id, bedrijf_id, datum, tijdstip, opmerking || null]);
+
+    res.status(201).json({
+      success: true,
+      afspraak_id: result.insertId,
+      message: 'Afspraak succesvol toegevoegd',
+    });
+  } catch (err) {
+    console.error('Fout bij toevoegen afspraak:', err.message);
+    res.status(500).json({ error: 'Databasefout bij toevoegen afspraak' });
+  }
+});
+
+module.exports = router;

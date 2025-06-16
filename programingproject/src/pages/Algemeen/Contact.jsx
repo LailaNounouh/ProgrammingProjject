@@ -52,12 +52,23 @@ export default function Contact() {
     
         <div className="form-group">
           <label htmlFor="email">E-mail</label>
-           <input 
+            <input 
              type="email" 
              id="email" 
              name="email" 
              placeholder="Vul uw e-mailadres in" 
              required 
+            />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="subject">Onderwerp</label>
+            <input 
+              type="text" 
+              id="subject" 
+              name="subject" 
+              placeholder="Waarover gaat uw vraag?" 
+              required 
             />
         </div>
     
