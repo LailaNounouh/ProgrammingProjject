@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Plattegrond from '../../components/plattegrond/plattegrond';
 import './StudentenDashboard.css';
+import { baseUrl } from '../../config';
 
 const StudentenDashboard = () => {
   const [bedrijven, setBedrijven] = useState([]);

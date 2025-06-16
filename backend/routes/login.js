@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
     if (type === 'bedrijf') {
       query = `
         SELECT 
-          id,
+          bedrijf_id AS id,
           email,
           wachtwoord,
           naam AS bedrijfsnaam,

@@ -22,16 +22,12 @@ export default function ProfielSettingsModule() {
   });
 
   const [profilePicture, setProfilePicture] = useState(null);
-
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState(null);
 
-  // Bij mount eerst localStorage checken en evt. data laden
+  // Laad profiel in formData zodra het beschikbaar is
   useEffect(() => {
-    const savedData = localStorage.getItem("localProfileData");
-    if (savedData) {
-      setFormData(JSON.parse(savedData));
-    } else if (profile) {
+    if (profile) {
       setFormData({
         naam: profile.naam || "",
         email: profile.email || "",
@@ -42,11 +38,6 @@ export default function ProfielSettingsModule() {
       });
     }
   }, [profile]);
-
-  // LocalStorage updaten bij elke wijziging van formData
-  useEffect(() => {
-    localStorage.setItem("localProfileData", JSON.stringify(formData));
-  }, [formData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,17 +55,13 @@ export default function ProfielSettingsModule() {
     e.preventDefault();
 
     const data = new FormData();
-    if (formData.naam) data.append("naam", formData.naam);
-    if (formData.email) data.append("email", formData.email);
-    if (formData.telefoon) data.append("telefoon", formData.telefoon);
-    if (formData.aboutMe) data.append("aboutMe", formData.aboutMe);
-    if (formData.github) data.append("github", formData.github);
-    if (formData.linkedin) data.append("linkedin", formData.linkedin);
+    data.append("naam", formData.naam);
+    data.append("email", formData.email);
+    data.append("telefoon", formData.telefoon);
+    data.append("aboutMe", formData.aboutMe);
+    data.append("github", formData.github);
+    data.append("linkedin", formData.linkedin);
     if (profilePicture) data.append("profilePicture", profilePicture);
-
-    if (profile?.type) {
-      data.append("type", profile.type);
-    }
 
     try {
       const response = await fetch(`${baseUrl}/profiel`, {
@@ -84,12 +71,9 @@ export default function ProfielSettingsModule() {
 
       if (!response.ok) throw new Error("Fout bij opslaan van profiel");
 
-      await fetchProfile();
+      await fetchProfile(); // opnieuw ophalen na update
       setMessage("Profiel succesvol opgeslagen!");
       setMessageType("success");
-
-      // LocalStorage leegmaken na succesvolle sync
-      localStorage.removeItem("localProfileData");
 
       setTimeout(() => {
         setMessage(null);
@@ -102,13 +86,16 @@ export default function ProfielSettingsModule() {
     }
   };
 
+  if (!profile) {
+    return <div>Profiel wordt geladen...</div>;
+  }
+
   return (
     <div className="profiel-module">
       <h1>Mijn Profiel</h1>
       <p>Vul je persoonlijke en professionele informatie in.</p>
 
       <form className="template-form" onSubmit={handleSubmit}>
-        {/* Persoonlijke gegevens */}
         <section className="form-group">
           <h2>Persoonlijke Gegevens</h2>
 
@@ -193,7 +180,6 @@ export default function ProfielSettingsModule() {
           </div>
         </section>
 
-        {/* Selectors voor skills en talen */}
         <section className="form-group">
           <h2>Talenkennis</h2>
           <TaalSelector />
