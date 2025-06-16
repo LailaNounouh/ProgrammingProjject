@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { baseUrl } from '../../../config';
-import "./Login.css";
 import { useAuth } from "../../../context/AuthProvider";
+import "./Login.css";
 
 export default function Login() {
   const navigate = useNavigate();
   const { inloggen } = useAuth();
-  const [email, setEmail] = useState("");
-  const [wachtwoord, setWachtwoord] = useState("");
-  const [type, setType] = useState("student");
+  const [formData, setFormData] = useState({
+    email: "",
+    wachtwoord: "",
+    type: "student"
+  });
   const [foutmelding, setFoutmelding] = useState("");
 
   const handleSubmit = async (e) => {
@@ -17,10 +18,9 @@ export default function Login() {
     setFoutmelding("");
 
     try {
-      const resultaat = await inloggen(email, wachtwoord, type);
-
+      const resultaat = await inloggen(formData.email, formData.wachtwoord, formData.type);
       if (resultaat.success) {
-        navigate(`/${type}`);
+        navigate(`/${formData.type}`);
       } else {
         setFoutmelding(resultaat.bericht || "Inloggen mislukt");
       }
@@ -30,61 +30,70 @@ export default function Login() {
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   return (
     <div className="login-container">
-      <h2>Inloggen</h2>
-      <form onSubmit={handleSubmit} className="login-form">
-        <div className="form-group">
-          <label htmlFor="type">Account type:</label>
-          <select
-            id="type"
-            name="type"
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-            required
-          >
-            <option value="student">Student</option>
-            <option value="bedrijf">Bedrijf</option>
-            <option value="werkzoekende">Werkzoekende</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
-        <label>
-          Email:
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </label>
+      <div className="login-card">
+        <h2>Inloggen</h2>
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="form-group">
+            <label htmlFor="type">Account type</label>
+            <select
+              id="type"
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              required
+            >
+              <option value="student">Student</option>
+              <option value="bedrijf">Bedrijf</option>
+              <option value="werkzoekende">Werkzoekende</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
 
-        <label>
-          Wachtwoord:
-          <input
-            type="password"
-            id="wachtwoord"
-            name="wachtwoord"
-            value={wachtwoord}
-            onChange={(e) => setWachtwoord(e.target.value)}
-            required
-          />
-        </label>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <button type="submit">Inloggen</button>
+          <div className="form-group">
+            <label htmlFor="wachtwoord">Wachtwoord</label>
+            <input
+              type="password"
+              id="wachtwoord"
+              name="wachtwoord"
+              value={formData.wachtwoord}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <div className="register-link">
-          Nog geen account? <Link to="/register">Registreer hier</Link>
-        </div>
+          <button type="submit" className="login-button">
+            Inloggen
+          </button>
 
-        <button type="submit" className="login-button">
-          Inloggen
-        </button>
+          <div className="register-link">
+            Nog geen account? <Link to="/register">Registreer hier</Link>
+          </div>
 
-        {foutmelding && <div className="error-message">{foutmelding}</div>}
-      </form>
+          {foutmelding && <div className="error-message">{foutmelding}</div>}
+        </form>
+      </div>
     </div>
   );
 }
