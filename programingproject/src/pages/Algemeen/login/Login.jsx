@@ -1,110 +1,81 @@
 import React, { useState } from "react";
 import "./Login.css";
-import { useNavigate } from "react-router-dom";
-import { baseUrl } from "../../../config";
-import { useAuth } from "../../../context/AuthProvider";
+import { Link } from "react-router-dom"; // alleen indien je react-router-dom gebruikt
 
 export default function Login() {
-  const navigate = useNavigate();
-  const { login } = useAuth();
-  const [formData, setFormData] = useState({
-    email: "",
-    wachtwoord: "",
-    type: "student" // default type
-  });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [type, setType] = useState("student");
   const [error, setError] = useState("");
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+  const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
 
     try {
-      const result = await login(
-        formData.email, 
-        formData.wachtwoord, 
-        formData.type
-      );
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, type }),
+      });
+      const data = await response.json();
 
-      if (result.success) {
-        navigate(`/${formData.type}`);
+      if (data.success) {
+        setSuccess("Login geslaagd!");
       } else {
-        setError(result.message || 'Inloggen mislukt');
+        setError(data.error || "Login mislukt.");
       }
     } catch (err) {
-      console.error("Login fout:", err);
-      setError("Er is een fout opgetreden bij het inloggen");
+      setError("Serverfout.");
     }
   };
 
   return (
     <div className="login-container">
-      <h2>Inloggen</h2>
-      <form onSubmit={handleSubmit} className="login-form">
-        <div className="form-group">
-          <label htmlFor="type">Account type:</label>
-          <select
-            id="type"
-            name="type"
-            value={formData.type}
-            onChange={handleChange}
-            required
-          >
+      <form className="login-form" onSubmit={handleSubmit}>
+        <h2>Inloggen</h2>
+        {error && <div className="login-error">{error}</div>}
+        {success && <div className="login-success">{success}</div>}
+        <label>
+          Type gebruiker:
+          <select value={type} onChange={e => setType(e.target.value)}>
             <option value="student">Student</option>
             <option value="bedrijf">Bedrijf</option>
             <option value="werkzoekende">Werkzoekende</option>
             <option value="admin">Admin</option>
           </select>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="email">E-mail:</label>
+        </label>
+        <label>
+          Email:
           <input
             type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            autoComplete="username"
             required
           />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="wachtwoord">Wachtwoord:</label>
+        </label>
+        <label>
+          Wachtwoord:
           <input
             type="password"
-            id="wachtwoord"
-            name="wachtwoord"
-            value={formData.wachtwoord}
-            onChange={handleChange}
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            autoComplete="current-password"
             required
           />
+        </label>
+        <button type="submit">Inloggen</button>
+        <div className="register-link">
+          Nog geen account?{" "}
+          <Link to="/register">Registreer hier</Link>
+          {/* Als je geen react-router gebruikt, vervang bovenste regel door: 
+          <a href="/registratie">Registreer hier</a> 
+          */}
         </div>
-
-        <button type="submit" className="login-button">
-          Inloggen
-        </button>
-
-        {error && <div className="error-message">{error}</div>}
       </form>
-
-      {/* Registratie sectie toegevoegd */}
-      <div className="register-section">
-        <p>Heb je nog geen account?</p>
-        <button 
-          type="button" 
-          className="register-link-button"
-          onClick={() => navigate('/register')}
-        >
-          Registreer hier
-        </button>
-      </div>
     </div>
   );
 }
