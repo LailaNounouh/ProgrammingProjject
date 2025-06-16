@@ -79,8 +79,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const uitloggen = () => {
+    console.log('Uitloggen...');
     setGebruiker(null);
-    localStorage.removeItem('gebruiker');
     navigate('/login');
   };
 
@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={{ 
       gebruiker, 
       inloggen, 
-      uitloggen,
+      uitloggen, 
       isIngelogd: () => !!gebruiker 
     }}>
       {children}
