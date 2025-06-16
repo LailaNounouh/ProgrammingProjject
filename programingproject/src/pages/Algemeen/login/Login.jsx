@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { baseUrl } from '../../../config';
 import "./Login.css";
-import { Link } from "react-router-dom"; // alleen indien je react-router-dom gebruikt
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -8,6 +9,7 @@ export default function Login() {
   const [type, setType] = useState("student");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,7 +17,7 @@ export default function Login() {
     setSuccess("");
 
     try {
-      const response = await fetch("/api/login", {
+      const response = await fetch(`${baseUrl}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, type }),
@@ -24,6 +26,14 @@ export default function Login() {
 
       if (data.success) {
         setSuccess("Login geslaagd!");
+        // Na 1 seconde doorsturen naar juiste dashboard
+        setTimeout(() => {
+          if (type === 'admin') navigate('/Admin');
+          else if (type === 'bedrijf') navigate('/Bedrijf');
+          else if (type === 'student') navigate('/Student');
+          else if (type === 'werkzoekende') navigate('/werkzoekende');
+          else navigate('/');
+        }, 1000);
       } else {
         setError(data.error || "Login mislukt.");
       }
@@ -38,6 +48,7 @@ export default function Login() {
         <h2>Inloggen</h2>
         {error && <div className="login-error">{error}</div>}
         {success && <div className="login-success">{success}</div>}
+
         <label>
           Type gebruiker:
           <select value={type} onChange={e => setType(e.target.value)}>
@@ -47,6 +58,7 @@ export default function Login() {
             <option value="admin">Admin</option>
           </select>
         </label>
+
         <label>
           Email:
           <input
@@ -57,6 +69,7 @@ export default function Login() {
             required
           />
         </label>
+
         <label>
           Wachtwoord:
           <input
@@ -67,13 +80,14 @@ export default function Login() {
             required
           />
         </label>
+
         <button type="submit">Inloggen</button>
+
         <div className="register-link">
           Nog geen account?{" "}
           <Link to="/register">Registreer hier</Link>
-          {/* Als je geen react-router gebruikt, vervang bovenste regel door: 
-          <a href="/registratie">Registreer hier</a> 
-          */}
+          {/* Als je geen react-router gebruikt, vervang bovenstaande regel door:
+              <a href="/registratie">Registreer hier</a> */}
         </div>
       </form>
     </div>
