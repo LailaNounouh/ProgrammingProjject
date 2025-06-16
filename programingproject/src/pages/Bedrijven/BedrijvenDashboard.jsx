@@ -20,6 +20,19 @@ function BedrijvenDashboard() {
     ]);
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const notifications = [
     { id: 1, message: "Student Lisa Janssens heeft een afspraak gemaakt voor 17 juni om 10:00.", time: "1 uur geleden" },
     { id: 2, message: "Factuur F2023-0457 moet nog betaald worden (Tom Peeters).", time: "2 uur geleden" }
@@ -77,27 +90,28 @@ function BedrijvenDashboard() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
+
         <div className="notification-wrapper" ref={notificationRef}>
-  <div className="notification-bell" onClick={() => setShowNotifications(!showNotifications)}>
-    <FaBell />
-    {notifications.length > 0 && <span className="notification-badge">{notifications.length}</span>}
-  </div>
+          <div className="notification-bell" onClick={() => setShowNotifications(!showNotifications)}>
+            <FaBell />
+            {notifications.length > 0 && (
+              <span className="notification-badge">{notifications.length}</span>
+            )}
+          </div>
 
-  {showNotifications && (
-    <div className="notification-popup">
-      <h4>Meldingen</h4>
-      <ul>
-        {notifications.map((notif) => (
-          <li key={notif.id}>
-            {notif.message}
-            <span className="notif-time">{notif.time}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )}
-</div>
-
+          {showNotifications && (
+            <div className="notification-dropdown">
+              <ul>
+                {notifications.map((notif) => (
+                  <li key={notif.id}>
+                    <p>{notif.message}</p>
+                    <small>{notif.time}</small>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="card-grid">
@@ -110,9 +124,9 @@ function BedrijvenDashboard() {
               <h3 className="card-title">{card.title}</h3>
             </div>
             {card.description && <p className="card-description">{card.description}</p>}
-         {card.showAfspraken && (
-  <p className="card-description">Bekijk geplande afspraken</p>
-)}
+            {card.showAfspraken && (
+              <p className="card-description">Bekijk geplande afspraken</p>
+            )}
             <div className="card-footer">
               <span>Direct naar {card.title.toLowerCase()}</span>
               <FaChevronRight className="chevron-icon" />
