@@ -77,12 +77,27 @@ function BedrijvenDashboard() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="notification-wrapper">
-          <div className="notification-bell" onClick={() => setShowNotifications(!showNotifications)}>
-            <FaBell />
-            {notifications.length > 0 && <span className="notification-badge">{notifications.length}</span>}
-          </div>
-        </div>
+        <div className="notification-wrapper" ref={notificationRef}>
+  <div className="notification-bell" onClick={() => setShowNotifications(!showNotifications)}>
+    <FaBell />
+    {notifications.length > 0 && <span className="notification-badge">{notifications.length}</span>}
+  </div>
+
+  {showNotifications && (
+    <div className="notification-popup">
+      <h4>Meldingen</h4>
+      <ul>
+        {notifications.map((notif) => (
+          <li key={notif.id}>
+            {notif.message}
+            <span className="notif-time">{notif.time}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</div>
+
       </div>
 
       <div className="card-grid">
