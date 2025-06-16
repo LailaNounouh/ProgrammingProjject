@@ -18,15 +18,17 @@ router.post('/', async (req, res) => {
     if (type === 'bedrijf') {
       query = `
         SELECT 
-          id,
-          email,
-          wachtwoord,
-          naam AS bedrijfsnaam,
-          sector,
-          website_of_linkedin,
-          telefoonnummer,
-          gemeente
-        FROM Bedrijven 
+          b.bedrijf_id AS id,
+          b.email,
+          b.wachtwoord,
+          b.naam AS bedrijfsnaam,
+          s.naam AS sector_naam,
+          b.website_of_linkedin,
+          b.telefoonnummer,
+          b.gemeente
+FROM Bedrijven b
+JOIN Bedrijf_Sector bs ON b.bedrijf_id = bs.bedrijf_id
+JOIN Sectoren s ON bs.sector_id = s.sector_id 
         WHERE email = ?
       `;
     } else if (type === 'student') {

@@ -93,6 +93,18 @@ export default function Login() {
 
         {error && <div className="error-message">{error}</div>}
       </form>
+
+      {/* Registratie sectie toegevoegd */}
+      <div className="register-section">
+        <p>Heb je nog geen account?</p>
+        <button 
+          type="button" 
+          className="register-link-button"
+          onClick={() => navigate('/register')}
+        >
+          Registreer hier
+        </button>
+      </div>
     </div>
   );
 }
