@@ -33,17 +33,4 @@ router.post('/register', async (req, res) => {
   }
 });
 
-router.get('/check-session', async (req, res) => {
-  try {
-    if (req.session?.user) {
-      res.json({ user: req.session.user });
-    } else {
-      res.status(401).json({ error: 'Geen actieve sessie' });
-    }
-  } catch (error) {
-    console.error('Session check error:', error);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
 module.exports = router;

@@ -4,11 +4,11 @@ const db = require('../db');
 
 router.get('/', async (req, res) => {
   try {
-    const [bedrijven] = await db.query('SELECT * FROM Bedrijven');
-    res.json(bedrijven);
+    const [rows] = await db.query('SELECT * FROM Bedrijven');
+    res.json(rows);
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Server error bij ophalen bedrijven' });
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Kon bedrijven niet ophalen' });
   }
 });
 
