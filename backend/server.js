@@ -14,6 +14,7 @@ const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
 const sectorenRouter = require('./routes/sectoren');
 const profielRouter = require('./routes/profiel');
 const adminRouter = require('./routes/admin');
+const afsprakenRouter = require('./routes/afspraken')
 
 const app = express();
 
@@ -63,21 +64,11 @@ app.post('/api/studentenaccount', upload.single('profilePicture'), async (req, r
     const { naam, email, telefoon, aboutMe, github, linkedin, type } = req.body;
     let profilePictureUrl = null;
 
+    // URL van de geüploade afbeelding
     if (req.file) {
-      // URL van de geüploade afbeelding
       profilePictureUrl = `/uploads/${req.file.filename}`;
     }
 
-    // TODO: Voeg hier je database insert of update code toe.
-    // Bijvoorbeeld met pool.query:
-    /*
-    await pool.query(
-      `UPDATE studenten SET naam=$1, telefoon=$2, aboutMe=$3, github=$4, linkedin=$5, profilePicture=$6, type=$7 WHERE email=$8`,
-      [naam, telefoon, aboutMe, github, linkedin, profilePictureUrl, type, email]
-    );
-    */
-
-    // Voorbeeldreactie:
     res.status(200).json({ message: 'Profiel succesvol opgeslagen!' });
   } catch (error) {
     console.error('Fout bij opslaan profiel:', error);
@@ -97,6 +88,7 @@ apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
 apiRouter.use('/sectoren', sectorenRouter);
 apiRouter.use('/profiel', profielRouter);
 apiRouter.use('/admin', adminRouter);
+apiRouter.use('/afspraken', afsprakenRouter)
 
 app.use('/api', apiRouter);
 
