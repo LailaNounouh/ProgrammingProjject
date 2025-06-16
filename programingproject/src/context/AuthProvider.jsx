@@ -10,7 +10,6 @@ export const AuthProvider = ({ children }) => {
   const [gebruiker, setGebruiker] = useState(null);
   const navigate = useNavigate();
 
-  // Herstel gebruiker bij pagina herladen
   useEffect(() => {
     const opgeslagen = localStorage.getItem('gebruiker');
     if (opgeslagen) {
@@ -24,6 +23,28 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('gebruiker');
       }
     }
+  }, []);
+
+  
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await fetch('/api/check-session', {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.user) {
+            setGebruiker(data.user);
+          }
+        }
+      } catch (error) {
+        console.error('Session check failed:', error);
+      }
+    };
+
+    checkSession();
   }, []);
 
   // Login functie
@@ -61,10 +82,18 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Logout functie
-  const uitloggen = () => {
-    setGebruiker(null);
-    localStorage.removeItem('gebruiker');
-    navigate('/login');
+  const uitloggen = async () => {
+    try {
+      await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setGebruiker(null);
+      navigate('/login');
+    }
   };
 
   return (

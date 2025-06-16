@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { baseUrl } from '../config';
 import { useAuth } from './AuthProvider';
 
-const ProfileContext = createContext();
+export const ProfileContext = createContext();
 
 export const useProfile = () => useContext(ProfileContext);
 
