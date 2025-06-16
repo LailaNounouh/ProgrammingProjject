@@ -2,67 +2,48 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { baseUrl } from '../../../config';
 import "./Login.css";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthProvider";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [type, setType] = useState("student");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+  const { inloggen } = useAuth();
+  const [email, setEmail] = useState("");
+  const [wachtwoord, setWachtwoord] = useState("");
+  const [type, setType] = useState("student");
+  const [foutmelding, setFoutmelding] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
+    setFoutmelding("");
 
     try {
-      const response = await fetch(`${baseUrl}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, type }),
-      });
+      const resultaat = await inloggen(email, wachtwoord, type);
 
-      const data = await response.json();
-
-      if (data.success && data.user) {
-        // Sla gebruiker lokaal op
-        const userData = {
-          id: data.user.id,
-          email: data.user.email,
-          role: type,
-          ...data.user,
-        };
-
-        localStorage.setItem("user", JSON.stringify(userData));
-        setSuccess("Login geslaagd!");
-
-        // Na korte delay doorsturen naar juiste dashboard
-        setTimeout(() => {
-          if (type === 'admin') navigate('/Admin');
-          else if (type === 'bedrijf') navigate('/Bedrijf');
-          else if (type === 'student') navigate('/Student');
-          else if (type === 'werkzoekende') navigate('/werkzoekende');
-          else navigate('/');
-        }, 1000);
+      if (resultaat.success) {
+        navigate(`/${type}`);
       } else {
-        setError(data.error || "Login mislukt.");
+        setFoutmelding(resultaat.bericht || "Inloggen mislukt");
       }
     } catch (err) {
-      setError("Serverfout tijdens inloggen.");
+      console.error("Login fout:", err);
+      setFoutmelding("Er is een fout opgetreden bij het inloggen");
     }
   };
 
   return (
     <div className="login-container">
-      <form className="login-form" onSubmit={handleSubmit}>
-        <h2>Inloggen</h2>
-        {error && <div className="login-error">{error}</div>}
-        {success && <div className="login-success">{success}</div>}
-
-        <label>
-          Type gebruiker:
-          <select value={type} onChange={e => setType(e.target.value)}>
+      <h2>Inloggen</h2>
+      <form onSubmit={handleSubmit} className="login-form">
+        <div className="form-group">
+          <label htmlFor="type">Account type:</label>
+          <select
+            id="type"
+            name="type"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            required
+          >
             <option value="student">Student</option>
             <option value="bedrijf">Bedrijf</option>
             <option value="werkzoekende">Werkzoekende</option>
@@ -74,9 +55,10 @@ export default function Login() {
           Email:
           <input
             type="email"
+            id="email"
+            name="email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
-            autoComplete="username"
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </label>
@@ -85,9 +67,10 @@ export default function Login() {
           Wachtwoord:
           <input
             type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            autoComplete="current-password"
+            id="wachtwoord"
+            name="wachtwoord"
+            value={wachtwoord}
+            onChange={(e) => setWachtwoord(e.target.value)}
             required
           />
         </label>
@@ -97,6 +80,12 @@ export default function Login() {
         <div className="register-link">
           Nog geen account? <Link to="/register">Registreer hier</Link>
         </div>
+
+        <button type="submit" className="login-button">
+          Inloggen
+        </button>
+
+        {foutmelding && <div className="error-message">{foutmelding}</div>}
       </form>
     </div>
   );

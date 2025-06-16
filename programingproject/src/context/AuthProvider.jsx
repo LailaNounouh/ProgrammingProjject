@@ -7,73 +7,90 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [gebruiker, setGebruiker] = useState(null);
   const navigate = useNavigate();
 
-  // Herstel gebruiker bij pagina herladen
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        if (parsedUser && parsedUser.email && parsedUser.id) {
-          setUser(parsedUser);
-        }
-      } catch (err) {
-        console.warn("Fout bij parsen van user uit localStorage");
-        localStorage.removeItem('user');
+    try {
+      const opgeslagenGebruiker = JSON.parse(localStorage.getItem('gebruiker'));
+      if (opgeslagenGebruiker?.email) {
+        setGebruiker(opgeslagenGebruiker);
       }
+    } catch (err) {
+      console.warn("Ongeldige gebruikersdata in localStorage");
+      localStorage.removeItem('gebruiker');
     }
   }, []);
 
-  // Login functie
-  const login = async (email, password, type) => {
+  const inloggen = async (email, wachtwoord, type) => {
     try {
+      console.log('Verstuur login verzoek:', { email, type });
+
       const response = await fetch(`${baseUrl}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, type }),
+        body: JSON.stringify({ 
+          email, 
+          password: wachtwoord,
+          type
+        }),
+        credentials: 'include'
       });
 
       const data = await response.json();
+      console.log('Server response:', data);
 
       if (!response.ok) {
-        return { success: false, message: data.error || 'Inloggen mislukt' };
+        throw new Error(data.error || 'Inloggen mislukt');
       }
 
-      const userData = {
+      const gebruikersData = {
         id: data.user.id,
         email: data.user.email,
-        role: type,
-        ...data.user  // bevat naam, bedrijfsnaam, etc.
+        type: type,
+        naam: data.user.naam
       };
 
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
+      setGebruiker(gebruikersData);
+      localStorage.setItem('gebruiker', JSON.stringify(gebruikersData));
 
-      // Navigeer naar het juiste dashboard
-      if (['student', 'bedrijf', 'werkzoekende', 'admin'].includes(type)) {
-        navigate(`/${type}`);
-      } else {
-        navigate('/');
+      switch(type) {
+        case 'student':
+          navigate('/student');
+          break;
+        case 'bedrijf':
+          navigate('/bedrijf');
+          break;
+        case 'werkzoekende':
+          navigate('/werkzoekende');
+          break;
+        case 'admin':
+          navigate('/admin');
+          break;
+        default:
+          navigate('/');
       }
 
       return { success: true };
-    } catch (err) {
-      console.error('Login fout:', err);
-      return { success: false, message: 'Interne fout tijdens inloggen' };
+    } catch (error) {
+      console.error('Inlogfout:', error);
+      return { success: false, bericht: error.message };
     }
   };
 
-  // Logout functie
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+  const uitloggen = () => {
+    console.log('Uitloggen...');
+    setGebruiker(null);
     navigate('/login');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ 
+      gebruiker, 
+      inloggen, 
+      uitloggen, 
+      isIngelogd: () => !!gebruiker 
+    }}>
       {children}
     </AuthContext.Provider>
   );

@@ -3,18 +3,11 @@ import { useAuth } from '../../context/AuthProvider.jsx';
 
 
 const LogoutButton = () => {
-  const { logout } = useAuth();
-
+  const { uitloggen } = useAuth();
 
   return (
-    <button onClick={logout}>
-      Logout
-    </button>
+    <button onClick={uitloggen}>Uitloggen</button>
   );
 };
 
-
 export default LogoutButton;
-
-
-

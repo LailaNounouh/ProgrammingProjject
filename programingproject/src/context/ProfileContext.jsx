@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { baseUrl } from "../config";
-import { useAuth } from "./AuthProvider";  // Zorg dat deze correct bestaat en exporteert
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { baseUrl } from '../config';
+import { useAuth } from './AuthProvider';
 
 const ProfileContext = createContext();
 
