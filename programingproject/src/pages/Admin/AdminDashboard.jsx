@@ -3,21 +3,21 @@ import './AdminDashboard.css';
 import Plattegrond from '../../components/plattegrond/Plattegrond';
 
 function App() {
-  const bedrijven = [
+  const [bedrijven, setBedrijven] = useState([
     { naam: 'Microsoft' },
     { naam: 'Cisco' },
     { naam: 'Sopra Steria' },
     { naam: 'Webdoos' },
-     { naam: 'Amazon' },
-  { naam: 'Google' }
-  ];
+    { naam: 'Amazon' },
+    { naam: 'Google' }
+  ]);
 
-  const gebruikers = [
+  const [gebruikers, setGebruikers] = useState([
     { id: 1, rol: 'bedrijf' },
     { id: 2, rol: 'werkzoekende' },
     { id: 3, rol: 'student' },
     { id: 4, rol: 'bedrijf' }
-  ];
+  ]);
 
   const actieveStanden = 9;
   const aantalGebruikers = 156;
@@ -27,9 +27,13 @@ function App() {
     { naam: "Marketing", zichtbaar: true },
     { naam: "Onderwijs", zichtbaar: true }
   ]);
-  const [nieuweSector, setNieuweSector] = useState('');
-const [bewerkModus, setBewerkModus] = useState(false);
 
+  const [nieuweSector, setNieuweSector] = useState('');
+
+  // 🔁 GESCHEIDEN bewerk-modi
+  const [bewerkBedrijvenModus, setBewerkBedrijvenModus] = useState(false);
+  const [bewerkStandenModus, setBewerkStandenModus] = useState(false);
+  const [bewerkGebruikersModus, setBewerkGebruikersModus] = useState(false);
 
   const voegSectorToe = () => {
     if (nieuweSector.trim() !== '' && !sectoren.find(s => s.naam === nieuweSector)) {
@@ -44,40 +48,72 @@ const [bewerkModus, setBewerkModus] = useState(false);
     setSectoren(nieuweSectoren);
   };
 
+  const handleBedrijfNaamChange = (index, nieuweNaam) => {
+    const nieuweBedrijven = [...bedrijven];
+    nieuweBedrijven[index].naam = nieuweNaam;
+    setBedrijven(nieuweBedrijven);
+  };
+
+  const handleGebruikerRolChange = (index, nieuweRol) => {
+    const nieuweGebruikers = [...gebruikers];
+    nieuweGebruikers[index].rol = nieuweRol;
+    setGebruikers(nieuweGebruikers);
+  };
+
+  const handleGebruikerIdChange = (index, nieuweId) => {
+    const nieuweGebruikers = [...gebruikers];
+    nieuweGebruikers[index].id = parseInt(nieuweId);
+    setGebruikers(nieuweGebruikers);
+  };
+
   return (
     <div className="admin-dashboard">
       <main className="admin-main">
 
+        {/* Deelnemende bedrijven */}
         <section className="bedrijven-section">
-  <h2>Deelnemende bedrijven:</h2>
+          <h2>Deelnemende bedrijven:</h2>
 
-  <div className="bedrijven-header">
-    <button className="filter-button">Filter ⌄</button>
-  </div>
+          <div className="bedrijven-header">
+            <button className="filter-button">Filter ⌄</button>
+          </div>
 
-  <div className="bedrijven-grid">
-    {bedrijven.map((bedrijf, index) => (
-      <div key={index} className="bedrijf-card">
-        <div className="bedrijf-image" />
-        <strong>{bedrijf.naam}</strong>
-        <p>• Meer info</p>
-      </div>
-    ))}
-  </div>
+          <div className="bedrijven-grid">
+            {bedrijven.map((bedrijf, index) => (
+              <div key={index} className="bedrijf-card">
+                <div className="bedrijf-image" />
+                {bewerkBedrijvenModus ? (
+                  <input
+                    type="text"
+                    value={bedrijf.naam}
+                    onChange={(e) => handleBedrijfNaamChange(index, e.target.value)}
+                    className="bedrijf-input"
+                    style={{ textAlign: 'center', fontWeight: 'bold' }}
+                  />
+                ) : (
+                  <strong>{bedrijf.naam}</strong>
+                )}
+                <p>• Meer info</p>
+              </div>
+            ))}
+          </div>
 
-  <div className="bedrijven-footer">
-    <button className="bewerken-button">bewerk</button>
-  </div>
-</section>
+          <div className="bedrijven-footer">
+            <button
+              className="bewerken-button"
+              onClick={() => setBewerkBedrijvenModus(!bewerkBedrijvenModus)}
+            >
+              {bewerkBedrijvenModus ? 'Opslaan' : 'Bewerk'}
+            </button>
+          </div>
+        </section>
 
-
-
+        {/* Standen */}
         <section className="standen-section">
           <h2>Beheer van Standen:</h2>
           <div className="plattegrond">
-  <Plattegrond bewerkModus={bewerkModus} />
-</div>
-
+            <Plattegrond bewerkModus={bewerkStandenModus} />
+          </div>
 
           <div className="legend">
             <span><div className="dot red"></div>= bezet</span>
@@ -85,13 +121,14 @@ const [bewerkModus, setBewerkModus] = useState(false);
           </div>
 
           <button
-  className="bewerken-button"
-  onClick={() => setBewerkModus(!bewerkModus)}
->
-  {bewerkModus ? 'Opslaan' : 'Bewerk'}
-</button>
+            className="bewerken-button"
+            onClick={() => setBewerkStandenModus(!bewerkStandenModus)}
+          >
+            {bewerkStandenModus ? 'Opslaan' : 'Bewerk'}
+          </button>
         </section>
 
+        {/* Gebruikers beheren */}
         <section className="gebruikers-section">
           <h2>Gebruikers beheren</h2>
           <table>
@@ -102,23 +139,52 @@ const [bewerkModus, setBewerkModus] = useState(false);
               </tr>
             </thead>
             <tbody>
-              {gebruikers.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>{user.rol}</td>
+              {gebruikers.map((user, index) => (
+                <tr key={index}>
+                  <td>
+                    {bewerkGebruikersModus ? (
+                      <input
+                        type="number"
+                        value={user.id}
+                        onChange={(e) => handleGebruikerIdChange(index, e.target.value)}
+                        style={{ width: '100%' }}
+                      />
+                    ) : (
+                      user.id
+                    )}
+                  </td>
+                  <td>
+                    {bewerkGebruikersModus ? (
+                      <input
+                        type="text"
+                        value={user.rol}
+                        onChange={(e) => handleGebruikerRolChange(index, e.target.value)}
+                        style={{ width: '100%' }}
+                      />
+                    ) : (
+                      user.rol
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <button className="bewerken-button">bewerk</button>
+          <button
+            className="bewerken-button"
+            onClick={() => setBewerkGebruikersModus(!bewerkGebruikersModus)}
+          >
+            {bewerkGebruikersModus ? 'Opslaan' : 'Bewerk'}
+          </button>
         </section>
 
+        {/* Statistieken */}
         <section className="statistieken-section">
           <h3>Statistieken</h3>
           <p>Gebruikers: {aantalGebruikers}</p>
           <p>Actieve standen: {actieveStanden}</p>
         </section>
 
+        {/* Sectoren */}
         <section className="sectoren-section">
           <h2>Sectoren beheren</h2>
           <ul>
@@ -139,8 +205,10 @@ const [bewerkModus, setBewerkModus] = useState(false);
           />
           <button onClick={voegSectorToe}>Voeg toe</button>
         </section>
+
       </main>
     </div>
   );
 }
-export default App
+
+export default App;

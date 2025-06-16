@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "./ProfielSettingsModule.css";
 
+import { useProfile } from "../../context/ProfileContext";
+
 import TaalSelector from "../../components/dropdowns/TaalSelector";
 import CodeertaalSelector from "../../components/dropdowns/CodeerTaalSelector";
 import SoftSkillsSelector from "../../components/dropdowns/SoftSkillsSelector";
 import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
 
 import { baseUrl } from "../../config";
-import { useProfile } from "../../context/ProfileContext";
 
 export default function ProfielSettingsModule() {
   const { profile, fetchProfile } = useProfile();
@@ -17,6 +18,8 @@ export default function ProfielSettingsModule() {
     email: "",
     telefoon: "",
     aboutMe: "",
+    github: "",
+    linkedin: "",
   });
 
   const [profilePicture, setProfilePicture] = useState(null);
@@ -28,6 +31,8 @@ export default function ProfielSettingsModule() {
         email: profile.email || "",
         telefoon: profile.telefoon || "",
         aboutMe: profile.aboutMe || "",
+        github: profile.github || "",
+        linkedin: profile.linkedin || "",
       });
     }
   }, [profile]);
@@ -48,12 +53,17 @@ export default function ProfielSettingsModule() {
     e.preventDefault();
 
     const data = new FormData();
-    data.append("naam", formData.naam);
-    data.append("email", formData.email);
-    data.append("telefoon", formData.telefoon);
-    data.append("aboutMe", formData.aboutMe);
-    if (profilePicture) {
-      data.append("profilePicture", profilePicture);
+    if (formData.naam) data.append("naam", formData.naam);
+    if (formData.email) data.append("email", formData.email);
+    if (formData.telefoon) data.append("telefoon", formData.telefoon);
+    if (formData.aboutMe) data.append("aboutMe", formData.aboutMe);
+    if (formData.github) data.append("github", formData.github);
+    if (formData.linkedin) data.append("linkedin", formData.linkedin);
+    if (profilePicture) data.append("profilePicture", profilePicture);
+
+    // Voeg type toe als het in de profile context zit
+    if (profile?.type) {
+      data.append("type", profile.type); // bijv. "student" of "werkzoekende"
     }
 
     try {
@@ -89,7 +99,6 @@ export default function ProfielSettingsModule() {
               name="naam"
               value={formData.naam}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -101,7 +110,6 @@ export default function ProfielSettingsModule() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -113,7 +121,6 @@ export default function ProfielSettingsModule() {
               name="telefoon"
               value={formData.telefoon}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -137,7 +144,30 @@ export default function ProfielSettingsModule() {
               onChange={handleChange}
               rows="4"
               placeholder="Vertel iets over jezelf..."
-              required
+            />
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="github">GitHub Link</label>
+            <input
+              type="url"
+              id="github"
+              name="github"
+              value={formData.github}
+              onChange={handleChange}
+              placeholder="https://github.com/jouwnaam"
+            />
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="linkedin">LinkedIn Link</label>
+            <input
+              type="url"
+              id="linkedin"
+              name="linkedin"
+              value={formData.linkedin}
+              onChange={handleChange}
+              placeholder="https://linkedin.com/in/jouwprofiel"
             />
           </div>
         </section>

@@ -5,7 +5,6 @@ import './StudentenDashboard.css';
 const StudentenDashboard = () => {
   const [bedrijven, setBedrijven] = useState([]);
   const [filterSector, setFilterSector] = useState('all');
-  const [linkedinUrl, setLinkedinUrl] = useState('');
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -41,16 +40,6 @@ const StudentenDashboard = () => {
   return (
     <div className="app">
       <main>
-        <section className="linkedin-section">
-          <label htmlFor="linkedin">LinkedIn toevoegen:*</label>
-          <input
-            type="url"
-            id="linkedin"
-            placeholder="URL naar LinkedIn profiel"
-            value={linkedinUrl}
-            onChange={e => setLinkedinUrl(e.target.value)}
-          />
-        </section>
 
         <section id="bedrijven" className="bedrijven-section">
           <h2>Deelnemende bedrijven:</h2>
