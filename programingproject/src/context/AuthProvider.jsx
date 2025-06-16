@@ -10,20 +10,23 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // Herstel ingelogde gebruiker bij pagina herladen
+  // Herstel gebruiker bij pagina herladen
   useEffect(() => {
-    try {
-      const storedUser = JSON.parse(localStorage.getItem('user'));
-      if (storedUser && storedUser.email) {
-        setUser(storedUser);
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser && parsedUser.email && parsedUser.id) {
+          setUser(parsedUser);
+        }
+      } catch (err) {
+        console.warn("Fout bij parsen van user uit localStorage");
+        localStorage.removeItem('user');
       }
-    } catch (err) {
-      console.warn("Ongeldige data in localStorage, gebruiker wordt genegeerd.");
-      localStorage.removeItem('user');
     }
   }, []);
 
-  // Login functie: stuurt email, wachtwoord en type (rol) naar backend
+  // Login functie
   const login = async (email, password, type) => {
     try {
       const response = await fetch(`${baseUrl}/login`, {
@@ -35,19 +38,20 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Ongeldige inloggegevens');
+        return { success: false, message: data.error || 'Inloggen mislukt' };
       }
 
       const userData = {
-        email: data.user.email,
         id: data.user.id,
+        email: data.user.email,
         role: type,
+        ...data.user  // bevat naam, bedrijfsnaam, etc.
       };
 
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
 
-      // Redirect naar homepagina per rol
+      // Navigeer naar het juiste dashboard
       if (['student', 'bedrijf', 'werkzoekende', 'admin'].includes(type)) {
         navigate(`/${type}`);
       } else {
@@ -55,13 +59,13 @@ export const AuthProvider = ({ children }) => {
       }
 
       return { success: true };
-    } catch (error) {
-      console.error('Login fout:', error.message);
-      return { success: false, message: error.message };
+    } catch (err) {
+      console.error('Login fout:', err);
+      return { success: false, message: 'Interne fout tijdens inloggen' };
     }
   };
 
-  // Logout functie: verwijdert user uit state en localStorage, redirect naar login
+  // Logout functie
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');

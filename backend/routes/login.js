@@ -16,20 +16,23 @@ router.post('/', async (req, res) => {
     let params = [email];
 
     if (type === 'bedrijf') {
+      // Gebruik GROUP_CONCAT voor sectoren en LIMIT 1
       query = `
         SELECT 
           b.bedrijf_id AS id,
           b.email,
           b.wachtwoord,
           b.naam AS bedrijfsnaam,
-          s.naam AS sector_naam,
+          GROUP_CONCAT(s.naam SEPARATOR ', ') AS sectoren,
           b.website_of_linkedin,
           b.telefoonnummer,
           b.gemeente
-FROM Bedrijven b
-JOIN Bedrijf_Sector bs ON b.bedrijf_id = bs.bedrijf_id
-JOIN Sectoren s ON bs.sector_id = s.sector_id 
-        WHERE email = ?
+        FROM Bedrijven b
+        JOIN Bedrijf_Sector bs ON b.bedrijf_id = bs.bedrijf_id
+        JOIN Sectoren s ON bs.sector_id = s.sector_id 
+        WHERE b.email = ?
+        GROUP BY b.bedrijf_id
+        LIMIT 1
       `;
     } else if (type === 'student') {
       query = `
@@ -40,26 +43,29 @@ JOIN Sectoren s ON bs.sector_id = s.sector_id
           naam 
         FROM Studenten 
         WHERE email = ?
+        LIMIT 1
       `;
     } else if (type === 'werkzoekende') {
       query = `
         SELECT 
-          werkzoekende_id AS id,  -- Pas aan als dit in je DB anders heet
+          werkzoekende_id AS id, 
           email, 
           wachtwoord, 
           naam 
         FROM Werkzoekenden 
         WHERE email = ?
+        LIMIT 1
       `;
     } else if (type === 'admin') {
       query = `
         SELECT 
-          admin_id AS id,  -- Pas aan als dit in je DB anders heet
+          admin_id AS id, 
           email, 
           wachtwoord, 
           naam 
         FROM Admins 
         WHERE email = ?
+        LIMIT 1
       `;
     } else {
       return res.status(400).json({ error: 'Ongeldig type gebruiker' });
@@ -74,6 +80,8 @@ JOIN Sectoren s ON bs.sector_id = s.sector_id
     }
 
     const user = rows[0];
+    console.log("Gevonden gebruiker:", user);
+
     const validPassword = await bcrypt.compare(password, user.wachtwoord);
 
     if (!validPassword) {
@@ -87,11 +95,11 @@ JOIN Sectoren s ON bs.sector_id = s.sector_id
       user: {
         id: user.id,
         email: user.email,
-        type: type,
+        type,
         ...(type === 'bedrijf'
           ? {
               bedrijfsnaam: user.bedrijfsnaam,
-              sector: user.sector,
+              sectoren: user.sectoren?.split(', ').map(s => s.trim()),
               website: user.website_of_linkedin,
               telefoonnummer: user.telefoonnummer,
               gemeente: user.gemeente,
