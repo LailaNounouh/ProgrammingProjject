@@ -220,6 +220,7 @@ body {
  display: flex;
   align-items: center;
   gap: 0.5rem;
+  background: red;
 }
 
 .card-icon {
@@ -229,8 +230,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 0.5rem;
-  color: white;
+  /*color: white;*/
+  background:blue;
   font-size: 1.3rem;
 }
 
