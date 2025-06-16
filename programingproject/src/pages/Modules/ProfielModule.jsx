@@ -1,11 +1,14 @@
-// src/modules/profiel/ProfielModule.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import "./ProfielModule.css";
 import { useProfile } from "../../context/ProfileContext";
 import { baseUrl } from "../../config";
 
 export default function ProfielModule() {
-  const { profile, loading, error } = useProfile();
+  const { profile, loading, error, fetchProfile } = useProfile();
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   if (loading) return <p>Profiel wordt geladen...</p>;
   if (error) return <p style={{ color: "red" }}>Fout: {error}</p>;
@@ -17,6 +20,8 @@ export default function ProfielModule() {
     telefoon,
     aboutMe,
     foto,
+    github,
+    linkedin,
     talen = [],
     programmeertalen = [],
     softSkills = [],
@@ -39,6 +44,24 @@ export default function ProfielModule() {
       <div className="account-details">
         <p><strong>Email:</strong> {email || "Niet ingevuld"}</p>
         <p><strong>Telefoon:</strong> {telefoon || "Niet ingevuld"}</p>
+
+        {github && (
+          <p>
+            <strong>GitHub:</strong>{" "}
+            <a href={github.startsWith('http') ? github : `https://${github}`} target="_blank" rel="noopener noreferrer">
+              {github}
+            </a>
+          </p>
+        )}
+
+        {linkedin && (
+          <p>
+            <strong>LinkedIn:</strong>{" "}
+            <a href={linkedin.startsWith('http') ? linkedin : `https://${linkedin}`} target="_blank" rel="noopener noreferrer">
+              {linkedin}
+            </a>
+          </p>
+        )}
 
         <h3>Talenkennis</h3>
         <ul>
