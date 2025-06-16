@@ -17,6 +17,7 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'E-mail is al geregistreerd.' });
     }
 
+    // Hash het wachtwoord
     const hashedPassword = await bcrypt.hash(wachtwoord, 10);
 
     // Voeg student toe

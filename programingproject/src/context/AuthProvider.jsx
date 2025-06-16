@@ -7,84 +7,90 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [gebruiker, setGebruiker] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     try {
-      const storedUser = JSON.parse(localStorage.getItem('user'));
-      if (storedUser && storedUser.email) {
-        setUser(storedUser);
+      const opgeslagenGebruiker = JSON.parse(localStorage.getItem('gebruiker'));
+      if (opgeslagenGebruiker?.email) {
+        setGebruiker(opgeslagenGebruiker);
       }
     } catch (err) {
-      console.warn("Ongeldige data in localStorage, gebruiker wordt genegeerd.");
-      localStorage.removeItem('user');
+      console.warn("Ongeldige gebruikersdata in localStorage");
+      localStorage.removeItem('gebruiker');
     }
   }, []);
 
-  
-  const login = async (email, password, type) => {
-  try {
-    const response = await fetch(`${baseUrl}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, type }),
-    });
+  const inloggen = async (email, wachtwoord, type) => {
+    try {
+      console.log('Verstuur login verzoek:', { email, type });
 
-    const data = await response.json();
+      const response = await fetch(`${baseUrl}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email, 
+          password: wachtwoord,
+          type
+        }),
+        credentials: 'include'
+      });
 
-    if (!response.ok) {
-      throw new Error(data.error || 'Ongeldige inloggegevens');
+      const data = await response.json();
+      console.log('Server response:', data);
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Inloggen mislukt');
+      }
+
+      const gebruikersData = {
+        id: data.user.id,
+        email: data.user.email,
+        type: type,
+        naam: data.user.naam
+      };
+
+      setGebruiker(gebruikersData);
+      localStorage.setItem('gebruiker', JSON.stringify(gebruikersData));
+
+      switch(type) {
+        case 'student':
+          navigate('/student');
+          break;
+        case 'bedrijf':
+          navigate('/bedrijf');
+          break;
+        case 'werkzoekende':
+          navigate('/werkzoekende');
+          break;
+        case 'admin':
+          navigate('/admin');
+          break;
+        default:
+          navigate('/');
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Inlogfout:', error);
+      return { success: false, bericht: error.message };
     }
+  };
 
-    const userData = {
-      email: data.user.email,
-      id: data.user.id,
-      role: type,
-      ...(type === 'bedrijf' && {
-        bedrijfsnaam: data.user.bedrijfsnaam,
-        sector: data.user.sector,
-        website: data.user.website,
-        telefoonnummer: data.user.telefoonnummer,
-        gemeente: data.user.gemeente
-      })
-    };
-
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-
-    switch(type) {
-      case 'student':
-        navigate('/student');
-        break;
-      case 'bedrijf':
-        navigate('/bedrijf');
-        break;
-      case 'werkzoekende':
-        navigate('/werkzoekende');
-        break;
-      case 'admin':
-        navigate('/admin');
-        break;
-      default:
-        navigate('/');
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error('Login fout:', error);
-    return { success: false, message: error.message };
-  }
-};
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+  const uitloggen = () => {
+    setGebruiker(null);
+    localStorage.removeItem('gebruiker');
     navigate('/login');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ 
+      gebruiker, 
+      inloggen, 
+      uitloggen,
+      isIngelogd: () => !!gebruiker 
+    }}>
       {children}
     </AuthContext.Provider>
   );

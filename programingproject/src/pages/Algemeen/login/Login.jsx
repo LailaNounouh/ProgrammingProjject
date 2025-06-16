@@ -1,45 +1,31 @@
 import React, { useState } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
-import { baseUrl } from "../../../config";
 import { useAuth } from "../../../context/AuthProvider";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
-  const [formData, setFormData] = useState({
-    email: "",
-    wachtwoord: "",
-    type: "student" // default type
-  });
-  const [error, setError] = useState("");
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+  const { inloggen } = useAuth();
+  const [email, setEmail] = useState("");
+  const [wachtwoord, setWachtwoord] = useState("");
+  const [type, setType] = useState("student");
+  const [foutmelding, setFoutmelding] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setFoutmelding("");
 
     try {
-      const result = await login(
-        formData.email, 
-        formData.wachtwoord, 
-        formData.type
-      );
+      const resultaat = await inloggen(email, wachtwoord, type);
 
-      if (result.success) {
-        navigate(`/${formData.type}`);
+      if (resultaat.success) {
+        navigate(`/${type}`);
       } else {
-        setError(result.message || 'Inloggen mislukt');
+        setFoutmelding(resultaat.bericht || "Inloggen mislukt");
       }
     } catch (err) {
       console.error("Login fout:", err);
-      setError("Er is een fout opgetreden bij het inloggen");
+      setFoutmelding("Er is een fout opgetreden bij het inloggen");
     }
   };
 
@@ -52,8 +38,8 @@ export default function Login() {
           <select
             id="type"
             name="type"
-            value={formData.type}
-            onChange={handleChange}
+            value={type}
+            onChange={(e) => setType(e.target.value)}
             required
           >
             <option value="student">Student</option>
@@ -69,8 +55,8 @@ export default function Login() {
             type="email"
             id="email"
             name="email"
-            value={formData.email}
-            onChange={handleChange}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
@@ -81,8 +67,8 @@ export default function Login() {
             type="password"
             id="wachtwoord"
             name="wachtwoord"
-            value={formData.wachtwoord}
-            onChange={handleChange}
+            value={wachtwoord}
+            onChange={(e) => setWachtwoord(e.target.value)}
             required
           />
         </div>
@@ -91,7 +77,7 @@ export default function Login() {
           Inloggen
         </button>
 
-        {error && <div className="error-message">{error}</div>}
+        {foutmelding && <div className="error-message">{foutmelding}</div>}
       </form>
     </div>
   );

@@ -1,7 +1,6 @@
-// context/ProfileContext.jsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { baseUrl } from '../config';
-import { useAuth } from './AuthProvider'; // Zorg dat dit pad klopt
+import { useAuth } from './AuthProvider';
 
 const ProfileContext = createContext();
 
