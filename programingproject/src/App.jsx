@@ -53,6 +53,7 @@ export default function App() {
           <Route path="/student/instellingen" element={<StudentenLayout><ProfileProvider><ProfielSettingsModule /></ProfileProvider></StudentenLayout>} />
           <Route path="/student/profiel" element={<StudentenLayout><ProfileProvider><ProfielModule /></ProfileProvider></StudentenLayout>} />
           <Route path="/afsprakenmodule" element={<StudentenLayout><AfsprakenModule /></StudentenLayout>} />
+          <Route path="/afsprakenmodule/:id" element={<StudentenLayout><AfsprakenModule /></StudentenLayout>} />
  
           {/* Admin */}
           <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
