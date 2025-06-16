@@ -9,7 +9,8 @@ export default function AdminRegisterPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch(`${baseUrl}/register`)
+    // Controleer of admin al bestaat door GET request naar backend (route moet bestaan)
+    fetch(`${baseUrl}/register/admin-exists`)
       .then((res) => res.json())
       .then((data) => setAdminExists(data.exists))
       .catch(() => setAdminExists(false));
@@ -24,7 +25,7 @@ export default function AdminRegisterPage() {
       const res = await fetch(`${baseUrl}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, wachtwoord: password }), // alleen email + wachtwoord
       });
       const data = await res.json();
 

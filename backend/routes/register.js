@@ -5,23 +5,22 @@ const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
 
-// Multer-configuratie voor bestand upload
+// Multer configuratie (bestanden in /uploads)
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
     cb(null, file.fieldname + '-' + Date.now() + ext);
   }
 });
 const upload = multer({ storage: storage });
 
-// POST /register route
+// POST /register
 router.post('/', upload.single('bestand'), async (req, res) => {
   try {
+    // Extract velden uit body
     const {
-      type,       // 'student', 'werkzoekende', 'bedrijf', 'admin'
+      type,
       naam,
       email,
       wachtwoord,
@@ -41,18 +40,10 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       website_of_linkedin
     } = req.body;
 
-    // Basiscontrole
-    if (!type || !naam || !email) {
-      return res.status(400).json({ error: 'Type, naam en e-mailadres zijn verplicht' });
-    }
-
-    // 🔐 Admin-registratie (maar één keer mogelijk)
-    if (type === 'Admin') {
-      if (!wachtwoord) {
-        return res.status(400).json({ error: 'Wachtwoord is verplicht voor admin' });
-      }
-
-      const [admins] = await pool.query(`SELECT * FROM Admins LIMIT 1`);
+    // Admin registratie: alleen email + wachtwoord zonder type of naam
+    if (email && wachtwoord && !type) {
+      // Check of admin al bestaat
+      const [admins] = await pool.query('SELECT * FROM Admins LIMIT 1');
       if (admins.length > 0) {
         return res.status(403).json({ error: 'Er is al een admin geregistreerd' });
       }
@@ -60,19 +51,23 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       const hashedPassword = await bcrypt.hash(wachtwoord, 10);
 
       const [result] = await pool.query(
-        `INSERT INTO Admins (email, wachtwoord) VALUES (?, ?)`,
-        [naam, email, hashedPassword]
+        'INSERT INTO Admins (email, wachtwoord) VALUES (?, ?)',
+        [email, hashedPassword]
       );
 
       return res.status(201).json({ message: 'Admin geregistreerd', id: result.insertId });
     }
 
-    // 👩‍🎓 Student
+    // Voor de andere types is type verplicht
+    if (!type || !naam || !email) {
+      return res.status(400).json({ error: 'Type, naam en e-mailadres zijn verplicht' });
+    }
+
+    // Studenten registratie
     if (type === 'student') {
       if (!wachtwoord || !studie) {
         return res.status(400).json({ error: 'Wachtwoord en studie zijn verplicht voor studenten' });
       }
-
       if (!email.endsWith('@student.ehb.be')) {
         return res.status(400).json({ error: 'Alleen EHB student e-mailadressen zijn toegestaan.' });
       }
@@ -87,10 +82,8 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       );
 
       return res.status(201).json({ message: 'Student geregistreerd', id: result.insertId });
-    }
 
-    // 👨‍🔧 Werkzoekende
-    if (type === 'werkzoekende') {
+    } else if (type === 'werkzoekende') {
       if (!wachtwoord) {
         return res.status(400).json({ error: 'Wachtwoord is verplicht voor werkzoekenden' });
       }
@@ -98,20 +91,19 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       const hashedPassword = await bcrypt.hash(wachtwoord, 10);
 
       const [result] = await pool.query(
-        `INSERT INTO Werkzoekenden (naam, email, wachtwoord) VALUES (?, ?, ?)`,
+        'INSERT INTO Werkzoekenden (naam, email, wachtwoord) VALUES (?, ?, ?)',
         [naam, email, hashedPassword]
       );
 
       return res.status(201).json({ message: 'Werkzoekende geregistreerd', id: result.insertId });
-    }
 
-    // 🏢 Bedrijf
-    if (type === 'bedrijf') {
-      if (!wachtwoord) {
-        return res.status(400).json({ error: 'Wachtwoord is verplicht voor bedrijven' });
+    } else if (type === 'bedrijf') {
+      if (!wachtwoord || !email) {
+        return res.status(400).json({ error: 'E-mail en wachtwoord zijn verplicht voor bedrijven' });
       }
 
       const hashedPassword = await bcrypt.hash(wachtwoord, 10);
+
       const bestandPad = req.file ? req.file.path : null;
 
       const [result] = await pool.query(
@@ -142,7 +134,7 @@ router.post('/', upload.single('bestand'), async (req, res) => {
 
       if (sector) {
         await pool.query(
-          `INSERT INTO Bedrijf_Sector (bedrijf_id, sector_id) VALUES (?, ?)`,
+          'INSERT INTO Bedrijf_Sector (bedrijf_id, sector_id) VALUES (?, ?)',
           [bedrijfId, sector]
         );
       }
@@ -150,7 +142,6 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       return res.status(201).json({ message: 'Bedrijf geregistreerd', id: bedrijfId });
     }
 
-    // ❌ Geen geldig type
     return res.status(400).json({ error: 'Ongeldig registratie-type opgegeven' });
 
   } catch (error) {
