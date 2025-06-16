@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthProvider';
 import './StudentenDashboard.css';
+import Afspraken from '../Modules/AfsprakenModule.jsx'; 
 
 const StudentDashboard = () => {
   const { gebruiker } = useAuth();
@@ -75,7 +76,7 @@ const StudentDashboard = () => {
           <div className="dashboard-card">
             <div className="card-header">
               <h2>Komende Afspraken</h2>
-              <Link to="/student/afspraken" className="view-all">
+              <Link to="/student/Afspraken" className="view-all">
                 Bekijk alles →
               </Link>
             </div>
@@ -94,7 +95,7 @@ const StudentDashboard = () => {
               ) : (
                 <p className="geen-afspraken">
                   Je hebt nog geen afspraken gepland.
-                  <Link to="/student/afspraken" className="maak-afspraak">
+                  <Link to="/student/Afspraak" className="maak-afspraak">
                     Plan een afspraak
                   </Link>
                 </p>
