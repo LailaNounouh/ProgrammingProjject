@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
           bedrijf_id AS id,
           email,
           wachtwoord,
-          naam AS bedrijfsnaam,
+          naam AS bedrijfsnaam
         FROM Bedrijven
         WHERE email = ?
         LIMIT 1
