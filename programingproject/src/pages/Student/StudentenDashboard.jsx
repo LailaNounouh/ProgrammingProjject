@@ -93,7 +93,7 @@ function StudentenDashboard() {
                   )}
                   <p>{bedrijf.naam}</p>
                   <a
-                    href={`/afsprakenmodule?naam=${encodeURIComponent(bedrijf.naam)}&beschrijving=${encodeURIComponent(bedrijf.beschrijving || "")}&logo=${encodeURIComponent(bedrijf.logo_url || "")}`}
+                    href={`/afsprakenmodule/${bedrijf.bedrijf_id}`}
                     className="meer-info-link"
                   >
                     {" "}

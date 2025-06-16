@@ -1,32 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { baseUrl } from "../../config";
+import { useParams } from "react-router-dom";
 
 export default function Afspraken() {
-  const [bedrijvenLijst, setBedrijvenLijst] = useState([]);
   const [geselecteerdBedrijf, setGeselecteerdBedrijf] = useState(null);
   const [tijdslot, setTijdslot] = useState("");
   const [afspraakIngediend, setAfspraakIngediend] = useState(false);
+  const { id } = useParams();
 
   useEffect(() => {
-    async function fetchBedrijven() {
+    async function fetchBedrijf() {
       try {
-        const res = await fetch(`${baseUrl}/bedrijvenmodule`);
+        const res = await fetch(`${baseUrl}/afspraken/${id}`);
         const data = await res.json();
-        setBedrijvenLijst(data);
-        console.log("Bedrijven uit database:", data);
+        setGeselecteerdBedrijf(data);
       } catch (err) {
-        console.error("Fout bij ophalen bedrijven:", err);
+        console.error("Fout bij ophalen bedrijf:", err);
       }
     }
-    fetchBedrijven();
-  }, []);
+    fetchBedrijf();
+  }, [id]);
 
   console.log("Afspraakmodule ontvangen:", geselecteerdBedrijf);
 
   return (
     <div className="page-container">
       <h2>Afspraak maken</h2>
-      <p>Selecteer hieronder een bedrijf en een tijdslot om een afspraak vast te leggen.</p>
+      <p>Selecteer hieronder een tijdslot om een afspraak vast te leggen.</p>
 
       {geselecteerdBedrijf && (
         <div className="bedrijf-info">
@@ -41,28 +41,6 @@ export default function Afspraken() {
           e.preventDefault();
           setAfspraakIngediend(true);
         }}>
-          <label>Bedrijf:</label><br />
-          <select
-            required
-            value={geselecteerdBedrijf ? String(geselecteerdBedrijf.bedrijf_id) : ""}
-            onChange={(e) => {
-              const gekozenId = Number(e.target.value);
-              console.log("Gekozen ID (type):", gekozenId, typeof gekozenId);
-              const gekozen = bedrijvenLijst.find(b => Number(b.bedrijf_id) === gekozenId);
-              console.log("Gekozen bedrijf:", gekozen);
-              if (gekozen) {
-                setGeselecteerdBedrijf(gekozen);
-              }
-            }}
-          >
-            <option value="" disabled>Kies een bedrijf</option>
-            {bedrijvenLijst.map(bedrijf => (
-              <option key={bedrijf.bedrijf_id} value={String(bedrijf.bedrijf_id)}>
-                {bedrijf.naam}
-              </option>
-            ))}
-          </select><br /><br />
-
           <label>Tijdslot:</label><br />
           <select required value={tijdslot} onChange={(e) => setTijdslot(e.target.value)}>
             <option value="">Kies een tijd</option>
