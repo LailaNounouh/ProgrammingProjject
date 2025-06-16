@@ -1,20 +1,19 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { baseUrl } from "../config";
-import { useAuth } from "./AuthProvider";
+import { useAuth } from "./AuthProvider";  // Zorg dat deze correct bestaat en exporteert
 
 const ProfileContext = createContext();
 
 export const useProfile = () => useContext(ProfileContext);
 
 export const ProfileProvider = ({ children }) => {
-  const { user } = useAuth();
+  const { user } = useAuth();  // user kan null of undefined zijn
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Haalt het profiel op vanuit de backend (op basis van e-mail)
   const fetchProfile = useCallback(async () => {
-    if (!user?.email) {
+    if (!user || !user.email) {
       setProfile(null);
       return;
     }
@@ -27,25 +26,21 @@ export const ProfileProvider = ({ children }) => {
       if (!response.ok) throw new Error(`Fout bij ophalen profiel: ${response.status}`);
       const data = await response.json();
 
-      // Voorzie optioneel lege lijsten als fallback (voor wanneer die later via aparte tabellen komen)
-      const enrichedProfile = {
+      setProfile({
         ...data,
         talen: data.talen || [],
         programmeertalen: data.programmeertalen || [],
         softSkills: data.softSkills || [],
         hardSkills: data.hardSkills || [],
-      };
-
-      setProfile(enrichedProfile);
+      });
     } catch (err) {
       setError(err.message || "Onbekende fout");
       setProfile(null);
     } finally {
       setLoading(false);
     }
-  }, [user?.email]);
+  }, [user]);
 
-  // Automatisch profiel ophalen wanneer user (email) verandert
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);

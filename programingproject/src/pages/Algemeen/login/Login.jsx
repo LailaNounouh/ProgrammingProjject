@@ -22,11 +22,22 @@ export default function Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, type }),
       });
+
       const data = await response.json();
 
-      if (data.success) {
+      if (data.success && data.user) {
+        // Sla gebruiker lokaal op
+        const userData = {
+          id: data.user.id,
+          email: data.user.email,
+          role: type,
+          ...data.user,
+        };
+
+        localStorage.setItem("user", JSON.stringify(userData));
         setSuccess("Login geslaagd!");
-        // Na 1 seconde doorsturen naar juiste dashboard
+
+        // Na korte delay doorsturen naar juiste dashboard
         setTimeout(() => {
           if (type === 'admin') navigate('/Admin');
           else if (type === 'bedrijf') navigate('/Bedrijf');
@@ -38,7 +49,7 @@ export default function Login() {
         setError(data.error || "Login mislukt.");
       }
     } catch (err) {
-      setError("Serverfout.");
+      setError("Serverfout tijdens inloggen.");
     }
   };
 
@@ -84,10 +95,7 @@ export default function Login() {
         <button type="submit">Inloggen</button>
 
         <div className="register-link">
-          Nog geen account?{" "}
-          <Link to="/register">Registreer hier</Link>
-          {/* Als je geen react-router gebruikt, vervang bovenstaande regel door:
-              <a href="/registratie">Registreer hier</a> */}
+          Nog geen account? <Link to="/register">Registreer hier</Link>
         </div>
       </form>
     </div>
