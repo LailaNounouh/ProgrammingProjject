@@ -18,8 +18,6 @@ export default function Contact() {
     
         <div className="address-section">
           <p><strong>Adres:</strong> Nijverheidskaai 170, 1070 Anderlecht</p>
-          <p className="link">Route</p>
-          <p className="link">Grotere kaart bekijken</p>
         </div>
       </div>
   
