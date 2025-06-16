@@ -1,40 +1,48 @@
-// context/ProfileContext.jsx
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { baseUrl } from '../config';
-import { useAuth } from './AuthProvider'; // Zorg dat dit pad klopt
+// src/context/ProfileContext.js
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { baseUrl } from "../config";
+import { useAuth } from "./AuthProvider";
 
 const ProfileContext = createContext();
 
 export const useProfile = () => useContext(ProfileContext);
 
 export const ProfileProvider = ({ children }) => {
-  const { user } = useAuth(); // Haalt ingelogde gebruiker op
+  const { user } = useAuth();
   const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchProfile = async () => {
     if (!user?.email) {
-      console.warn("Geen e-mailadres gevonden, profiel niet opgehaald.");
+      console.warn("Geen gebruiker ingelogd.");
+      setProfile(null);
       return;
     }
 
+    setLoading(true);
+    setError(null);
+
     try {
-      const response = await fetch(`${baseUrl}/studentenaccount/${user.email}`);
-      if (!response.ok) {
-        throw new Error("Fout bij ophalen profiel: " + response.status);
-      }
+      const response = await fetch(`${baseUrl}/profiel/${encodeURIComponent(user.email)}`);
+      if (!response.ok) throw new Error(`Fout bij ophalen profiel: ${response.status}`);
       const data = await response.json();
       setProfile(data);
-    } catch (error) {
-      console.error('Fout bij ophalen profiel:', error);
+    } catch (err) {
+      console.error("Fout bij ophalen profiel:", err);
+      setError(err.message || "Onbekende fout");
+      setProfile(null);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchProfile();
-  }, [user?.email]); // Voer opnieuw uit als user/email verandert
+  }, [user?.email]);
 
   return (
-    <ProfileContext.Provider value={{ profile, setProfile, fetchProfile }}>
+    <ProfileContext.Provider value={{ profile, setProfile, fetchProfile, loading, error }}>
       {children}
     </ProfileContext.Provider>
   );
