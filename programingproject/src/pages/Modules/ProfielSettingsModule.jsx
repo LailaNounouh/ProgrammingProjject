@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ProfielSettingsModule.css";
+import { useProfile } from "../../context/ProfileContext";
 
 import TaalSelector from "../../components/dropdowns/TaalSelector";
 import CodeertaalSelector from "../../components/dropdowns/CodeerTaalSelector";
@@ -7,18 +8,38 @@ import SoftSkillsSelector from "../../components/dropdowns/SoftSkillsSelector";
 import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
 
 import { baseUrl } from "../../config";
-import { useProfile } from "../../context/ProfileContext";
 
 export default function ProfielSettingsModule() {
+  const { profile, fetchProfile } = useProfile();
+
   const [formData, setFormData] = useState({
     naam: "",
     email: "",
     telefoon: "",
     aboutMe: "",
+    github: "",
+    linkedin: "",
   });
 
   const [profilePicture, setProfilePicture] = useState(null);
-  const { fetchProfile } = useProfile();
+  const [message, setMessage] = useState(null);
+  const [messageType, setMessageType] = useState(null);
+
+  useEffect(() => {
+    // Profiel ophalen als die nog niet bestaat
+    if (!profile) {
+      fetchProfile();
+    } else {
+      setFormData({
+        naam: profile.naam || "",
+        email: profile.email || "",
+        telefoon: profile.telefoon || "",
+        aboutMe: profile.aboutMe || "",
+        github: profile.github || "",
+        linkedin: profile.linkedin || "",
+      });
+    }
+  }, [profile, fetchProfile]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,23 +61,31 @@ export default function ProfielSettingsModule() {
     data.append("email", formData.email);
     data.append("telefoon", formData.telefoon);
     data.append("aboutMe", formData.aboutMe);
-    if (profilePicture) {
-      data.append("profilePicture", profilePicture);
-    }
+    data.append("github", formData.github);
+    data.append("linkedin", formData.linkedin);
+    if (profilePicture) data.append("profilePicture", profilePicture);
+    if (profile?.type) data.append("type", profile.type);
 
     try {
-      const response = await fetch(`${baseUrl}/api/profile`, {
+      const response = await fetch(`${baseUrl}/profiel`, {
         method: "POST",
         body: data,
       });
 
-      if (!response.ok) throw new Error("Fout bij verzenden");
+      if (!response.ok) throw new Error("Fout bij opslaan van profiel");
 
-      await fetchProfile(); // update profiel na verzenden
-      alert("Profiel opgeslagen!");
+      await fetchProfile();
+      setMessage("Profiel succesvol opgeslagen!");
+      setMessageType("success");
+
+      setTimeout(() => {
+        setMessage(null);
+        setMessageType(null);
+      }, 5000);
     } catch (error) {
-      alert("Er ging iets mis bij het verzenden.");
-      console.error(error);
+      console.error("Fout bij verzenden:", error);
+      setMessage(`Er ging iets mis: ${error.message}`);
+      setMessageType("error");
     }
   };
 
@@ -77,7 +106,6 @@ export default function ProfielSettingsModule() {
               name="naam"
               value={formData.naam}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -89,7 +117,6 @@ export default function ProfielSettingsModule() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -101,7 +128,6 @@ export default function ProfielSettingsModule() {
               name="telefoon"
               value={formData.telefoon}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -125,7 +151,30 @@ export default function ProfielSettingsModule() {
               onChange={handleChange}
               rows="4"
               placeholder="Vertel iets over jezelf..."
-              required
+            />
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="github">GitHub Link</label>
+            <input
+              type="url"
+              id="github"
+              name="github"
+              value={formData.github}
+              onChange={handleChange}
+              placeholder="https://github.com/jouwnaam"
+            />
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="linkedin">LinkedIn Link</label>
+            <input
+              type="url"
+              id="linkedin"
+              name="linkedin"
+              value={formData.linkedin}
+              onChange={handleChange}
+              placeholder="https://linkedin.com/in/jouwprofiel"
             />
           </div>
         </section>
@@ -154,6 +203,8 @@ export default function ProfielSettingsModule() {
           <button type="submit">Opslaan</button>
         </div>
       </form>
+
+      {message && <div className={`notification ${messageType}`}>{message}</div>}
     </div>
   );
 }

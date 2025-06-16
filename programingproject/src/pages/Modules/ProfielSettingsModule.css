@@ -98,6 +98,42 @@ textarea {
   background-color: #2980b9;
 }
 
+/* Meldingen onderaan */
+.notification {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1em 2em;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  z-index: 9999;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  animation: fadein 0.5s ease forwards;
+  max-width: 90%;
+  text-align: center;
+}
+
+.notification.success {
+  background-color: #4caf50; /* groen */
+}
+
+.notification.error {
+  background-color: #f44336; /* rood */
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+    bottom: 0;
+  }
+  to {
+    opacity: 1;
+    bottom: 20px;
+  }
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   .profiel-module {

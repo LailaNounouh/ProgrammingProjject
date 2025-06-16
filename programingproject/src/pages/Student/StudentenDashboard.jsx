@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useMemo } from "react";
-import "./StudentenDashboard.css";
+import React, { useState, useEffect, useMemo } from 'react';
+import './StudentenDashboard.css';
 import { baseUrl } from "../../config";
 
-function StudentenDashboard() {
+const StudentenDashboard = () => {
   const [bedrijven, setBedrijven] = useState([]);
-  const [filterSector, setFilterSector] = useState("all");
-  const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [filterSector, setFilterSector] = useState('all');
+  const [linkedinUrl, setLinkedinUrl] = useState('');
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -23,7 +23,6 @@ function StudentenDashboard() {
         setError("Fout bij laden bedrijven, probeer later opnieuw.");
       }
     }
-
     fetchBedrijven();
   }, []);
 
@@ -50,13 +49,12 @@ function StudentenDashboard() {
             id="linkedin"
             placeholder="URL naar LinkedIn profiel"
             value={linkedinUrl}
-            onChange={(e) => setLinkedinUrl(e.target.value)}
+            onChange={e => setLinkedinUrl(e.target.value)}
           />
         </section>
 
         <section id="bedrijven" className="bedrijven-section">
           <h2>Deelnemende bedrijven:</h2>
-
           <label htmlFor="sectorFilter">Filter op sector:</label>
           <select
             id="sectorFilter"
@@ -105,28 +103,15 @@ function StudentenDashboard() {
           </div>
         </section>
 
-        <section id="standen" className="standen-section">
-          <h2>Standen:</h2>
-          <div className="standen-grid">
-            <div className="stand bedrijf"></div>
-            <div className="stand bedrijf"></div>
-            <div className="stand bedrijf"></div>
-            <div className="stand bedrijf"></div>
-            <div className="stand">Buffet</div>
-            <div className="stand bedrijf"></div>
-            <div className="stand bedrijf"></div>
-            <div className="stand">Onthaal</div>
-            <div className="stand bedrijf"></div>
-            <div className="stand bedrijf"></div>
+        <section id="plattegrond" className="plattegrond-section">
+          <h2>Plattegrond:</h2>
+          <div className="plattegrond-container">
+            <Plattegrond bewerkModus={false} />
           </div>
-        </section>
-
-        <section id="afspraak">
-          {/* Placeholder voor toekomstige afsprakenmodule */}
         </section>
       </main>
     </div>
   );
-}
+};
 
 export default StudentenDashboard;

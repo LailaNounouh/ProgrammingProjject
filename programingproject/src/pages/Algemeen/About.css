@@ -1,39 +1,54 @@
-.about-content {
-  padding: 40px 20px;
+body {
+  margin: 0;
+  padding: 20px;
+  background-color: #f5f5f5;
+  font-family: sans-serif;
+}
+
+.about-page {
   max-width: 800px;
   margin: 0 auto;
-  color: #333;
 }
 
-.header h1 {
-  margin-bottom: 10px;
-  font-size: 2.5rem;
-  line-height: 1.6;
+.header-box {
+  background: #00a9b5;
+  padding: 30px;
+  border-radius: 8px;
+  text-align: center;
+  color: white;
+  margin: 0 auto;
+  width: 80%;
+  max-width: 600px;
+  position: relative;
+  top: 20px;
+  z-index: 2;
+}
+
+.header-box h1 {
+  font-size: 2.3rem;
+  margin: 0 0 10px 0;
   font-weight: 700;
   color: white;
-  text-transform: uppercase;
 }
 
-.subtitle {
-  color: #007a84; /* iets donkerder blauw voor subtitel */
+.header-box .subtitle {
+  color: #424242; 
   font-weight: 600;
-  margin-top: -10px;
-  margin-bottom: 30px;
-  font-size: 1.2rem;
-}
-.divider {
-  height: 2px;
-  background-color: #00a9b5;
-  margin: 20px 0 30px;
-  width:100%;
+  font-size: 1.3rem;
+  margin: 0;
 }
 
-.description {
+.content-box {
+  background: #d3d9e0;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: black;
+}
+
+.content-box p {
   font-size: 1.1rem;
   line-height: 1.6;
-}
-
-.description p {
   margin-bottom: 20px;
 }
 
