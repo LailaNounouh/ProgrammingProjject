@@ -43,6 +43,7 @@ function BedrijvenDashboard() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showNotifications]);
 
+  //commit test
   // Fake notificaties
   const notifications = [
     {
