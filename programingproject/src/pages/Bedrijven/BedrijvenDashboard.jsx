@@ -86,7 +86,7 @@ function BedrijvenDashboard() {
     iconClass: "bg-purple"
   }
 ];
-/*filter om kaarten te kunnen zien */
+/*filters voor kaarten  */
 const filteredCards = dashboardCards.filter(card =>
   card.title.toLowerCase().includes(searchTerm.toLowerCase())
 );
