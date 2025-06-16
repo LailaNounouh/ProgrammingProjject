@@ -10,22 +10,19 @@ router.post('/', async (req, res) => {
   if (!email || !password || !type) {
     return res.status(400).json({ error: 'Email, wachtwoord en type zijn verplicht' });
   }
-
+// test om dit op te lossen
   try {
     let query;
     let params = [email];
 
     if (type === 'bedrijf') {
-      // Alleen checken op email en wachtwoord van bedrijf, geen join
+      // Gebruik GROUP_CONCAT voor sectoren en LIMIT 1
       query = `
         SELECT 
           bedrijf_id AS id,
           email,
           wachtwoord,
-          naam AS bedrijfsnaam,
-          website_of_linkedin,
-          telefoonnummer,
-          gemeente
+          naam AS bedrijfsnaam
         FROM Bedrijven
         WHERE email = ?
         LIMIT 1
@@ -95,6 +92,7 @@ router.post('/', async (req, res) => {
         ...(type === 'bedrijf'
           ? {
               bedrijfsnaam: user.bedrijfsnaam,
+              sectoren: user.sectoren?.split(', ').map(s => s.trim()),
               website: user.website_of_linkedin,
               telefoonnummer: user.telefoonnummer,
               gemeente: user.gemeente,
