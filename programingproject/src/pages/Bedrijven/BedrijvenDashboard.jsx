@@ -43,8 +43,7 @@ function BedrijvenDashboard() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showNotifications]);
 
-  //commit test
-  // Fake notificaties
+  
   const notifications = [
     {
       id: 1,
@@ -68,9 +67,9 @@ function BedrijvenDashboard() {
   {
     title: "Opleidingsmatch",
     icon: <FaCalendarAlt />,
-    onClick: () => setActiveTab('afspraken'),
+    onClick: () => navigate ('<bedrijf/afspraken'),
     iconClass: "bg-green",
-    showAfspraken: true // Extra veld om afspraken te tonen
+    showAfspraken: true 
   },
   {
     title: "Beschikbaarheid van standen",
@@ -87,6 +86,11 @@ function BedrijvenDashboard() {
     iconClass: "bg-purple"
   }
 ];
+/*filters voor kaarten  */
+const filteredCards = dashboardCards.filter(card =>
+  card.title.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
 
   const renderDashboard = () => (
     <>
@@ -134,80 +138,40 @@ function BedrijvenDashboard() {
         </div>
       </div>
 
-      <div className="card-grid">
-        {/* Betalingskaart */}
-        <div className="dashboard-card" onClick={() => navigate('/bedrijf/betaling')}>
-          <div className="card-header">
-            <div className="card-icon bg-blue">
-              <FaEuroSign />
-            </div>
-            <h3>Staat van betaling</h3>
-          </div>
-          <p>Bekijk uw betalingsstatus en facturen</p>
-          <div className="card-footer">
-            <span>Direct naar betalingen</span>
-            <FaChevronRight />
-          </div>
+  <div className="card-grid">
+  {filteredCards.map((card, index) => (
+    <div key={index} className="dashboard-card" onClick={card.onClick}>
+      <div className="card-header">
+        <div className={`card-icon ${card.iconClass}`}>
+          {card.icon}
         </div>
-
-        {/* Opleidingsmatch kaart */}
-        <div className="dashboard-card" onClick={() => setActiveTab('afspraken')}>
-          <div className="card-header">
-            <div className="card-icon bg-green">
-              <FaCalendarAlt />
-            </div>
-            <h3>Opleidingsmatch</h3>
-          </div>
-          <div className="afspraken-status">
-            <p>Overzicht Afspraken</p>
-            {afspraken.length > 0 ? (
-              <div className="upcoming-appointments">
-                {afspraken.slice(0, 2).map(afspraak => (
-                  <div key={afspraak.id} className="appointment-item">
-                    {/* Afspraak details */}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="no-appointments">Geen komende afspraken</p>
-            )}
-          </div>
-          <div className="card-footer">
-            <span>Bekijk alle</span>
-            <FaChevronRight />
-          </div>
-        </div>
-
-        {/* Standenkaart */}
-        <div className="dashboard-card" onClick={() => setActiveTab('standen')}>
-          <div className="card-header">
-            <div className="card-icon bg-orange">
-              <FaMapMarkerAlt />
-            </div>
-            <h3>Beschikbaarheid van standen</h3>
-          </div>
-          <p>Beheer uw standlocaties en reserveringen</p>
-          <div className="card-footer">
-            <span>Direct naar standen</span>
-            <FaChevronRight />
-          </div>
-        </div>
-
-        {/* Instellingenkaart */}
-        <div className="dashboard-card" onClick={() => navigate('/bedrijf/Settingsbedrijf')}>
-          <div className="card-header">
-            <div className="card-icon bg-purple">
-              <FaCog />
-            </div>
-            <h3>Bedrijfsinstellingen</h3>
-          </div>
-          <p>Beheer uw bedrijfsgegevens en voorkeuren</p>
-          <div className="card-footer">
-            <span>Direct naar instellingen</span>
-            <FaChevronRight />
-          </div> 
-        </div>
+        <h3>{card.title}</h3>
       </div>
+      {card.description && <p>{card.description}</p>}
+      {card.showAfspraken && (
+        <div className="afspraken-status">
+          <p>Overzicht Afspraken</p>
+          {afspraken.length > 0 ? (
+            <div className="upcoming-appointments">
+              {afspraken.slice(0, 2).map(afspraak => (
+                <div key={afspraak.id} className="appointment-item">
+                  {/* Afspraak details */}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="no-appointments">Geen komende afspraken</p>
+          )}
+        </div>
+      )}
+      <div className="card-footer">
+        <span>Direct naar {card.title.toLowerCase()}</span>
+        <FaChevronRight />
+      </div>
+    </div>
+  ))}
+</div>
+
     </>
   );
 
