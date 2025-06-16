@@ -219,21 +219,26 @@ body {
 .card-header {
  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: red;
+  gap: 0;
+  padding: 8px;
 }
 
 .card-icon {
-  width: 32px;
+   width: 32px;
   height: 32px;
-  border-radius: 10px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  /*color: white;*/
-  background:blue;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
 }
+.card-icon :is(svg, i, span) {
+  display: block;
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
+}
+
 
 .bg-blue { background-color: var(--primary-blue); }
 .bg-green { background-color: var(--success-green); }
@@ -241,8 +246,9 @@ body {
 .bg-purple { background-color: var(--purple); }
 
 .card-header h3 {
-  margin: 0;
-  font-size: 1.2rem;
+   margin: 0;
+  padding: 0;
+  line-height: 1;
 }
 
 .dashboard-card p {

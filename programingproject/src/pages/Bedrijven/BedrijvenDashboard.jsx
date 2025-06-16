@@ -30,7 +30,6 @@ function BedrijvenDashboard() {
     ]);
   }, []);
 
-  // Sluit popup als je buiten de notificatiebel klikt
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (notificationRef.current && !notificationRef.current.contains(event.target)) {
@@ -43,7 +42,6 @@ function BedrijvenDashboard() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showNotifications]);
 
-  
   const notifications = [
     {
       id: 1,
@@ -56,47 +54,47 @@ function BedrijvenDashboard() {
       time: "2 uur geleden"
     }
   ];
-  const dashboardCards = [
-  {
-    title: "Staat van betaling",
-    icon: <FaEuroSign />,
-    description: "Bekijk uw betalingsstatus en facturen",
-    onClick: () => navigate('/bedrijf/betaling'),
-    iconClass: "bg-blue"
-  },
-  {
-    title: "Afspraakoverzicht",
-    icon: <FaCalendarAlt />,
-    onClick: () => navigate('/bedrijf/afspraken'),
-    iconClass: "bg-green",
-    showAfspraken: true 
-  },
-  {
-    title: "Beschikbaarheid van standen",
-    icon: <FaMapMarkerAlt />,
-    description: "Beheer uw standlocaties en reserveringen",
-    onClick: () => setActiveTab('standen'),
-    iconClass: "bg-orange"
-  },
-  {
-    title: "Bedrijfsinstellingen",
-    icon: <FaCog />,
-    description: "Beheer uw bedrijfsgegevens en voorkeuren",
-    onClick: () => navigate('/bedrijf/Settingsbedrijf'),
-    iconClass: "bg-purple"
-  }
-];
-/*filters voor kaarten  */
-const filteredCards = dashboardCards.filter(card =>
-  card.title.toLowerCase().includes(searchTerm.toLowerCase())
-);
 
+  const dashboardCards = [
+    {
+      title: "Staat van betaling",
+      icon: <FaEuroSign />,
+      description: "Bekijk uw betalingsstatus en facturen",
+      onClick: () => navigate('/bedrijf/betaling'),
+      iconClass: "bg-blue"
+    },
+    {
+      title: "Afspraakoverzicht",
+      icon: <FaCalendarAlt />,
+      onClick: () => navigate('/bedrijf/afspraken'),
+      iconClass: "bg-green",
+      showAfspraken: true
+    },
+    {
+      title: "Beschikbaarheid van standen",
+      icon: <FaMapMarkerAlt />,
+      description: "Beheer uw standlocaties en reserveringen",
+      onClick: () => setActiveTab('standen'),
+      iconClass: "bg-orange"
+    },
+    {
+      title: "Bedrijfsinstellingen",
+      icon: <FaCog />,
+      description: "Beheer uw bedrijfsgegevens en voorkeuren",
+      onClick: () => navigate('/bedrijf/Settingsbedrijf'),
+      iconClass: "bg-purple"
+    }
+  ];
+
+  const filteredCards = dashboardCards.filter(card =>
+    card.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const renderDashboard = () => (
     <>
       <div className="welcome-banner">
         <h1>Welkom terug, NovaTech!</h1>
-        <p>Hier vindt u een overzicht van uw activiteiten and status</p>
+        <p>Hier vindt u een overzicht van uw activiteiten en status</p>
       </div>
 
       <div className="dashboard-toolbar">
@@ -112,7 +110,7 @@ const filteredCards = dashboardCards.filter(card =>
         <div className="toolbar-actions">
           <div
             className="notification-bell"
-            onClick={() => setShowNotifications((prev) => !prev)}
+            onClick={() => setShowNotifications(prev => !prev)}
             tabIndex={0}
             role="button"
             aria-label="Toon notificaties"
@@ -138,40 +136,37 @@ const filteredCards = dashboardCards.filter(card =>
         </div>
       </div>
 
-  <div className="card-grid">
-  {filteredCards.map((card, index) => (
-    <div key={index} className="dashboard-card" onClick={card.onClick}>
-      <div className="card-header">
-        <div className={`card-icon ${card.iconClass}`}>
-          {card.icon}
-        </div>
-        <h3>{card.title}</h3>
-      </div>
-      {card.description && <p>{card.description}</p>}
-      {card.showAfspraken && (
-        <div className="afspraken-status">
-          <p>Overzicht Afspraken</p>
-          {afspraken.length > 0 ? (
-            <div className="upcoming-appointments">
-              {afspraken.slice(0, 2).map(afspraak => (
-                <div key={afspraak.id} className="appointment-item">
-                  {/* Afspraak details */}
-                </div>
-              ))}
+      <div className="card-grid">
+        {filteredCards.map((card, index) => (
+          <div key={index} className="dashboard-card" onClick={card.onClick}>
+            <div className="card-header">
+              <div className={`card-icon ${card.iconClass}`}>{card.icon}</div>
+              <h3>{card.title}</h3>
             </div>
-          ) : (
-            <p className="no-appointments">Geen komende afspraken</p>
-          )}
-        </div>
-      )}
-      <div className="card-footer">
-        <span>Direct naar {card.title.toLowerCase()}</span>
-        <FaChevronRight />
+            {card.description && <p>{card.description}</p>}
+            {card.showAfspraken && (
+              <div className="afspraken-status">
+                <p>Overzicht Afspraken</p>
+                {afspraken.length > 0 ? (
+                  <div className="upcoming-appointments">
+                    {afspraken.slice(0, 2).map((afspraak) => (
+                      <div key={afspraak.id} className="appointment-item">
+                        {afspraak.student} – {afspraak.datum} om {afspraak.tijd || 'n.v.t.'}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="no-appointments">Geen komende afspraken</p>
+                )}
+              </div>
+            )}
+            <div className="card-footer">
+              <span>Direct naar {card.title.toLowerCase()}</span>
+              <FaChevronRight />
+            </div>
+          </div>
+        ))}
       </div>
-    </div>
-  ))}
-</div>
-
     </>
   );
 
