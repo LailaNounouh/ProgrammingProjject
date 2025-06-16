@@ -24,7 +24,7 @@ router.get("/:email", async (req, res) => {
     if (rows.length === 0) return res.status(404).json({ error: "Student niet gevonden" });
 
     const student = rows[0];
-    delete student.wachtwoord;
+    delete student.wachtwoord; // Wachtwoord niet teruggeven
     res.json(student);
   } catch (err) {
     console.error("Fout bij ophalen profiel:", err);
@@ -34,8 +34,8 @@ router.get("/:email", async (req, res) => {
 
 // POST profiel bijwerken + foto uploaden
 router.post("/", upload.single("profilePicture"), async (req, res) => {
-  const { naam, email, telefoon, aboutMe } = req.body;
-  const foto_url = req.file ? req.file.path : null; // aangepast naar foto_url
+  const { naam, email, telefoon, aboutMe, github, linkedin } = req.body;
+  const foto_url = req.file ? req.file.path : null;
 
   if (!email) {
     return res.status(400).json({ error: "Email is verplicht" });
@@ -45,27 +45,54 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
     const [rows] = await pool.query("SELECT * FROM Studenten WHERE email = ?", [email]);
 
     if (rows.length === 0) {
-      // Insert nieuwe student
+      // Nieuwe student: wachtwoord verplicht, hier tijdelijk default wachtwoord
+      const defaultPassword = "geheim123"; // Pas aan of behandel dit beter in registratieproces
+
       await pool.query(
-        `INSERT INTO Studenten (naam, email, telefoon, aboutMe, foto_url)
-         VALUES (?, ?, ?, ?, ?)`,
-        [naam, email, telefoon, aboutMe, foto_url]
+        `INSERT INTO Studenten 
+          (naam, email, telefoon, aboutMe, foto_url, github_url, linkedin_url, wachtwoord)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          naam || null,
+          email,
+          telefoon || null,
+          aboutMe || null,
+          foto_url,
+          github || null,
+          linkedin || null,
+          defaultPassword,
+        ]
       );
     } else {
       // Update bestaande student
       if (foto_url) {
         await pool.query(
           `UPDATE Studenten
-           SET naam = ?, telefoon = ?, aboutMe = ?, foto_url = ?, updated_at = NOW()
+           SET naam = ?, telefoon = ?, aboutMe = ?, foto_url = ?, github_url = ?, linkedin_url = ?, updated_at = NOW()
            WHERE email = ?`,
-          [naam, telefoon, aboutMe, foto_url, email]
+          [
+            naam || null,
+            telefoon || null,
+            aboutMe || null,
+            foto_url,
+            github || null,
+            linkedin || null,
+            email,
+          ]
         );
       } else {
         await pool.query(
           `UPDATE Studenten
-           SET naam = ?, telefoon = ?, aboutMe = ?, updated_at = NOW()
+           SET naam = ?, telefoon = ?, aboutMe = ?, github_url = ?, linkedin_url = ?, updated_at = NOW()
            WHERE email = ?`,
-          [naam, telefoon, aboutMe, email]
+          [
+            naam || null,
+            telefoon || null,
+            aboutMe || null,
+            github || null,
+            linkedin || null,
+            email,
+          ]
         );
       }
     }
@@ -73,7 +100,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
     res.json({ success: true, message: "Profiel opgeslagen" });
   } catch (err) {
     console.error("Fout bij opslaan profiel:", err);
-    res.status(500).json({ error: "Fout bij opslaan profiel" });
+    res.status(500).json({ error: err.message || "Fout bij opslaan profiel" });
   }
 });
 

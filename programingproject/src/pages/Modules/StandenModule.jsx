@@ -1,11 +1,15 @@
-import React from "react";
+import React from 'react';
+import Plattegrond from '../../components/plattegrond/plattegrond';
 
-export default function Standen() {
+const StandenModule = () => {
   return (
-    <div className="page-container">
-      <h2>Standenoverzicht</h2>
-      <p>Hier komt een interactieve plattegrond met de locatie van de standen.</p>
-      <p>Voorbeeld: stand A1 = Microsoft | A2 = Sopra Steria</p>
+    <div className="standen-module">
+      <h2>Interactieve Kaart: Standen</h2>
+      <div className="plattegrond-container">
+        <Plattegrond bewerkModus={false} />
+      </div>
     </div>
   );
-}
+};
+
+export default StandenModule;
