@@ -25,9 +25,11 @@ export default function ProfielSettingsModule() {
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState(null);
 
-  // Laad profiel in formData zodra het beschikbaar is
   useEffect(() => {
-    if (profile) {
+    // Profiel ophalen als die nog niet bestaat
+    if (!profile) {
+      fetchProfile();
+    } else {
       setFormData({
         naam: profile.naam || "",
         email: profile.email || "",
@@ -37,7 +39,7 @@ export default function ProfielSettingsModule() {
         linkedin: profile.linkedin || "",
       });
     }
-  }, [profile]);
+  }, [profile, fetchProfile]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,6 +64,7 @@ export default function ProfielSettingsModule() {
     data.append("github", formData.github);
     data.append("linkedin", formData.linkedin);
     if (profilePicture) data.append("profilePicture", profilePicture);
+    if (profile?.type) data.append("type", profile.type);
 
     try {
       const response = await fetch(`${baseUrl}/profiel`, {
@@ -71,7 +74,7 @@ export default function ProfielSettingsModule() {
 
       if (!response.ok) throw new Error("Fout bij opslaan van profiel");
 
-      await fetchProfile(); // opnieuw ophalen na update
+      await fetchProfile();
       setMessage("Profiel succesvol opgeslagen!");
       setMessageType("success");
 
@@ -85,10 +88,6 @@ export default function ProfielSettingsModule() {
       setMessageType("error");
     }
   };
-
-  if (!profile) {
-    return <div>Profiel wordt geladen...</div>;
-  }
 
   return (
     <div className="profiel-module">

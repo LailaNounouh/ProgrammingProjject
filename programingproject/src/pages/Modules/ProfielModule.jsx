@@ -7,7 +7,7 @@ export default function ProfielModule() {
   const { profile, loading, error, fetchProfile } = useProfile();
 
   useEffect(() => {
-    fetchProfile();
+    fetchProfile(); // Haalt het profiel op uit de backend (database)
   }, [fetchProfile]);
 
   if (loading) return <p>Profiel wordt geladen...</p>;
@@ -19,9 +19,9 @@ export default function ProfielModule() {
     email,
     telefoon,
     aboutMe,
-    foto,
-    github,
-    linkedin,
+    foto_url,
+    github_url,
+    linkedin_url,
     talen = [],
     programmeertalen = [],
     softSkills = [],
@@ -34,7 +34,7 @@ export default function ProfielModule() {
 
       <div className="account-header">
         <img
-          src={foto ? `${baseUrl}/${foto}` : "/default-profile.png"}
+          src={foto_url ? `${baseUrl}/${foto_url}` : "/default-profile.png"}
           alt={`Profielfoto van ${naam}`}
           className="account-foto"
         />
@@ -45,20 +45,20 @@ export default function ProfielModule() {
         <p><strong>Email:</strong> {email || "Niet ingevuld"}</p>
         <p><strong>Telefoon:</strong> {telefoon || "Niet ingevuld"}</p>
 
-        {github && (
+        {github_url && (
           <p>
             <strong>GitHub:</strong>{" "}
-            <a href={github.startsWith('http') ? github : `https://${github}`} target="_blank" rel="noopener noreferrer">
-              {github}
+            <a href={github_url.startsWith("http") ? github_url : `https://${github_url}`} target="_blank" rel="noopener noreferrer">
+              {github_url}
             </a>
           </p>
         )}
 
-        {linkedin && (
+        {linkedin_url && (
           <p>
             <strong>LinkedIn:</strong>{" "}
-            <a href={linkedin.startsWith('http') ? linkedin : `https://${linkedin}`} target="_blank" rel="noopener noreferrer">
-              {linkedin}
+            <a href={linkedin_url.startsWith("http") ? linkedin_url : `https://${linkedin_url}`} target="_blank" rel="noopener noreferrer">
+              {linkedin_url}
             </a>
           </p>
         )}
