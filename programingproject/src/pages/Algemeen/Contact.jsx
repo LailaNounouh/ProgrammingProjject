@@ -13,8 +13,8 @@ export default function Contact() {
           
       <div className="contact-details-container">
         <div className="contact-text">
-          <p><strong>E-mail:</strong> info@careerlaunch.be</p>
-          <p><strong>Telefoon:</strong> +32 123 45 67 89</p>
+          <p><strong>E-mail:</strong> info@ehb.be</p>
+          <p><strong>Telefoon:</strong> +32 2 523 37 37</p>
     
         <div className="address-section">
           <p><strong>Adres:</strong> Nijverheidskaai 170, 1070 Anderlecht</p>
@@ -72,7 +72,7 @@ export default function Contact() {
             />
         </div>
     
-        <div className="form-group">
+        <div className="form-group form-group-wide">
           <label htmlFor="message">Bericht</label>
             <textarea 
               id="message" 
