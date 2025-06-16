@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./ProfielModule.css";
 import { useProfile } from "../../context/ProfileContext";
 import { baseUrl } from "../../config";
 
 export default function ProfielModule() {
-  const { profile, loading, error } = useProfile();
+  const { profile, loading, error, fetchProfile } = useProfile();
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   if (loading) return <p>Profiel wordt geladen...</p>;
   if (error) return <p style={{ color: "red" }}>Fout: {error}</p>;
@@ -41,7 +45,6 @@ export default function ProfielModule() {
         <p><strong>Email:</strong> {email || "Niet ingevuld"}</p>
         <p><strong>Telefoon:</strong> {telefoon || "Niet ingevuld"}</p>
 
-        {/* GitHub link (indien beschikbaar) */}
         {github && (
           <p>
             <strong>GitHub:</strong>{" "}
@@ -51,7 +54,6 @@ export default function ProfielModule() {
           </p>
         )}
 
-        {/* LinkedIn link (indien beschikbaar) */}
         {linkedin && (
           <p>
             <strong>LinkedIn:</strong>{" "}
