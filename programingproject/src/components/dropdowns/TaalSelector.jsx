@@ -6,7 +6,7 @@ const codeerOpties = ["JavaScript", "Python", "Java", "C#", "SQL", "HTML/CSS"];
 const beheersOpties = ["Beginner", "Gevorderd", "Expert"];
 
 
-export default function CodeertaalSelector() {
+export default function TaalSelector() {
  const [lijst, setLijst] = useState([]);
  const [taal, setTaal] = useState("");
  const [niveau, setNiveau] = useState("");
@@ -22,11 +22,11 @@ export default function CodeertaalSelector() {
 
 
  return (
-   <div className="codeertaal-selector">
-     <h3>Codeertalen</h3>
+   <div className="taal-selector">
+     <h3>talen</h3>
       <div className="inputs">
        <select value={taal} onChange={(e) => setTaal(e.target.value)}>
-         <option value="">Kies codeertaal</option>
+         <option value="">Kies taal</option>
          {codeerOpties.map((t, i) => <option key={i} value={t}>{t}</option>)}
        </select>
 
