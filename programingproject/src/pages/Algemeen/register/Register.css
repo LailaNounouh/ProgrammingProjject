@@ -113,7 +113,7 @@
 
 /* Vaardigheden in "Werkzoeknde" */
 .registratie-container form textarea.input-field {
-  width: 100%;
+  width: 400px;
   min-height: 80px;
   padding: 0.8rem;
   border: 1.5px solid #c0d3dd;
@@ -122,7 +122,9 @@
   background: #f9fbfc;
   resize: vertical;
   transition: border-color 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(0, 169, 181, 0.04);
+  box-shadow: 0 2px 8px rgba(0, 169, 181, 0.04);       
+  max-width: 98%;
+  gap: 0.8rem;
 }
 
 /* Stijl voor "Werkzoekende" */
