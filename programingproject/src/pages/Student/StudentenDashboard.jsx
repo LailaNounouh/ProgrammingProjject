@@ -24,13 +24,17 @@ const StudentDashboard = () => {
 
     // Haal afspraken op alleen als gebruiker bestaat
     const fetchAfspraken = async () => {
-      if (!gebruiker?.id) return; // Stop als er geen gebruiker is
+      if (!gebruiker?.id) return; 
 
       try {
-        const response = await fetch(`http://10.2.160.211:3000/api/afspraken/${gebruiker.id}`);
+        const response = await fetch(`http://10.2.160.211:3000/api/afspraken/student/${gebruiker.id}`);
+        
         if (response.ok) {
           const data = await response.json();
+          console.log('Opgehaalde afspraken:', data); 
           setAfspraken(data);
+        } else {
+          console.error('Fout bij ophalen afspraken:', await response.text());
         }
       } catch (error) {
         console.error('Fout bij ophalen afspraken:', error);
