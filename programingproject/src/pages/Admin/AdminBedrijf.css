@@ -39,15 +39,14 @@ body {
   margin-bottom: 1rem;
 }
 
-.filter-button {
-  background-color: var(--light-blue);
-  border: none;
+.filter-input {
   padding: 0.5rem 1rem;
   border-radius: 8px;
-  color: var(--main-blue);
-  font-weight: 500;
-  cursor: pointer;
+  border: 1px solid var(--border-color);
+  font-size: 1rem;
+  max-width: 250px;
 }
+
 
 .bedrijven-grid {
   display: grid;
