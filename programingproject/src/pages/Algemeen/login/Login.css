@@ -63,6 +63,7 @@
   outline: none;
 }
 
+/* Knop login */
 .login-button {
   margin-top: 0.5rem;
   padding: 1rem;
@@ -80,6 +81,7 @@
   background: #3182ce;
 }
 
+/* Registratie link */
 .login-container .register-link {
   text-align: center;
   margin-top: 1rem;
@@ -98,6 +100,7 @@
   text-decoration: underline;
 }
 
+/* Foutmelding */
 .login-container .error-message {
   background: #fed7d7;
   color: #c53030;
