@@ -65,7 +65,7 @@ export default function StudentForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3>Registratie - Student</h3>
+      <h2>Student</h2>
 
       <input
         type="text"

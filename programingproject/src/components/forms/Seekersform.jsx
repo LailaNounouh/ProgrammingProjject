@@ -52,7 +52,7 @@ export default function SeekersForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3>Registratie - Werkzoekende</h3>
+      <h2>Werkzoekende</h2>
 
       <input
         type="text"
@@ -75,12 +75,18 @@ export default function SeekersForm() {
         onChange={(e) => setWachtwoord(e.target.value)}
         required
       />
-      <textarea
-        placeholder="Vaardigheden"
-        value={vaardigheden}
-        onChange={(e) => setVaardigheden(e.target.value)}
-        required
-      />
+      <div className="form-group">
+        <label htmlFor="vaardigheden">Vaardigheden</label>
+          <textarea
+            id="vaardigheden"
+            placeholder="Beschrijf je vaardigheden..."
+            value={vaardigheden}
+            onChange={(e) => setVaardigheden(e.target.value)}
+            required
+            className="input-field"
+            rows={4}
+          />
+      </div>
       <button type="submit">Registreer</button>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
