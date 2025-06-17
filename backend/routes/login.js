@@ -28,7 +28,7 @@ router.post('/', async (req, res) => {
 
     const query = `
       SELECT 
-        student_id AS id, -- Gebruik alias voor consistentie met de frontend
+     id, -- Gebruik alias voor consistentie met de frontend
         email,
         wachtwoord,
         naam
