@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { baseUrl } from '../config';
 
 const AuthContext = createContext();
 
@@ -26,15 +27,14 @@ export const AuthProvider = ({ children }) => {
 
   const inloggen = async (email, wachtwoord, type) => {
     try {
-      const response = await fetch('http://10.2.160.211:3000/api/login', {
+      const response = await fetch(`${baseUrl}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password: wachtwoord, type }),
-        credentials: 'include'
       });
 
       const data = await response.json();
-
+      
       if (!response.ok) {
         throw new Error(data.error || 'Inloggen mislukt');
       }
