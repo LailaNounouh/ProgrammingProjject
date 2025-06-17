@@ -13,7 +13,6 @@ import {
 import './Afspraakoverzicht.css';
 
 const opleidingenOpties = [
-  '',
   'Business IT Technology',
   'Business IT Development',
   'Mobile Enterprise Apps Business IT',
@@ -192,10 +191,11 @@ const filteredAfspraken = afspraken.filter((afspraak) => {
         style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}
       >
         <select
+        
           value={filters.opleiding}
           onChange={(e) => setFilters({ ...filters, opleiding: e.target.value })}
           aria-label="Filter op opleiding"
-        >
+        ><option value="">Geen filter</option>
           {opleidingenOpties.map((optie, idx) => (
             <option key={idx} value={optie}>
               {optie === '' ? 'Filter op opleiding' : optie}
