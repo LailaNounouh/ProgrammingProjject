@@ -106,12 +106,18 @@ export default function BedrijfForm() {
 
       <input type="text" placeholder="Bedrijfsnaam *" value={bedrijfsnaam} onChange={(e) => setBedrijfsnaam(e.target.value)} required />
 
-      <select value={sector} onChange={(e) => setSector(e.target.value)} required>
+      <select
+        id="sector"
+        value={sector}
+        onChange={(e) => setSector(e.target.value)}
+        required
+      >
         <option value="">Kies een sector *</option>
-        {sectoren.map((s) => (
+         {sectoren.map((s) => (
           <option key={s.sector_id} value={s.sector_id}>{s.naam}</option>
-        ))}
+          ))}
       </select>
+    
 
       <input type="text" placeholder="Straat *" value={straat} onChange={(e) => setStraat(e.target.value)} required />
       <input type="text" placeholder="Nummer *" value={nummer} onChange={(e) => setNummer(e.target.value)} required />
