@@ -14,6 +14,7 @@ function AdminBedrijf() {
   ]);
 
   const [bewerkBedrijvenModus, setBewerkBedrijvenModus] = useState(false);
+  const [filter, setFilter] = useState('');
 
   const handleBedrijfNaamChange = (index, nieuweNaam) => {
     const nieuweBedrijven = [...bedrijven];
@@ -34,37 +35,45 @@ function AdminBedrijf() {
           <h2>Deelnemende bedrijven:</h2>
 
           <div className="bedrijven-header">
-            <button className="filter-button">Filter ⌄</button>
+            <input
+              type="text"
+              placeholder="Filter op naam..."
+              className="filter-input"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+            />
           </div>
 
           <div className="bedrijven-grid">
-            {bedrijven.map((bedrijf, index) => (
-              <div key={index} className="bedrijf-card">
-                <div className="bedrijf-image">
-                  <div className="bedrijf-logo-placeholder"></div>
+            {bedrijven
+              .filter((bedrijf) => bedrijf.naam.toLowerCase().includes(filter.toLowerCase()))
+              .map((bedrijf, index) => (
+                <div key={index} className="bedrijf-card">
+                  <div className="bedrijf-image">
+                    <div className="bedrijf-logo-placeholder"></div>
+                  </div>
+                  {bewerkBedrijvenModus ? (
+                    <>
+                      <input
+                        type="text"
+                        value={bedrijf.naam}
+                        onChange={(e) => handleBedrijfNaamChange(index, e.target.value)}
+                        className="bedrijf-input"
+                        style={{ textAlign: 'center', fontWeight: 'bold' }}
+                      />
+                      <button
+                        className="verwijder-button"
+                        onClick={() => handleVerwijderBedrijf(index)}
+                      >
+                        Verwijder
+                      </button>
+                    </>
+                  ) : (
+                    <strong>{bedrijf.naam}</strong>
+                  )}
+                  <p className="meer-info">• Meer info</p>
                 </div>
-                {bewerkBedrijvenModus ? (
-                  <>
-                    <input
-                      type="text"
-                      value={bedrijf.naam}
-                      onChange={(e) => handleBedrijfNaamChange(index, e.target.value)}
-                      className="bedrijf-input"
-                      style={{ textAlign: 'center', fontWeight: 'bold' }}
-                    />
-                    <button
-                      className="verwijder-button"
-                      onClick={() => handleVerwijderBedrijf(index)}
-                    >
-                      Verwijder
-                    </button>
-                  </>
-                ) : (
-                  <strong>{bedrijf.naam}</strong>
-                )}
-                <p className="meer-info">• Meer info</p>
-              </div>
-            ))}
+              ))}
           </div>
 
           <div className="bedrijven-footer">
