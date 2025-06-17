@@ -22,86 +22,86 @@ const AfspraakOverzicht = () => {
           {
             id: 1,
             student_naam: 'Lisa van der Berg',
-            student_opleiding: 'HBO-ICT',
             student_specialisatie: 'Software Engineering',
             datum: '15 juni 2025',
             tijd: '09:30 - 10:15',
             github: 'https://github.com/lisavdberg',
             linkedin: 'https://linkedin.com/in/lisavdberg',
             status: 'in-afwachting',
-            opmerking: 'Ervaring met Java en Spring Boot'
+            opmerking: 'Ervaring met Java en Spring Boot',
+            taal: 'Nederlands'
           },
           {
             id: 2,
             student_naam: 'Ahmed el-Masri',
-            student_opleiding: 'HBO-ICT',
             student_specialisatie: 'Data Science',
             datum: '15 juni 2025',
             tijd: '11:00 - 11:45',
             github: 'https://github.com/ahmedelmasri',
             linkedin: 'https://linkedin.com/in/ahmedelmasri',
             status: 'goedgekeurd',
-            opmerking: 'Machine learning specialisatie'
+            opmerking: 'Machine learning specialisatie',
+            taal: 'Nederlands'
           },
           {
             id: 3,
             student_naam: 'Sophie de Vries',
-            student_opleiding: 'HBO-ICT',
             student_specialisatie: 'Frontend Development',
             datum: '16 juni 2025',
             tijd: '14:00 - 14:45',
             github: 'https://github.com/sophiedev',
             linkedin: 'https://linkedin.com/in/sophiedev',
             status: 'in-afwachting',
-            opmerking: 'Expertise in React en TypeScript'
+            opmerking: 'Expertise in React en TypeScript',
+            taal: 'Frans'
           },
           {
             id: 4,
             student_naam: 'Thomas Janssen',
-            student_opleiding: 'HBO-ICT',
             student_specialisatie: 'Cyber Security',
             datum: '17 juni 2025',
             tijd: '10:15 - 11:00',
             github: 'https://github.com/tomjanssen',
             linkedin: 'https://linkedin.com/in/tomjanssen',
             status: 'geweigerd',
-            opmerking: 'Niet beschikbaar in gevraagde periode'
+            opmerking: 'Niet beschikbaar in gevraagde periode',
+            taal: 'Nederlands'
           },
           {
             id: 5,
             student_naam: 'Yara Hassan',
-            student_opleiding: 'HBO-ICT',
             student_specialisatie: 'Cloud Engineering',
             datum: '18 juni 2025',
             tijd: '13:30 - 14:15',
             github: 'https://github.com/yarah',
             linkedin: 'https://linkedin.com/in/yarah',
             status: 'goedgekeurd',
-            opmerking: 'AWS gecertificeerd'
+            opmerking: 'AWS gecertificeerd',
+            taal: 'Frans , Engels'
           },
           {
             id: 6,
             student_naam: 'Mark Boer',
-            student_opleiding: 'HBO-ICT',
             student_specialisatie: 'Fullstack Development',
             datum: '18 juni 2025',
             tijd: '15:00 - 15:45',
             github: 'https://github.com/markboer',
             linkedin: 'https://linkedin.com/in/markboer',
             status: 'in-afwachting',
-            opmerking: 'Ervaring met MERN stack'
+            opmerking: 'Ervaring met MERN stack',
+            taal: 'Nederlands'
           },
           {
             id: 7,
             student_naam: 'Eva van Dijk',
-            student_opleiding: 'HBO-ICT',
             student_specialisatie: 'UX/UI Design',
             datum: '19 juni 2025',
             tijd: '10:00 - 10:45',
             github: 'https://github.com/evavandijk',
             linkedin: 'https://linkedin.com/in/evavandijk',
             status: 'goedgekeurd',
-            opmerking: 'Sterke portfolio met case studies'
+            opmerking: 'Sterke portfolio met case studies',
+            taal: 'Engels , Nederlands'
           }
         ];
         setAfspraken(mockData);
