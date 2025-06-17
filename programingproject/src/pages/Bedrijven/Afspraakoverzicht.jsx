@@ -185,7 +185,7 @@ const [vaardigheidFilter, setVaardigheidFilter] = useState('');
         </div>
       ) : (
         <div className="afspraken-grid">
-          {afspraken.map((afspraak) => (
+          {gefilterdeAfspraken.map((afspraak) => (
             <div key={afspraak.id} className={`afspraak-card ${afspraak.status}`}>
               <div className="card-header">
                 <div className="student-info">
