@@ -60,7 +60,7 @@ export default function AdminRegisterPage() {
         onChange={(e) => setPassword(e.target.value)}
         required
       /><br />
-      <button type="submit">Registreer Admin</button>
+      <button type="submit">Registreer</button>
       {message && <p style={{ color: "green" }}>{message}</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
     </form>
