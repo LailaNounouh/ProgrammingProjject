@@ -85,8 +85,8 @@ export default function SeekersForm() {
             required
             className="input-field"
             rows={4}
-          />
-      </div>
+         />
+    </div>
       <button type="submit">Registreer</button>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}

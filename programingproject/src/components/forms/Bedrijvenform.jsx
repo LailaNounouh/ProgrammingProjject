@@ -131,7 +131,7 @@ export default function BedrijfForm() {
 
       <input type="password" placeholder="Wachtwoord *" value={wachtwoord} onChange={(e) => setWachtwoord(e.target.value)} required />
 
-      <button type="submit">Verder</button>
+      <button type="submit">Registreer</button>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {success && <p style={{ color: 'green' }}>{success}</p>}
