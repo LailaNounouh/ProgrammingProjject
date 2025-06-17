@@ -1,3 +1,4 @@
+/* Buiten container */
 .login-container {
   min-height: 100vh;
   display: flex;
@@ -7,6 +8,7 @@
   padding: 1rem;
 }
 
+/* Witte kader met formulier */
 .login-card {
   background: white;
   padding: 2.5rem;
@@ -16,43 +18,46 @@
   max-width: 400px;
 }
 
+/* Titel */
 .login-card h2 {
   text-align: center;
   margin-bottom: 2rem;
   font-size: 2rem;
   font-weight: 700;
-  color: #2d3748;
+  color: #2c3e50;
 }
 
+/* Formulier */
 .login-form {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
 }
 
-.form-group {
+.login-container .form-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.form-group label {
+.login-container .form-group label {
   font-size: 0.95rem;
   font-weight: 500;
   color: #4a5568;
 }
 
-.form-group input,
-.form-group select {
+/* Input velden en select dropdown */
+.login-container .form-group input,
+.login-container .form-group select {
   padding: 0.8rem;
-  border: 2px solid #e2e8f0;
+  border: 1.5px solid #c0d3dd;
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.2s ease;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.login-container .form-group input:focus,
+.login-container .form-group select:focus {
   border-color: #4299e1;
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
   outline: none;
@@ -75,25 +80,25 @@
   background: #3182ce;
 }
 
-.register-link {
+.login-container .register-link {
   text-align: center;
   margin-top: 1rem;
   font-size: 0.95rem;
   color: #4a5568;
 }
 
-.register-link a {
+.login-container .register-link a {
   color: #4299e1;
   text-decoration: none;
   font-weight: 500;
   margin-left: 0.3rem;
 }
 
-.register-link a:hover {
+.login-container .register-link a:hover {
   text-decoration: underline;
 }
 
-.error-message {
+.login-container .error-message {
   background: #fed7d7;
   color: #c53030;
   padding: 0.8rem;
