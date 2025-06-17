@@ -7,7 +7,7 @@ import Layout from "./components/layout/algemenelayout/Layout";
 import StudentenLayout from "./components/layout/studentenlayout/StudentenLayout";
 import BedrijvenLayout from "./components/layout/bedrijvenlayout/BedrijvenLayout";
 import AdminLayout from "./components/layout/adminlayout/AdminLayout";
-import SeekerLayout from "./components/layout/seekerlayout/SeekerLayout";
+import SeekerLayout from "./components/layout/Seekerlayout/SeekerLayout";
  
  
 import Home from "./pages/Algemeen/Home";
@@ -47,7 +47,9 @@ export default function App() {
  
           {/* Seeker */}
           <Route path="/werkzoekende" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
- 
+          <Route path= "werkzoekende/bedrijven" element={<SeekerLayout><BedrijvenModule /></SeekerLayout>}/>
+ <Route path= "werkzoekende/standen" element={<SeekerLayout><StandenModule /></SeekerLayout>}/>
+<Route path="/werkzoekende/profiel" element={<SeekerLayout><ProfileProvider><ProfielModule /></ProfileProvider></SeekerLayout>} />
           {/* Student */}
           <Route path="/student" element={<StudentenLayout><StudentDashboard /></StudentenLayout>} />
           <Route path="/student/bedrijven" element={<StudentenLayout><BedrijvenModule /></StudentenLayout>} />

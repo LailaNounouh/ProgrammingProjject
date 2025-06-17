@@ -1,98 +1,59 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import Plattegrond from '../../components/plattegrond/plattegrond';
-import './SeekerDashboard.css';
-import { baseUrl } from '../../config';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthProvider';
+import './SeekerDashboard.css'; 
+
 
 const SeekerDashboard = () => {
+  const { gebruiker } = useAuth();
   const [bedrijven, setBedrijven] = useState([]);
-  const [filterSector, setFilterSector] = useState('all');
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchBedrijven() {
+    const fetchBedrijven = async () => {
       try {
-        const response = await fetch(`${baseUrl}/bedrijvenmodule`);
-        if (!response.ok) {
-          throw new Error(`HTTP-fout! status: ${response.status}`);
+        const response = await fetch('http://10.2.160.211:3000/api/bedrijvenmodule');
+        if (response.ok) {
+          const data = await response.json();
+          setBedrijven(data.slice(0, 5)); // Toon enkel eerste 5 bedrijven
         }
-        const data = await response.json();
-        setBedrijven(data);
-        setError(null);
       } catch (error) {
-        console.error("Fout bij laden bedrijven:", error);
-        setError("Fout bij laden bedrijven, probeer later opnieuw.");
+        console.error('Fout bij ophalen bedrijven:', error);
       }
-    }
+    };
+
     fetchBedrijven();
   }, []);
 
-  const alleSectoren = useMemo(() => {
-    const sectorSet = new Set();
-    bedrijven.forEach(b => {
-      if (b.sector_naam) sectorSet.add(b.sector_naam);
-    });
-    return Array.from(sectorSet).sort();
-  }, [bedrijven]);
-
-  const gefilterdeBedrijven = filterSector === 'all'
-    ? bedrijven
-    : bedrijven.filter(b => b.sector_naam === filterSector);
-
   return (
-    <div className="app">
-      <main>
+    <div className="dashboard-container">
 
-        <section id="bedrijven" className="bedrijven-section">
-          <h2>Deelnemende bedrijven:</h2>
-          <label htmlFor="sectorFilter">Filter op sector:</label>
-          <select
-            id="sectorFilter"
-            value={filterSector}
-            onChange={e => setFilterSector(e.target.value)}
-            className="filter-select"
-          >
-            <option value="all">Alle sectoren</option>
-            {alleSectoren.map((sector, idx) => (
-              <option key={idx} value={sector}>{sector}</option>
-            ))}
-          </select>
+      <div className="welcome-section">
+        <h1>Welkom{gebruiker ? `, ${gebruiker.naam}` : ' op het dashboard'}</h1>
+        <p>Bekijk hieronder de deelnemende bedrijven aan de jobbeurs</p>
+      </div>
 
-          <div className="bedrijven-lijst">
-            {error ? (
-              <p className="error">{error}</p>
-            ) : bedrijven.length === 0 ? (
-              <p>Bedrijven worden geladen...</p>
-            ) : gefilterdeBedrijven.length === 0 ? (
-              <p>Geen bedrijven gevonden in deze sector.</p>
-            ) : (
-              gefilterdeBedrijven.map((bedrijf, index) => (
-                <div className="bedrijf-kaart" key={`${bedrijf.naam}-${index}`}>
-                  {bedrijf.logo_url ? (
-                    <img
-                      src={bedrijf.logo_url}
-                      alt={`${bedrijf.naam} logo`}
-                      className="bedrijf-logo"
-                    />
-                  ) : (
-                    <div className="logo-placeholder">Geen logo</div>
-                  )}
-                  <p>{bedrijf.naam}</p>
-                  <a href={`/bedrijven/${bedrijf.naam}`} className="meer-info-link">
-                    Meer info
-                  </a>
+      <div className="dashboard-grid">
+        <div className="dashboard-card">
+          <div className="card-header">
+            <h2>Deelnemende Bedrijven</h2>
+            <Link to="/Seeker/bedrijven" className="view-all">
+              Bekijk alles →
+            </Link>
+          </div>
+          <div className="bedrijven-list">
+            {bedrijven.length > 0 ? (
+              bedrijven.map((bedrijf, index) => (
+                <div key={`bedrijf-${bedrijf.id || index}`} className="bedrijf-item">
+                  <span>{bedrijf.naam}</span>
+                  <span className="bedrijf-sector">{bedrijf.sector}</span>
                 </div>
               ))
+            ) : (
+              <p>Laden van bedrijven...</p>
             )}
           </div>
-        </section>
-
-        <section id="plattegrond" className="plattegrond-section">
-          <h2>Plattegrond:</h2>
-          <div className="plattegrond-container">
-            <Plattegrond bewerkModus={false} />
-          </div>
-        </section>
-      </main>
+        </div>
+      </div>
     </div>
   );
 };
