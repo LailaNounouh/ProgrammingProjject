@@ -28,7 +28,6 @@ router.post('/', async (req, res) => {
 
     const query = `
       SELECT 
-        id,
         email,
         wachtwoord,
         naam
