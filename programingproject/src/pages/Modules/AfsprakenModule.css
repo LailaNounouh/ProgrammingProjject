@@ -1,0 +1,69 @@
+
+
+
+.afspraken-module {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.module-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #00a9b5;
+  text-align: center;
+}
+
+.module-subtext {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  color: #444;
+  text-align: center;
+}
+
+.form-select {
+  padding: 0.6rem;
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.btn-submit {
+  display: block;
+  margin: 0 auto;
+  padding: 0.6rem 1.5rem;
+  background-color: #00a9b5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover {
+  background-color: #008b98;
+}
+
+.overzicht-blok {
+  background: #e6f7f9;
+  border-left: 5px solid #00a9b5;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 2rem;
+}
+
+.bevestiging {
+  font-size: 1.2rem;
+  color: #00a9b5;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  text-align: center;
+}
