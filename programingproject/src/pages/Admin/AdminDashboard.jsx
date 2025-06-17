@@ -1,7 +1,6 @@
-import React from 'react';
-import './AdminDashboard.css';
-import { useNavigate } from 'react-router-dom';
-
+import React from "react";
+import "./AdminDashboard.css";
+import { useNavigate } from "react-router-dom";
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -14,36 +13,74 @@ function AdminDashboard() {
       </div>
 
       <div className="admin-dashboard-content">
-
-
         {/* Kaarten */}
         <div className="dashboard-cards">
-          <div className="dashboard-card" onClick={() => navigate('/bedrijven')}>
-            <div className="card-icon">🏢</div>
-            <h3>Deelnemende bedrijven</h3>
-            <p>Bekijk en beheer alle deelnemende bedrijvens</p>
-            <span className="card-link">Ga naar bedrijven →</span>
+          {/* Deelnemende bedrijven */}
+          <div
+            className="dashboard-card"
+            onClick={() => navigate("/bedrijven")}
+          >
+            <div className="icon-container">
+              <div className="icon-wrapper icon-blauw">🏢</div>
+              <h3>Deelnemende bedrijven</h3>
+            </div>
+            <hr className="card-divider" />
+            <p className="card-description">
+              Bekijk en beheer alle deelnemende bedrijvens
+            </p>
+            <div className="card-footer">
+              <span className="card-link">Ga naar bedrijven</span>
+              <span className="card-arrow">→</span>
+            </div>
           </div>
 
-          <div className="dashboard-card" onClick={() => navigate('/standen')}>
-            <div className="card-icon">📍</div>
-            <h3>Beheer van standen</h3>
-            <p>Beheer alle standen op de plattegrond</p>
-            <span className="card-link">Ga naar standenbeheer →</span>
+          <div className="dashboard-card" onClick={() => navigate("/standen")}>
+            <div className="icon-container">
+              <div className="icon-wrapper icon-rood">📍</div>
+              <h3>Beheer van standen</h3>
+            </div>
+            <hr className="card-divider" />
+            <p className="card-description">
+              Beheer alle standen op de plattegrond
+            </p>
+            <div className="card-footer">
+              <span className="card-link">Ga naar standenbeheer</span>
+              <span className="card-arrow">→</span>
+            </div>
           </div>
 
-          <div className="dashboard-card" onClick={() => navigate('/gebruikers')}>
-            <div className="card-icon">👥</div>
-            <h3>Beheer van gebruikers</h3>
-            <p>Beheer accounts en rollen van gebruikers</p>
-            <span className="card-link">Ga naar gebruikersbeheer →</span>
+          <div
+            className="dashboard-card"
+            onClick={() => navigate("/gebruikers")}
+          >
+            <div className="icon-container">
+              <div className="icon-wrapper icon-paars">👥</div>
+              <h3>Beheer van gebruikers</h3>
+            </div>
+            <hr className="card-divider" />
+            <p className="card-description">
+              Beheer accounts en rollen van gebruikers
+            </p>
+            <div className="card-footer">
+              <span className="card-link">Ga naar gebruikersbeheer</span>
+              <span className="card-arrow">→</span>
+            </div>
           </div>
 
-          <div className="dashboard-card" onClick={() => navigate('/statistieken')}>
-            <div className="card-icon">📊</div>
-            <h3>Statistieken</h3>
-            <p>Bekijk statistieken en inzichten</p>
-            <span className="card-link">Bekijk statistieken →</span>
+          <div
+            className="dashboard-card"
+            onClick={() => navigate("/statistieken")}
+          >
+            <div className="icon-container">
+              <div className="icon-wrapper icon-geel">📊</div>
+              <h3>Statistieken</h3>
+            </div>
+            <hr className="card-divider" />
+            <p className="card-description">Bekijk statistieken en inzichten</p>
+            <div className="card-footer">
+              <span className="card-link">Bekijk statistieken</span>
+              <span className="card-arrow">→</span>
+            </div>
           </div>
         </div>
       </div>
