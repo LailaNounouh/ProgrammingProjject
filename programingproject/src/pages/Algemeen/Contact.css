@@ -170,7 +170,7 @@
 }
 
 /* Knop "verzenden" */
-button[type="submit"] {
+.contact-form button[type="submit"] {
   background-color: #D64045;
   color: white;
   border: none;
@@ -186,7 +186,7 @@ button[type="submit"] {
   display: block;
 }
 
-button[type="submit"]:hover {
+.contact-form button[type="submit"]:hover {
   background-color: #BF393E;
   transform: translateY(-2px);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
