@@ -136,3 +136,19 @@ body {
 .verwijder-button:hover {
   background-color: #d32f2f;
 }
+
+
+.terug-button {
+  background-color: var(--main-blue);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.terug-knop-container {
+  text-align: left;
+  margin-bottom: 1rem;
+}
