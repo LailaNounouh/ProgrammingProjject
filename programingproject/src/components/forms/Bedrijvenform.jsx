@@ -102,16 +102,22 @@ export default function BedrijfForm() {
 
   return (
     <form onSubmit={handleSubmit} className="bedrijf-formulier">
-      <h3>Bedrijfsgegevens</h3>
+      <h2>Bedrijf</h2>
 
       <input type="text" placeholder="Bedrijfsnaam *" value={bedrijfsnaam} onChange={(e) => setBedrijfsnaam(e.target.value)} required />
 
-      <select value={sector} onChange={(e) => setSector(e.target.value)} required>
+      <select
+        id="sector"
+        value={sector}
+        onChange={(e) => setSector(e.target.value)}
+        required
+      >
         <option value="">Kies een sector *</option>
-        {sectoren.map((s) => (
+         {sectoren.map((s) => (
           <option key={s.sector_id} value={s.sector_id}>{s.naam}</option>
-        ))}
+          ))}
       </select>
+    
 
       <input type="text" placeholder="Straat *" value={straat} onChange={(e) => setStraat(e.target.value)} required />
       <input type="text" placeholder="Nummer *" value={nummer} onChange={(e) => setNummer(e.target.value)} required />
@@ -131,7 +137,7 @@ export default function BedrijfForm() {
 
       <input type="password" placeholder="Wachtwoord *" value={wachtwoord} onChange={(e) => setWachtwoord(e.target.value)} required />
 
-      <button type="submit">Verder</button>
+      <button type="submit">Registreer</button>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {success && <p style={{ color: 'green' }}>{success}</p>}

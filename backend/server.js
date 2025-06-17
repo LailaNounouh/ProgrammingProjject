@@ -15,6 +15,7 @@ const sectorenRouter = require('./routes/sectoren');
 const profielRouter = require('./routes/profiel');
 const adminRouter = require('./routes/admin');
 const afsprakenRouter = require('./routes/afspraken')
+const codeertaalRouter = require('./routes/codeertalen');
 
 const app = express();
 
@@ -22,7 +23,7 @@ const corsOptions = {
   origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
-};
+};  
 app.use(cors(corsOptions));
 app.use(express.json());
 
@@ -89,6 +90,7 @@ apiRouter.use('/sectoren', sectorenRouter);
 apiRouter.use('/profiel', profielRouter);
 apiRouter.use('/admin', adminRouter);
 apiRouter.use('/afspraken', afsprakenRouter)
+apiRouter.use('/codeertaal', codeertaalRouter);
 
 app.use('/api', apiRouter);
 

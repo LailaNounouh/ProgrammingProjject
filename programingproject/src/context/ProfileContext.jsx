@@ -1,58 +1,63 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { baseUrl } from "../config";
-import { useAuth } from "./AuthProvider";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthProvider';
 
 const ProfileContext = createContext();
 
 export const useProfile = () => useContext(ProfileContext);
 
 export const ProfileProvider = ({ children }) => {
-  const { user } = useAuth();
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const { gebruiker } = useAuth();
+  const [profiel, setProfiel] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Haalt het profiel op vanuit de backend (op basis van e-mail)
-  const fetchProfile = useCallback(async () => {
-    if (!user?.email) {
-      setProfile(null);
+  const fetchProfiel = async () => {
+    if (!gebruiker?.id) {
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
-    setError(null);
-
     try {
-      const response = await fetch(`${baseUrl}/profiel/${encodeURIComponent(user.email)}`);
-      if (!response.ok) throw new Error(`Fout bij ophalen profiel: ${response.status}`);
-      const data = await response.json();
-
-      // Voorzie optioneel lege lijsten als fallback (voor wanneer die later via aparte tabellen komen)
-      const enrichedProfile = {
-        ...data,
-        talen: data.talen || [],
-        programmeertalen: data.programmeertalen || [],
-        softSkills: data.softSkills || [],
-        hardSkills: data.hardSkills || [],
-      };
-
-      setProfile(enrichedProfile);
-    } catch (err) {
-      setError(err.message || "Onbekende fout");
-      setProfile(null);
-    } finally {
+      const storedProfile = localStorage.getItem('userProfile');
+      if (storedProfile) {
+        setProfiel(JSON.parse(storedProfile));
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Fout bij laden profiel:', error);
       setLoading(false);
     }
-  }, [user?.email]);
+  };
 
-  // Automatisch profiel ophalen wanneer user (email) verandert
+  const updateProfiel = async (updatedData) => {
+    try {
+      // Update local storage
+      const currentProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+      const newProfile = { ...currentProfile, ...updatedData };
+      localStorage.setItem('userProfile', JSON.stringify(newProfile));
+      
+      // Update state
+      setProfiel(newProfile);
+      return { success: true };
+    } catch (error) {
+      console.error('Fout bij updaten profiel:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
   useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
+    fetchProfiel();
+  }, [gebruiker]);
 
   return (
-    <ProfileContext.Provider value={{ profile, setProfile, fetchProfile, loading, error }}>
+    <ProfileContext.Provider value={{ 
+      profiel, 
+      fetchProfiel,
+      updateProfiel,
+      loading 
+    }}>
       {children}
     </ProfileContext.Provider>
   );
 };
+
+export { ProfileContext };

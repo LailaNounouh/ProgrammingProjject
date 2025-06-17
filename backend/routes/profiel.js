@@ -32,6 +32,25 @@ router.get("/:email", async (req, res) => {
   }
 });
 
+// GET profiel ophalen via ID
+router.get("/:id", async (req, res) => {
+  try {
+    const [rows] = await pool.query("SELECT * FROM Studenten WHERE id = ?", [req.params.id]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Profiel niet gevonden" });
+    }
+
+    const profiel = rows[0];
+    delete profiel.wachtwoord; // Verwijder gevoelige data
+
+    res.json(profiel);
+  } catch (error) {
+    console.error("Database error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // POST profiel bijwerken + foto uploaden
 router.post("/", upload.single("profilePicture"), async (req, res) => {
   const { naam, email, telefoon, aboutMe, github, linkedin } = req.body;
@@ -92,7 +111,6 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
     delete updatedStudent.wachtwoord;
 
     res.json({ success: true, student: updatedStudent });
-
   } catch (err) {
     console.error("Fout bij opslaan profiel:", err);
     res.status(500).json({ error: err.message || "Fout bij opslaan profiel" });

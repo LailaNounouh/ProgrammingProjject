@@ -5,79 +5,57 @@ const bcrypt = require('bcryptjs');
 
 router.post('/', async (req, res) => {
   const { email, password, type } = req.body;
-  console.log('Login poging:', { email, type });
+  console.log('Login poging details:', { email, type });
 
-  if (!email || !password || !type) {
-    return res.status(400).json({ error: 'Email, wachtwoord en type zijn verplicht' });
-  }
-// test om dit op te lossen
   try {
-    let query;
-    let params = [email];
-
-    if (type === 'bedrijf') {
-      // Gebruik GROUP_CONCAT voor sectoren en LIMIT 1
-      query = `
-        SELECT 
-          bedrijf_id AS id,
-          email,
-          wachtwoord,
-          naam AS bedrijfsnaam
-        FROM Bedrijven
-        WHERE email = ?
-        LIMIT 1
-      `;
-    } else if (type === 'student') {
-      query = `
-        SELECT 
-          student_id AS id, 
-          email, 
-          wachtwoord, 
-          naam 
-        FROM Studenten 
-        WHERE email = ?
-        LIMIT 1
-      `;
-    } else if (type === 'werkzoekende') {
-      query = `
-        SELECT 
-          werkzoekende_id AS id, 
-          email, 
-          wachtwoord, 
-          naam 
-        FROM Werkzoekenden 
-        WHERE email = ?
-        LIMIT 1
-      `;
-    } else if (type === 'admin') {
-      query = `
-        SELECT 
-          admin_id AS id, 
-          email, 
-          wachtwoord, 
-          naam 
-        FROM Admins 
-        WHERE email = ?
-        LIMIT 1
-      `;
-    } else {
-      return res.status(400).json({ error: 'Ongeldig type gebruiker' });
+    let tableName;
+    switch (type) {
+      case 'student':
+        tableName = 'Studenten';
+        break;
+      case 'bedrijf':
+        tableName = 'Bedrijven';
+        break;
+      case 'admin':
+        tableName = 'Admins';
+        break;
+      case 'werkzoekende':
+        tableName = 'Werkzoekenden';
+        break;
+      default:
+        return res.status(400).json({ error: 'Ongeldig account type' });
     }
 
-    const [rows] = await db.query(query, params);
+    const query = `
+      SELECT 
+        student_id AS id, -- Gebruik alias voor consistentie met de frontend
+        email,
+        wachtwoord,
+        naam
+      FROM ${tableName}
+      WHERE email = ?
+    `;
+
+    console.log('Query:', query.replace('?', `'${email}'`));
+
+    const [rows] = await db.query(query, [email]);
+    console.log('Raw database result:', rows);
 
     if (rows.length === 0) {
-      return res.status(401).json({
-        error: `${type === 'bedrijf' ? 'Bedrijf' : 'Gebruiker'} niet gevonden`
-      });
+      return res.status(401).json({ error: `${type} niet gevonden met email: ${email}` });
     }
 
     const user = rows[0];
-    console.log("Gevonden gebruiker:", user);
-
+    
+    // Debug logging voor wachtwoord vergelijking
+    console.log('Ingevoerd wachtwoord:', password);
+    console.log('Opgeslagen hash:', user.wachtwoord);
+    
     const validPassword = await bcrypt.compare(password, user.wachtwoord);
+    console.log('Wachtwoord vergelijking resultaat:', validPassword);
 
     if (!validPassword) {
+      console.log('Wachtwoord verificatie mislukt');
       return res.status(401).json({ error: 'Ongeldig wachtwoord' });
     }
 
@@ -88,23 +66,13 @@ router.post('/', async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
-        type,
-        ...(type === 'bedrijf'
-          ? {
-              bedrijfsnaam: user.bedrijfsnaam,
-              sectoren: user.sectoren?.split(', ').map(s => s.trim()),
-              website: user.website_of_linkedin,
-              telefoonnummer: user.telefoonnummer,
-              gemeente: user.gemeente,
-            }
-          : {
-              naam: user.naam,
-            }),
-      },
+        naam: user.naam,
+        type: type
+      }
     };
 
-    console.log('Login succesvol:', responseData);
     res.json(responseData);
+    
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Server error bij inloggen' });

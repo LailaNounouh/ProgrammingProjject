@@ -72,3 +72,111 @@ main {
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.dashboard-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.welcome-section {
+  margin-bottom: 2rem;
+}
+
+.welcome-section h1 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card-header h2 {
+  font-size: 1.2rem;
+  color: #2c3e50;
+}
+
+.view-all {
+  color: #3498db;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.view-all:hover {
+  text-decoration: underline;
+}
+
+.bedrijven-list, .afspraken-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.bedrijf-item, .afspraak-item {
+  padding: 0.8rem;
+  border-radius: 4px;
+  background: #f8f9fa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bedrijf-sector {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.afspraak-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.afspraak-bedrijf {
+  font-weight: 500;
+}
+
+.afspraak-tijd {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.geen-afspraken {
+  color: #666;
+  text-align: center;
+  padding: 1rem;
+}
+
+.maak-afspraak {
+  color: #3498db;
+  text-decoration: none;
+  margin-left: 0.5rem;
+}
+
+.maak-afspraak:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}

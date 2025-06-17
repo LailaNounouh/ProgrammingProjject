@@ -1,80 +1,90 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { baseUrl } from '../config';
 
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  // Initialize state with stored user data
+  const [gebruiker, setGebruiker] = useState(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+
   const navigate = useNavigate();
 
-  // Herstel gebruiker bij pagina herladen
+  // Update localStorage when user state changes
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        if (parsedUser && parsedUser.email && parsedUser.id) {
-          setUser(parsedUser);
-        }
-      } catch (err) {
-        console.warn("Fout bij parsen van user uit localStorage");
-        localStorage.removeItem('user');
-      }
+    console.log('User state changed:', gebruiker);
+    if (gebruiker) {
+      localStorage.setItem('user', JSON.stringify(gebruiker));
+    } else {
+      localStorage.removeItem('user');
     }
-  }, []);
+  }, [gebruiker]);
 
-  // Login functie
-  const login = async (email, password, type) => {
+  const inloggen = async (email, wachtwoord, type) => {
     try {
-      const response = await fetch(`${baseUrl}/login`, {
+      const response = await fetch('http://10.2.160.211:3000/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, type }),
+        body: JSON.stringify({ email, password: wachtwoord, type }),
+        credentials: 'include'
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        return { success: false, message: data.error || 'Inloggen mislukt' };
+        throw new Error(data.error || 'Inloggen mislukt');
       }
 
+      // Store user data
       const userData = {
-        id: data.user.id,
-        email: data.user.email,
-        role: type,
-        ...data.user  // bevat naam, bedrijfsnaam, etc.
+        ...data.user,
+        lastLogin: new Date().toISOString()
       };
 
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
-
-      // Navigeer naar het juiste dashboard
-      if (['student', 'bedrijf', 'werkzoekende', 'admin'].includes(type)) {
-        navigate(`/${type}`);
-      } else {
-        navigate('/');
-      }
-
+      console.log('Storing user data:', userData);
+      setGebruiker(userData);
+      
+      // Navigate to dashboard
+      navigate(`/${type}`);
+      
       return { success: true };
-    } catch (err) {
-      console.error('Login fout:', err);
-      return { success: false, message: 'Interne fout tijdens inloggen' };
+    } catch (error) {
+      console.error('Login error:', error);
+      return { success: false, bericht: error.message };
     }
   };
 
-  // Logout functie
-  const logout = () => {
-    setUser(null);
+  const uitloggen = () => {
+    console.log('Logging out user');
     localStorage.removeItem('user');
+    setGebruiker(null);
     navigate('/login');
   };
 
+  const checkAuthStatus = () => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      console.log('Found stored user:', JSON.parse(storedUser));
+      return true;
+    }
+    return false;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{
+      gebruiker,
+      inloggen,
+      uitloggen,
+      checkAuthStatus,
+      isIngelogd: () => !!gebruiker
+    }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+export default AuthProvider;

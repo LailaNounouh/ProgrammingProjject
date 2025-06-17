@@ -1,150 +1,111 @@
-.profiel-module {
-  max-width: 800px;
+/* ProfielSettingsModule.css */
+
+.profiel-settings {
+  max-width: 900px;
   margin: 2rem auto;
   padding: 2rem;
-  background: #f9f9f9;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  font-family: 'Segoe UI', sans-serif;
-  color: #333;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.profiel-module h1 {
+.module-title {
   font-size: 2rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
   color: #2c3e50;
 }
 
-.profiel-module p {
-  font-size: 1rem;
-  color: #666;
-  margin-bottom: 2rem;
-}
-
-.template-form {
+.settings-form {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
-.form-group {
-  background: #ffffff;
-  border: 1px solid #ddd;
-  padding: 1.5rem;
-  border-radius: 12px;
+.form-section {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 1.5rem;
 }
 
-.form-group h2 {
-  font-size: 1.25rem;
+.form-section h3 {
+  font-size: 1.3rem;
   margin-bottom: 1rem;
   color: #34495e;
 }
 
-.form-field {
+.form-group {
   display: flex;
   flex-direction: column;
   margin-bottom: 1rem;
 }
 
-.form-field label {
-  margin-bottom: 0.5rem;
+.form-group label {
+  margin-bottom: 0.4rem;
   font-weight: 500;
-  color: #2c3e50;
+  color: #2d3436;
 }
 
-.form-field input,
-.form-field select,
-.form-field textarea {
-  padding: 0.75rem 1rem;
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.6rem;
+  border: 1px solid #dcdde1;
+  border-radius: 6px;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
   transition: border 0.3s ease;
 }
 
-.form-field input:focus,
-.form-field select:focus,
-.form-field textarea:focus {
-  border-color: #3498db;
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
   outline: none;
+  border-color: #3498db;
 }
 
-.form-field input[type="file"] {
-  padding: 0.25rem;
+.readonly-field {
+  background-color: #f4f4f4;
+  color: #888;
+  cursor: not-allowed;
 }
 
-textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-.form-footer {
+.char-count {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 0.3rem;
   text-align: right;
-  margin-top: 1rem;
 }
 
-.form-footer button {
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.save-button {
   background-color: #3498db;
   color: white;
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
+  padding: 0.8rem 1.6rem;
   border: none;
   border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.form-footer button:hover {
+.save-button:hover:not(:disabled) {
   background-color: #2980b9;
 }
 
-/* Meldingen onderaan */
-.notification {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 1em 2em;
-  border-radius: 4px;
-  color: white;
-  font-weight: bold;
-  z-index: 9999;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  animation: fadein 0.5s ease forwards;
-  max-width: 90%;
+.save-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.loading,
+.error {
   text-align: center;
-}
-
-.notification.success {
-  background-color: #4caf50; /* groen */
-}
-
-.notification.error {
-  background-color: #f44336; /* rood */
-}
-
-@keyframes fadein {
-  from {
-    opacity: 0;
-    bottom: 0;
-  }
-  to {
-    opacity: 1;
-    bottom: 20px;
-  }
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  .profiel-module {
-    padding: 1rem;
-  }
-
-  .form-footer {
-    text-align: center;
-  }
-
-  .form-footer button {
-    width: 100%;
-  }
+  font-size: 1.1rem;
+  color: #888;
+  padding: 2rem 0;
 }

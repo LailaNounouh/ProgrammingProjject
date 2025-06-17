@@ -1,13 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  FaEuroSign,
-  FaCalendarAlt,
-  FaMapMarkerAlt,
-  FaCog,
-  FaChevronRight,
-  FaSearch,
-  FaBell
-} from 'react-icons/fa';
+import { FaEuroSign, FaCalendarAlt, FaMapMarkerAlt, FaCog, FaChevronRight, FaSearch, FaBell } from 'react-icons/fa';
 import './BedrijvenDashboard.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,82 +13,71 @@ function BedrijvenDashboard() {
   const notificationRef = useRef(null);
 
   useEffect(() => {
-    setBetalingen([
-      { id: 1, factuur: "F2023-0456", status: "Betaald", bedrag: 1200, datum: "20-04-2023" }
-    ]);
+    setBetalingen([{ id: 1, factuur: "F2023-0456", status: "Betaald", bedrag: 1200, datum: "20-04-2023" }]);
     setAfspraken([
       { id: 1, student: "Lisa Janssens", type: "Afspraak", datum: "2025-06-17", tijd: "10:00" },
       { id: 2, student: "Tom Peeters", type: "Betaling vereist", bedrag: 800, factuur: "F2023-0457" }
     ]);
   }, []);
 
-  // Sluit popup als je buiten de notificatiebel klikt
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (notificationRef.current && !notificationRef.current.contains(event.target)) {
         setShowNotifications(false);
       }
     };
-    if (showNotifications) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showNotifications]);
 
-  
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const notifications = [
+    { id: 1, message: "Student Lisa Janssens heeft een afspraak gemaakt voor 17 juni om 10:00.", time: "1 uur geleden" },
+    { id: 2, message: "Factuur F2023-0457 moet nog betaald worden (Tom Peeters).", time: "2 uur geleden" }
+  ];
+
+  const dashboardCards = [
     {
-      id: 1,
-      message: "Student Lisa Janssens heeft een afspraak gemaakt voor 17 juni om 10:00.",
-      time: "1 uur geleden"
+      title: "Staat van betaling",
+      icon: <FaEuroSign className="icon-fix" />,
+      description: "Bekijk uw betalingsstatus en facturen",
+      onClick: () => navigate('/bedrijf/betaling'),
+      iconClass: "bg-blue"
     },
     {
-      id: 2,
-      message: "Factuur F2023-0457 moet nog betaald worden (Tom Peeters).",
-      time: "2 uur geleden"
+      title: "Afspraakoverzicht",
+      icon: <FaCalendarAlt className="icon-fix" />,
+      onClick: () => navigate('/bedrijf/afspraken'),
+      iconClass: "bg-green",
+      showAfspraken: true
+    },
+    {
+      title: "Beschikbaarheid van standen",
+      icon: <FaMapMarkerAlt className="icon-fix" />,
+      description: "Beheer uw standlocaties en reserveringen",
+      onClick: () => setActiveTab('standen'),
+      iconClass: "bg-orange"
+    },
+    {
+      title: "Bedrijfsinstellingen",
+      icon: <FaCog className="icon-fix" />,
+      description: "Beheer uw bedrijfsgegevens en voorkeuren",
+      onClick: () => navigate('/bedrijf/Settingsbedrijf'),
+      iconClass: "bg-purple"
     }
   ];
-  const dashboardCards = [
-  {
-    title: "Staat van betaling",
-    icon: <FaEuroSign />,
-    description: "Bekijk uw betalingsstatus en facturen",
-    onClick: () => navigate('/bedrijf/betaling'),
-    iconClass: "bg-blue"
-  },
-  {
-    title: "Afspraakoverzicht",
-    icon: <FaCalendarAlt />,
-    onClick: () => navigate('/bedrijf/afspraken'),
-    iconClass: "bg-green",
-    showAfspraken: true 
-  },
-  {
-    title: "Beschikbaarheid van standen",
-    icon: <FaMapMarkerAlt />,
-    description: "Beheer uw standlocaties en reserveringen",
-    onClick: () => setActiveTab('standen'),
-    iconClass: "bg-orange"
-  },
-  {
-    title: "Bedrijfsinstellingen",
-    icon: <FaCog />,
-    description: "Beheer uw bedrijfsgegevens en voorkeuren",
-    onClick: () => navigate('/bedrijf/Settingsbedrijf'),
-    iconClass: "bg-purple"
-  }
-];
-/*filters voor kaarten  */
-const filteredCards = dashboardCards.filter(card =>
-  card.title.toLowerCase().includes(searchTerm.toLowerCase())
-);
 
+  const filteredCards = dashboardCards.filter(card =>
+    card.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const renderDashboard = () => (
-    <>
+    <div className="dashboard-container">
       <div className="welcome-banner">
         <h1>Welkom terug, NovaTech!</h1>
-        <p>Hier vindt u een overzicht van uw activiteiten and status</p>
+        <p>Hier vindt u een overzicht van uw activiteiten en status</p>
       </div>
 
       <div className="dashboard-toolbar">
@@ -109,79 +90,56 @@ const filteredCards = dashboardCards.filter(card =>
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="toolbar-actions">
-          <div
-            className="notification-bell"
-            onClick={() => setShowNotifications((prev) => !prev)}
-            tabIndex={0}
-            role="button"
-            aria-label="Toon notificaties"
-            ref={notificationRef}
-          >
+
+        <div className="notification-wrapper" ref={notificationRef}>
+          <div className="notification-bell" onClick={() => setShowNotifications(!showNotifications)}>
             <FaBell />
-            <span className="notification-badge">{notifications.length}</span>
-            {showNotifications && (
-              <div className="notification-popup">
-                <h4>Meldingen</h4>
-                <ul>
-                  {notifications.map((notif) => (
-                    <li key={notif.id}>
-                      <span>{notif.message}</span>
-                      <span className="notif-time">{notif.time}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            {notifications.length > 0 && (
+              <span className="notification-badge">{notifications.length}</span>
             )}
           </div>
-          <div className="user-avatar">NT</div>
-        </div>
-      </div>
 
-  <div className="card-grid">
-  {filteredCards.map((card, index) => (
-    <div key={index} className="dashboard-card" onClick={card.onClick}>
-      <div className="card-header">
-        <div className={`card-icon ${card.iconClass}`}>
-          {card.icon}
-        </div>
-        <h3>{card.title}</h3>
-      </div>
-      {card.description && <p>{card.description}</p>}
-      {card.showAfspraken && (
-        <div className="afspraken-status">
-          <p>Overzicht Afspraken</p>
-          {afspraken.length > 0 ? (
-            <div className="upcoming-appointments">
-              {afspraken.slice(0, 2).map(afspraak => (
-                <div key={afspraak.id} className="appointment-item">
-                  {/* Afspraak details */}
-                </div>
-              ))}
+          {showNotifications && (
+            <div className="notification-dropdown">
+              <ul>
+                {notifications.map((notif) => (
+                  <li key={notif.id}>
+                    <p>{notif.message}</p>
+                    <small>{notif.time}</small>
+                  </li>
+                ))}
+              </ul>
             </div>
-          ) : (
-            <p className="no-appointments">Geen komende afspraken</p>
           )}
         </div>
-      )}
-      <div className="card-footer">
-        <span>Direct naar {card.title.toLowerCase()}</span>
-        <FaChevronRight />
+      </div>
+
+      <div className="card-grid">
+        {filteredCards.map((card, index) => (
+          <div key={index} className="dashboard-card" onClick={card.onClick}>
+            <div className="card-header">
+              <div className={`card-icon ${card.iconClass}`}>
+                {card.icon}
+              </div>
+              <h3 className="card-title">{card.title}</h3>
+            </div>
+            {card.description && <p className="card-description">{card.description}</p>}
+            {card.showAfspraken && (
+              <p className="card-description">Bekijk geplande afspraken</p>
+            )}
+            <div className="card-footer">
+              <span>Direct naar {card.title.toLowerCase()}</span>
+              <FaChevronRight className="chevron-icon" />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
-  ))}
-</div>
-
-    </>
   );
 
   return (
     <div className="bedrijven-dashboard">
-      <main>
-        <div className="dashboard-content">
-          {activeTab === 'dashboard' && renderDashboard()}
-        </div>
-      </main>
+      {renderDashboard()}
     </div>
   );
 }

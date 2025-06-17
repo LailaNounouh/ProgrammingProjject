@@ -1,81 +1,99 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthProvider";
 import "./Login.css";
-import { Link } from "react-router-dom"; // alleen indien je react-router-dom gebruikt
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [type, setType] = useState("student");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
+  const { inloggen } = useAuth();
+  const [formData, setFormData] = useState({
+    email: "",
+    wachtwoord: "",
+    type: "student"
+  });
+  const [foutmelding, setFoutmelding] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
+    setFoutmelding("");
 
     try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, type }),
-      });
-      const data = await response.json();
-
-      if (data.success) {
-        setSuccess("Login geslaagd!");
+      const resultaat = await inloggen(formData.email, formData.wachtwoord, formData.type);
+      if (resultaat.success) {
+        navigate(`/${formData.type}`);
       } else {
-        setError(data.error || "Login mislukt.");
+        setFoutmelding(resultaat.bericht || "Inloggen mislukt");
       }
     } catch (err) {
-      setError("Serverfout.");
+      console.error("Login fout:", err);
+      setFoutmelding("Er is een fout opgetreden bij het inloggen");
     }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   return (
     <div className="login-container">
-      <form className="login-form" onSubmit={handleSubmit}>
+      <div className="login-card">
         <h2>Inloggen</h2>
-        {error && <div className="login-error">{error}</div>}
-        {success && <div className="login-success">{success}</div>}
-        <label>
-          Type gebruiker:
-          <select value={type} onChange={e => setType(e.target.value)}>
-            <option value="student">Student</option>
-            <option value="bedrijf">Bedrijf</option>
-            <option value="werkzoekende">Werkzoekende</option>
-            <option value="admin">Admin</option>
-          </select>
-        </label>
-        <label>
-          Email:
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            autoComplete="username"
-            required
-          />
-        </label>
-        <label>
-          Wachtwoord:
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            autoComplete="current-password"
-            required
-          />
-        </label>
-        <button type="submit">Inloggen</button>
-        <div className="register-link">
-          Nog geen account?{" "}
-          <Link to="/register">Registreer hier</Link>
-          {/* Als je geen react-router gebruikt, vervang bovenste regel door: 
-          <a href="/registratie">Registreer hier</a> 
-          */}
-        </div>
-      </form>
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="form-group">
+            <label htmlFor="type">Account type</label>
+            <select
+              id="type"
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              required
+            >
+              <option value="student">Student</option>
+              <option value="bedrijf">Bedrijf</option>
+              <option value="werkzoekende">Werkzoekende</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="wachtwoord">Wachtwoord</label>
+            <input
+              type="password"
+              id="wachtwoord"
+              name="wachtwoord"
+              value={formData.wachtwoord}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <button type="submit" className="login-button">
+            Inloggen
+          </button>
+
+          <div className="register-link">
+            Nog geen account? <Link to="/register">Registreer hier</Link>
+          </div>
+
+          {foutmelding && <div className="error-message">{foutmelding}</div>}
+        </form>
+      </div>
     </div>
   );
 }

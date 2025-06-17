@@ -45,22 +45,22 @@ export default function AdminRegisterPage() {
 
   return (
     <form onSubmit={handleRegister}>
-      <h2>Admin registreren</h2>
+      <h2>Admin</h2>
       <input
         type="email"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
-      /><br />
+      />
       <input
         type="password"
         placeholder="Wachtwoord"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
-      /><br />
-      <button type="submit">Registreer Admin</button>
+      />
+      <button type="submit">Registreer</button>
       {message && <p style={{ color: "green" }}>{message}</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
     </form>
