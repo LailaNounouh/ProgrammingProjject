@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './AdminBedrijf.css';
+import { useNavigate } from "react-router-dom";
 
 function AdminBedrijf() {
   const [bedrijven, setBedrijven] = useState([
@@ -15,6 +16,7 @@ function AdminBedrijf() {
 
   const [bewerkBedrijvenModus, setBewerkBedrijvenModus] = useState(false);
   const [filter, setFilter] = useState('');
+  const navigate = useNavigate();
 
   const handleBedrijfNaamChange = (index, nieuweNaam) => {
     const nieuweBedrijven = [...bedrijven];
@@ -28,8 +30,16 @@ function AdminBedrijf() {
     setBedrijven(nieuweBedrijven);
   };
 
+  
   return (
     <div className="admin-dashboard">
+      {/* ✅ Terugknop helemaal bovenaan */}
+      <div className="terug-knop-container">
+        <button className="terug-button" onClick={() => navigate("/admin")}>
+          ← Terug naar dashboard
+        </button>
+      </div>
+
       <main className="admin-main">
         <section className="bedrijven-section">
           <h2>Deelnemende bedrijven:</h2>
