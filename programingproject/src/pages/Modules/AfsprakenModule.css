@@ -67,3 +67,36 @@
   font-weight: bold;
   text-align: center;
 }
+
+.tijdslot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.tijdslot-btn {
+  padding: 0.6rem;
+  background-color: #00a9b5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.tijdslot-btn:hover:not(:disabled) {
+  background-color: #007f89;
+}
+
+.tijdslot-btn.bezet {
+  background-color: #c0392b;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.tijdslot-btn.gekozen {
+  background-color: #005f66;
+  border: 2px solid #000;
+}

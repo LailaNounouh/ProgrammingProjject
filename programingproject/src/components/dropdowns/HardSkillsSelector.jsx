@@ -1,38 +1,57 @@
 import React, { useState } from "react";
-import "./DropDowns.css"
+import hardSkills from "./HardSkills.json";
+import "./DropDowns.css";
 
-
-const hardskills = ["Data-analyse", "UI/UX Design", "Projectmanagement", "Netwerkbeheer", "Databasebeheer"];
-
+const niveaus = ["Beginner", "Gevorderd", "Expert"];
 
 export default function HardSkillsSelector() {
- const [lijst, setLijst] = useState([]);
- const [skill, setSkill] = useState("");
+  const [lijst, setLijst] = useState([]);
+  const [skill, setSkill] = useState("");
+  const [niveau, setNiveau] = useState("");
 
+  const voegToe = () => {
+    if (skill && niveau && !lijst.some(item => item.skill === skill)) {
+      setLijst([...lijst, { skill, niveau }]);
+      setSkill("");
+      setNiveau("");
+    }
+  };
 
- const voegToe = () => {
-   if (skill && !lijst.includes(skill)) {
-     setLijst([...lijst, skill]);
-     setSkill("");
-   }
- };
+  const verwijder = (skillNaam) => {
+    setLijst(lijst.filter(item => item.skill !== skillNaam));
+  };
 
+  return (
+    <div className="codeertaal-selector">
+      <h3>Hard Skills</h3>
+      <div className="inputs">
+        <select value={skill} onChange={(e) => setSkill(e.target.value)}>
+          <option value="">Kies een skill</option>
+          {hardSkills.map((s, index) => (
+            <option key={index} value={s.vaardigheid}>
+              {s.vaardigheid} ({s.tag})
+            </option>
+          ))}
+        </select>
 
- return (
-   <div className="hardskills-selector">
-     <h3>Hard Skills</h3>
-     <div className="inputs">
-       <select value={skill} onChange={(e) => setSkill(e.target.value)}>
-         <option value="">Kies skill</option>
-         {hardskills.map((s, i) => <option key={i} value={s}>{s}</option>)}
-       </select>
-       <button onClick={voegToe}>Toevoegen</button>
-     </div>
-     <ul>
-       {lijst.map((s, i) => (
-         <li key={i}>{s}</li>
-       ))}
-     </ul>
-   </div>
- );
+        <select value={niveau} onChange={(e) => setNiveau(e.target.value)}>
+          <option value="">Kies niveau</option>
+          {niveaus.map((n, i) => (
+            <option key={i} value={n}>{n}</option>
+          ))}
+        </select>
+
+        <button onClick={voegToe}>Toevoegen</button>
+      </div>
+
+      <ul>
+        {lijst.map((item, index) => (
+          <li key={index}>
+            {item.skill} — {item.niveau}
+            <button onClick={() => verwijder(item.skill)}>Verwijder</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }

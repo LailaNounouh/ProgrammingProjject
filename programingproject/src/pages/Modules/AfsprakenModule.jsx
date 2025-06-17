@@ -2,9 +2,15 @@ import "./AfsprakenModule.css";
 import React, { useState, useEffect } from "react";
 import { baseUrl } from "../../config";
 
-
-
 export default function Afspraken() {
+  const beschikbareTijdsloten = [
+    "13:30", "13:45", "14:00", "14:15", "14:30", "14:45",
+    "15:00", "15:15", "15:30", "15:45", "16:00", "16:15"
+  ];
+
+  // Voorbeeld: deze tijdsloten zijn al bezet (kun je dynamisch maken later)
+  const bezetteTijdsloten = ["14:00", "15:30"];
+
   const [bedrijven, setBedrijven] = useState([]);
   const [bedrijfId, setBedrijfId] = useState("");
   const [tijdslot, setTijdslot] = useState("");
@@ -51,17 +57,24 @@ export default function Afspraken() {
               ))}
             </select><br /><br />
 
-            <label>Tijdslot:</label><br />
-            <select
-              required
-              className="form-select"
-              value={tijdslot}
-              onChange={(e) => setTijdslot(e.target.value)}
-            >
-              <option value="">Kies een tijd</option>
-              <option value="10:00">10:00</option>
-              <option value="11:00">11:00</option>
-            </select><br /><br />
+            <label>Kies een tijdstip:</label>
+            <div className="tijdslot-grid">
+              {beschikbareTijdsloten.map((tijd) => {
+                const isBezet = bezetteTijdsloten.includes(tijd);
+                const isGekozen = tijdslot === tijd;
+                return (
+                  <button
+                    key={tijd}
+                    type="button"
+                    disabled={isBezet}
+                    className={`tijdslot-btn ${isBezet ? "bezet" : ""} ${isGekozen ? "gekozen" : ""}`}
+                    onClick={() => setTijdslot(tijd)}
+                  >
+                    {tijd}
+                  </button>
+                );
+              })}
+            </div><br />
 
             <button type="submit" className="btn-submit">Afspraak maken</button>
           </form>
