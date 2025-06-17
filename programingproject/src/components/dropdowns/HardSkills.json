@@ -1,0 +1,394 @@
+[
+    {
+      "vaardigheid": "Adobe Photoshop",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Adobe Illustrator",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Adobe InDesign",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "UX-design",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "UI-design",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Wireframing",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Prototyping",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Sketch",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Figma",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Adobe XD",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Motion design",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "3D-modellering",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "AutoCAD",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Blender",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Typografie",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Visuele hiërarchie",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Design thinking",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Storyboarding",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Branding",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Kleurenleer",
+      "tag": "Design"
+    },
+    {
+      "vaardigheid": "Microsoft Excel",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "Data-analyse",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "Gegevensinvoer",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "Datavisualisatie",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "Tableau",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "Power BI",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "Google Sheets",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "SPSS",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "SQL-query's (zonder taal)",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "Statistiek",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "Forecasting",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "Financiële modellering",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "Datamining",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "A/B-testen",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "Enquêtes ontwerpen",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "Regressieanalyse",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "KPI-rapportage",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "ETL-processen",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "Dashboardontwikkeling",
+      "tag": "Data"
+    },
+    {
+      "vaardigheid": "SEO (zoekmachineoptimalisatie)",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "SEA (zoekmachine adverteren)",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Google Analytics",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Google Ads",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Facebook Ads",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Socialemediamarketing",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Contentmarketing",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Copywriting",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "E-mailmarketing",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "CRM-systemen",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Affiliate marketing",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Influencer marketing",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Conversie-optimalisatie",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Campagnebeheer",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Productmarketing",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Marktonderzoek",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Merkstrategie",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Growth hacking",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Persrelaties",
+      "tag": "Marketing"
+    },
+    {
+      "vaardigheid": "Businessanalyse",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Projectmanagement",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Scrum",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Agile-methodologie",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Kanban",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Business Intelligence",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Risicomanagement",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Strategische planning",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Verandermanagement",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Lean management",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "OKR-planning",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Businessmodellen",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Productmanagement",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Roadmapping",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Stakeholdermanagement",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Budgetteren",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Operationeel beheer",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Inkoopbeheer",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Procesmodellering",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "Concurrentieanalyse",
+      "tag": "Business"
+    },
+    {
+      "vaardigheid": "CAD-tekenen",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "Elektrische bedrading",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "HVAC-systemen",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "PLC-probleemoplossing",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "CNC-bediening",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "Roboticasystemen",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "Mechanische assemblage",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "Schema lezen",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "Kalibratie van apparatuur",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "Lean productie",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "Six Sigma",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "3D-printen",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "Kwaliteitsborging",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "Technisch tekenen",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "Machineonderhoud",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "Lassen (MIG, TIG)",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "Veiligheidsprotocollen",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "Storingsanalyse",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "Structurele analyse",
+      "tag": "Techniek"
+    },
+    {
+      "vaardigheid": "Productieoptimalisatie",
+      "tag": "Techniek"
+    }
+  ]

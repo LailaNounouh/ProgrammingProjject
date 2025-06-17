@@ -1,51 +1,57 @@
 import React, { useState } from "react";
-import "./DropDowns.css"
+import programmeerTalen from "./codeertalen.json";
+import "./DropDowns.css";
 
-
-const codeerOpties = ["JavaScript", "Python", "Java", "C#", "SQL", "HTML/CSS"];
 const beheersOpties = ["Beginner", "Gevorderd", "Expert"];
 
-
 export default function CodeertaalSelector() {
- const [lijst, setLijst] = useState([]);
- const [taal, setTaal] = useState("");
- const [niveau, setNiveau] = useState("");
+  const [lijst, setLijst] = useState([]);
+  const [taal, setTaal] = useState("");
+  const [niveau, setNiveau] = useState("");
 
+  const voegToe = () => {
+    if (taal && niveau && !lijst.some(item => item.taal === taal)) {
+      setLijst([...lijst, { taal, niveau }]);
+      setTaal("");
+      setNiveau("");
+    }
+  };
 
- const voegToe = () => {
-   if (taal && niveau && !lijst.some(item => item.taal === taal)) {
-     setLijst([...lijst, { taal, niveau }]);
-     setTaal("");
-     setNiveau("");
-   }
- };
+  const verwijderTaal = (taalNaam) => {
+    setLijst(lijst.filter(item => item.taal !== taalNaam));
+  };
 
+  return (
+    <div className="codeertaal-selector">
+      <h3>Codeertalen</h3>
+      <div className="inputs">
+        <select value={taal} onChange={(e) => setTaal(e.target.value)}>
+          <option value="">Kies codeertaal</option>
+          {programmeerTalen.map((optie, index) => (
+            <option key={index} value={optie.name}>
+              {optie.name} ({optie.tag})
+            </option>
+          ))}
+        </select>
 
- return (
-   <div className="codeertaal-selector">
-     <h3>Codeertalen</h3>
-     <div className="inputs">
-       <select value={taal} onChange={(e) => setTaal(e.target.value)}>
-         <option value="">Kies codeertaal</option>
-         {codeerOpties.map((t, i) => <option key={i} value={t}>{t}</option>)}
-       </select>
+        <select value={niveau} onChange={(e) => setNiveau(e.target.value)}>
+          <option value="">Kies beheersing</option>
+          {beheersOpties.map((optie, index) => (
+            <option key={index} value={optie}>{optie}</option>
+          ))}
+        </select>
 
+        <button onClick={voegToe}>Toevoegen</button>
+      </div>
 
-       <select value={niveau} onChange={(e) => setNiveau(e.target.value)}>
-         <option value="">Kies beheersing</option>
-         {beheersOpties.map((n, i) => <option key={i} value={n}>{n}</option>)}
-       </select>
-
-
-       <button onClick={voegToe}>Toevoegen</button>
-     </div>
-     <ul>
-       {lijst.map((item, i) => (
-         <li key={i}>{item.taal} — {item.niveau}</li>
-       ))}
-     </ul>
-   </div>
- );
+      <ul>
+        {lijst.map((item, index) => (
+          <li key={index}>
+            {item.taal} — {item.niveau}
+            <button onClick={() => verwijderTaal(item.taal)}>Verwijder</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
-
-
