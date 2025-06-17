@@ -54,11 +54,13 @@
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.2s ease;
+  background: #f9fbfc;
+  box-shadow: 0 2px 8px rgba(0, 169, 181, 0.04);
 }
 
 .login-container .form-group input:focus,
 .login-container .form-group select:focus {
-  border-color: #4299e1;
+  border-color:  #00a9b5;
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
   outline: none;
 }
@@ -67,10 +69,10 @@
 .login-button {
   margin-top: 0.5rem;
   padding: 1rem;
-  background: #4299e1;
+  background: #D64045;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -78,7 +80,7 @@
 }
 
 .login-button:hover {
-  background: #3182ce;
+  background: #BF393E;
 }
 
 /* Registratie link */
