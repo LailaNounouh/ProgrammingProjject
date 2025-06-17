@@ -3,15 +3,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f9fafa 0%, #dee3ec 100%);
+  background: #e0e8ea;
   padding: 1rem;
 }
 
 .login-card {
   background: white;
   padding: 2.5rem;
-  border-radius: 16px;
-  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
   width: 100%;
   max-width: 400px;
 }
