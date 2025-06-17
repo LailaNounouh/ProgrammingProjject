@@ -307,6 +307,22 @@ body {
   color: #1d4ed8;
   text-decoration: underline;
 }
+.filter-form {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.filter-form input {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 1rem;
+  flex: 1;
+  min-width: 200px;
+}
+
 
 @media (max-width: 768px) {
   .afspraken-container {
