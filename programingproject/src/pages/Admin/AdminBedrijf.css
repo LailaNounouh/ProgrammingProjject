@@ -137,20 +137,3 @@ body {
 .verwijder-button:hover {
   background-color: #d32f2f;
 }
-
-.bedrijf-toevoegen {
-  margin-top: 2rem;
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.bedrijf-toevoegen input {
-  flex: 1;
-  max-width: 300px;
-}
-
-.bedrijf-toevoegen button {
-  padding: 0.6rem 1.2rem;
-}

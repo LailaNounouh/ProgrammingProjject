@@ -14,7 +14,6 @@ function AdminBedrijf() {
   ]);
 
   const [bewerkBedrijvenModus, setBewerkBedrijvenModus] = useState(false);
-  const [nieuwBedrijf, setNieuwBedrijf] = useState('');
 
   const handleBedrijfNaamChange = (index, nieuweNaam) => {
     const nieuweBedrijven = [...bedrijven];
@@ -26,13 +25,6 @@ function AdminBedrijf() {
     const nieuweBedrijven = [...bedrijven];
     nieuweBedrijven.splice(index, 1);
     setBedrijven(nieuweBedrijven);
-  };
-
-  const handleVoegToe = () => {
-    if (nieuwBedrijf.trim() !== '') {
-      setBedrijven([...bedrijven, { naam: nieuwBedrijf.trim() }]);
-      setNieuwBedrijf('');
-    }
   };
 
   return (
@@ -74,19 +66,6 @@ function AdminBedrijf() {
               </div>
             ))}
           </div>
-
-          {bewerkBedrijvenModus && (
-            <div className="bedrijf-toevoegen">
-              <input
-                type="text"
-                placeholder="Nieuw bedrijf"
-                value={nieuwBedrijf}
-                onChange={(e) => setNieuwBedrijf(e.target.value)}
-                className="bedrijf-input"
-              />
-              <button className="bewerken-button" onClick={handleVoegToe}>Voeg toe</button>
-            </div>
-          )}
 
           <div className="bedrijven-footer">
             <button
