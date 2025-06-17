@@ -20,7 +20,7 @@ const StudentenHeader = () => {
          <li><Link to="/student">Dashboard</Link></li>
          <li><Link to="/student/bedrijven">Deelnemende Bedrijven</Link></li>
          <li><Link to="/student/standen">Standen</Link></li>
-         <li><Link to="/student/afspraak">Afspraak maken</Link></li>
+         <li><Link to="/student/afspraken">Afspraak maken</Link></li>
          <li><Link to="/student/profiel">Profiel</Link></li> 
          <li><Link to="/student/instellingen">Instellingen</Link></li>
          <li><LogoutButton /></li>

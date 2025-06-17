@@ -54,7 +54,7 @@ export default function App() {
           <Route path="/student/bedrijven" element={<StudentenLayout><BedrijvenModule /></StudentenLayout>} />
           <Route path="/student/instellingen" element={<StudentenLayout><ProfileProvider><ProfielSettingsModule /></ProfileProvider></StudentenLayout>} />
           <Route path="/student/profiel" element={<StudentenLayout><ProfileProvider><ProfielModule /></ProfileProvider></StudentenLayout>} />
-          <Route path="/student/afsprakenmodule" element={<StudentenLayout><AfsprakenModule /></StudentenLayout>} />
+          <Route path="/student/afspraken" element={<StudentenLayout><AfsprakenModule /></StudentenLayout>} />
           <Route path="/student/standen" element={<StudentenLayout><StandenModule /></StudentenLayout>} />
           {/* Admin */}
           <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
