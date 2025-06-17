@@ -52,7 +52,7 @@ export default function SeekersForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3>Registratie - Werkzoekende</h3>
+      <h2>Werkzoekende</h2>
 
       <input
         type="text"
