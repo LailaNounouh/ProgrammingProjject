@@ -18,7 +18,7 @@ function AdminDashboard() {
           {/* Deelnemende bedrijven */}
           <div
             className="dashboard-card"
-            onClick={() => navigate("/bedrijven")}
+            onClick={() => navigate("/Admin/Bedrijf")}
           >
             <div className="icon-container">
               <div className="icon-wrapper icon-blauw">🏢</div>
