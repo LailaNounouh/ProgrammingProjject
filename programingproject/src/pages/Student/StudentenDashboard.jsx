@@ -94,7 +94,7 @@ const StudentDashboard = () => {
               ) : (
                 <p className="geen-afspraken">
                   Je hebt nog geen afspraken gepland.
-                  <Link to="/student/afspraken" className="maak-afspraak">
+                  <Link to="/student/afsprakenmodule" className="maak-afspraak">
                     Plan een afspraak
                   </Link>
                 </p>
