@@ -4,6 +4,8 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const multer = require('multer');
+const http = require('http');
+const socketIo = require('socket.io');
 
 // Routers
 const homeRouter = require('./routes/home');
@@ -18,6 +20,13 @@ const afsprakenRouter = require('./routes/afspraken')
 const codeertaalRouter = require('./routes/codeertalen');
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "*", // Adjust according to your security needs
+    methods: ["GET", "POST"]
+  }
+});
 
 const corsOptions = {
   origin: 'http://localhost:5173',
@@ -77,6 +86,29 @@ app.post('/api/studentenaccount', upload.single('profilePicture'), async (req, r
   }
 });
 
+// Set up Socket.IO connection
+io.on('connection', (socket) => {
+  console.log('New client connected');
+  
+  // Join a room for a specific company and date
+  socket.on('joinAppointmentRoom', ({ bedrijfId, datum }) => {
+    const roomName = `appointments-${bedrijfId}-${datum}`;
+    socket.join(roomName);
+    console.log(`Client joined room: ${roomName}`);
+  });
+  
+  // Leave a room
+  socket.on('leaveAppointmentRoom', ({ bedrijfId, datum }) => {
+    const roomName = `appointments-${bedrijfId}-${datum}`;
+    socket.leave(roomName);
+    console.log(`Client left room: ${roomName}`);
+  });
+  
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
+
 // Maak apiRouter aan
 const apiRouter = express.Router();
 
@@ -105,6 +137,6 @@ app.use((req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server draait op poort ${PORT}`);
 });

@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from "react";
 import "./AfsprakenModule.css";
 import { baseUrl } from "../../config";
+import io from "socket.io-client";
 
 export default function Afspraken() {
   const [bedrijven, setBedrijven] = useState([]);
   const [bedrijfId, setBedrijfId] = useState("");
   const [tijdslot, setTijdslot] = useState("");
-  // Use today's date as default and fixed date
+ 
   const [datum] = useState(formatDate(new Date()));
   const [beschikbareTijdsloten, setBeschikbareTijdsloten] = useState([]);
   const [bezetteTijdsloten, setBezetteTijdsloten] = useState([]);
+  const [alleTijdsloten, setAlleTijdsloten] = useState([]);
   const [afspraakIngediend, setAfspraakIngediend] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [socket, setSocket] = useState(null);
 
-  // Format date as YYYY-MM-DD for API
+  
   function formatDate(date) {
     const d = new Date(date);
     let month = '' + (d.getMonth() + 1);
@@ -27,7 +31,39 @@ export default function Afspraken() {
     return [year, month, day].join('-');
   }
 
-  // Fetch companies on component mount
+  
+  useEffect(() => {
+    const newSocket = io(baseUrl);
+    setSocket(newSocket);
+    
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+
+  
+  useEffect(() => {
+    if (!socket || !bedrijfId) return;
+    
+
+    socket.emit('joinAppointmentRoom', { bedrijfId, datum });
+    
+ 
+    socket.on('appointmentCreated', (data) => {
+      if (data.bedrijf_id === bedrijfId && data.datum === datum) {
+        console.log('Appointment created by another user:', data);
+  
+        setBezetteTijdsloten(prev => [...prev, data.tijdslot]);
+        setBeschikbareTijdsloten(prev => prev.filter(t => t !== data.tijdslot));
+      }
+    });
+    
+    return () => {
+      socket.emit('leaveAppointmentRoom', { bedrijfId, datum });
+      socket.off('appointmentCreated');
+    };
+  }, [socket, bedrijfId, datum]);
+
   useEffect(() => {
     async function fetchBedrijven() {
       try {
@@ -51,7 +87,6 @@ export default function Afspraken() {
     fetchBedrijven();
   }, []);
 
-  // Fetch available time slots when company changes
   useEffect(() => {
     async function fetchTijdsloten() {
       if (!bedrijfId) return;
@@ -69,11 +104,12 @@ export default function Afspraken() {
         const data = await res.json();
         console.log("Tijdsloten data:", data);
         
-        // Explicitly set both available and occupied time slots
+        
         setBeschikbareTijdsloten(data.beschikbaar || []);
         setBezetteTijdsloten(data.bezet || []);
+        setAlleTijdsloten(data.alle || []);
         
-        setTijdslot(""); // Reset selected time slot
+        setTijdslot(""); 
       } catch (err) {
         console.error("Fout bij ophalen tijdsloten:", err);
         setError("Kon de beschikbare tijdsloten niet ophalen.");
@@ -83,7 +119,7 @@ export default function Afspraken() {
     }
 
     fetchTijdsloten();
-  }, [bedrijfId, datum]);
+  }, [bedrijfId, datum, refreshTrigger]); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -95,7 +131,6 @@ export default function Afspraken() {
 
     try {
       setLoading(true);
-      // Get the student_id from localStorage - use the 'id' field from user info
       const userInfoString = localStorage.getItem('userInfo');
       let student_id;
       
@@ -105,10 +140,10 @@ export default function Afspraken() {
           student_id = userInfo.id;
         } catch (parseError) {
           console.error("Error parsing user info:", parseError);
-          student_id = 1; // Fallback
+          student_id = 1; 
         }
       } else {
-        student_id = 1; // Fallback if no user info
+        student_id = 1; 
       }
       
       console.log(`Submitting appointment to: ${baseUrl}/api/afspraken/nieuw`);
@@ -131,6 +166,13 @@ export default function Afspraken() {
         const errorData = await res.json();
         throw new Error(errorData.message || "Kon afspraak niet maken");
       }
+
+    
+      setBezetteTijdsloten(prev => [...prev, tijdslot]);
+      setBeschikbareTijdsloten(prev => prev.filter(t => t !== tijdslot));
+      
+    
+      setRefreshTrigger(prev => prev + 1);
 
       setAfspraakIngediend(true);
       setError("");
@@ -176,22 +218,24 @@ export default function Afspraken() {
 
             {bedrijfId && (
               <>
-                <h3>Beschikbare tijdsloten:</h3>
+                <h3>Tijdsloten:</h3>
                 {loading ? (
                   <p>Tijdsloten laden...</p>
-                ) : beschikbareTijdsloten.length > 0 ? (
+                ) : alleTijdsloten.length > 0 ? (
                   <div className="tijdslot-grid">
-                    {beschikbareTijdsloten.map((tijd) => {
+                    {alleTijdsloten.map((tijd) => {
+                      const isBezet = bezetteTijdsloten.includes(tijd);
                       const isGekozen = tijdslot === tijd;
                       
                       return (
                         <button
                           key={tijd}
                           type="button"
-                          className={`tijdslot-btn ${isGekozen ? "gekozen" : ""}`}
+                          disabled={isBezet}
+                          className={`tijdslot-btn ${isBezet ? "bezet" : ""} ${isGekozen ? "gekozen" : ""}`}
                           onClick={() => setTijdslot(tijd)}
                         >
-                          {tijd}
+                          {tijd} {isBezet ? "🔒" : ""}
                         </button>
                       );
                     })}
@@ -200,24 +244,17 @@ export default function Afspraken() {
                   <p>Geen tijdsloten beschikbaar voor vandaag.</p>
                 )}
                 
-                {/* Also display the occupied time slots (for debugging) */}
-                {bezetteTijdsloten.length > 0 && (
-                  <div style={{ marginTop: '20px' }}>
-                    <h4>Bezette tijdsloten:</h4>
-                    <div className="tijdslot-grid">
-                      {bezetteTijdsloten.map((tijd) => (
-                        <button
-                          key={tijd}
-                          type="button"
-                          className="tijdslot-btn bezet"
-                          disabled
-                        >
-                          {tijd}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <div style={{ marginTop: '15px', fontSize: '0.9rem' }}>
+                  <p>
+                    <span style={{ backgroundColor: '#f0f0f0', padding: '2px 8px', borderRadius: '4px' }}>
+                      Beschikbaar
+                    </span>
+                    {" "}
+                    <span style={{ backgroundColor: '#ffdddd', padding: '2px 8px', borderRadius: '4px', marginLeft: '10px' }}>
+                      Bezet 🔒
+                    </span>
+                  </p>
+                </div>
               </>
             )}
 
