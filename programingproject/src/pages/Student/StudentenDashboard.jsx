@@ -47,7 +47,7 @@ const StudentDashboard = () => {
 
       <div className="welcome-section">
         <h1>Welkom{gebruiker ? `, ${gebruiker.naam}` : ' op het dashboard'}</h1>
-        <p>Hier is een overzicht van de jobbeurs</p>
+        <p>Hier is een overzicht van de CareerLaunch</p>
       </div>
 
       <div className="dashboard-grid">

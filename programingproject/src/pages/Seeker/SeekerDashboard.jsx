@@ -29,7 +29,7 @@ const SeekerDashboard = () => {
 
       <div className="welcome-section">
         <h1>Welkom{gebruiker ? `, ${gebruiker.naam}` : ' op het dashboard'}</h1>
-        <p>Bekijk hieronder de deelnemende bedrijven aan de jobbeurs</p>
+        <p>Bekijk hieronder de deelnemende bedrijven aan de CareerLaunch</p>
       </div>
 
       <div className="dashboard-grid">
