@@ -102,7 +102,7 @@ export default function BedrijfForm() {
 
   return (
     <form onSubmit={handleSubmit} className="bedrijf-formulier">
-      <h2>Bedrijfsgegevens</h2>
+      <h2>Bedrijf</h2>
 
       <input type="text" placeholder="Bedrijfsnaam *" value={bedrijfsnaam} onChange={(e) => setBedrijfsnaam(e.target.value)} required />
 
