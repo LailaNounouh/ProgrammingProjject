@@ -7,6 +7,10 @@ const AfspraakOverzicht = () => {
   const [afspraken, setAfspraken] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const [opleidingFilter, setOpleidingFilter] = useState('');
+const [taalFilter, setTaalFilter] = useState('');
+const [vaardigheidFilter, setVaardigheidFilter] = useState('');
+
 
   useEffect(() => {
     fetchAfspraken();
@@ -121,6 +125,14 @@ const AfspraakOverzicht = () => {
     );
   };
 
+  const gefilterdeAfspraken = afspraken.filter((afspraak) => {
+  const opleidingMatch = opleidingFilter === '' || afspraak.student_opleiding.toLowerCase().includes(opleidingFilter.toLowerCase());
+  const taalMatch = taalFilter === '' || afspraak.taal.toLowerCase().includes(taalFilter.toLowerCase());
+  const vaardigheidMatch = vaardigheidFilter === '' || afspraak.opmerking?.toLowerCase().includes(vaardigheidFilter.toLowerCase());
+  return opleidingMatch && taalMatch && vaardigheidMatch;
+});
+
+
   return (
     <div className="afspraken-container">
       <div className="afspraken-header">
@@ -135,6 +147,27 @@ const AfspraakOverzicht = () => {
           <FiRefreshCw /> Vernieuwen
         </button>
       </div>
+      <div className="filter-form">
+  <input
+    type="text"
+    placeholder="Filter op opleiding"
+    value={opleidingFilter}
+    onChange={(e) => setOpleidingFilter(e.target.value)}
+  />
+  <input
+    type="text"
+    placeholder="Filter op taal"
+    value={taalFilter}
+    onChange={(e) => setTaalFilter(e.target.value)}
+  />
+  <input
+    type="text"
+    placeholder="Filter op vaardigheden"
+    value={vaardigheidFilter}
+    onChange={(e) => setVaardigheidFilter(e.target.value)}
+  />
+</div>
+
 
       {isLoading ? (
         <div className="loading-state">
