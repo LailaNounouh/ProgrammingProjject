@@ -58,7 +58,7 @@ export default function App() {
           <Route path="/student/standen" element={<StudentenLayout><StandenModule /></StudentenLayout>} />
           {/* Admin */}
           <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
-          <Route path="/admin/Bedrijven" element={<AdminLayout><AdminBedrijf /></AdminLayout>} />
+          <Route path="/admin/Bedrijf" element={<AdminLayout><AdminBedrijf /></AdminLayout>} />
  
           {/* Bedrijven */}
           <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
