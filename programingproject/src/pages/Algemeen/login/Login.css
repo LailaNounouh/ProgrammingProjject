@@ -9,7 +9,7 @@
 }
 
 /* Witte kader met formulier */
-.login-card {
+.login-container .login-card {
   background: white;
   padding: 2.5rem;
   border-radius: 12px;
@@ -19,7 +19,7 @@
 }
 
 /* Titel */
-.login-card h2 {
+.login-container .login-card h2 {
   text-align: center;
   margin-bottom: 2rem;
   font-size: 2rem;
@@ -28,7 +28,7 @@
 }
 
 /* Formulier */
-.login-form {
+.login-container .login-form {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
@@ -66,7 +66,7 @@
 }
 
 /* Knop login */
-.login-button {
+.login-container .login-button {
   margin-top: 0.5rem;
   padding: 1rem;
   background: #D64045;
@@ -79,8 +79,9 @@
   transition: background-color 0.2s ease;
 }
 
-.login-button:hover {
+.login-container .login-button:hover {
   background: #BF393E;
+  transform: translateY(-2px);
 }
 
 /* Registratie link */
