@@ -105,6 +105,22 @@
   font-weight: 600;
 }
 
+.info-item input,
+.info-item textarea {
+  font-size: 1rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+}
+
+.info-item input:focus,
+.info-item textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -144,6 +160,28 @@
   box-shadow: 0 2px 4px rgba(220, 53, 69, 0.1);
   margin: 2rem auto;
   max-width: 400px;
+}
+
+.opslaan-knop {
+  display: block;
+  margin: 1.5rem auto 0;
+  padding: 0.75rem 2rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.opslaan-knop:hover {
+  background-color: #0056b3;
+}
+
+.opslaan-knop.success {
+  background-color: #28a745;
 }
 
 a {
