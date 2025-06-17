@@ -7,13 +7,11 @@ import {
   FiCalendar,
   FiClock,
   FiBook,
-  FiAward,
   FiRefreshCw,
 } from 'react-icons/fi';
 import './Afspraakoverzicht.css';
 
 const opleidingenOpties = [
-  '',
   'Business IT Technology',
   'Business IT Development',
   'Mobile Enterprise Apps Business IT',
@@ -33,7 +31,6 @@ const AfspraakOverzicht = () => {
 
   const navigate = useNavigate();
 
-  // Mock data ophalen met loading simulatie
   useEffect(() => {
     fetchAfspraken();
   }, []);
@@ -47,14 +44,13 @@ const AfspraakOverzicht = () => {
             id: 1,
             student_naam: 'Lisa van der Berg',
             student_opleiding: 'Software Engineering',
-           student_vaardigheden: 'Software Engineering',
+            student_vaardigheden: 'Software Engineering',
             datum: '15 juni 2025',
             tijd: '09:30 - 10:15',
             github: 'https://github.com/lisavdberg',
             linkedin: 'https://linkedin.com/in/lisavdberg',
             status: 'in-afwachting',
             taal: 'Nederlands',
-            opmerking: 'Ervaring met Java en Spring Boot',
           },
           {
             id: 2,
@@ -67,33 +63,30 @@ const AfspraakOverzicht = () => {
             linkedin: 'https://linkedin.com/in/ahmedelmasri',
             status: 'goedgekeurd',
             taal: 'Engels',
-            opmerking: 'Machine learning specialisatie',
           },
           {
             id: 3,
             student_naam: 'Sophie de Vries',
             student_opleiding: 'Software Engineering',
-          student_vaardigheden: 'Frontend Development',
+            student_vaardigheden: 'Frontend Development',
             datum: '16 juni 2025',
             tijd: '14:00 - 14:45',
             github: 'https://github.com/sophiedev',
             linkedin: 'https://linkedin.com/in/sophiedev',
             status: 'in-afwachting',
             taal: 'Nederlands',
-            opmerking: 'Expertise in React en TypeScript',
           },
           {
             id: 4,
             student_naam: 'Thomas Janssen',
             student_opleiding: 'Network Engineering',
-           student_vaardigheden: 'Cyber Security',
+            student_vaardigheden: 'Cyber Security',
             datum: '17 juni 2025',
             tijd: '10:15 - 11:00',
             github: 'https://github.com/tomjanssen',
             linkedin: 'https://linkedin.com/in/tomjanssen',
             status: 'geweigerd',
             taal: 'Frans',
-            opmerking: 'Niet beschikbaar in gevraagde periode',
           },
           {
             id: 5,
@@ -106,7 +99,6 @@ const AfspraakOverzicht = () => {
             linkedin: 'https://linkedin.com/in/yarah',
             status: 'goedgekeurd',
             taal: 'Engels',
-            opmerking: 'AWS gecertificeerd',
           },
           {
             id: 6,
@@ -119,7 +111,6 @@ const AfspraakOverzicht = () => {
             linkedin: 'https://linkedin.com/in/markboer',
             status: 'in-afwachting',
             taal: 'Nederlands',
-            opmerking: 'Ervaring met MERN stack',
           },
           {
             id: 7,
@@ -132,7 +123,6 @@ const AfspraakOverzicht = () => {
             linkedin: 'https://linkedin.com/in/evavandijk',
             status: 'goedgekeurd',
             taal: 'Engels',
-            opmerking: 'Sterke portfolio met case studies',
           },
         ];
         setAfspraken(mockData);
@@ -144,7 +134,6 @@ const AfspraakOverzicht = () => {
     }, 1000);
   };
 
-  // Status bijwerken van een afspraak
   const updateStatus = (id, newStatus) => {
     setAfspraken((prev) =>
       prev.map((afspraak) =>
@@ -153,132 +142,146 @@ const AfspraakOverzicht = () => {
     );
   };
 
-  // Filter logica
   const filteredAfspraken = afspraken.filter((afspraak) => {
-    // opleiding filter exact match op student_specialisatie (als filter leeg is: alles)
     const opleidingMatch =
-      !filters.opleiding || afspraak.student_specialisatie === filters.opleiding;
+      !filters.opleiding || afspraak.student_opleiding === filters.opleiding;
 
-    // vaardigheid filter zoekt in 'opmerking' (case insensitive)
-    const vaardigheidMatch = afspraak.opmerking
-      .toLowerCase()
-      .includes(filters.vaardigheid.toLowerCase());
+    const vaardigheidMatch =
+      !filters.vaardigheid ||
+      afspraak.student_vaardigheden
+        .toLowerCase()
+        .includes(filters.vaardigheid.toLowerCase());
 
-    // taal filter zoekt in taal (case insensitive)
-    const taalMatch = afspraak.taal
-      .toLowerCase()
-      .includes(filters.taal.toLowerCase());
+    const taalMatch =
+      !filters.taal ||
+      afspraak.taal.toLowerCase().includes(filters.taal.toLowerCase());
 
     return opleidingMatch && vaardigheidMatch && taalMatch;
   });
 
+  // Helper om status netter te tonen, bijv 'in-afwachting' => 'In Afwachting'
+  const formatStatus = (status) =>
+    status
+      .split('-')
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+
   return (
     <div className="afspraken-container">
-      {/* Header met terug knop en titel */}
       <div className="afspraken-header">
-        <button onClick={() => navigate('/bedrijf')} className="terug-button">
-          <FiArrowLeft /> Terug naar Dashboard
+        <button
+          onClick={() => navigate('/bedrijf')}
+          className="terug-button"
+          aria-label="Terug naar dashboard"
+        >
+          <FiArrowLeft aria-hidden="true" /> Terug naar Dashboard
         </button>
         <div className="header-content">
           <h1>Afsprakenbeheer</h1>
           <p className="subtitle">Overzicht van sollicitatiegesprekken met studenten</p>
         </div>
-        <button onClick={fetchAfspraken} className="refresh-button" aria-label="Vernieuwen">
-          <FiRefreshCw /> Vernieuwen
+        <button
+          onClick={fetchAfspraken}
+          className="refresh-button"
+          aria-label="Afspraken vernieuwen"
+        >
+          <FiRefreshCw aria-hidden="true" /> Vernieuwen
         </button>
       </div>
 
-      {/* Filters */}
-      <div
+      <form
         className="filters"
         style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}
+        aria-label="Filters voor afspraken"
+        onSubmit={(e) => e.preventDefault()}
       >
+        <label htmlFor="filter-opleiding" className="sr-only">
+          Filter op opleiding
+        </label>
         <select
+          id="filter-opleiding"
           value={filters.opleiding}
           onChange={(e) => setFilters({ ...filters, opleiding: e.target.value })}
-          aria-label="Filter op opleiding"
+          aria-describedby="filter-opleiding"
         >
+          <option value="">Alle opleidingen</option>
           {opleidingenOpties.map((optie, idx) => (
             <option key={idx} value={optie}>
-              {optie === '' ? 'Filter op opleiding' : optie}
+              {optie}
             </option>
           ))}
         </select>
 
+        <label htmlFor="filter-vaardigheid" className="sr-only">
+          Filter op vaardigheden
+        </label>
         <input
+          id="filter-vaardigheid"
           type="text"
           placeholder="Filter op vaardigheden"
           value={filters.vaardigheid}
           onChange={(e) => setFilters({ ...filters, vaardigheid: e.target.value })}
-          aria-label="Filter op vaardigheden"
         />
 
+        <label htmlFor="filter-taal" className="sr-only">
+          Filter op taal
+        </label>
         <input
+          id="filter-taal"
           type="text"
           placeholder="Filter op taal"
           value={filters.taal}
           onChange={(e) => setFilters({ ...filters, taal: e.target.value })}
-          aria-label="Filter op taal"
         />
-      </div>
+      </form>
 
-      {/* Laden / lege staat / afspraken lijst */}
       {isLoading ? (
         <div className="loading-state" role="status" aria-live="polite">
-          <div className="spinner"></div>
+          <div className="spinner" aria-hidden="true"></div>
           <p>Afspraken worden geladen...</p>
         </div>
       ) : filteredAfspraken.length === 0 ? (
         <div className="empty-state" role="alert">
-          <FiCalendar className="empty-icon" size={48} />
+          <FiCalendar className="empty-icon" size={48} aria-hidden="true" />
           <h3>Geen afspraken gevonden</h3>
           <p>Pas de filters aan of vernieuw de lijst.</p>
           <button onClick={fetchAfspraken} className="refresh-btn">
-            <FiRefreshCw /> Vernieuwen
+            <FiRefreshCw aria-hidden="true" /> Vernieuwen
           </button>
         </div>
       ) : (
-        <div className="afspraken-grid">
+        <section className="afspraken-grid" aria-label="Lijst van afspraken">
           {filteredAfspraken.map((afspraak) => (
-            <article key={afspraak.id} className={`afspraak-card ${afspraak.status}`}>
-              {/* Header van de kaart */}
+            <article
+              key={afspraak.id}
+              className={`afspraak-card status-${afspraak.status}`}
+              aria-live="polite"
+              aria-atomic="true"
+            >
               <header className="card-header">
                 <div className="student-info">
                   <h3>{afspraak.student_naam}</h3>
-                  <span className="specialization">{afspraak.student_specialisatie}</span>
                 </div>
-                <span className={`status-badge ${afspraak.status}`}>
-                  {afspraak.status.replace('-', ' ')}
+                <span className={`status-badge status-${afspraak.status}`}>
+                  {formatStatus(afspraak.status)}
                 </span>
               </header>
 
-              {/* Body met details */}
-              <section className="card-body">
-                <div className="detail-row">
-                  <FiBook className="icon" />
-                  <span>{afspraak.student_opleiding}</span>
-                </div>
-                <div className="detail-row">
-                  <FiCalendar className="icon" />
-                  <span>{afspraak.datum}</span>
-                </div>
-                <div className="detail-row">
-                  <FiClock className="icon" />
-                  <span>{afspraak.tijd}</span>
-                </div>
-                <div className="detail-row">
-                  <FiAward className="icon" />
-                  <span>Taal: {afspraak.taal}</span>
-                </div>
-                {afspraak.opmerking && (
-                  <div className="comment-section">
-                    <FiAward className="icon" />
-                    <p>{afspraak.opmerking}</p>
-                  </div>
-                )}
-              </section>
+              <div className="card-body">
+                <p>
+                  <FiBook aria-hidden="true" /> Opleiding: {afspraak.student_opleiding}
+                </p>
+                <p>
+                  <FiCalendar aria-hidden="true" /> Datum: {afspraak.datum}
+                </p>
+                <p>
+                  <FiClock aria-hidden="true" /> Tijd: {afspraak.tijd}
+                </p>
+                <p>
+                  <strong>Taal:</strong> {afspraak.taal}
+                </p>
+              </div>
 
-              {/* Footer met acties en social links */}
               <footer className="card-footer">
                 <div className="actions">
                   {(afspraak.status !== 'goedgekeurd' && afspraak.status !== 'geweigerd') && (
@@ -301,17 +304,27 @@ const AfspraakOverzicht = () => {
                   )}
                 </div>
                 <div className="social-links">
-                  <a href={afspraak.github} target="_blank" rel="noopener noreferrer" aria-label={`GitHub profiel van ${afspraak.student_naam}`}>
-                    <FiGithub /> Profiel
+                  <a
+                    href={afspraak.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`GitHub profiel van ${afspraak.student_naam}`}
+                  >
+                    <FiGithub aria-hidden="true" /> GitHub
                   </a>
-                  <a href={afspraak.linkedin} target="_blank" rel="noopener noreferrer" aria-label={`LinkedIn profiel van ${afspraak.student_naam}`}>
-                    <FiLinkedin /> Profiel
+                  <a
+                    href={afspraak.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`LinkedIn profiel van ${afspraak.student_naam}`}
+                  >
+                    <FiLinkedin aria-hidden="true" /> LinkedIn
                   </a>
                 </div>
               </footer>
             </article>
           ))}
-        </div>
+        </section>
       )}
     </div>
   );

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useProfile } from "../../context/ProfileContext";
 import { useAuth } from "../../context/AuthProvider";
-import  CodeerTaalSelector  from "../../components/dropdowns/CodeerTaalSelector";
-import  TaalSelector  from "../../components/dropdowns/TaalSelector";
-import  HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
-import  SoftSkillsSelector  from "../../components/dropdowns/SoftSkillsSelector";
+import CodeerTaalSelector from "../../components/dropdowns/CodeerTaalSelector";
+import TaalSelector from "../../components/dropdowns/TaalSelector";
+import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
+import SoftSkillsSelector from "../../components/dropdowns/SoftSkillsSelector";
 import "./ProfielSettingsModule.css";
 
 const ProfielSettingsModule = () => {
@@ -58,60 +58,50 @@ const ProfielSettingsModule = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const editableData = {
         telefoon: formData.telefoon,
         beschrijving: formData.beschrijving,
         linkedin: formData.linkedin,
-        skills: formData.skills,
+        codeertaal: formData.codeertaal,
         talen: formData.talen,
+        hardSkills: formData.hardSkills,
+        softSkills: formData.softSkills,
       };
 
       const result = await updateProfiel(editableData);
-      
       if (result.success) {
-        alert('Profiel succesvol bijgewerkt!');
+        alert("Profiel succesvol bijgewerkt!");
       } else {
-        throw new Error(result.error || 'Kon profiel niet updaten');
+        throw new Error(result.error || "Kon profiel niet updaten");
       }
     } catch (error) {
-      console.error('Fout bij bijwerken profiel:', error);
-      alert('Er ging iets mis bij het bijwerken van je profiel');
+      console.error("Fout bij bijwerken profiel:", error);
+      alert("Er ging iets mis bij het bijwerken van je profiel");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  if (loading) {
-    return <div className="profiel-settings"><div className="loading">Profiel laden...</div></div>;
-  }
-
-  if (!gebruiker) {
-    return <div className="profiel-settings"><div className="error">Je moet ingelogd zijn om je profiel te bewerken.</div></div>;
-  }
+  if (loading) return <div className="profiel-settings"><div className="loading">Profiel laden...</div></div>;
+  if (!gebruiker) return <div className="profiel-settings"><div className="error">Je moet ingelogd zijn om je profiel te bewerken.</div></div>;
 
   return (
     <div className="profiel-settings">
-      <h2>Profiel Instellingen</h2>
-      <form onSubmit={handleSubmit} noValidate>
-        {/* Persoonlijke gegevens */}
-        <div className="form-section">
+      <h2 className="module-title">Profiel Instellingen</h2>
+      <form onSubmit={handleSubmit} className="settings-form">
+        <section className="form-section">
           <h3>Persoonlijke Informatie</h3>
           {["naam", "email", "studie"].map((field) => (
             <div className="form-group" key={field}>
               <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-              <input
-                id={field}
-                type="text"
-                value={formData[field]}
-                readOnly
-                disabled
-                className="readonly-field"
-              />
+              <input id={field} type="text" value={formData[field]} readOnly disabled className="readonly-field" />
             </div>
           ))}
-        </div>
+        </section>
 
-        {/* Contact */}
-        <div className="form-section">
+        <section className="form-section">
           <h3>Contact Informatie</h3>
           <div className="form-group">
             <label htmlFor="telefoon">Telefoonnummer</label>
@@ -133,43 +123,29 @@ const ProfielSettingsModule = () => {
               placeholder="https://www.linkedin.com/in/jouwnaam"
             />
           </div>
-        </div>
+        </section>
 
-        {/* Vaardigheden */}
-        <div className="form-section">
+        <section className="form-section">
           <h3>Vaardigheden</h3>
           <div className="form-group">
             <label>Codeertalen</label>
-            <CodeerTaalSelector
-              selectedSkills={formData.codeertaal}
-              onChange={(selected) => handleInputChange("codeertaal", selected)}
-            />
+            <CodeerTaalSelector selectedSkills={formData.codeertaal} onChange={(selected) => handleInputChange("codeertaal", selected)} />
           </div>
           <div className="form-group">
             <label>Talen</label>
-            <TaalSelector
-              selectedTalen={formData.talen}
-              onChange={(selected) => handleInputChange("talen", selected)}
-            />
+            <TaalSelector selectedTalen={formData.talen} onChange={(selected) => handleInputChange("talen", selected)} />
           </div>
           <div className="form-group">
             <label>Hard Skills</label>
-            <HardSkillsSelector
-              selectedOpleiding={formData.hardSkills}
-              onChange={(selected) => handleInputChange("hardSkills", selected)}
-            />
+            <HardSkillsSelector selectedOpleiding={formData.hardSkills} onChange={(selected) => handleInputChange("hardSkills", selected)} />
           </div>
           <div className="form-group">
             <label>Soft Skills</label>
-            <SoftSkillsSelector
-              selectedErvaring={formData.softSkills}
-              onChange={(selected) => handleInputChange("softSkills", selected)}
-            />
+            <SoftSkillsSelector selectedErvaring={formData.softSkills} onChange={(selected) => handleInputChange("softSkills", selected)} />
           </div>
-        </div>
+        </section>
 
-        {/* Beschrijving */}
-        <div className="form-section">
+        <section className="form-section">
           <h3>Over Mij</h3>
           <div className="form-group">
             <label htmlFor="beschrijving">Beschrijving</label>
@@ -181,13 +157,10 @@ const ProfielSettingsModule = () => {
               onChange={(e) => handleInputChange("beschrijving", e.target.value)}
               placeholder="Vertel iets over jezelf..."
             />
-            <small className="char-count">
-              {formData.beschrijving.length}/1000 karakters
-            </small>
+            <small className="char-count">{formData.beschrijving.length}/1000 karakters</small>
           </div>
-        </div>
+        </section>
 
-        {/* Submit */}
         <div className="form-actions">
           <button type="submit" className="save-button" disabled={isSubmitting}>
             {isSubmitting ? "Opslaan..." : "Opslaan"}
