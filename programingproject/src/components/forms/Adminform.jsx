@@ -45,7 +45,7 @@ export default function AdminRegisterPage() {
 
   return (
     <form onSubmit={handleRegister}>
-      <h2>Admin registreren</h2>
+      <h2>Admin</h2>
       <input
         type="email"
         placeholder="Email"

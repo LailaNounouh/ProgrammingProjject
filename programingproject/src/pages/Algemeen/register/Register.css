@@ -82,4 +82,83 @@
   align-items: center;
 }
 
+.registratie-container form {
+  background: #e0e8ea;
+  padding: 2rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 169, 181, 0.04);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  align-items: center;
+}
 
+.registratie-container form input,
+.registratie-container form select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1.5px solid #c0d3dd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #f9fbfc;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 169, 181, 0.04);
+}
+
+.registratie-container form input:focus,
+.registratie-container form select:focus {
+  border-color: #00a9b5;
+  box-shadow: 0 0 0 3px rgba(0, 169, 181, 0.10);
+  outline: none;
+}
+
+/* Knop registreer */
+.registratie-container form button[type="submit"] {
+  background-color: #D64045;
+  color: white;
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s;
+  padding: 1rem 4rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: fit-content;
+}
+
+.registratie-container form button[type="submit"]:hover {
+  background-color: #BF393E;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Foutmelding */
+.registratie-container .error-message {
+  background: #fed7d7;
+  color: #c53030;
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .registratie-container {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  .registratie-container form {
+    padding: 1rem 0.5rem;
+  }
+  .registratie-container h2 {
+    font-size: 1.3rem;
+  }
+}
