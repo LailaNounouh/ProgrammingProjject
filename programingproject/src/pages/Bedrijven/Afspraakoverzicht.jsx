@@ -153,25 +153,23 @@ const AfspraakOverzicht = () => {
     );
   };
 
-  // Filter logica
-  const filteredAfspraken = afspraken.filter((afspraak) => {
-    // opleiding filter exact match op student_specialisatie (als filter leeg is: alles)
-    const opleidingMatch =
-      !filters.opleiding || afspraak.student_specialisatie === filters.opleiding;
+const filteredAfspraken = afspraken.filter((afspraak) => {
+  // opleiding filter exact match op student_opleiding
+  const opleidingMatch =
+    !filters.opleiding || afspraak.student_opleiding === filters.opleiding;
 
-    // vaardigheid filter zoekt in 'opmerking' (case insensitive)
-    const vaardigheidMatch = afspraak.opmerking
+  const vaardigheidMatch =
+    !filters.vaardigheid ||
+    afspraak.student_vaardigheden
       .toLowerCase()
       .includes(filters.vaardigheid.toLowerCase());
 
-    // taal filter zoekt in taal (case insensitive)
-    const taalMatch = afspraak.taal
-      .toLowerCase()
-      .includes(filters.taal.toLowerCase());
+  const taalMatch =
+    !filters.taal ||
+    afspraak.taal.toLowerCase().includes(filters.taal.toLowerCase());
 
-    return opleidingMatch && vaardigheidMatch && taalMatch;
-  });
-
+  return opleidingMatch && vaardigheidMatch && taalMatch;
+});
   return (
     <div className="afspraken-container">
       {/* Header met terug knop en titel */}
