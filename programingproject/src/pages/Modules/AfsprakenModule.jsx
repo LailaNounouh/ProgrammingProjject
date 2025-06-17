@@ -131,19 +131,40 @@ export default function Afspraken() {
 
     try {
       setLoading(true);
+      
+      // Get the current user's ID from the authentication context
       const userInfoString = localStorage.getItem('userInfo');
       let student_id;
       
       if (userInfoString) {
         try {
           const userInfo = JSON.parse(userInfoString);
+          console.log("User info from localStorage:", userInfo);
+          // Make sure we're using the correct property for the ID
           student_id = userInfo.id;
+          
+          // Debug log to verify the ID
+          console.log("Using student_id:", student_id);
         } catch (parseError) {
           console.error("Error parsing user info:", parseError);
-          student_id = 1; 
+          // Don't use a fallback - we want to know if there's an issue
+          setError("Gebruiker informatie kon niet worden geladen. Log opnieuw in.");
+          setLoading(false);
+          return;
         }
       } else {
-        student_id = 1; 
+        console.error("No user info found in localStorage");
+        setError("Je bent niet ingelogd. Log in om een afspraak te maken.");
+        setLoading(false);
+        return;
+      }
+      
+      // Ensure we have a valid student_id
+      if (!student_id) {
+        console.error("No valid student_id found");
+        setError("Kon geen geldig gebruikers-ID vinden. Log opnieuw in.");
+        setLoading(false);
+        return;
       }
       
       console.log(`Submitting appointment to: ${baseUrl}/api/afspraken/nieuw`);
@@ -167,22 +188,21 @@ export default function Afspraken() {
         throw new Error(errorData.message || "Kon afspraak niet maken");
       }
 
+    setBezetteTijdsloten(prev => [...prev, tijdslot]);
+    setBeschikbareTijdsloten(prev => prev.filter(t => t !== tijdslot));
     
-      setBezetteTijdsloten(prev => [...prev, tijdslot]);
-      setBeschikbareTijdsloten(prev => prev.filter(t => t !== tijdslot));
-      
-    
-      setRefreshTrigger(prev => prev + 1);
+  
+    setRefreshTrigger(prev => prev + 1);
 
-      setAfspraakIngediend(true);
-      setError("");
-    } catch (err) {
-      console.error("Fout bij maken afspraak:", err);
-      setError(err.message || "Er is een probleem opgetreden bij het maken van de afspraak.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    setAfspraakIngediend(true);
+    setError("");
+  } catch (err) {
+    console.error("Fout bij maken afspraak:", err);
+    setError(err.message || "Er is een probleem opgetreden bij het maken van de afspraak.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="page-container afspraken-module">
