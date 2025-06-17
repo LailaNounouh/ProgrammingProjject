@@ -52,14 +52,14 @@ export default function AdminRegisterPage() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
-      /><br />
+      />
       <input
         type="password"
         placeholder="Wachtwoord"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
-      /><br />
+      />
       <button type="submit">Registreer</button>
       {message && <p style={{ color: "green" }}>{message}</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}

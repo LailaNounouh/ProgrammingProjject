@@ -1,37 +1,66 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import { useProfile } from "../../context/ProfileContext";
 import "./ProfielModule.css";
 
 const ProfielModule = () => {
   const { gebruiker } = useAuth();
-  const { profiel, fetchProfiel, loading } = useProfile();
+  const { profiel, fetchProfiel, loading, updateProfiel } = useProfile();
+
+  const profielData = profiel || JSON.parse(localStorage.getItem("userProfile")) || {};
+
+  const [formData, setFormData] = useState({
+    naam: profielData.naam || '',
+    email: profielData.email || '',
+    studie: profielData.studie || '',
+    telefoon: profielData.telefoon || '',
+    linkedin: profielData.linkedin || '',
+    beschrijving: profielData.beschrijving || '',
+    skills: profielData.skills || [],
+    talen: profielData.talen || [],
+  });
+
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     fetchProfiel();
   }, []);
 
-  if (loading) return <div className="loading">Laden...</div>;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
-  // Get profile data from localStorage if not in context
-  const profielData = profiel || JSON.parse(localStorage.getItem("userProfile")) || {};
-  console.log("Profile data:", profielData); // Debug log
+  const handleSubmit = async () => {
+    try {
+      await updateProfiel(formData);
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (error) {
+      console.error("Fout bij bijwerken profiel:", error);
+    }
+  };
+
+  if (loading) return <div className="loading">Laden...</div>;
 
   return (
     <div className="profiel-container">
       <h2>Mijn Profiel</h2>
-      
+
       <div className="profiel-sectie">
         <h3>Persoonlijke Informatie</h3>
         <div className="profiel-info">
           <div className="info-item">
-            <strong>Naam:</strong> {profielData.naam || 'Niet opgegeven'}
+            <label>Naam:</label>
+            <input type="text" name="naam" value={formData.naam} onChange={handleChange} />
           </div>
           <div className="info-item">
-            <strong>Email:</strong> {profielData.email || 'Niet opgegeven'}
+            <label>Email:</label>
+            <input type="email" name="email" value={formData.email} onChange={handleChange} />
           </div>
           <div className="info-item">
-            <strong>Studie:</strong> {profielData.studie || 'Niet opgegeven'}
+            <label>Studie:</label>
+            <input type="text" name="studie" value={formData.studie} onChange={handleChange} />
           </div>
         </div>
       </div>
@@ -40,53 +69,60 @@ const ProfielModule = () => {
         <h3>Contact Informatie</h3>
         <div className="profiel-info">
           <div className="info-item">
-            <strong>Telefoonnummer:</strong> {profielData.telefoon || 'Niet opgegeven'}
+            <label>Telefoonnummer:</label>
+            <input type="tel" name="telefoon" value={formData.telefoon} onChange={handleChange} />
           </div>
-          {profielData.linkedin && (
-            <div className="info-item">
-              <strong>LinkedIn:</strong> 
-              <a href={profielData.linkedin} target="_blank" rel="noopener noreferrer">
-                {profielData.linkedin}
-              </a>
-            </div>
-          )}
+          <div className="info-item">
+            <label>LinkedIn:</label>
+            <input type="url" name="linkedin" value={formData.linkedin} onChange={handleChange} />
+          </div>
         </div>
       </div>
 
       <div className="profiel-sectie">
-        <h3>Vaardigheden en Talen</h3>
+        <h3>Over Mij</h3>
+        <div className="profiel-info">
+          <textarea name="beschrijving" value={formData.beschrijving} onChange={handleChange} rows="4" />
+        </div>
+      </div>
+
+      <div className="profiel-sectie">
+        <h3>Vaardigheden</h3>
         <div className="profiel-info">
           <div className="info-item">
-            <strong>Skills:</strong>
-            <div className="tags">
-              {profielData.skills && profielData.skills.map((skill, index) => (
-                <span key={`skill-${index}`} className="tag">
-                  {skill.label || skill}
-                </span>
-              ))}
-            </div>
+            <label>Hard Skills (gescheiden met komma):</label>
+            <input
+              type="text"
+              name="skills"
+              value={formData.skills.join(', ')}
+              onChange={(e) => {
+                const skills = e.target.value.split(',').map(s => s.trim());
+                setFormData(prev => ({ ...prev, skills }));
+              }}
+            />
           </div>
           <div className="info-item">
-            <strong>Talen:</strong>
-            <div className="tags">
-              {profielData.talen && profielData.talen.map((taal, index) => (
-                <span key={`taal-${index}`} className="tag">
-                  {taal.label || taal}
-                </span>
-              ))}
-            </div>
+            <label>Talen (gescheiden met komma):</label>
+            <input
+              type="text"
+              name="talen"
+              value={formData.talen.join(', ')}
+              onChange={(e) => {
+                const talen = e.target.value.split(',').map(t => t.trim());
+                setFormData(prev => ({ ...prev, talen }));
+              }}
+            />
           </div>
         </div>
       </div>
 
-      {profielData.beschrijving && (
-        <div className="profiel-sectie">
-          <h3>Over Mij</h3>
-          <div className="profiel-info">
-            <p>{profielData.beschrijving}</p>
-          </div>
-        </div>
-      )}
+      <button
+        type="button"
+        className={`opslaan-knop ${success ? 'success' : ''}`}
+        onClick={handleSubmit}
+      >
+        {success ? "Opgeslagen" : "Opslaan"}
+      </button>
     </div>
   );
 };
