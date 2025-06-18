@@ -5,12 +5,23 @@ import { useNavigate } from "react-router-dom";
 
 function BeheerStanden() {
   const [bewerkModus, setBewerkModus] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="admin-dashboard">
+     <div className="terug-knop-container">
+  <button className="terug-button" onClick={() => navigate("/admin")}>
+    ← Terug naar dashboard
+  </button>
+</div>
+    
       <main className="admin-main">
         <section className="standen-section">
           <h2>Beheer van standen</h2>
+
+          <div className="plattegrond">
+            <Plattegrond bewerkModus={bewerkModus} />
+          </div>
 
           <div className="bedrijven-header">
             <button
@@ -20,9 +31,7 @@ function BeheerStanden() {
               {bewerkModus ? 'Opslaan' : 'Bewerk'}</button>
           </div>
 
-          <div className="plattegrond">
-            <Plattegrond bewerkModus={bewerkModus} />
-          </div>
+          
 
         </section>
       </main>
