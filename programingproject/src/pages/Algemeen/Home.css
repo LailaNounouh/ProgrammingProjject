@@ -316,3 +316,33 @@
   }
 }
 
+@media (max-width: 600px) {
+  .home {
+    padding: 4px;
+  }
+  .home .info-box {
+    padding: 18px 6px;
+    margin: -20px auto 20px auto;
+  }
+  .home .info-box h1 {
+    font-size: 1.3rem;
+  }
+  .home .info-box h2 {
+    font-size: 1.05rem;
+  }
+  .home .banner-image {
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  }
+  .home .description,
+  .home .cta-box,
+  .home .faq-section {
+    padding: 10px 4px;
+    font-size: 0.98rem;
+  }
+  .home .faq-section h2 {
+    font-size: 1rem;
+    padding-bottom: 6px;
+  }
+}
+
