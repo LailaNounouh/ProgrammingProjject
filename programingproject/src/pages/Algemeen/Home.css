@@ -382,10 +382,25 @@
     padding: 0.7rem 2.5rem;
     font-size: 0.98rem;
   }
-  
+
   .home .opleidingen-lijst {
     padding-left: 10px;
     font-size: 0.93rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .home .info-box {
+    padding: 6px 2px;
+  }
+  .home .form-section input[type="text"],
+  .home .form-section input[type="email"] {
+    width: 95vw;
+    padding: 7px 2px;
+  }
+  .home .form-section button[type="submit"] {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.92rem;
   }
 }
 
