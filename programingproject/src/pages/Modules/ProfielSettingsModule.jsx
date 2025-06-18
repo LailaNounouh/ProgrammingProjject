@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useProfile } from "../../context/ProfileContext";
 import { useAuth } from "../../context/AuthProvider";
+import Studierichtingen from "../../components/dropdowns/Studierichtingen";
 import CodeerTaalSelector from "../../components/dropdowns/CodeerTaalSelector";
 import TaalSelector from "../../components/dropdowns/TaalSelector";
 import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
@@ -133,14 +134,12 @@ const ProfielSettingsModule = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="studie">Studie</label>
-            <input
-              id="studie"
-              type="text"
-              value={formData.studie}
-              onChange={(e) => handleInputChange("studie", e.target.value)}
-            />
-          </div>
+  <label htmlFor="studie">Studierichting</label>
+  <Studierichtingen
+    selectedStudie={formData.studie}
+    onChange={(selected) => handleInputChange("studie", selected)}
+  />
+</div>
         </section>
 
         <section className="form-section">

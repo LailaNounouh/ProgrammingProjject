@@ -7,22 +7,35 @@ const ProfielModule = () => {
   const { gebruiker } = useAuth();
   const { profiel, fetchProfiel, loading } = useProfile();
 
-  const profielData = profiel || JSON.parse(localStorage.getItem("userProfile")) || {};
-
   const [formData, setFormData] = useState({
-    naam: profielData.naam || '',
-    email: profielData.email || '',
-    studie: profielData.studie || '',
-    telefoon: profielData.telefoon || '',
-    linkedin: profielData.linkedin || '',
-    beschrijving: profielData.beschrijving || '',
-    skills: profielData.skills || [],
-    talen: profielData.talen || [],
+    naam: "",
+    email: "",
+    studie: "",
+    telefoon: "",
+    linkedin: "",
+    beschrijving: "",
+    skills: [],
+    talen: [],
   });
 
   useEffect(() => {
     fetchProfiel();
   }, []);
+
+  useEffect(() => {
+    if (profiel) {
+      setFormData({
+        naam: profiel.naam || "",
+        email: profiel.email || "",
+        studie: profiel.studie || "",
+        telefoon: profiel.telefoon || "",
+        linkedin: profiel.linkedin || "",
+        beschrijving: profiel.beschrijving || "",
+        skills: [...(profiel.hardSkills || []), ...(profiel.softSkills || [])],
+        talen: profiel.talen || [],
+      });
+    }
+  }, [profiel]);
 
   if (loading) return <div className="loading">Laden...</div>;
 
@@ -73,12 +86,14 @@ const ProfielModule = () => {
         <h3>Vaardigheden</h3>
         <div className="profiel-info">
           <div className="info-item">
-            <label>Hard Skills (gescheiden met komma):</label>
-            <p>{formData.skills.join(', ')}</p>
+            <label>Hard Skills:</label>
+            <p>{profiel?.hardSkills?.join(", ") || "Geen"}</p>
+            <label>Soft Skills:</label>
+            <p>{profiel?.softSkills?.join(", ") || "Geen"}</p>
           </div>
           <div className="info-item">
             <label>Talen (gescheiden met komma):</label>
-            <p>{formData.talen.join(', ')}</p>
+            <p>{formData.talen.join(", ")}</p>
           </div>
         </div>
       </div>
