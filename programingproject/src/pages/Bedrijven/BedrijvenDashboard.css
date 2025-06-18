@@ -1,3 +1,7 @@
+html, body, #root, .dashboard-container, .main-content-wrapper, .sidebar {
+  margin: 0;
+  padding: 0;
+}
 :root {
   --primary-blue: #2563eb;
   --dark-blue: #1d4ed8;
@@ -46,6 +50,8 @@ body {
   top: 0;
   z-index: 50;
   height: 60px;
+   border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
 }
 
 .nav-left {
@@ -127,6 +133,11 @@ body {
   padding: 1.5rem 1rem; /* Alleen binnenruimte, geen buitenruimte */
   position: relative;
   height: auto;
+   border-top-right-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  box-shadow: var(--shadow-md);
+  margin-top: 1rem;
+  
 }
 
 .sidebar h3 {
