@@ -30,13 +30,16 @@ export const ProfileProvider = ({ children }) => {
 
   const updateProfiel = async (updatedData) => {
     try {
-      // Update local storage
       const currentProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
-      const newProfile = { ...currentProfile, ...updatedData };
+      const newProfile = {
+        ...currentProfile,
+        ...updatedData,
+        userId: gebruiker.id
+      };
+
       localStorage.setItem('userProfile', JSON.stringify(newProfile));
-      
-      // Update state
       setProfiel(newProfile);
+
       return { success: true };
     } catch (error) {
       console.error('Fout bij updaten profiel:', error);
@@ -45,7 +48,35 @@ export const ProfileProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchProfiel();
+    if (!gebruiker?.id) {
+      localStorage.removeItem('userProfile');
+      setProfiel(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const storedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+
+      if (storedProfile.userId !== gebruiker.id) {
+        // Nieuw profiel aanmaken op basis van de ingelogde gebruiker
+        const defaultProfile = {
+          userId: gebruiker.id,
+          naam: gebruiker.naam || '',
+          email: gebruiker.email || '',
+        };
+        localStorage.setItem('userProfile', JSON.stringify(defaultProfile));
+        setProfiel(defaultProfile);
+      } else {
+        // Profiel komt overeen met de ingelogde gebruiker
+        setProfiel(storedProfile);
+      }
+    } catch (error) {
+      console.error('Fout bij laden profiel:', error);
+      setProfiel(null);
+    }
+
+    setLoading(false);
   }, [gebruiker]);
 
   return (

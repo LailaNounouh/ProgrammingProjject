@@ -1,0 +1,56 @@
+.admin-standen {
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+
+.standen-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+.plattegrond-container {
+  overflow-x: auto;
+  margin: 2rem 0;
+}
+
+.info-box {
+  margin-bottom: 1rem;
+  color: #555;
+}
+
+.bewerken-button {
+  background-color: #2c7da0;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.bewerken-button:hover {
+  background-color: #256a8a;
+}
+
+.terug-knop-container {
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+}
+
+.terug-button {
+  background-color: #4ba3af;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.terug-button:hover {
+  background-color: #256a8a;
+}

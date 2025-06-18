@@ -68,9 +68,9 @@ export default function Afspraken() {
     async function fetchBedrijven() {
       try {
         setLoading(true);
-        console.log(`Fetching companies from: ${baseUrl}/api/bedrijvenmodule`);
+        console.log(`Fetching companies from: ${baseUrl}/bedrijvenmodule`);
         
-        const res = await fetch(`${baseUrl}/api/bedrijvenmodule`);
+        const res = await fetch(`${baseUrl}/bedrijvenmodule`);
         if (!res.ok) throw new Error("Kon bedrijven niet ophalen");
         
         const data = await res.json();
@@ -93,9 +93,9 @@ export default function Afspraken() {
       
       try {
         setLoading(true);
-        console.log(`Fetching time slots from: ${baseUrl}/api/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
+        console.log(`Fetching time slots from: ${baseUrl}/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
         
-        const res = await fetch(`${baseUrl}/api/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
+        const res = await fetch(`${baseUrl}/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
         if (!res.ok) {
           console.error(`Server responded with status: ${res.status}`);
           throw new Error("Kon tijdsloten niet ophalen");
