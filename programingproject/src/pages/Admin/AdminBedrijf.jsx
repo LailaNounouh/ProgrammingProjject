@@ -30,74 +30,80 @@ function AdminBedrijf() {
     setBedrijven(nieuweBedrijven);
   };
 
-  
-  return (
-    <div className="admin-dashboard">
-      {/* ✅ Terugknop helemaal bovenaan */}
-      <div className="terug-knop-container">
-        <button className="terug-button" onClick={() => navigate("/admin")}>
-          ← Terug naar dashboard
-        </button>
-      </div>
+ 
+return (
+  <div className="admin-dashboard">
+    <main className="admin-main">
+      <section className="bedrijven-section">
 
-      <main className="admin-main">
-        <section className="bedrijven-section">
-          <h2>Deelnemende bedrijven:</h2>
+        {/* Terug-knop */}
+        <div className="terug-knop-container">
+          <button className="terug-button" onClick={() => navigate("/admin")}>
+            ← Terug naar dashboard
+          </button>
+        </div>
 
-          <div className="bedrijven-header">
-            <input
-              type="text"
-              placeholder="Filter op naam..."
-              className="filter-input"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-            />
-          </div>
+        <h2>Deelnemende bedrijven:</h2>
 
-          <div className="bedrijven-grid">
-            {bedrijven
-              .filter((bedrijf) => bedrijf.naam.toLowerCase().includes(filter.toLowerCase()))
-              .map((bedrijf, index) => (
-                <div key={index} className="bedrijf-card">
-                  <div className="bedrijf-image">
-                    <div className="bedrijf-logo-placeholder"></div>
-                  </div>
-                  {bewerkBedrijvenModus ? (
-                    <>
-                      <input
-                        type="text"
-                        value={bedrijf.naam}
-                        onChange={(e) => handleBedrijfNaamChange(index, e.target.value)}
-                        className="bedrijf-input"
-                        style={{ textAlign: 'center', fontWeight: 'bold' }}
-                      />
-                      <button
-                        className="verwijder-button"
-                        onClick={() => handleVerwijderBedrijf(index)}
-                      >
-                        Verwijder
-                      </button>
-                    </>
-                  ) : (
-                    <strong>{bedrijf.naam}</strong>
-                  )}
-                  <p className="meer-info">• Meer info</p>
+        <div className="bedrijven-header">
+          <input
+            type="text"
+            placeholder="Filter op naam..."
+            className="filter-input"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          />
+        </div>
+
+        <div className="bedrijven-grid">
+          {bedrijven
+            .filter((bedrijf) =>
+              bedrijf.naam.toLowerCase().includes(filter.toLowerCase())
+            )
+            .map((bedrijf, index) => (
+              <div key={index} className="bedrijf-card">
+                <div className="bedrijf-image">
+                  <div className="bedrijf-logo-placeholder"></div>
                 </div>
-              ))}
-          </div>
+                {bewerkBedrijvenModus ? (
+                  <>
+                    <input
+                      type="text"
+                      value={bedrijf.naam}
+                      onChange={(e) =>
+                        handleBedrijfNaamChange(index, e.target.value)
+                      }
+                      className="bedrijf-input"
+                      style={{ textAlign: "center", fontWeight: "bold" }}
+                    />
+                    <button
+                      className="verwijder-button"
+                      onClick={() => handleVerwijderBedrijf(index)}
+                    >
+                      Verwijder
+                    </button>
+                  </>
+                ) : (
+                  <strong>{bedrijf.naam}</strong>
+                )}
+                <p className="meer-info">• Meer info</p>
+              </div>
+            ))}
+        </div>
 
-          <div className="bedrijven-footer">
-            <button
-              className="bewerken-button"
-              onClick={() => setBewerkBedrijvenModus(!bewerkBedrijvenModus)}
-            >
-              {bewerkBedrijvenModus ? 'Opslaan' : 'Bewerk'}
-            </button>
-          </div>
-        </section>
-      </main>
-    </div>
-  );
+        <div className="bedrijven-footer">
+          <button
+            className="bewerken-button"
+            onClick={() => setBewerkBedrijvenModus(!bewerkBedrijvenModus)}
+          >
+            {bewerkBedrijvenModus ? "Opslaan" : "Bewerk"}
+          </button>
+        </div>
+      </section>
+    </main>
+  </div> 
+);
+
 }
 
 export default AdminBedrijf;
