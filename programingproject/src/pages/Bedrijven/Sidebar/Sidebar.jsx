@@ -44,23 +44,23 @@ export const Sidebar = ({ showMobileMenu, setShowMobileMenu }) => {
       <h3>Snelmenu</h3>
       <ul>
         {menuItems.map((item, index) => (
-         <li
-  key={index}
-  onClick={() => {
-    item.onClick();
-    setShowMobileMenu(false);
-  }}
->
-  <span className={`icon ${item.color}`}>{item.icon}</span>
-  <span>{item.title}</span>
-</li>
+          <li
+            key={index}
+            onClick={() => {
+              item.onClick();
+              setShowMobileMenu(false);
+            }}
+          >
+            <span className={`icon ${item.color}`}>{item.icon}</span>
+            <span>{item.title}</span>
+          </li>
         ))}
       </ul>
     </aside>
   );
 };
+
 Sidebar.propTypes = {
   showMobileMenu: PropTypes.bool,
   setShowMobileMenu: PropTypes.func,
 };
-
