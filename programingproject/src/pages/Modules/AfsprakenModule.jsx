@@ -166,7 +166,7 @@ export default function Afspraken() {
         return;
       }
       
-      console.log(`Submitting appointment to: ${baseUrl}/api/afspraken/nieuw`);
+      console.log(`Submitting appointment to: ${baseUrl}/afspraken/nieuw`);
       console.log("Appointment data:", { student_id, bedrijf_id: bedrijfId, tijdslot, datum });
       
       const res = await fetch(`${baseUrl}/api/afspraken/nieuw`, {

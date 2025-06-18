@@ -1,24 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './AdminGebruikers.css';
 import { useNavigate } from 'react-router-dom';
+import { baseUrl } from '../../config'; // pas aan naar jouw config of baseUrl
 
 function AdminGebruikers() {
   const navigate = useNavigate();
 
-  const [gebruikers, setGebruikers] = useState(
-    Array.from({ length: 100 }, (_, i) => ({
-      id: i + 1,
-      rol: ['student', 'bedrijf', 'werkzoekende'][i % 3]
-    }))
-  );
+  const [gebruikers, setGebruikers] = useState([]);
 
-  const [bewerkModus, setBewerkModus] = useState(false);
-
-  const handleGebruikerRolChange = (index, nieuweRol) => {
-    const nieuweGebruikers = [...gebruikers];
-    nieuweGebruikers[index].rol = nieuweRol;
-    setGebruikers(nieuweGebruikers);
-  };
+  useEffect(() => {
+    // Haal alle gebruikers op via één endpoint /users
+    fetch(`${baseUrl}/users`)
+      .then(res => {
+        if (!res.ok) throw new Error('Fout bij ophalen gebruikers');
+        return res.json();
+      })
+      .then(data => {
+        // data is een array met gebruikers met id en rol
+        setGebruikers(data);
+      })
+      .catch(err => {
+        console.error('Fout bij ophalen gebruikers:', err);
+      });
+  }, []);
 
   return (
     <div className="admin-dashboard">
@@ -43,31 +47,11 @@ function AdminGebruikers() {
               {gebruikers.map((user, index) => (
                 <tr key={index}>
                   <td>{user.id}</td>
-                  <td>
-                    {bewerkModus ? (
-                      <input
-                        type="text"
-                        value={user.rol}
-                        onChange={(e) => handleGebruikerRolChange(index, e.target.value)}
-                        style={{ width: '100%' }}
-                      />
-                    ) : (
-                      user.rol
-                    )}
-                  </td>
+                  <td>{user.rol}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-
-          <div className="gebruikers-footer">
-            <button
-              className="bewerken-button"
-              onClick={() => setBewerkModus(!bewerkModus)}
-            >
-              {bewerkModus ? 'Opslaan' : 'Bewerk'}
-            </button>
-          </div>
         </section>
       </main>
     </div>
