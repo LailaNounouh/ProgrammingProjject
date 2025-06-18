@@ -7,7 +7,7 @@ import {
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import '.Bedrijven/Sidebar/Sidebar.css';
+import './Sidebar.css'; 
 
 export const Sidebar = ({ showMobileMenu, setShowMobileMenu }) => {
   const navigate = useNavigate();
