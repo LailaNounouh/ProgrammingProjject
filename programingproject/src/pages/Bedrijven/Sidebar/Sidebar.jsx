@@ -6,6 +6,8 @@ import {
   FaCog,
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import '.Bedrijven/Sidebar/Sidebar.css';
 
 export const Sidebar = ({ showMobileMenu, setShowMobileMenu }) => {
   const navigate = useNavigate();
@@ -58,3 +60,8 @@ export const Sidebar = ({ showMobileMenu, setShowMobileMenu }) => {
     </aside>
   );
 };
+Sidebar.propTypes = {
+  showMobileMenu: PropTypes.bool,
+  setShowMobileMenu: PropTypes.func,
+};
+
