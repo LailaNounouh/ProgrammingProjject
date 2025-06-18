@@ -5,7 +5,7 @@ import "./ProfielModule.css";
 
 const ProfielModule = () => {
   const { gebruiker } = useAuth();
-  const { profiel, fetchProfiel, loading, updateProfiel } = useProfile();
+  const { profiel, fetchProfiel, loading } = useProfile();
 
   const profielData = profiel || JSON.parse(localStorage.getItem("userProfile")) || {};
 
@@ -20,26 +20,9 @@ const ProfielModule = () => {
     talen: profielData.talen || [],
   });
 
-  const [success, setSuccess] = useState(false);
-
   useEffect(() => {
     fetchProfiel();
   }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async () => {
-    try {
-      await updateProfiel(formData);
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
-    } catch (error) {
-      console.error("Fout bij bijwerken profiel:", error);
-    }
-  };
 
   if (loading) return <div className="loading">Laden...</div>;
 
@@ -52,15 +35,15 @@ const ProfielModule = () => {
         <div className="profiel-info">
           <div className="info-item">
             <label>Naam:</label>
-            <input type="text" name="naam" value={formData.naam} onChange={handleChange} />
+            <p>{formData.naam}</p>
           </div>
           <div className="info-item">
             <label>Email:</label>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} />
+            <p>{formData.email}</p>
           </div>
           <div className="info-item">
             <label>Studie:</label>
-            <input type="text" name="studie" value={formData.studie} onChange={handleChange} />
+            <p>{formData.studie}</p>
           </div>
         </div>
       </div>
@@ -70,11 +53,11 @@ const ProfielModule = () => {
         <div className="profiel-info">
           <div className="info-item">
             <label>Telefoonnummer:</label>
-            <input type="tel" name="telefoon" value={formData.telefoon} onChange={handleChange} />
+            <p>{formData.telefoon}</p>
           </div>
           <div className="info-item">
             <label>LinkedIn:</label>
-            <input type="url" name="linkedin" value={formData.linkedin} onChange={handleChange} />
+            <p>{formData.linkedin}</p>
           </div>
         </div>
       </div>
@@ -82,7 +65,7 @@ const ProfielModule = () => {
       <div className="profiel-sectie">
         <h3>Over Mij</h3>
         <div className="profiel-info">
-          <textarea name="beschrijving" value={formData.beschrijving} onChange={handleChange} rows="4" />
+          <p>{formData.beschrijving}</p>
         </div>
       </div>
 
@@ -91,38 +74,14 @@ const ProfielModule = () => {
         <div className="profiel-info">
           <div className="info-item">
             <label>Hard Skills (gescheiden met komma):</label>
-            <input
-              type="text"
-              name="skills"
-              value={formData.skills.join(', ')}
-              onChange={(e) => {
-                const skills = e.target.value.split(',').map(s => s.trim());
-                setFormData(prev => ({ ...prev, skills }));
-              }}
-            />
+            <p>{formData.skills.join(', ')}</p>
           </div>
           <div className="info-item">
             <label>Talen (gescheiden met komma):</label>
-            <input
-              type="text"
-              name="talen"
-              value={formData.talen.join(', ')}
-              onChange={(e) => {
-                const talen = e.target.value.split(',').map(t => t.trim());
-                setFormData(prev => ({ ...prev, talen }));
-              }}
-            />
+            <p>{formData.talen.join(', ')}</p>
           </div>
         </div>
       </div>
-
-      <button
-        type="button"
-        className={`opslaan-knop ${success ? 'success' : ''}`}
-        onClick={handleSubmit}
-      >
-        {success ? "Opgeslagen" : "Opslaan"}
-      </button>
     </div>
   );
 };
