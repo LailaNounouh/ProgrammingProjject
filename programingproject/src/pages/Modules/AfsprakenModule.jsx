@@ -132,16 +132,15 @@ export default function Afspraken() {
     try {
       setLoading(true);
       
-      // Get the current user's ID from the authentication context
-      const userInfoString = localStorage.getItem('userInfo');
+      const userString = localStorage.getItem('user');
       let student_id;
       
-      if (userInfoString) {
+      if (userString) {
         try {
-          const userInfo = JSON.parse(userInfoString);
-          console.log("User info from localStorage:", userInfo);
+          const user = JSON.parse(userString);
+          console.log("User info from localStorage:", user);
           // Make sure we're using the correct property for the ID
-          student_id = userInfo.id;
+          student_id = user.id;
           
           // Debug log to verify the ID
           console.log("Using student_id:", student_id);

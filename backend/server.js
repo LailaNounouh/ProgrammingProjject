@@ -29,10 +29,11 @@ const io = socketIo(server, {
 });
 
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'http://localhost:5174'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
-};  
+};
+
 app.use(cors(corsOptions));
 app.use(express.json());
 

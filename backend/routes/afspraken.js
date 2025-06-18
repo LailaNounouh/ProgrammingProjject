@@ -59,10 +59,7 @@ router.get('/student/:studentId', async (req, res) => {
   }
 });
 
-/**
- * @route GET /api/afspraken/bedrijf/:bedrijfId
- * @desc Haal alle afspraken op van een specifiek bedrijf
- */
+
 router.get('/bedrijf/:bedrijfId', async (req, res) => {
   const { bedrijfId } = req.params;
   
@@ -86,10 +83,7 @@ router.get('/bedrijf/:bedrijfId', async (req, res) => {
   }
 });
 
-/**
- * @route GET /api/afspraken/beschikbaar/:bedrijfId
- * @desc Haal beschikbare tijdsloten op voor een bedrijf op een specifieke datum
- */
+
 router.get('/beschikbaar/:bedrijfId', async (req, res) => {
   const { bedrijfId } = req.params;
   const datum = req.query.datum || new Date().toISOString().split('T')[0]; // fallback: vandaag
@@ -151,10 +145,7 @@ router.get('/beschikbaar/:bedrijfId', async (req, res) => {
   }
 });
 
-/**
- * @route POST /api/afspraken/nieuw
- * @desc Maak een nieuwe afspraak
- */
+
 router.post('/nieuw', async (req, res) => {
   const { student_id, bedrijf_id, tijdslot, datum } = req.body;
 

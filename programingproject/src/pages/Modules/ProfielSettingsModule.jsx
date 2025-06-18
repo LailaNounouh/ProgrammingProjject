@@ -1,6 +1,9 @@
+// /src/pages/Modules/ProfielSettingsModule.jsx
+
 import React, { useEffect, useState } from "react";
 import { useProfile } from "../../context/ProfileContext";
 import { useAuth } from "../../context/AuthProvider";
+import Studierichtingen from "../../components/dropdowns/Studierichtingen";
 import CodeerTaalSelector from "../../components/dropdowns/CodeerTaalSelector";
 import TaalSelector from "../../components/dropdowns/TaalSelector";
 import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
@@ -13,7 +16,6 @@ const ProfielSettingsModule = () => {
 
   const [formData, setFormData] = useState({
     naam: "",
-    email: "",
     studie: "",
     telefoon: "",
     beschrijving: "",
@@ -25,6 +27,7 @@ const ProfielSettingsModule = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     if (gebruiker?.id) {
@@ -36,7 +39,6 @@ const ProfielSettingsModule = () => {
     if (profiel) {
       setFormData({
         naam: profiel.naam || "",
-        email: profiel.email || "",
         studie: profiel.studie || "",
         telefoon: profiel.telefoon || "",
         beschrijving: profiel.beschrijving || "",
@@ -59,6 +61,7 @@ const ProfielSettingsModule = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSuccess(false);
     try {
       const editableData = {
         telefoon: formData.telefoon,
@@ -72,7 +75,7 @@ const ProfielSettingsModule = () => {
 
       const result = await updateProfiel(editableData);
       if (result.success) {
-        alert("Profiel succesvol bijgewerkt!");
+        setSuccess(true);
       } else {
         throw new Error(result.error || "Kon profiel niet updaten");
       }
@@ -84,8 +87,23 @@ const ProfielSettingsModule = () => {
     }
   };
 
-  if (loading) return <div className="profiel-settings"><div className="loading">Profiel laden...</div></div>;
-  if (!gebruiker) return <div className="profiel-settings"><div className="error">Je moet ingelogd zijn om je profiel te bewerken.</div></div>;
+  if (loading) {
+    return (
+      <div className="profiel-settings">
+        <div className="loading">Profiel laden...</div>
+      </div>
+    );
+  }
+
+  if (!gebruiker) {
+    return (
+      <div className="profiel-settings">
+        <div className="error">
+          Je moet ingelogd zijn om je profiel te bewerken.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="profiel-settings">
@@ -93,12 +111,35 @@ const ProfielSettingsModule = () => {
       <form onSubmit={handleSubmit} className="settings-form">
         <section className="form-section">
           <h3>Persoonlijke Informatie</h3>
-          {["naam", "email", "studie"].map((field) => (
-            <div className="form-group" key={field}>
-              <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-              <input id={field} type="text" value={formData[field]} readOnly disabled className="readonly-field" />
-            </div>
-          ))}
+
+          <div className="form-group">
+            <label htmlFor="naam">Naam</label>
+            <input
+              id="naam"
+              type="text"
+              value={formData.naam}
+              onChange={(e) => handleInputChange("naam", e.target.value)}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              value={gebruiker?.email || ""}
+              readOnly
+              className="readonly-field"
+            />
+          </div>
+
+          <div className="form-group">
+  <label htmlFor="studie">Studierichting</label>
+  <Studierichtingen
+    selectedStudie={formData.studie}
+    onChange={(selected) => handleInputChange("studie", selected)}
+  />
+</div>
         </section>
 
         <section className="form-section">
@@ -129,19 +170,31 @@ const ProfielSettingsModule = () => {
           <h3>Vaardigheden</h3>
           <div className="form-group">
             <label>Codeertalen</label>
-            <CodeerTaalSelector selectedSkills={formData.codeertaal} onChange={(selected) => handleInputChange("codeertaal", selected)} />
+            <CodeerTaalSelector
+              selectedSkills={formData.codeertaal}
+              onChange={(selected) => handleInputChange("codeertaal", selected)}
+            />
           </div>
           <div className="form-group">
             <label>Talen</label>
-            <TaalSelector selectedTalen={formData.talen} onChange={(selected) => handleInputChange("talen", selected)} />
+            <TaalSelector
+              selectedTalen={formData.talen}
+              onChange={(selected) => handleInputChange("talen", selected)}
+            />
           </div>
           <div className="form-group">
             <label>Hard Skills</label>
-            <HardSkillsSelector selectedOpleiding={formData.hardSkills} onChange={(selected) => handleInputChange("hardSkills", selected)} />
+            <HardSkillsSelector
+              selectedOpleiding={formData.hardSkills}
+              onChange={(selected) => handleInputChange("hardSkills", selected)}
+            />
           </div>
           <div className="form-group">
             <label>Soft Skills</label>
-            <SoftSkillsSelector selectedErvaring={formData.softSkills} onChange={(selected) => handleInputChange("softSkills", selected)} />
+            <SoftSkillsSelector
+              selectedErvaring={formData.softSkills}
+              onChange={(selected) => handleInputChange("softSkills", selected)}
+            />
           </div>
         </section>
 
@@ -157,13 +210,23 @@ const ProfielSettingsModule = () => {
               onChange={(e) => handleInputChange("beschrijving", e.target.value)}
               placeholder="Vertel iets over jezelf..."
             />
-            <small className="char-count">{formData.beschrijving.length}/1000 karakters</small>
+            <small className="char-count">
+              {formData.beschrijving.length}/1000 karakters
+            </small>
           </div>
         </section>
 
         <div className="form-actions">
-          <button type="submit" className="save-button" disabled={isSubmitting}>
-            {isSubmitting ? "Opslaan..." : "Opslaan"}
+          <button
+            type="submit"
+            className={`save-button${success ? " success" : ""}`}
+            disabled={isSubmitting}
+          >
+            {isSubmitting
+              ? "Opslaan..."
+              : success
+              ? "Opgeslagen"
+              : "Opslaan"}
           </button>
         </div>
       </form>

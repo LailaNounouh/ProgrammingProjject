@@ -10,7 +10,16 @@ function BedrijvenDashboard() {
   const [afspraken, setAfspraken] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
+  const [bedrijfNaam, setBedrijfNaam] = useState(''); // ✅ toegevoegd
   const notificationRef = useRef(null);
+
+  useEffect(() => {
+    // ✅ Haal bedrijfsnaam op uit localStorage
+    const user = JSON.parse(localStorage.getItem('ingelogdeGebruiker'));
+    if (user && user.type === 'bedrijf') {
+      setBedrijfNaam(user.naam);
+    }
+  }, []);
 
   useEffect(() => {
     setBetalingen([{ id: 1, factuur: "F2023-0456", status: "Betaald", bedrag: 1200, datum: "20-04-2023" }]);
@@ -76,7 +85,7 @@ function BedrijvenDashboard() {
   const renderDashboard = () => (
     <div className="dashboard-container">
       <div className="welcome-banner">
-        <h1>Welkom terug, NovaTech!</h1>
+        <h1>Welkom terug, {bedrijfNaam}!</h1> {/* ✅ Dynamisch */}
         <p>Hier vindt u een overzicht van uw activiteiten en status</p>
       </div>
 
