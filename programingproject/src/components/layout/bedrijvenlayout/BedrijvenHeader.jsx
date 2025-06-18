@@ -28,19 +28,20 @@ const Header = () => {
             <li><Link to="/about">About</Link></li>
             <li><Link to="/contact">Contact</Link></li>
 
-            {user ? (
-              <>
-                <li><Link to={`/${user.role}`}>Dashboard</Link></li>
-                <li><Link to={`/${user.role}/profiel`}>Account</Link></li>
-                <li>
-                  <button onClick={() => setShowLogoutPopup(true)} className="logout-link">
-                    Log Out
-                  </button>
-                </li>
-              </>
-            ) : (
-              <li><Link to="/login">Sign In</Link></li>
-            )}
+          {user ? (
+  <>
+    <li><Link to={`/${user.role}`}>Dashboard</Link></li>
+    <li><Link to={`/${user.role}/profiel`}>Account</Link></li>
+    <li>
+      <button onClick={() => setShowLogoutPopup(true)} className="logout-link">
+        Uitloggen
+      </button>
+    </li>
+  </>
+) : (
+  <li><Link to="/login">Inloggen</Link></li>
+)}
+
           </ul>
         </nav>
       </header>
@@ -50,7 +51,8 @@ const Header = () => {
         <div className="logout-popup-overlay">
           <div className="logout-popup">
             <p>Weet je zeker dat je wilt uitloggen?</p>
-            <button onClick={logout} className="confirm-button">Ja, log uit</button>
+         <button onClick={logout} className="confirm-button">Bevestig uitloggen</button>
+
             <button onClick={() => setShowLogoutPopup(false)} className="cancel-button">Annuleer</button>
           </div>
         </div>
