@@ -214,3 +214,29 @@ a:hover {
     font-size: 0.85rem;
   }
 }
+
+/* Voor overzicht-modus (niet-bewerkbaar) */
+.info-item p {
+  margin: 0;
+  font-size: 1rem;
+  color: #343a40;
+  background-color: #fff;
+  padding: 0.6rem 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.info-item label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #495057;
+  margin-bottom: 0.2rem;
+}
+
+
+.profiel-sectie:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
