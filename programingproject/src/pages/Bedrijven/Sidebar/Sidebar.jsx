@@ -51,8 +51,7 @@ export const Sidebar = ({ showMobileMenu, setShowMobileMenu }) => {
               setShowMobileMenu(false);
             }}
           >
-          <span className={`icon ${item.color}`}>{item.icon}</span>
-
+            <span className={`icon ${item.color}`}>{item.icon}</span>
             <span>{item.title}</span>
           </li>
         ))}
@@ -60,8 +59,8 @@ export const Sidebar = ({ showMobileMenu, setShowMobileMenu }) => {
     </aside>
   );
 };
+
 Sidebar.propTypes = {
   showMobileMenu: PropTypes.bool,
   setShowMobileMenu: PropTypes.func,
 };
-
