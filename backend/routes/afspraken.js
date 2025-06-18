@@ -250,7 +250,42 @@ router.put('/:afspraakId', async (req, res) => {
     });
   }
 });
+/**
+ * @route GET /api/afspraken/bezet
+ * @desc Haal bezette tijdsloten op voor een specifiek bedrijf op een specifieke datum
+ */
+router.get('/bezet', async (req, res) => {
+  const { bedrijf_id, datum } = req.query;
 
+  if (!bedrijf_id || !datum) {
+    return res.status(400).json({ 
+      error: 'Bedrijf ID en datum zijn verplicht'
+    });
+  }
+
+  try {
+    // Controleer of er afspraken zijn voor dit bedrijf op deze datum
+    const [afspraken] = await pool.query(
+      'SELECT tijdslot FROM Afspraken WHERE bedrijf_id = ? AND datum = ?',
+      [bedrijf_id, datum]
+    );
+
+    // Haal de bezette tijdsloten uit de resultaten
+    const bezette_tijdsloten = afspraken.map(afspraak => afspraak.tijdslot);
+
+    return res.json({
+      bedrijf_id,
+      datum,
+      bezette_tijdsloten
+    });
+  } catch (err) {
+    console.error('[Serverfout] Ophalen bezette tijdsloten mislukt:', err);
+    return res.status(500).json({
+      error: 'Fout bij ophalen bezette tijdsloten',
+      message: err.message
+    });
+  }
+});
 /**
  * @route DELETE /api/afspraken/:afspraakId
  * @desc Verwijder een afspraak
