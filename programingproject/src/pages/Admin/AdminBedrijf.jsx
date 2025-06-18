@@ -33,15 +33,17 @@ function AdminBedrijf() {
  
 return (
   <div className="admin-dashboard">
-    <main className="admin-main">
-      <section className="bedrijven-section">
 
-        {/* Terug-knop */}
         <div className="terug-knop-container">
           <button className="terug-button" onClick={() => navigate("/admin")}>
             ← Terug naar dashboard
           </button>
         </div>
+
+    <main className="admin-main">
+      <section className="bedrijven-section">
+
+        
 
         <h2>Deelnemende bedrijven:</h2>
 
