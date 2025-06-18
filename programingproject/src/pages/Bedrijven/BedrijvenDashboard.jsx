@@ -63,36 +63,38 @@ function BedrijvenDashboard() {
   ];
 
   return (
-    <div className="dashboard-container">
-      {/* Top Navigation Bar */}
-      <div className="top-nav-bar">
-        <div className="nav-left">
-          <button
-            className="menu-toggle"
-            onClick={() => setShowMobileMenu(!showMobileMenu)}
-            aria-label="Menu openen"
-          >
-            <FaBars />
-          </button>
-          <div className="logo">Dashboard</div>
+  <>
+   
+    <div className="top-nav-bar">
+      <div className="nav-left">
+        <button
+          className="menu-toggle"
+          onClick={() => setShowMobileMenu(!showMobileMenu)}
+          aria-label="Menu openen"
+        >
+          <FaBars />
+        </button>
+        <div className="logo">Dashboard</div>
+      </div>
+      <div className="nav-right">
+        <div className="search-box">
+          <FaSearch className="search-icon" />
+          <input
+            type="text"
+            placeholder="Zoeken..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
-        <div className="nav-right">
-          <div className="search-box">
-            <FaSearch className="search-icon" />
-            <input
-              type="text"
-              placeholder="Zoeken..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div className="notification-icon" ref={notificationRef}>
-            <FaBell onClick={() => setShowNotifications(!showNotifications)} />
-          </div>
+        <div className="notification-icon" ref={notificationRef}>
+          <FaBell onClick={() => setShowNotifications(!showNotifications)} />
         </div>
       </div>
+    </div>
 
-      {/* Main Content Area */}
+    {/* ALLE INHOUD ONDER DE TOP NAV */}
+    <div className="dashboard-container">
+      {/* Wrapper met sidebar en hoofdinhoud */}
       <div className="main-content-wrapper">
         {/* Sidebar */}
         <aside className={`sidebar ${showMobileMenu ? 'active' : ''}`}>
@@ -113,9 +115,8 @@ function BedrijvenDashboard() {
           </ul>
         </aside>
 
-        {/* Main Content */}
+        {/* Hoofdinhoud */}
         <div className="main-content-area">
-          {/* Welcome Banner */}
           <div className="welcome-banner">
             <div className="welcome-content">
               <h1>Welkom terug, {bedrijfNaam}!</h1>
@@ -123,10 +124,13 @@ function BedrijvenDashboard() {
             </div>
           </div>
 
-          {/* Dashboard Cards */}
           <div className="dashboard-cards-container">
             {dashboardItems.map((item, index) => (
-              <div key={index} className="dashboard-card" onClick={item.onClick}>
+              <div
+                key={index}
+                className="dashboard-card"
+                onClick={item.onClick}
+              >
                 <div className={`card-header ${item.color}`}>
                   {item.icon}
                   <h3>{item.title}</h3>
@@ -144,7 +148,7 @@ function BedrijvenDashboard() {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Overlay mobiel menu */}
       {showMobileMenu && (
         <div
           className="mobile-menu-overlay"
@@ -152,7 +156,9 @@ function BedrijvenDashboard() {
         ></div>
       )}
     </div>
-  );
+  </>
+);
+
 }
 
 export default BedrijvenDashboard;
