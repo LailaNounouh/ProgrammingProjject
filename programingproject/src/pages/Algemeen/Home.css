@@ -48,10 +48,11 @@
 }
 
 .home .info-box h1 {
-  font-size: 2.3rem; 
+  font-size: 2.1rem; 
   color: #00a9b5;
   margin: 0 0 10px 0; 
   line-height: 1.2; 
+  font-weight: bold;
 }
 
 .home .info-box h2 {

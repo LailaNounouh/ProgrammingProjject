@@ -13,11 +13,12 @@
 /* Titel + intro */
 .contact-container h1 {
   color: #2c3e50;
-  font-size: 2rem;
+  font-size: 2.5rem;
   margin-bottom: 1.5rem;
   padding-bottom: 0.75rem;
   border-bottom: 2px solid #00a9b5;
-  font-weight: 700;
+  font-weight: bold;
+  text-align: left;
 }
 
 .contact-container .contact-intro {
