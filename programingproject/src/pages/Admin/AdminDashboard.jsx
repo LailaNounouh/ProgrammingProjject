@@ -51,7 +51,7 @@ function AdminDashboard() {
 
           <div
             className="dashboard-card"
-            onClick={() => navigate("/gebruikers")}
+            onClick={() => navigate("/Admin/gebruikers")}
           >
             <div className="icon-container">
               <div className="icon-wrapper icon-paars">👥</div>
