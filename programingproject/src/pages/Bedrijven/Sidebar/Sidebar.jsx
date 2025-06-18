@@ -6,6 +6,7 @@ import {
   FaCog,
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import './Sidebar/Sidebar.css';
 
 export const Sidebar = ({ showMobileMenu, setShowMobileMenu }) => {
   const navigate = useNavigate();
