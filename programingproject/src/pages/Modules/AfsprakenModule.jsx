@@ -207,7 +207,7 @@ export default function Afspraken() {
     <div className="page-container afspraken-module">
       <h2 className="module-title">Afspraak maken</h2>
       <p className="module-subtext">
-        Selecteer een bedrijf om de beschikbare tijdsloten voor vandaag ({datum}) te zien.
+        Selecteer een bedrijf om de beschikbare tijdsloten voor te zien.
       </p>
 
       {error && (
@@ -291,7 +291,6 @@ export default function Afspraken() {
         <div className="overzicht-blok">
           <p className="bevestiging"><strong>✅ Je afspraak is ingediend!</strong></p>
           <p><strong>Bedrijf:</strong> {bedrijven.find(b => b.bedrijf_id === parseInt(bedrijfId))?.naam}</p>
-          <p><strong>Datum:</strong> {datum}</p>
           <p><strong>Tijdslot:</strong> {tijdslot}</p>
           <button 
             className="btn-submit" 
