@@ -147,6 +147,8 @@
   margin-bottom: 0.7rem;
   font-weight: 700;
   color: #2c3e50;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
 }
 
 .contact-container .contact-form input,
@@ -204,5 +206,9 @@
     flex-direction: column;
     gap: 0.8rem;
     max-width: 100%;
+  }
+
+  .contact-container .form-group-wide {
+    padding: 0.8rem 0.5rem;
   }
 }
