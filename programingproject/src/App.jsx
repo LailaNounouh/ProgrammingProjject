@@ -20,6 +20,7 @@ import Contact from "./pages/Algemeen/Contact";
 import StudentDashboard from "./pages/Student/StudentenDashboard";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminBedrijf from "./pages/Admin/AdminBedrijf";
+import AdminStanden from "./pages/Admin/AdminStanden";
 import SeekerDashboard from "./pages/Seeker/SeekerDashboard";
 import BedrijvenDashboard from "./pages/Bedrijven/BedrijvenDashboard";
 import StatusBetaling from './pages/Bedrijven/statusbetaling';
@@ -59,6 +60,7 @@ export default function App() {
           {/* Admin */}
           <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
           <Route path="/admin/Bedrijf" element={<AdminLayout><AdminBedrijf /></AdminLayout>} />
+          <Route path="/admin/standen" element={<AdminLayout><AdminStanden /></AdminLayout>} />
  
           {/* Bedrijven */}
           <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
