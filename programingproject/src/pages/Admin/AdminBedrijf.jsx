@@ -1,22 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './AdminBedrijf.css';
 import { useNavigate } from "react-router-dom";
+import { baseUrl } from '../../config';
 
 function AdminBedrijf() {
-  const [bedrijven, setBedrijven] = useState([
-    { naam: 'Microsoft' }, { naam: 'Cisco' }, { naam: 'Sopra Steria' }, { naam: 'Webdoos' },
-    { naam: 'Amazon' }, { naam: 'Google' }, { naam: 'Tesla' }, { naam: 'Meta' },
-    { naam: 'Apple' }, { naam: 'IBM' }, { naam: 'Oracle' }, { naam: 'Dell' },
-    { naam: 'Intel' }, { naam: 'Nvidia' }, { naam: 'SAP' }, { naam: 'Atos' },
-    { naam: 'Capgemini' }, { naam: 'HP' }, { naam: 'Zoom' }, { naam: 'Slack' },
-    { naam: 'Dropbox' }, { naam: 'Salesforce' }, { naam: 'Red Hat' }, { naam: 'GitHub' },
-    { naam: 'Bitbucket' }, { naam: 'Trello' }, { naam: 'Spotify' }, { naam: 'YouTube' },
-    { naam: 'Snapchat' }, { naam: 'TikTok' }
-  ]);
-
+  const [bedrijven, setBedrijven] = useState([]);
   const [bewerkBedrijvenModus, setBewerkBedrijvenModus] = useState(false);
   const [filter, setFilter] = useState('');
   const navigate = useNavigate();
+
+  // ✅ Haal bedrijven op uit database bij laden van de component
+  useEffect(() => {
+    fetch(`${baseUrl}/bedrijvenmodule`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Netwerkfout');
+        return res.json();
+      })
+      .then((data) => {
+        // ✅ Als de backend { bedrijven: [...] } teruggeeft
+        const bedrijvenLijst = Array.isArray(data) ? data : data.bedrijven;
+        if (!bedrijvenLijst || !Array.isArray(bedrijvenLijst)) {
+          throw new Error("Ongeldig formaat van API-response");
+        }
+        setBedrijven(bedrijvenLijst);
+      })
+      .catch((err) => {
+        console.error('Fout bij ophalen bedrijven:', err.message);
+      });
+  }, []);
 
   const handleBedrijfNaamChange = (index, nieuweNaam) => {
     const nieuweBedrijven = [...bedrijven];
@@ -30,10 +41,8 @@ function AdminBedrijf() {
     setBedrijven(nieuweBedrijven);
   };
 
-  
   return (
     <div className="admin-dashboard">
-      {/* ✅ Terugknop helemaal bovenaan */}
       <div className="terug-knop-container">
         <button className="terug-button" onClick={() => navigate("/admin")}>
           ← Terug naar dashboard
@@ -56,9 +65,9 @@ function AdminBedrijf() {
 
           <div className="bedrijven-grid">
             {bedrijven
-              .filter((bedrijf) => bedrijf.naam.toLowerCase().includes(filter.toLowerCase()))
+              .filter((bedrijf) => bedrijf.naam?.toLowerCase().includes(filter.toLowerCase()))
               .map((bedrijf, index) => (
-                <div key={index} className="bedrijf-card">
+                <div key={bedrijf.bedrijf_id || index} className="bedrijf-card">
                   <div className="bedrijf-image">
                     <div className="bedrijf-logo-placeholder"></div>
                   </div>
