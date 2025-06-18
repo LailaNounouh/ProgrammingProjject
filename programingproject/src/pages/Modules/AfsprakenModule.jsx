@@ -7,7 +7,7 @@ export default function Afspraken() {
   const [bedrijven, setBedrijven] = useState([]);
   const [bedrijfId, setBedrijfId] = useState("");
   const [tijdslot, setTijdslot] = useState("");
- 
+  
   const [datum] = useState(formatDate(new Date()));
   const [beschikbareTijdsloten, setBeschikbareTijdsloten] = useState([]);
   const [bezetteTijdsloten, setBezetteTijdsloten] = useState([]);
@@ -18,7 +18,6 @@ export default function Afspraken() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [socket, setSocket] = useState(null);
 
-  
   function formatDate(date) {
     const d = new Date(date);
     let month = '' + (d.getMonth() + 1);
@@ -31,7 +30,6 @@ export default function Afspraken() {
     return [year, month, day].join('-');
   }
 
-  
   useEffect(() => {
     const newSocket = io(baseUrl);
     setSocket(newSocket);
@@ -41,14 +39,11 @@ export default function Afspraken() {
     };
   }, []);
 
-  
   useEffect(() => {
     if (!socket || !bedrijfId) return;
     
-
     socket.emit('joinAppointmentRoom', { bedrijfId, datum });
     
- 
     socket.on('appointmentCreated', (data) => {
       if (data.bedrijf_id === bedrijfId && data.datum === datum) {
         console.log('Appointment created by another user:', data);
@@ -68,7 +63,7 @@ export default function Afspraken() {
     async function fetchBedrijven() {
       try {
         setLoading(true);
-        console.log(`Fetching companies from: ${baseUrl}/bedrijvenmodule`);
+        console.log(`Bedrijven ophalen van: ${baseUrl}/bedrijvenmodule`);
         
         const res = await fetch(`${baseUrl}/bedrijvenmodule`);
         if (!res.ok) throw new Error("Kon bedrijven niet ophalen");
@@ -93,17 +88,16 @@ export default function Afspraken() {
       
       try {
         setLoading(true);
-        console.log(`Fetching time slots from: ${baseUrl}/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
+        console.log(`Tijdsloten ophalen van: ${baseUrl}/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
         
         const res = await fetch(`${baseUrl}/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
         if (!res.ok) {
-          console.error(`Server responded with status: ${res.status}`);
+          console.error(`Server antwoordde met status: ${res.status}`);
           throw new Error("Kon tijdsloten niet ophalen");
         }
         
         const data = await res.json();
         console.log("Tijdsloten data:", data);
-        
         
         setBeschikbareTijdsloten(data.beschikbaar || []);
         setBezetteTijdsloten(data.bezet || []);
@@ -138,38 +132,34 @@ export default function Afspraken() {
       if (userString) {
         try {
           const user = JSON.parse(userString);
-          console.log("User info from localStorage:", user);
-          // Make sure we're using the correct property for the ID
+          console.log("Gebruikersinfo uit localStorage:", user);
           student_id = user.id;
           
-          // Debug log to verify the ID
-          console.log("Using student_id:", student_id);
+          console.log("Gebruiker ID:", student_id);
         } catch (parseError) {
-          console.error("Error parsing user info:", parseError);
-          // Don't use a fallback - we want to know if there's an issue
+          console.error("Fout bij parsen gebruikersinfo:", parseError);
           setError("Gebruiker informatie kon niet worden geladen. Log opnieuw in.");
           setLoading(false);
           return;
         }
       } else {
-        console.error("No user info found in localStorage");
+        console.error("Geen gebruikersinfo gevonden in localStorage");
         setError("Je bent niet ingelogd. Log in om een afspraak te maken.");
         setLoading(false);
         return;
       }
       
-      // Ensure we have a valid student_id
       if (!student_id) {
-        console.error("No valid student_id found");
+        console.error("Geen geldig student_id gevonden");
         setError("Kon geen geldig gebruikers-ID vinden. Log opnieuw in.");
         setLoading(false);
         return;
       }
       
-      console.log(`Submitting appointment to: ${baseUrl}/api/afspraken/nieuw`);
-      console.log("Appointment data:", { student_id, bedrijf_id: bedrijfId, tijdslot, datum });
+      console.log(`Afspraak versturen naar: ${baseUrl}/afspraken/nieuw`);
+      console.log("Afspraak data:", { student_id, bedrijf_id: bedrijfId, tijdslot, datum });
       
-      const res = await fetch(`${baseUrl}/api/afspraken/nieuw`, {
+      const res = await fetch(`${baseUrl}/afspraken/nieuw`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -187,21 +177,20 @@ export default function Afspraken() {
         throw new Error(errorData.message || "Kon afspraak niet maken");
       }
 
-    setBezetteTijdsloten(prev => [...prev, tijdslot]);
-    setBeschikbareTijdsloten(prev => prev.filter(t => t !== tijdslot));
-    
-  
-    setRefreshTrigger(prev => prev + 1);
+      setBezetteTijdsloten(prev => [...prev, tijdslot]);
+      setBeschikbareTijdsloten(prev => prev.filter(t => t !== tijdslot));
+      
+      setRefreshTrigger(prev => prev + 1);
 
-    setAfspraakIngediend(true);
-    setError("");
-  } catch (err) {
-    console.error("Fout bij maken afspraak:", err);
-    setError(err.message || "Er is een probleem opgetreden bij het maken van de afspraak.");
-  } finally {
-    setLoading(false);
-  }
-};
+      setAfspraakIngediend(true);
+      setError("");
+    } catch (err) {
+      console.error("Fout bij maken afspraak:", err);
+      setError(err.message || "Er is een probleem opgetreden bij het maken van de afspraak.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="page-container afspraken-module">
