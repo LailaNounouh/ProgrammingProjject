@@ -1,111 +1,75 @@
-import React, { useEffect, useState } from "react";
-import { baseUrl } from "../../config";
+import React, { useState, useEffect } from "react";
 import "./BedrijvenModule.css";
+import { baseUrl } from "../../config";
 
 export default function Bedrijven() {
   const [bedrijven, setBedrijven] = useState([]);
-  const [selectedBedrijf, setSelectedBedrijf] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("");
-  const [sectors, setSectors] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchBedrijven = async () => {
+    async function haalBedrijvenOp() {
       try {
-        const response = await fetch("http://10.2.160.211:3000/api/bedrijvenmodule");
-        if (response.ok) {
-          const data = await response.json();
-          setBedrijven(data);
-          // Extract unique sectors
-          const uniqueSectors = [...new Set(data.map(bedrijf => bedrijf.sector))];
-          setSectors(uniqueSectors);
-        }
-      } catch (error) {
-        console.error("Fout bij ophalen bedrijven:", error);
+        setLoading(true);
+        console.log(`Bedrijven ophalen van: ${baseUrl}/bedrijvenmodule`);
+        
+        const res = await fetch(`${baseUrl}/bedrijvenmodule`);
+        if (!res.ok) throw new Error("Kon bedrijven niet ophalen");
+        
+        const data = await res.json();
+        console.log("Bedrijven data:", data);
+        setBedrijven(data);
+      } catch (err) {
+        console.error("Fout bij ophalen bedrijven:", err);
+        setError("Er is een probleem opgetreden bij het ophalen van de bedrijven.");
       } finally {
         setLoading(false);
       }
-    };
+    }
 
-    fetchBedrijven();
+    haalBedrijvenOp();
   }, []);
 
-  const handleShowDetails = (bedrijf) => {
-    setSelectedBedrijf(bedrijf);
-  };
-
-  const filteredBedrijven = filter 
-    ? bedrijven.filter(bedrijf => bedrijf.sector === filter)
-    : bedrijven;
-
-  if (loading) return <div className="loading">Laden...</div>;
-
   return (
-    <div className="bedrijven-container">
-      <div className="filter-section">
-        <select 
-          value={filter} 
-          onChange={(e) => setFilter(e.target.value)}
-          className="sector-filter"
-        >
-          <option value="">Alle sectoren</option>
-          {sectors.map(sector => (
-            <option key={sector} value={sector}>{sector}</option>
+    <div className="page-container bedrijven-module">
+      <h2 className="module-title">Deelnemende Bedrijven</h2>
+      <p className="module-subtext">
+        Hier vind je een overzicht van alle bedrijven die deelnemen aan het event.
+      </p>
+
+      {error && (
+        <div className="error-message" style={{ color: 'red', marginBottom: '1rem' }}>
+          {error}
+        </div>
+      )}
+
+      {loading ? (
+        <p>Bedrijven laden...</p>
+      ) : (
+        <div className="bedrijven-grid">
+          {bedrijven.map((bedrijf) => (
+            <div key={bedrijf.bedrijf_id} className="bedrijf-kaart">
+              <div className="bedrijf-logo">
+                {bedrijf.logo_url ? (
+                  <img src={bedrijf.logo_url} alt={`${bedrijf.naam} logo`} />
+                ) : (
+                  <div className="placeholder-logo">{bedrijf.naam.charAt(0)}</div>
+                )}
+              </div>
+              <h3 className="bedrijf-naam">{bedrijf.naam}</h3>
+              <p className="bedrijf-beschrijving">{bedrijf.beschrijving || "Geen beschrijving beschikbaar"}</p>
+              {bedrijf.website && (
+                <a 
+                  href={bedrijf.website.startsWith('http') ? bedrijf.website : `https://${bedrijf.website}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bedrijf-link"
+                >
+                  Bezoek website
+                </a>
+              )}
+            </div>
           ))}
-        </select>
-      </div>
-
-      <div className="bedrijven-list">
-        {filteredBedrijven.map((bedrijf) => (
-          <div key={bedrijf.id} className="bedrijf-item">
-            <div className="bedrijf-preview">
-              <div className="bedrijf-header">
-                <div className="bedrijf-info">
-                  <h3>{bedrijf.naam}</h3>
-                  <span className="sector">{bedrijf.sector}</span>
-                </div>
-              </div>
-              <div className="bedrijf-preview-info">
-                <p><strong>Locatie:</strong> {bedrijf.locatie}</p>
-                <p><strong>Aantal vacatures:</strong> {bedrijf.vacatures?.length || 0}</p>
-              </div>
-              <button 
-                className="meer-info-btn"
-                onClick={() => handleShowDetails(bedrijf)}
-              >
-                Meer info
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {selectedBedrijf && (
-        <div className="bedrijf-detail-overlay">
-          <div className="bedrijf-detail-card">
-            <button className="close-btn" onClick={() => setSelectedBedrijf(null)}>&times;</button>
-            <h2>{selectedBedrijf.naam}</h2>
-            <div className="detail-content">
-              <div className="detail-section">
-                <h3>Over ons</h3>
-                <p>{selectedBedrijf.beschrijving}</p>
-              </div>
-              <div className="detail-section">
-                <h3>Contact</h3>
-                <p>Email: {selectedBedrijf.email}</p>
-                <p>Telefoon: {selectedBedrijf.telefoon}</p>
-                <p>Locatie: {selectedBedrijf.locatie}</p>
-              </div>
-              <div className="detail-section">
-                <h3>Vacatures</h3>
-                <ul>
-                  {selectedBedrijf.vacatures?.map((vacature, index) => (
-                    <li key={index}>{vacature}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
         </div>
       )}
     </div>
