@@ -19,6 +19,7 @@ const profielRouter = require('./routes/profiel');
 const adminRouter = require('./routes/admin');
 const afsprakenRouter = require('./routes/afspraken')
 const codeertaalRouter = require('./routes/codeertalen');
+const usersRouter = require('./routes/users');
 
 const app = express();
 const server = http.createServer(app);
@@ -124,6 +125,7 @@ apiRouter.use('/profiel', profielRouter);
 apiRouter.use('/admin', adminRouter);
 apiRouter.use('/afspraken', afsprakenRouter)
 apiRouter.use('/codeertaal', codeertaalRouter);
+apiRouter.use('/users', usersRouter);
 
 app.use('/api', apiRouter);
 
