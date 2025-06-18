@@ -104,7 +104,7 @@
   padding: 2rem 1.5rem;
   background-color: #e0e8ea;
   border-radius: 8px;
-  box-shadow: 0 6px 24px rgba(0, 169, 181, 0.06);
+  box-shadow: 0 8px 32px rgba(0, 169, 181, 0.08);
   max-width: 900px;
 }
 
@@ -144,8 +144,8 @@
 
 .contact-container .contact-form label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
+  margin-bottom: 0.7rem;
+  font-weight: 700;
   color: #2c3e50;
 }
 
