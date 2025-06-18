@@ -6,7 +6,6 @@ import {
   FaCog,
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import './Sidebar/Sidebar.css';
 
 export const Sidebar = ({ showMobileMenu, setShowMobileMenu }) => {
   const navigate = useNavigate();
@@ -50,7 +49,8 @@ export const Sidebar = ({ showMobileMenu, setShowMobileMenu }) => {
               setShowMobileMenu(false);
             }}
           >
-            <span className="icon">{item.icon}</span>
+          <span className={`icon ${item.color}`}>{item.icon}</span>
+
             <span>{item.title}</span>
           </li>
         ))}

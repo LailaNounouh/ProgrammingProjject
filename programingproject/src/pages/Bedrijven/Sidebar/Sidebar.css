@@ -45,3 +45,26 @@
   justify-content: center;
   color: var(--white);
 }
+.icon.blue { background-color: var(--primary-blue); }
+.icon.green { background-color: var(--green); }
+.icon.orange { background-color: var(--orange); }
+.icon.purple { background-color: var(--purple); }
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 80vw;
+    max-width: 320px;
+    height: calc(100vh - 60px);
+    z-index: 100;
+    background: var(--white);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+}
