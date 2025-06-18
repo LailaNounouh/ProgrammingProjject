@@ -1,9 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from 'react-icons/fi';
+import LogoUploadForm from "../../components/forms/LogoUploadform";
+import { useAuth } from "../../context/AuthProvider"; // voor bedrijfId
 import "./Settingsbedrijf.css";
 
 const Settingsbedrijf = () => {
+  const { user } = useAuth(); // haalt ingelogde bedrijf-ID op
   const navigate = useNavigate();
   
   // Mockdata : bedrijfsgegevens
@@ -237,6 +240,10 @@ const Settingsbedrijf = () => {
             </section>
           </div>
 
+          <div className="form-sectie">
+            <h2 className="sectie-titel">Logo uploaden</h2>
+            <LogoUploadForm bedrijfId={user?.id} />
+          </div>
           <button type="submit" className="opslaan-knop">Wijzigingen opslaan</button>
         </form>
       </div>

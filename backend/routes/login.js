@@ -8,27 +8,32 @@ router.post('/', async (req, res) => {
   console.log('Login poging details:', { email, type });
 
   try {
-    let tableName;
+    let tableName, idColumn;
     switch (type) {
       case 'student':
         tableName = 'Studenten';
+        idColumn = 'student_id';
         break;
       case 'bedrijf':
         tableName = 'Bedrijven';
+        idColumn = 'bedrijf_id';
         break;
       case 'admin':
         tableName = 'Admins';
+        idColumn = 'admin_id';
+
         break;
       case 'werkzoekende':
         tableName = 'Werkzoekenden';
+        idColumn = 'werkzoekende';
         break;
       default:
         return res.status(400).json({ error: 'Ongeldig account type' });
     }
 
     const query = `
-      SELECT 
-        id,
+      SELECT
+      ${idColumn} AS id,
         email,
         wachtwoord,
         naam

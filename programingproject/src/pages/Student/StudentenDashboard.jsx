@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthProvider';
 import './StudentenDashboard.css';
-import Afspraken from '../Modules/AfsprakenModule.jsx'; 
 
 const StudentDashboard = () => {
   const { gebruiker } = useAuth();
@@ -25,13 +24,17 @@ const StudentDashboard = () => {
 
     // Haal afspraken op alleen als gebruiker bestaat
     const fetchAfspraken = async () => {
-      if (!gebruiker?.id) return; // Stop als er geen gebruiker is
+      if (!gebruiker?.id) return; 
 
       try {
-        const response = await fetch(`http://10.2.160.211:3000/api/afspraken/${gebruiker.id}`);
+        const response = await fetch(`http://10.2.160.211:3000/api/afspraken/student/${gebruiker.id}`);
+        
         if (response.ok) {
           const data = await response.json();
+          console.log('Opgehaalde afspraken:', data); 
           setAfspraken(data);
+        } else {
+          console.error('Fout bij ophalen afspraken:', await response.text());
         }
       } catch (error) {
         console.error('Fout bij ophalen afspraken:', error);
@@ -76,7 +79,7 @@ const StudentDashboard = () => {
           <div className="dashboard-card">
             <div className="card-header">
               <h2>Komende Afspraken</h2>
-              <Link to="/student/Afspraken" className="view-all">
+              <Link to="/student/afspraken" className="view-all">
                 Bekijk alles →
               </Link>
             </div>
@@ -95,7 +98,7 @@ const StudentDashboard = () => {
               ) : (
                 <p className="geen-afspraken">
                   Je hebt nog geen afspraken gepland.
-                  <Link to="/student/Afspraak" className="maak-afspraak">
+                  <Link to="/student/afsprakenmodule" className="maak-afspraak">
                     Plan een afspraak
                   </Link>
                 </p>

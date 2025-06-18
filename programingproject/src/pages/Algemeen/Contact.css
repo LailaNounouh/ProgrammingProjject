@@ -20,13 +20,13 @@
   font-weight: 700;
 }
 
-.contact-intro {
+.contact-container .contact-intro {
   font-size: 1.2rem; 
   font-weight: 500; 
   margin-bottom: 0.8rem; 
 }
 
-.contact-form-section h2 {
+.contact-container .contact-form-section h2 {
   color: #2c3e50;
   font-size: 2rem;
   margin-bottom: 1.5rem;
@@ -34,26 +34,26 @@
 }
 
 /* Contact info */
-.contact-info {
+.contact-container .contact-info {
   padding: 1.5rem 0;
 }
 
-.contact-info p {
+.contact-container .contact-info p {
   margin: 0.8rem 0;
   line-height: 1.6;
   color: #555;
 } 
 
-.contact-details {
+.contact-container .contact-details {
   margin: 1.5rem 0;
 }
 
-.contact-details p {
+.contact-container .contact-details p {
   margin: 0.8rem 0;
   padding: 0.5rem 0;
 }
 
-.contact-details strong {
+.contact-container .contact-details strong {
   color: #2c3e50;
   font-weight: 600;
   min-width: 90px;
@@ -61,30 +61,30 @@
 }
 
 /* Lijn */
-.divider {
+.contact-container .divider {
   height: 1px;
   background-color: #e0e0e0;
   margin: 2rem 0;
 }
 
 /* Layout contactgegevens + google maps */
-.contact-details-container {
+.contact-container .contact-details-container {
   display: flex;
   gap: 2rem;
   align-items: flex-start;
   margin: 1.5rem 0;
 }
 
-.contact-text {
+.contact-container .contact-text {
   flex: 1;
 }
 
-.address-section {
+.contact-container .address-section {
   margin-top: 1rem;
 }
 
 /* Google maps */
-.google-maps {
+.contact-container .google-maps {
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #e0e0e0;
@@ -92,33 +92,34 @@
   flex: 1;
 }
 
-.google-maps iframe {
+.contact-container .google-maps iframe {
   width: 100%;
   height: 400px;
   border: 0;
 }
 
 /* Contactformulier */
-.contact-form-section {
+.contact-container .contact-form-section {
   margin: 2.5rem auto;
-  padding: 1rem;
+  padding: 2rem 1.5rem;
   background-color: #e0e8ea;
   border-radius: 8px;
-  box-shadow: 0 6px 24px rgba(0, 169, 181, 0.06);
+  box-shadow: 0 8px 32px rgba(0, 169, 181, 0.08);
   max-width: 900px;
 }
 
-.contact-form-group {
+.contact-container .contact-form-group {
   display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
+  flex-direction: row;
+  gap: 1rem;
   align-items: flex-start;
-  margin-bottom: 0.8rem;
-  max-width: 320px;
+  margin-bottom: 1rem;
+  max-width: 900px;
   border-radius: 8px; 
+  width: 100%;
 }
 
-.small-input {
+.contact-container .small-input {
   max-width: 300px;  
   width: 100%;
   background: #f9fbfc;
@@ -130,21 +131,26 @@
   box-shadow: 0 2px 8px rgba(0, 169, 181, 0.04);
 }
 
-.form-group-wide {
+.contact-container .form-group-wide {
   width: 800px;         /* Breder voor bericht */
   max-width: 98%;
   gap: 0.8rem;
+  background: #f9fbfc;
+  border-radius: 10px;
+  padding: 1.2rem 1rem;
+  box-shadow: 0 2px 12px rgba(0, 169, 181, 0.07);
+  margin-bottom: 1.2rem;
 }
 
-.contact-form label {
+.contact-container .contact-form label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
+  margin-bottom: 0.7rem;
+  font-weight: 700;
   color: #2c3e50;
 }
 
-.contact-form input,
-.contact-form textarea {
+.contact-container .contact-form input,
+.contact-container .contact-form textarea {
   width: 100%;
   padding: 1rem 1.2rem;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -156,45 +162,47 @@
  
 }
 
-.contact-form input::placeholder,
-.contact-form textarea::placeholder {
+.contact-container .contact-form input::placeholder,
+.contact-container .contact-form textarea::placeholder {
   color: #b0b8be;
   opacity: 1;
 }
 
-.contact-form input:focus,
-.contact-form textarea:focus {
+.contact-container .contact-form input:focus,
+.contact-container .contact-form textarea:focus {
   border-color: #00a9b5;
   outline: none;
   box-shadow: 0 0 0 3px rgba(0, 169, 181, 0.15);
 }
 
 /* Knop "verzenden" */
-button[type="submit"] {
+.contact-container .contact-form button[type="submit"] {
   background-color: #D64045;
   color: white;
   border: none;
   padding: 1rem 2rem;
   font-size: 1rem;
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
   font-weight: 600;
   margin-top: 1rem;
   width: auto;
   margin-left: auto; 
   display: block;
+  box-shadow: 0 4px 18px rgba(214, 64, 69, 0.10);
 }
 
-button[type="submit"]:hover {
+.contact-container .contact-form button[type="submit"]:hover {
   background-color: #BF393E;
-  transform: translateY(-2px);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 24px rgba(214, 64, 69, 0.16);
 }
 
-@media (max-width: 700px) {
-  .form-group {
-    width: 98vw;
-    padding: 0.7rem;
+@media (max-width: 900px) {
+  .contact-container .contact-form-group {
+    flex-direction: column;
+    gap: 0.8rem;
+    max-width: 100%;
   }
 }

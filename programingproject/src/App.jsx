@@ -19,6 +19,7 @@ import Contact from "./pages/Algemeen/Contact";
  
 import StudentDashboard from "./pages/Student/StudentenDashboard";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminBedrijf from "./pages/Admin/AdminBedrijf";
 import SeekerDashboard from "./pages/Seeker/SeekerDashboard";
 import BedrijvenDashboard from "./pages/Bedrijven/BedrijvenDashboard";
 import StatusBetaling from './pages/Bedrijven/statusbetaling';
@@ -55,10 +56,11 @@ export default function App() {
           <Route path="/student/bedrijven" element={<StudentenLayout><BedrijvenModule /></StudentenLayout>} />
           <Route path="/student/instellingen" element={<StudentenLayout><ProfileProvider><ProfielSettingsModule /></ProfileProvider></StudentenLayout>} />
           <Route path="/student/profiel" element={<StudentenLayout><ProfileProvider><ProfielModule /></ProfileProvider></StudentenLayout>} />
-          <Route path="/student/afspraak" element={<StudentenLayout><AfsprakenModule /></StudentenLayout>} />
+          <Route path="/student/afspraken" element={<StudentenLayout><AfsprakenModule /></StudentenLayout>} />
           <Route path="/student/standen" element={<StudentenLayout><StandenModule /></StudentenLayout>} />
           {/* Admin */}
           <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+          <Route path="/admin/Bedrijf" element={<AdminLayout><AdminBedrijf /></AdminLayout>} />
  
           {/* Bedrijven */}
           <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
@@ -69,77 +71,3 @@ export default function App() {
       </AuthProvider>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

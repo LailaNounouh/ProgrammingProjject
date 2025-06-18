@@ -1,0 +1,149 @@
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #4fb5b7;
+  padding: 12px 24px;
+  height: 60px;
+  color: white;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+}
+
+.admin-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.admin-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.notification-icon {
+  position: relative;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.notification-icon .badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: red;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+.profile-circle {
+  background: #6366f1;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logout-button {
+  background-color: white;
+  color: #333;
+  font-weight: bold;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: #f0f0f0;
+}.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #4fb5b7;
+  padding: 12px 24px;
+  height: 60px;
+  color: white;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+}
+
+.admin-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.admin-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.notification-icon {
+  position: relative;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.notification-icon .badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: red;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+.profile-circle {
+  background: #6366f1;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logout-button {
+  background-color: white;
+  color: #333;
+  font-weight: bold;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: #f0f0f0;
+}

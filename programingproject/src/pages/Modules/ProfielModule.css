@@ -105,6 +105,22 @@
   font-weight: 600;
 }
 
+.info-item input,
+.info-item textarea {
+  font-size: 1rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+}
+
+.info-item input:focus,
+.info-item textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -146,6 +162,28 @@
   max-width: 400px;
 }
 
+.opslaan-knop {
+  display: block;
+  margin: 1.5rem auto 0;
+  padding: 0.75rem 2rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.opslaan-knop:hover {
+  background-color: #0056b3;
+}
+
+.opslaan-knop.success {
+  background-color: #28a745;
+}
+
 a {
   color: #007bff;
   text-decoration: none;
@@ -175,4 +213,30 @@ a:hover {
     padding: 4px 10px;
     font-size: 0.85rem;
   }
+}
+
+/* Voor overzicht-modus (niet-bewerkbaar) */
+.info-item p {
+  margin: 0;
+  font-size: 1rem;
+  color: #343a40;
+  background-color: #fff;
+  padding: 0.6rem 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.info-item label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #495057;
+  margin-bottom: 0.2rem;
+}
+
+
+.profiel-sectie:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }

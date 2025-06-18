@@ -1,99 +1,110 @@
+/* Buiten container */
 .login-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f9fafa 0%, #dee3ec 100%);
+  background: #e0e8ea;
   padding: 1rem;
 }
 
-.login-card {
+/* Witte kader met formulier */
+.login-container .login-card {
   background: white;
   padding: 2.5rem;
-  border-radius: 16px;
-  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
   width: 100%;
   max-width: 400px;
 }
 
-.login-card h2 {
+/* Titel */
+.login-container .login-card h2 {
   text-align: center;
   margin-bottom: 2rem;
   font-size: 2rem;
   font-weight: 700;
-  color: #2d3748;
+  color: #2c3e50;
 }
 
-.login-form {
+/* Formulier */
+.login-container .login-form {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
 }
 
-.form-group {
+.login-container .form-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.form-group label {
+.login-container .form-group label {
   font-size: 0.95rem;
   font-weight: 500;
   color: #4a5568;
 }
 
-.form-group input,
-.form-group select {
+/* Input velden en select dropdown */
+.login-container .form-group input,
+.login-container .form-group select {
   padding: 0.8rem;
-  border: 2px solid #e2e8f0;
+  border: 1.5px solid #c0d3dd;
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.2s ease;
+  background: #f9fbfc;
+  box-shadow: 0 2px 8px rgba(0, 169, 181, 0.04);
 }
 
-.form-group input:focus,
-.form-group select:focus {
-  border-color: #4299e1;
+.login-container .form-group input:focus,
+.login-container .form-group select:focus {
+  border-color:  #00a9b5;
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
   outline: none;
 }
 
-.login-button {
+/* Knop login */
+.login-container .login-button {
   margin-top: 0.5rem;
   padding: 1rem;
-  background: #4299e1;
+  background: #D64045;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
-.login-button:hover {
-  background: #3182ce;
+.login-container .login-button:hover {
+  background: #BF393E;
+  transform: translateY(-2px);
 }
 
-.register-link {
+/* Registratie link */
+.login-container .register-link {
   text-align: center;
   margin-top: 1rem;
   font-size: 0.95rem;
   color: #4a5568;
 }
 
-.register-link a {
-  color: #4299e1;
+.login-container .register-link a {
+  color:  #00a9b5;
   text-decoration: none;
   font-weight: 500;
   margin-left: 0.3rem;
 }
 
-.register-link a:hover {
+.login-container .register-link a:hover {
   text-decoration: underline;
 }
 
-.error-message {
+/* Foutmelding */
+.login-container .error-message {
   background: #fed7d7;
   color: #c53030;
   padding: 0.8rem;
