@@ -1,10 +1,7 @@
 const express = require('express');
 const router = express.Router();
-<<<<<<< Updated upstream
-const db = require('../db'); // jouw database module, bv met query functies
-=======
 const db = require('../db'); // jouw database module
->>>>>>> Stashed changes
+
 
 router.get('/', async (req, res) => {
   try {
