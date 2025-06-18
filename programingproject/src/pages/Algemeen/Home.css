@@ -292,3 +292,27 @@
   color: white; 
 }
 
+/* Responsive */
+@media (max-width: 900px) {
+  .home {
+    padding: 10px;
+  }
+  .home .info-box {
+    max-width: 95%;
+    margin: -40px auto 35px auto;
+    padding: 30px 15px;
+  }
+  .home .banner-image {
+    max-width: 100%;
+    border-radius: 6px;
+  }
+  .home .description,
+  .home .cta-box,
+  .home .faq-section {
+    padding: 15px;
+  }
+  .home .form-section {
+    padding: 25px 10px;
+  }
+}
+
