@@ -7,6 +7,7 @@ const multer = require('multer');
 const http = require('http');
 const socketIo = require('socket.io');
 
+
 // Routers
 const homeRouter = require('./routes/home');
 const registerRouter = require('./routes/register');
@@ -86,7 +87,6 @@ app.post('/api/studentenaccount', upload.single('profilePicture'), async (req, r
     res.status(500).json({ error: 'Er ging iets mis bij het opslaan van het profiel.' });
   }
 });
-
 // Set up Socket.IO connection
 io.on('connection', (socket) => {
   console.log('New client connected');
