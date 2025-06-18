@@ -22,7 +22,6 @@ body {
   color: #333;
 }
 
-/* Dashboard Container */
 .dashboard-container {
   display: flex;
   flex-direction: column;
@@ -30,16 +29,19 @@ body {
   background-color: var(--gray-100);
 }
 
-/* Header */
 .dashboard-header {
+  width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 1rem 2rem;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 10;
+  height: 80px;
+   margin-left: 250px;
 }
 
 .menu-toggle {
@@ -52,7 +54,9 @@ body {
 }
 
 .header-content {
-  flex: 1;
+    flex: 1;
+  text-align: left;
+  margin-left: 1rem;
 }
 
 .header-content h1 {
@@ -97,24 +101,23 @@ body {
   cursor: pointer;
 }
 
-/* Main Content */
 .dashboard-main {
   display: flex;
   flex: 1;
-  padding: 1.5rem;
-  gap: 1.5rem;
+  min-height: calc(100vh - 80px); /* hoogte zonder header */
 }
 
-/* Sidebar */
+
 .sidebar {
   width: 250px;
   background-color: white;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  height: fit-content;
-  position: sticky;
-  top: 5rem;
+  border-right: 1px solid var(--gray-200);
+  padding: 1.5rem 1rem;
+  height: 100%;
+  position: fixed;
+  top: 80px; /* onder header */
+  left: 0;
+  overflow-y: auto;
 }
 
 .sidebar h3 {
@@ -156,11 +159,13 @@ body {
 .icon.orange { background-color: var(--orange); }
 .icon.purple { background-color: var(--purple); }
 
-/* Dashboard Cards */
+
 .dashboard-cards {
+  margin-left: 250px;
   flex: 1;
+  padding: 2rem;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
 }
 
@@ -225,6 +230,16 @@ body {
   }
 }
 
+@media (min-width: 769px) {
+  .dashboard-header {
+    margin-left: 250px;
+  }
+
+  .dashboard-main {
+    margin-left: 250px;
+  }
+}
+
 @media (max-width: 768px) {
   .dashboard-header {
     flex-wrap: wrap;
@@ -246,22 +261,25 @@ body {
     margin-left: auto;
   }
 
-  .dashboard-main {
-    flex-direction: column;
-    padding: 1rem;
-  }
-
   .sidebar {
-    position: static;
-    width: 100%;
-    margin-bottom: 1.5rem;
-    display: none;
+    position: fixed;
+    top: 80px;
+    left: -250px;
+    transition: left 0.3s ease;
+    height: calc(100vh - 80px);
+    z-index: 100;
   }
 
   .sidebar.active {
-    display: block;
+    left: 0;
+  }
+
+  .dashboard-cards {
+    margin-left: 0;
+    padding: 1rem;
   }
 }
+
 
 @media (max-width: 480px) {
   .search-box input {
