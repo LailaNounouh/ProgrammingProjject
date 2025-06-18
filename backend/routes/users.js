@@ -1,15 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db'); // jouw database module
-
+const db = require('../db'); // je mysql2 pool
 
 router.get('/', async (req, res) => {
   try {
-    const studentenResult = await db.query('SELECT student_id AS id, naam, email, \'student\' AS rol FROM Studenten');
-    const werkzoekendenResult = await db.query('SELECT werkzoekende_id AS id, naam, email, \'werkzoekende\' AS rol FROM Werkzoekenden');
 
-    // Combineer rows
-    const users = [...studentenResult.rows, ...werkzoekendenResult.rows];
+    const [studenten] = await db.query('SELECT student_id AS id, naam, email, "student" AS rol FROM Studenten');
+    const [werkzoekenden] = await db.query('SELECT werkzoekende_id AS id, naam, email, "werkzoekende" AS rol FROM Werkzoekenden');
+
+    const users = [...studenten, ...werkzoekenden];
 
     res.json(users);
   } catch (err) {
