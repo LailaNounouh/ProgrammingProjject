@@ -69,7 +69,7 @@ function AdminDashboard() {
 
           <div
             className="dashboard-card"
-            onClick={() => navigate("/statistieken")}
+            onClick={() => navigate("/admin/statistiek")}
           >
             <div className="icon-container">
               <div className="icon-wrapper icon-geel">📊</div>
@@ -82,6 +82,22 @@ function AdminDashboard() {
               <span className="card-arrow">→</span>
             </div>
           </div>
+
+          <div className="dashboard-card" onClick={() => navigate("/admin/sectoren")}>
+            <div className="icon-container">
+              <div className="icon-wrapper icon-groen">🏷️</div>
+              <h3>Beheer van sectoren</h3>
+            </div>
+            <hr className="card-divider" />
+            <p className="card-description">Beheer zichtbaarheid en lijst van sectoren</p>
+            <div className="card-footer">
+              <span className="card-link">Ga naar sectorenbeheer</span>
+              <span className="card-arrow">→</span>
+            </div>
+          </div>
+
+
+
         </div>
       </div>
     </div>
