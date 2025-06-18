@@ -68,9 +68,9 @@ export default function Afspraken() {
     async function fetchBedrijven() {
       try {
         setLoading(true);
-        console.log(`Fetching companies from: ${baseUrl}/api/bedrijvenmodule`);
+        console.log(`Fetching companies from: ${baseUrl}/bedrijvenmodule`);
         
-        const res = await fetch(`${baseUrl}/api/bedrijvenmodule`);
+        const res = await fetch(`${baseUrl}/bedrijvenmodule`);
         if (!res.ok) throw new Error("Kon bedrijven niet ophalen");
         
         const data = await res.json();
