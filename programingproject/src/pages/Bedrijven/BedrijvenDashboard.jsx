@@ -27,6 +27,7 @@ function BedrijvenDashboard() {
     }
   }, []);
 
+  // Dashboard menu items
   const dashboardItems = [
     {
       title: 'Staat van betaling',
@@ -63,8 +64,8 @@ function BedrijvenDashboard() {
   ];
 
   return (
-    <div className="dashboard-container">
-      {/* Top Navigation Bar */}
+    <>
+      {/* --- TOP NAVIGATION BAR --- */}
       <div className="top-nav-bar">
         <div className="nav-left">
           <button
@@ -92,66 +93,70 @@ function BedrijvenDashboard() {
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="main-content-wrapper">
-        {/* Sidebar */}
-        <aside className={`sidebar ${showMobileMenu ? 'active' : ''}`}>
-          <h3>Snelmenu</h3>
-          <ul>
-            {dashboardItems.map((item, index) => (
-              <li
-                key={index}
-                onClick={() => {
-                  item.onClick();
-                  setShowMobileMenu(false);
-                }}
-              >
-                <span className={`icon ${item.color}`}>{item.icon}</span>
-                <span>{item.title}</span>
-              </li>
-            ))}
-          </ul>
-        </aside>
+      {/* --- MAIN DASHBOARD CONTAINER --- */}
+      <div className="dashboard-container">
+        {/* --- WRAPPER VOOR SIDEBAR EN HOOFDINHOUD --- */}
+        <div className="main-content-wrapper">
+          {/* --- SIDEBAR (SNELMENU) --- */}
+          <aside className={`sidebar ${showMobileMenu ? 'active' : ''}`}>
+            <h3>Snelmenu</h3>
+            <ul>
+              {dashboardItems.map((item, index) => (
+                <li
+                  key={index}
+                  onClick={() => {
+                    item.onClick();
+                    setShowMobileMenu(false);
+                  }}
+                >
+                  <span className={`icon ${item.color}`}>{item.icon}</span>
+                  <span>{item.title}</span>
+                </li>
+              ))}
+            </ul>
+          </aside>
 
-        {/* Main Content */}
-        <div className="main-content-area">
-          {/* Welcome Banner */}
-          <div className="welcome-banner">
-            <div className="welcome-content">
-              <h1>Welkom terug, {bedrijfNaam}!</h1>
-              <p>Hier vindt u een overzicht van uw activiteiten en status</p>
+          {/* --- HOOFDINHOUD (MAIN CONTENT) --- */}
+          <div className="main-content-area">
+            <div className="welcome-banner">
+              <div className="welcome-content">
+                <h1>Welkom terug, {bedrijfNaam}!</h1>
+                <p>Hier vindt u een overzicht van uw activiteiten en status</p>
+              </div>
             </div>
-          </div>
-
-          {/* Dashboard Cards */}
-          <div className="dashboard-cards-container">
-            {dashboardItems.map((item, index) => (
-              <div key={index} className="dashboard-card" onClick={item.onClick}>
-                <div className={`card-header ${item.color}`}>
-                  {item.icon}
-                  <h3>{item.title}</h3>
-                </div>
-                <div className="card-body">
-                  <p>{item.description}</p>
-                  <div className="card-action">
-                    <span>{item.action}</span>
-                    <FaChevronRight />
+            <div className="dashboard-cards-container">
+              {dashboardItems.map((item, index) => (
+                <div
+                  key={index}
+                  className="dashboard-card"
+                  onClick={item.onClick}
+                >
+                  <div className={`card-header ${item.color}`}>
+                    {item.icon}
+                    <h3>{item.title}</h3>
+                  </div>
+                  <div className="card-body">
+                    <p>{item.description}</p>
+                    <div className="card-action">
+                      <span>{item.action}</span>
+                      <FaChevronRight />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Mobile Menu Overlay */}
-      {showMobileMenu && (
-        <div
-          className="mobile-menu-overlay"
-          onClick={() => setShowMobileMenu(false)}
-        ></div>
-      )}
-    </div>
+        {/* --- OVERLAY VOOR MOBIEL MENU --- */}
+        {showMobileMenu && (
+          <div
+            className="mobile-menu-overlay"
+            onClick={() => setShowMobileMenu(false)}
+          ></div>
+        )}
+      </div>
+    </>
   );
 }
 
