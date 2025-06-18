@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./db'); // jouw database module, bv met query functies
+const db = require('../db'); // jouw database module, bv met query functies
 
 // Route om alle gebruikers (studenten + werkzoekenden) op te halen
 router.get('/users', async (req, res) => {
