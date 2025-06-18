@@ -60,7 +60,8 @@ export const AuthProvider = ({ children }) => {
 
   const uitloggen = () => {
     console.log('Logging out user');
-    localStorage.removeItem('user');
+    localStorage.removeItem('user')
+    localStorage.removeItem('userprofile');
     setGebruiker(null);
     navigate('/login');
   };
