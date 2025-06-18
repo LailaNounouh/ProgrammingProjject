@@ -200,15 +200,30 @@
 }
 
 /* Responsive */
-@media (max-width: 600px) {
+@media (max-width: 800px) {
   .registratie-container {
-    padding: 1rem;
-    border-radius: 8px;
+    max-width: 98vw;
+    padding: 1.5rem 0.5rem;
+    border-radius: 10px;
   }
+
   .registratie-container form {
     padding: 1rem 0.5rem;
+    border-radius: 10px;
   }
+
   .registratie-container h2 {
     font-size: 1.3rem;
+  }
+
+  .registratie-container .keuze-buttons {
+    flex-direction: column;
+    max-width: 100%;
+    gap: 0.7rem;
+  }
+
+   .registratie-container form .form-group {
+    padding: 1rem 0.5rem;
+    border-radius: 8px;
   }
 }
