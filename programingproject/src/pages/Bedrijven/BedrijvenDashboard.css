@@ -50,8 +50,7 @@ body {
   top: 0;
   z-index: 50;
   height: 60px;
-   border-bottom-left-radius: 1rem;
-  border-bottom-right-radius: 1rem;
+  border-radius: 0.75rem;
 }
 
 .nav-left {
@@ -133,10 +132,9 @@ body {
   padding: 1.5rem 1rem; /* Alleen binnenruimte, geen buitenruimte */
   position: relative;
   height: auto;
-   border-top-right-radius: 1rem;
-  border-bottom-right-radius: 1rem;
   box-shadow: var(--shadow-md);
   margin-top: 1rem;
+  border-radius: 0.75rem;
   
 }
 
