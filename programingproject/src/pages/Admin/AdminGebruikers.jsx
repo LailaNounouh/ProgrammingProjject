@@ -9,14 +9,12 @@ function AdminGebruikers() {
   const [gebruikers, setGebruikers] = useState([]);
 
   useEffect(() => {
-    // Haal alle gebruikers op via één endpoint /users
     fetch(`${baseUrl}/users`)
       .then(res => {
         if (!res.ok) throw new Error('Fout bij ophalen gebruikers');
         return res.json();
       })
       .then(data => {
-        // data is een array met gebruikers met id en rol
         setGebruikers(data);
       })
       .catch(err => {
@@ -40,6 +38,8 @@ function AdminGebruikers() {
             <thead>
               <tr>
                 <th>ID</th>
+                <th>Naam</th>       {/* toegevoegd */}
+                <th>Email</th>      {/* toegevoegd */}
                 <th>Rol</th>
               </tr>
             </thead>
@@ -47,6 +47,8 @@ function AdminGebruikers() {
               {gebruikers.map((user, index) => (
                 <tr key={index}>
                   <td>{user.id}</td>
+                  <td>{user.naam}</td>
+                  <td>{user.email}</td>
                   <td>{user.rol}</td>
                 </tr>
               ))}
