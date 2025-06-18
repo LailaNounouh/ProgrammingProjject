@@ -93,9 +93,9 @@ export default function Afspraken() {
       
       try {
         setLoading(true);
-        console.log(`Fetching time slots from: ${baseUrl}/api/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
+        console.log(`Fetching time slots from: ${baseUrl}/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
         
-        const res = await fetch(`${baseUrl}/api/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
+        const res = await fetch(`${baseUrl}/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
         if (!res.ok) {
           console.error(`Server responded with status: ${res.status}`);
           throw new Error("Kon tijdsloten niet ophalen");
