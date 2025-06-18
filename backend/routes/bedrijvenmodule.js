@@ -4,7 +4,7 @@ const db = require('../db');
 
 router.get('/', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM Bedrijven');
+    const [rows] = await db.query('SELECT * FROM Bedrijven WHERE bedrijf_id >= 2');
     res.json(rows);
   } catch (error) {
     console.error('Database error:', error);
