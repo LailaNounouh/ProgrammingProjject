@@ -34,3 +34,23 @@
 .bewerken-button:hover {
   background-color: #256a8a;
 }
+
+.terug-knop-container {
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+}
+
+.terug-button {
+  background-color: #4ba3af;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.terug-button:hover {
+  background-color: #256a8a;
+}
