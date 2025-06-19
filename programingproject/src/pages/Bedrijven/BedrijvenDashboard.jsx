@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
+  FaHome,
   FaEuroSign,
   FaCalendarAlt,
   FaMapMarkerAlt,
@@ -29,6 +30,14 @@ function BedrijvenDashboard() {
 
   // Dashboard menu items
   const dashboardItems = [
+    {
+      title: 'Dashboard',
+      icon: <FaHome />,
+      description: 'Terug naar het hoofdmenu',
+      action: 'Direct naar dashboard',
+      onClick: () => navigate('/bedrijf/dashboard'),
+      color: 'primary-blue'
+    },
     {
       title: 'Staat van betaling',
       icon: <FaEuroSign />,
@@ -65,34 +74,6 @@ function BedrijvenDashboard() {
 
   return (
     <>
-      {/* --- TOP NAVIGATION BAR --- */}
-      <div className="top-nav-bar">
-        <div className="nav-left">
-          <button
-            className="menu-toggle"
-            onClick={() => setShowMobileMenu(!showMobileMenu)}
-            aria-label="Menu openen"
-          >
-            <FaBars />
-          </button>
-          <div className="logo">Dashboard</div>
-        </div>
-        <div className="nav-right">
-          <div className="search-box">
-            <FaSearch className="search-icon" />
-            <input
-              type="text"
-              placeholder="Zoeken..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div className="notification-icon" ref={notificationRef}>
-            <FaBell onClick={() => setShowNotifications(!showNotifications)} />
-          </div>
-        </div>
-      </div>
-
       {/* --- MAIN DASHBOARD CONTAINER --- */}
       <div className="dashboard-container">
         {/* --- WRAPPER VOOR SIDEBAR EN HOOFDINHOUD --- */}
@@ -114,6 +95,35 @@ function BedrijvenDashboard() {
                 </li>
               ))}
             </ul>
+
+            {/* Zoekbalk toegevoegd onder het menu */}
+            <div className="sidebar-search">
+              <FaSearch className="search-icon" />
+              <input
+                type="text"
+                placeholder="Zoeken..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            {/* Notificatiebel toegevoegd onder de zoekbalk */}
+            <div className="sidebar-notifications" ref={notificationRef}>
+              <div 
+                className="notification-bell"
+                onClick={() => setShowNotifications(!showNotifications)}
+              >
+                <FaBell />
+                <span>Meldingen</span>
+              </div>
+              {showNotifications && (
+                <div className="notifications-dropdown">
+                  <div className="notification-item">
+                    Geen nieuwe meldingen
+                  </div>
+                </div>
+              )}
+            </div>
           </aside>
 
           {/* --- HOOFDINHOUD (MAIN CONTENT) --- */}
