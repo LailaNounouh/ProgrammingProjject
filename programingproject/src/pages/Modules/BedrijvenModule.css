@@ -291,6 +291,24 @@
         font-style: italic;
     }
 
+/* Enhanced website link styling */
+.website-item {
+  margin-top: 1rem;
+}
+
+.website-link {
+  display: inline-block;
+  color: #3182ce;
+  text-decoration: none;
+  word-break: break-all;
+  transition: color 0.2s;
+}
+
+.website-link:hover {
+  color: #2c5282;
+  text-decoration: underline;
+}
+
 /* Responsive aanpassingen */
 @media (max-width: 768px) {
   .bedrijven-grid {

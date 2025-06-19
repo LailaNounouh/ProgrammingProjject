@@ -117,12 +117,13 @@ export default function Bedrijven() {
                     </div>
                   )}
                   {bedrijf.website && (
-                    <div className="bedrijf-details-item">
+                    <div className="bedrijf-details-item website-item">
                       <strong>Website:</strong> 
                       <a 
                         href={bedrijf.website.startsWith('http') ? bedrijf.website : `https://${bedrijf.website}`} 
                         target="_blank" 
                         rel="noopener noreferrer"
+                        className="website-link"
                       >
                         {bedrijf.website}
                       </a>

@@ -366,6 +366,12 @@ body {
   font-style: italic;
 }
 
+.afspraak-card .card-header h3 {
+  color: var(--text-primary); /* #1e293b, een donkere tint */
+  font-weight: 600;
+  margin: 0;
+}
+
 @media (max-width: 600px) {
   .filters {
     flex-direction: column;
