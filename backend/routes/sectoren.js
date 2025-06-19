@@ -27,7 +27,11 @@ router.post('/', async (req, res) => {
       [naam, zichtbaar ? 1 : 0]
     );
 
-    res.status(201).json({ sector_id: result.insertId, naam, zichtbaar });
+    res.status(201).json({
+      sector_id: result.insertId,
+      naam,
+      zichtbaar
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Fout bij toevoegen sector' });
@@ -39,7 +43,12 @@ router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    await db.query('DELETE FROM Sectoren WHERE sector_id = ?', [id]);
+    const [result] = await db.query('DELETE FROM Sectoren WHERE sector_id = ?', [id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Sector niet gevonden' });
+    }
+
     res.status(204).send();
   } catch (err) {
     console.error(err);
@@ -47,7 +56,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// Wijzig zichtbaar-status van een sector
+// Wijzig zichtbaar-status
 router.patch('/:id', async (req, res) => {
   const { id } = req.params;
   const { zichtbaar } = req.body;
@@ -57,7 +66,15 @@ router.patch('/:id', async (req, res) => {
   }
 
   try {
-    await db.query('UPDATE Sectoren SET zichtbaar = ? WHERE sector_id = ?', [zichtbaar ? 1 : 0, id]);
+    const [result] = await db.query(
+      'UPDATE Sectoren SET zichtbaar = ? WHERE sector_id = ?',
+      [zichtbaar ? 1 : 0, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Sector niet gevonden' });
+    }
+
     res.status(200).json({ sector_id: id, zichtbaar });
   } catch (err) {
     console.error(err);
