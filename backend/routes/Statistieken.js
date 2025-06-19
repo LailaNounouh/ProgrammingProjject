@@ -1,22 +1,23 @@
-router.get('/', async (req, res) => {
+const express = require("express");
+const router = express.Router();
+const pool = require("../db");
+router.get("/", async (req, res) => {
   try {
-    const [rows] = await db.query(`
-      SELECT
-        (SELECT COUNT(*) FROM Bedrijven) AS bedrijvenCount,
-        (SELECT COUNT(*) FROM Studenten) AS studentenCount,
-        (SELECT COUNT(*) FROM Werkzoekenden) AS werkzoekendenCount,
-        (SELECT COUNT(*) FROM Afspraken) AS afsprakenCount
-    `);
+    const [bedrijven] = await pool.query("SELECT COUNT(*) AS count FROM Bedrijven");
+    const [studenten] = await pool.query("SELECT COUNT(*) AS count FROM Studenten");
+    const [werkzoekenden] = await pool.query("SELECT COUNT(*) AS count FROM Werkzoekenden");
+    const [afspraken] = await pool.query("SELECT COUNT(*) AS count FROM Afspraken WHERE datum >= CURDATE()");
 
-    const counts = rows; // rows is al het resultaat, geen .rows property
     res.json({
-      bedrijven: parseInt(counts.bedrijvenCount, 10),
-      studenten: parseInt(counts.studentenCount, 10),
-      werkzoekenden: parseInt(counts.werkzoekendenCount, 10),
-      afspraken: parseInt(counts.afsprakenCount, 10),
+      bedrijven: bedrijven[0].count,
+      studenten: studenten[0].count,
+      werkzoekenden: werkzoekenden[0].count,
+      afspraken: afspraken[0].count,
     });
-  } catch (error) {
-    console.error('Fout bij ophalen statistieken:', error.stack || error);
-    res.status(500).json({ error: 'Kon statistieken niet ophalen' });
+  } catch (err) {
+    console.error("Fout bij ophalen statistieken:", err);
+    res.status(500).json({ error: "Interne serverfout" });
   }
 });
+
+module.exports = router;

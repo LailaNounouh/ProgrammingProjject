@@ -229,27 +229,32 @@
 }
 
 
-  @media (max-width: 500px) {
+@media (max-width: 500px) {
   .registratie-container {
     padding: 0.5rem 0.1rem;
     border-radius: 7px;
   }
+
   .registratie-container h2 {
     font-size: 1.3rem;
   }
+
   .registratie-container form {
     padding: 0.5rem 0.2rem;
     border-radius: 7px;
   }
+
   .registratie-container .keuze-buttons button {
     font-size: 0.95rem;
     padding: 0.7rem 1rem;
     border-radius: 7px;
   }
+
   .registratie-container form .form-group {
     padding: 0.7rem 0.2rem;
     border-radius: 7px;
   }
+
   .registratie-container form input,
   .registratie-container form select,
   .registratie-container form textarea.input-field {
@@ -257,6 +262,7 @@
     padding: 0.5rem;
     border-radius: 7px;
   }
+  
   .registratie-container form button[type="submit"] {
     padding: 0.7rem 2rem;
     font-size: 0.97rem;
