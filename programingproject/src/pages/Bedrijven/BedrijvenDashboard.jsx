@@ -76,6 +76,12 @@ function BedrijvenDashboard() {
     <>
       {/* --- MAIN DASHBOARD CONTAINER --- */}
       <div className="dashboard-container">
+        <button
+  className="menu-toggle"
+  onClick={() => setShowMobileMenu(true)}
+>
+  <FaBars />
+</button>
         {/* --- WRAPPER VOOR SIDEBAR EN HOOFDINHOUD --- */}
         <div className="main-content-wrapper">
           {/* --- SIDEBAR (SNELMENU) --- */}
