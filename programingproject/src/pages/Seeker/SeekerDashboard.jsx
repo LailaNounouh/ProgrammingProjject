@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthProvider';
-import './SeekerDashboard.css'; 
-
-
+import React, { useState, useEffect, useMemo } from 'react';
+import Plattegrond from '../../components/plattegrond/Plattegrond';
+import './SeekerDashboard.css';
+import { baseUrl } from '../../config';
+ 
 const SeekerDashboard = () => {
-  const { gebruiker } = useAuth();
   const [bedrijven, setBedrijven] = useState([]);
   const [filterSector, setFilterSector] = useState('all');
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
-
+ 
   useEffect(() => {
     const userData = localStorage.getItem('user');
     if (userData) {
@@ -21,23 +19,37 @@ const SeekerDashboard = () => {
       }
     }
   }, []);
-
+ 
   useEffect(() => {
-    const fetchBedrijven = async () => {
+    async function fetchBedrijven() {
       try {
-        const response = await fetch('http://10.2.160.211:3000/api/bedrijvenmodule');
-        if (response.ok) {
-          const data = await response.json();
-          setBedrijven(data.slice(0, 5)); // Toon enkel eerste 5 bedrijven
+        const response = await fetch(`${baseUrl}/bedrijvenmodule`);
+        if (!response.ok) {
+          throw new Error(`HTTP-fout! status: ${response.status}`);
         }
+        const data = await response.json();
+        setBedrijven(data);
+        setError(null);
       } catch (error) {
-        console.error('Fout bij ophalen bedrijven:', error);
+        console.error("Fout bij laden bedrijven:", error);
+        setError("Fout bij laden bedrijven, probeer later opnieuw.");
       }
-    };
-
+    }
     fetchBedrijven();
   }, []);
-
+ 
+  const alleSectoren = useMemo(() => {
+    const sectorSet = new Set();
+    bedrijven.forEach(b => {
+      if (b.sector_naam) sectorSet.add(b.sector_naam);
+    });
+    return Array.from(sectorSet).sort();
+  }, [bedrijven]);
+ 
+  const gefilterdeBedrijven = filterSector === 'all'
+    ? bedrijven
+    : bedrijven.filter(b => b.sector_naam === filterSector);
+ 
   return (
     <div className="app">
       <main>
@@ -46,10 +58,10 @@ const SeekerDashboard = () => {
             <p><strong>Ingelogd als:</strong> {user.voornaam} {user.achternaam} ({user.email})</p>
           </div>
         )}
-
+ 
         <section id="bedrijven" className="bedrijven-section">
           <h2>Deelnemende bedrijven:</h2>
-
+ 
           <label htmlFor="sectorFilter">Filter op sector:</label>
           <select
             id="sectorFilter"
@@ -62,7 +74,7 @@ const SeekerDashboard = () => {
               <option key={idx} value={sector}>{sector}</option>
             ))}
           </select>
-
+ 
           <div className="bedrijven-grid">
             {error ? (
               <p className="error">{error}</p>
@@ -88,14 +100,19 @@ const SeekerDashboard = () => {
                   </a>
                 </div>
               ))
-            ) : (
-              <p>Laden van bedrijven...</p>
             )}
           </div>
-        </div>
-      </div>
+        </section>
+ 
+        <section id="plattegrond" className="plattegrond-section">
+          <h2>Plattegrond:</h2>
+          <div className="plattegrond-container">
+            <Plattegrond bewerkModus={false} />
+          </div>
+        </section>
+      </main>
     </div>
   );
 };
-
+ 
 export default SeekerDashboard;
