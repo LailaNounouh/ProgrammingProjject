@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
-//haal alle sectoren op
+// Haal alle sectoren op
 router.get('/', async (req, res) => {
   try {
     const [sectoren] = await db.query('SELECT * FROM Sectoren');
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-//voeg een nieuwe sector toe
+// Voeg een nieuwe sector toe
 router.post('/', async (req, res) => {
   const { naam, zichtbaar } = req.body;
 
@@ -27,19 +27,19 @@ router.post('/', async (req, res) => {
       [naam, zichtbaar ? 1 : 0]
     );
 
-    res.status(201).json({ id: result.insertId, naam, zichtbaar });
+    res.status(201).json({ sector_id: result.insertId, naam, zichtbaar });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Fout bij toevoegen sector' });
   }
 });
 
-//verwijder een sector
+// Verwijder een sector
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    await db.query('DELETE FROM Sectoren WHERE id = ?', [id]);
+    await db.query('DELETE FROM Sectoren WHERE sector_id = ?', [id]);
     res.status(204).send();
   } catch (err) {
     console.error(err);
@@ -47,7 +47,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-//wijzig zichtbaar status
+// Wijzig zichtbaar-status van een sector
 router.patch('/:id', async (req, res) => {
   const { id } = req.params;
   const { zichtbaar } = req.body;
@@ -57,8 +57,8 @@ router.patch('/:id', async (req, res) => {
   }
 
   try {
-    await db.query('UPDATE Sectoren SET zichtbaar = ? WHERE id = ?', [zichtbaar ? 1 : 0, id]);
-    res.status(200).json({ id, zichtbaar });
+    await db.query('UPDATE Sectoren SET zichtbaar = ? WHERE sector_id = ?', [zichtbaar ? 1 : 0, id]);
+    res.status(200).json({ sector_id: id, zichtbaar });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Fout bij aanpassen zichtbaarheid' });
