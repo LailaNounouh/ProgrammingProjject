@@ -1,34 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./AdminSectoren.css";
 import { useNavigate } from "react-router-dom";
+import { baseUrl } from "../../config";
 
 function AdminSectoren() {
   const navigate = useNavigate();
-
-  const [sectoren, setSectoren] = useState([
-    { naam: "IT", zichtbaar: true },
-    { naam: "Marketing", zichtbaar: true },
-    { naam: "Logistiek", zichtbaar: false },
-  ]);
-
+  const [sectoren, setSectoren] = useState([]);
   const [nieuweSector, setNieuweSector] = useState("");
+  const [error, setError] = useState(null);
 
-  const toggleZichtbaarheid = (index) => {
-    const nieuweSectoren = [...sectoren];
-    nieuweSectoren[index].zichtbaar = !nieuweSectoren[index].zichtbaar;
-    setSectoren(nieuweSectoren);
-  };
+  useEffect(() => {
+    fetch(`${baseUrl}/sectoren`)
+      .then((res) => res.json())
+      .then((data) => setSectoren(data))
+      .catch((err) => {
+        console.error(err);
+        setError("Kon sectoren niet ophalen.");
+      });
+  }, []);
 
   const voegSectorToe = () => {
     if (nieuweSector.trim() === "") return;
-    setSectoren([...sectoren, { naam: nieuweSector, zichtbaar: true }]);
-    setNieuweSector("");
+
+    fetch(`${baseUrl}/sectoren`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ naam: nieuweSector, zichtbaar: true }),
+    })
+      .then((res) => res.json())
+      .then((toegevoegdeSector) => {
+        setSectoren([...sectoren, toegevoegdeSector]);
+        setNieuweSector("");
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Kon sector niet toevoegen.");
+      });
   };
 
-  const verwijderSector = (index) => {
-    const nieuweSectoren = [...sectoren];
-    nieuweSectoren.splice(index, 1);
-    setSectoren(nieuweSectoren);
+  const verwijderSector = (id) => {
+    fetch(`${baseUrl}/sectoren/${id}`, {
+      method: "DELETE",
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Verwijderen mislukt");
+        setSectoren(sectoren.filter((s) => s.sector_id !== id));
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Kon sector niet verwijderen.");
+      });
   };
 
   return (
@@ -42,18 +63,18 @@ function AdminSectoren() {
       <main className="admin-main">
         <section className="sectoren-section">
           <h2>Sectoren beheren</h2>
+
+          {error && <p style={{ color: "red" }}>{error}</p>}
+
           <ul>
-            {sectoren.map((sector, index) => (
-              <li key={index} className="sector-item">
+            {sectoren.map((sector) => (
+              <li key={sector.sector_id} className="sector-item">
                 <span className="sector-naam">{sector.naam}</span>
-                <span className="sector-status">
-                  ({sector.zichtbaar ? "zichtbaar" : "verborgen"})
-                </span>
                 <div className="sector-acties">
-                  <button className="sector-toggle" onClick={() => toggleZichtbaarheid(index)}>
-                    {sector.zichtbaar ? "Verberg" : "Toon"}
-                  </button>
-                  <button className="sector-verwijder" onClick={() => verwijderSector(index)}>
+                  <button
+                    className="sector-verwijder"
+                    onClick={() => verwijderSector(sector.sector_id)}
+                  >
                     Verwijder
                   </button>
                 </div>
