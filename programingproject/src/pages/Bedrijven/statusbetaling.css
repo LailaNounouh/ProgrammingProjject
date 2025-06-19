@@ -1,73 +1,76 @@
 :root {
-  --menu-height: 60px;
-  --primary-color: #079db1; 
-}
-.payment-status {
-  background: white;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
-  margin-bottom: 2rem;
-  width: 100%;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  border: 1px solid #e0e0e0; 
+  --primary-color: #079db1;
+  --success-color: #28a745;
+  --border-color: #e0e0e0;
+  --secondary-color: #f8f9fa;
 }
 
-.payment-status-page {
-  padding: 2rem 1rem;
-  max-width: 1200px;
-  margin: 4rem auto 2rem; 
-  position: relative;
-}
-
-/* terugknop */
-.back-button {
-  position: absolute;
-  top: -3.5rem; 
-  left: 1rem;
-  background: var(--primary-color);
-  color: #f3f8f8;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  text-decoration: none;
+/* Main Layout */
+.payment-container {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  z-index: 10;
+  min-height: 100vh;
+  background-color: #f5f7fa;
 }
 
-.back-button:hover {
-  background: #bebebe;
+.sidebar-container {
+  width: 250px;
+  min-height: 100vh;
+  background: white;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
-
-
-
-.payment-status-page header h1 {
-  padding-top: 1rem; 
-  margin-top: 3rem 
+.payment-content {
+  flex: 1;
+  padding: 2rem;
+  max-width: 800px; /* Beperk de breedte voor betere leesbaarheid */
 }
 
-/* Betaalkaart met groene accentlijn */
+/* Mobile Menu Button */
+.mobile-menu-button {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 101;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+/* Payment Sections */
+.payment-section {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.payment-section h3 {
+  margin-top: 0;
+  color: var(--primary-color);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+/* Payment Card */
 .payment-card {
   border-left: 4px solid var(--success-color);
   padding: 1rem;
-  margin-top: 2rem;
-  margin-bottom: 1.5rem;
+  margin-top: 1rem;
   background-color: var(--secondary-color);
-  position: relative;
 }
 
-/* Betalingsinformatie regels - label + waarde */
 .payment-info {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
+  margin: 0.75rem 0;
 }
 
-/* Basis stijl voor status badges */
 .status-badge {
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
@@ -75,29 +78,78 @@
   font-weight: 500;
 }
 
-/* Specifieke stijl voor 'betaald' status */
 .status-paid {
   background-color: rgba(40, 167, 69, 0.1);
   color: var(--success-color);
 }
 
-/* Scheidingslijn tussen secties */
-.divider {
-  height: 1px;
-  background-color: var(--border-color);
-  margin: 2rem 0;
+/* Download Section */
+.download-section {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  text-align: center;
 }
 
-/* TIJDLIJN STIJLEN */
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--primary-color);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  border: none;
+  font-size: 0.9rem;
+}
 
-/* Container voor de tijdlijn */
-.payment-timeline {
-  position: relative;
-  padding-left: 2rem; /* Ruimte voor de lijn */
+.download-btn:hover {
+  background: #068a9b;
+}
+
+/* Upload Section */
+.upload-section {
   margin-top: 1.5rem;
 }
 
-/* Verticale lijn van de tijdlijn */
+.upload-label {
+  display: inline-block;
+  background: #f0f0f0;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.upload-label:hover {
+  background: #e0e0e0;
+}
+
+#file-upload {
+  display: none;
+}
+
+.uploaded-file {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* Timeline Section */
+.payment-timeline {
+  position: relative;
+  padding-left: 2rem;
+  margin-top: 1rem;
+}
+
 .payment-timeline::before {
   content: '';
   position: absolute;
@@ -108,18 +160,15 @@
   background: var(--border-color);
 }
 
-/* Individuele stap in de tijdlijn */
 .timeline-step {
   position: relative;
-  padding-bottom: 1.5rem; /* Ruimte tussen stappen */
+  padding-bottom: 1.5rem;
 }
 
-/* Verwijder padding bij laatste stap */
 .timeline-step:last-child {
   padding-bottom: 0;
 }
 
-/* Cirkel voor elke stap */
 .timeline-step::before {
   content: '';
   position: absolute;
@@ -132,76 +181,96 @@
   transform: translateX(-50%);
 }
 
-/* Voltooide stap - groene cirkel */
 .timeline-step.completed::before {
   background: var(--success-color);
 }
 
-/* Huidige stap - blauwe cirkel met glow */
-.timeline-step.current::before {
-  background: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
-}
-
-/* Inhoud van elke tijdlijn stap */
 .timeline-content {
-  background: #f8f9fa; 
+  background: #f8f9fa;
   padding: 0.75rem 1rem;
   border-radius: 6px;
 }
 
-/* Datum in tijdlijn stap */
 .timeline-date {
   font-size: 0.8rem;
-  color: #8a8a8a; 
+  color: #6c757d;
   margin-top: 0.25rem;
 }
-.download-section {
-  margin-top: 1rem;
-  border: 1px solid #e0e0e0;
-  padding: 1rem;
-  border-radius: 8px;
-  text-align: center;
+
+/* Upload Popup */
+.upload-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
-.download-btn {
-  display: inline-block;
+.popup-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 400px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.success-icon {
+  color: var(--success-color);
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.popup-content h4 {
+  margin: 0.5rem 0;
+  color: var(--primary-color);
+}
+
+.close-popup {
+  margin-top: 1.5rem;
   background: var(--primary-color);
   color: white;
+  border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 0.5rem;
-  border: none;
-  font-size: 1rem;
-}
-
-.download-btn:hover {
-  background: #079db1;
-}
-
-.downloaded-file {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-  background: #f8f9fa;
-  border-radius: 4px;
+  gap: 0.5rem;
 }
 
-/* Icoon voor bestand */
-.file-icon {
-  margin-right: 0.5rem;
-  color: #6c757d; 
+.close-popup:hover {
+  background: #068a9b;
 }
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .payment-status-page {
-    padding-top: 3rem; 
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+  .sidebar-container {
+    position: fixed;
+    left: -250px;
+    transition: left 0.3s ease;
+    z-index: 100;
   }
-   .payment-status {
-    padding: 1.5rem; 
+  
+  .sidebar-container.show {
+    left: 0;
+  }
+  
+  .payment-content {
+    padding: 1rem;
+    margin-left: 0;
+  }
+  
+  .mobile-menu-button {
+    display: block;
+  }
+  
+  .payment-section {
+    padding: 1rem;
   }
 }

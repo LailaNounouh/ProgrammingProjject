@@ -7,18 +7,18 @@ const SeekerHeader = () => {
   return (
     <header className="header">
       <Link to="/" className="logo-link">
-        <img 
-          src="./public/afbeelding/logo-ehb.png" 
-          alt="Logo" 
-          className="logo"
-          />
-      </Link>
+            <img
+              src={`${import.meta.env.BASE_URL}afbeelding/erasmuslogo.png`}
+              alt="Erasmus logo"
+              className="logo"
+            />
+          </Link>
       <nav>
         <ul>
-          <li><Link to="/student">Dashboard</Link></li>
-          <li><Link to="/bedrijven">Deelnemende Bedrijven</Link></li>
-          <li><Link to="/standen">Standen</Link></li>
-          <li><Link to="/student/profiel">Profiel</Link></li>
+          <li><Link to="/werkzoekende">Dashboard</Link></li>
+          <li><Link to="/werkzoekende/bedrijven">Deelnemende Bedrijven</Link></li>
+          <li><Link to="/werkzoekende/standen">Standen</Link></li>
+          <li><Link to="/werkzoekende/profiel">Profiel</Link></li>
           <li><LogoutButton /></li>
         </ul>
 

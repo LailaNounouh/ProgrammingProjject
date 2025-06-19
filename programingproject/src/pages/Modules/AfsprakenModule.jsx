@@ -7,7 +7,6 @@ export default function Afspraken() {
   const [bedrijven, setBedrijven] = useState([]);
   const [bedrijfId, setBedrijfId] = useState("");
   const [tijdslot, setTijdslot] = useState("");
-  
   const [datum] = useState(formatDate(new Date()));
   const [beschikbareTijdsloten, setBeschikbareTijdsloten] = useState([]);
   const [bezetteTijdsloten, setBezetteTijdsloten] = useState([]);
@@ -33,7 +32,7 @@ export default function Afspraken() {
   useEffect(() => {
     const newSocket = io(baseUrl);
     setSocket(newSocket);
-    
+
     return () => {
       newSocket.disconnect();
     };
@@ -41,18 +40,17 @@ export default function Afspraken() {
 
   useEffect(() => {
     if (!socket || !bedrijfId) return;
-    
+
     socket.emit('joinAppointmentRoom', { bedrijfId, datum });
-    
+
     socket.on('appointmentCreated', (data) => {
       if (data.bedrijf_id === bedrijfId && data.datum === datum) {
-        console.log('Appointment created by another user:', data);
-  
+        console.log('Afspraak aangemaakt door andere gebruiker:', data);
         setBezetteTijdsloten(prev => [...prev, data.tijdslot]);
         setBeschikbareTijdsloten(prev => prev.filter(t => t !== data.tijdslot));
       }
     });
-    
+
     return () => {
       socket.emit('leaveAppointmentRoom', { bedrijfId, datum });
       socket.off('appointmentCreated');
@@ -64,10 +62,10 @@ export default function Afspraken() {
       try {
         setLoading(true);
         console.log(`Bedrijven ophalen van: ${baseUrl}/bedrijvenmodule`);
-        
+
         const res = await fetch(`${baseUrl}/bedrijvenmodule`);
         if (!res.ok) throw new Error("Kon bedrijven niet ophalen");
-        
+
         const data = await res.json();
         console.log("Bedrijven data:", data);
         setBedrijven(data);
@@ -85,25 +83,25 @@ export default function Afspraken() {
   useEffect(() => {
     async function fetchTijdsloten() {
       if (!bedrijfId) return;
-      
+
       try {
         setLoading(true);
         console.log(`Tijdsloten ophalen van: ${baseUrl}/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
-        
+
         const res = await fetch(`${baseUrl}/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
         if (!res.ok) {
           console.error(`Server antwoordde met status: ${res.status}`);
           throw new Error("Kon tijdsloten niet ophalen");
         }
-        
+
         const data = await res.json();
         console.log("Tijdsloten data:", data);
-        
+
         setBeschikbareTijdsloten(data.beschikbaar || []);
         setBezetteTijdsloten(data.bezet || []);
         setAlleTijdsloten(data.alle || []);
-        
-        setTijdslot(""); 
+
+        setTijdslot("");
       } catch (err) {
         console.error("Fout bij ophalen tijdsloten:", err);
         setError("Kon de beschikbare tijdsloten niet ophalen.");
@@ -113,11 +111,11 @@ export default function Afspraken() {
     }
 
     fetchTijdsloten();
-  }, [bedrijfId, datum, refreshTrigger]); 
+  }, [bedrijfId, datum, refreshTrigger]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!bedrijfId || !tijdslot) {
       setError("Selecteer een bedrijf en een tijdslot");
       return;
@@ -125,16 +123,15 @@ export default function Afspraken() {
 
     try {
       setLoading(true);
-      
+
       const userString = localStorage.getItem('user');
       let student_id;
-      
+
       if (userString) {
         try {
           const user = JSON.parse(userString);
           console.log("Gebruikersinfo uit localStorage:", user);
           student_id = user.id;
-          
           console.log("Gebruiker ID:", student_id);
         } catch (parseError) {
           console.error("Fout bij parsen gebruikersinfo:", parseError);
@@ -148,17 +145,17 @@ export default function Afspraken() {
         setLoading(false);
         return;
       }
-      
+
       if (!student_id) {
         console.error("Geen geldig student_id gevonden");
         setError("Kon geen geldig gebruikers-ID vinden. Log opnieuw in.");
         setLoading(false);
         return;
       }
-      
-      console.log(`Submitting appointment to: ${baseUrl}/afspraken/nieuw`);
-      console.log("Appointment data:", { student_id, bedrijf_id: bedrijfId, tijdslot, datum });
-      
+
+      console.log(`Afspraak versturen naar: ${baseUrl}/afspraken/nieuw`);
+      console.log("Afspraak data:", { student_id, bedrijf_id: bedrijfId, tijdslot, datum });
+
       const res = await fetch(`${baseUrl}/afspraken/nieuw`, {
         method: 'POST',
         headers: {
@@ -179,7 +176,6 @@ export default function Afspraken() {
 
       setBezetteTijdsloten(prev => [...prev, tijdslot]);
       setBeschikbareTijdsloten(prev => prev.filter(t => t !== tijdslot));
-      
       setRefreshTrigger(prev => prev + 1);
 
       setAfspraakIngediend(true);
@@ -234,7 +230,7 @@ export default function Afspraken() {
                     {alleTijdsloten.map((tijd) => {
                       const isBezet = bezetteTijdsloten.includes(tijd);
                       const isGekozen = tijdslot === tijd;
-                      
+
                       return (
                         <button
                           key={tijd}
@@ -251,7 +247,7 @@ export default function Afspraken() {
                 ) : (
                   <p>Geen tijdsloten beschikbaar voor vandaag.</p>
                 )}
-                
+
                 <div style={{ marginTop: '15px', fontSize: '0.9rem' }}>
                   <p>
                     <span style={{ backgroundColor: '#f0f0f0', padding: '2px 8px', borderRadius: '4px' }}>

@@ -16,10 +16,14 @@ router.get('/', async (req, res) => {
     const werkzoekendenCountResult = await db.query('SELECT COUNT(*) AS count FROM Werkzoekenden');
     const werkzoekendenCount = parseInt(werkzoekendenCountResult.rows[0].count, 10);
 
+    const afsprakenCountResult = await db.query('SELECT COUNT(*) AS count FROM Afspraken');
+    const afsprakenCount = parseInt(afsprakenCountResult.rows[0].count, 10);
+
     res.json({
       bedrijven: bedrijvenCount,
       studenten: studentenCount,
       werkzoekenden: werkzoekendenCount,
+      afspraken: afsprakenCount,
     });
   } catch (error) {
     console.error('Fout bij ophalen statistieken:', error);

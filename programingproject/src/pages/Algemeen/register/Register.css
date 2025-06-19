@@ -89,12 +89,12 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   width: 100%;
   max-width: 400px;
-  display: flex;
+  display: flex; 
   flex-direction: column;
   gap: 1.2rem;
   align-items: center;
-}
-
+}  
+   
 /* Vaardigheden */
 .registratie-container form .form-group {
   width: 100%;
@@ -200,15 +200,66 @@
 }
 
 /* Responsive */
-@media (max-width: 600px) {
+@media (max-width: 800px) {
   .registratie-container {
-    padding: 1rem;
-    border-radius: 8px;
+    max-width: 98vw;
+    padding: 1.5rem 0.5rem;
+    border-radius: 10px;
   }
+
   .registratie-container form {
     padding: 1rem 0.5rem;
+    border-radius: 10px;
+  }
+
+  .registratie-container h2 {
+    font-size: 1.3rem;
+  }
+
+  .registratie-container .keuze-buttons {
+    flex-direction: column;
+    max-width: 100%;
+    gap: 0.7rem;
+  }
+
+   .registratie-container form .form-group {
+    padding: 1rem 0.5rem;
+    border-radius: 8px;
+  }
+}
+
+
+  @media (max-width: 500px) {
+  .registratie-container {
+    padding: 0.5rem 0.1rem;
+    border-radius: 7px;
   }
   .registratie-container h2 {
     font-size: 1.3rem;
+  }
+  .registratie-container form {
+    padding: 0.5rem 0.2rem;
+    border-radius: 7px;
+  }
+  .registratie-container .keuze-buttons button {
+    font-size: 0.95rem;
+    padding: 0.7rem 1rem;
+    border-radius: 7px;
+  }
+  .registratie-container form .form-group {
+    padding: 0.7rem 0.2rem;
+    border-radius: 7px;
+  }
+  .registratie-container form input,
+  .registratie-container form select,
+  .registratie-container form textarea.input-field {
+    font-size: 0.95rem;
+    padding: 0.5rem;
+    border-radius: 7px;
+  }
+  .registratie-container form button[type="submit"] {
+    padding: 0.7rem 2rem;
+    font-size: 0.97rem;
+    border-radius: 6px;
   }
 }
