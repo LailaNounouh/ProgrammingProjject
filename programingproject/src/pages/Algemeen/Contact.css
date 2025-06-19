@@ -233,3 +233,42 @@
     margin: 1.2rem 0;
   }
 }
+
+@media (max-width: 600px) {
+  .contact-container {
+    padding: 0.3rem 0.1rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .contact-container h1 {
+    font-size: 1.3rem;
+    padding-bottom: 0.3rem;
+  }
+
+  .contact-container .contact-intro {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .contact-container .contact-form-section h2 {
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 0.7rem;
+  }
+
+  .contact-container .contact-details strong {
+    min-width: 70px;
+    font-size: 0.97rem;
+  }
+
+  .contact-container .google-maps iframe {
+    height: 170px;
+  }
+
+  .contact-container .contact-form button[type="submit"] {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.95rem;
+    border-radius: 8px;
+  }
+}
