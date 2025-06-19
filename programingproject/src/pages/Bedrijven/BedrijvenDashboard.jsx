@@ -21,6 +21,7 @@ function BedrijvenDashboard() {
     }
   }, []);
 
+<<<<<<< Updated upstream
   useEffect(() => {
     setBetalingen([{ id: 1, factuur: "F2023-0456", status: "Betaald", bedrag: 1200, datum: "20-04-2023" }]);
     setAfspraken([
@@ -52,6 +53,22 @@ function BedrijvenDashboard() {
       title: "Staat van betaling",
       icon: <FaEuroSign className="icon-fix" />,
       description: "Bekijk uw betalingsstatus en facturen",
+=======
+  const dashboardItems = [
+    {
+      title: 'Dashboard',
+      icon: <FaHome />,
+      description: 'Terug naar het hoofdmenu',
+      action: 'Direct naar dashboard',
+      onClick: () => navigate('/bedrijf/dashboard'),
+      color: 'yellow'
+    },
+    {
+      title: 'Staat van betaling',
+      icon: <FaEuroSign />,
+      description: 'Bekijk uw betalingsstatus and facturen',
+      action: 'Direct naar staat van betaling',
+>>>>>>> Stashed changes
       onClick: () => navigate('/bedrijf/betaling'),
       iconClass: "bg-blue"
     },
@@ -78,6 +95,7 @@ function BedrijvenDashboard() {
     }
   ];
 
+<<<<<<< Updated upstream
   const filteredCards = dashboardCards.filter(card =>
     card.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -121,6 +139,95 @@ function BedrijvenDashboard() {
             </div>
           )}
         </div>
+=======
+  return (
+    <>
+      <div className="dashboard-container">
+        <button className="menu-toggle" onClick={() => setShowMobileMenu(true)}>
+          <FaBars />
+        </button>
+        <div className="main-content-wrapper">
+          <aside className={`sidebar ${showMobileMenu ? 'active' : ''}`}>
+            <div className="sidebar-header">
+              <h3>Dashboard</h3>
+              <div className="sidebar-notification-toggle" ref={notificationRef}>
+                <button
+                  onClick={() => setShowNotifications(!showNotifications)}
+                  className="notification-bell"
+                  title="Meldingen"
+                >
+                  <FaBell />
+                </button>
+              </div>
+            </div>
+            {showNotifications && (
+              <div className="notifications-dropdown">
+                <div className="notification-item">Geen nieuwe meldingen</div>
+              </div>
+            )}
+            <div className="sidebar-search">
+              <FaSearch className="search-icon" />
+              <input
+                type="text"
+                placeholder="Zoeken..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <ul>
+              {dashboardItems.map((item, index) => (
+                <li
+                  key={index}
+                  onClick={() => {
+                    item.onClick();
+                    setShowMobileMenu(false);
+                  }}
+                >
+                  <span className={`icon ${item.color}`}>{item.icon}</span>
+                  <span>{item.title}</span>
+                </li>
+              ))}
+            </ul>
+          </aside>
+          <div className="main-content-area">
+            <div className="welcome-banner">
+              <div className="welcome-content">
+                <h1>Welkom terug, {bedrijfNaam}!</h1>
+                <p>Hier vindt u een overzicht van uw activiteiten en status</p>
+              </div>
+            </div>
+            <div className="dashboard-cards-container">
+              {dashboardItems
+                .filter(item => item.title !== 'Dashboard')
+                .map((item, index) => (
+                  <div
+                    key={index}
+                    className="dashboard-card"
+                    onClick={item.onClick}
+                  >
+                    <div className={`card-header ${item.color}`}>
+                      {item.icon}
+                      <h3>{item.title}</h3>
+                    </div>
+                    <div className="card-body">
+                      <p>{item.description}</p>
+                      <div className="card-action">
+                        <span>{item.action}</span>
+                        <FaChevronRight />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+        {showMobileMenu && (
+          <div
+            className="mobile-menu-overlay"
+            onClick={() => setShowMobileMenu(false)}
+          ></div>
+        )}
+>>>>>>> Stashed changes
       </div>
 
       <div className="card-grid">
