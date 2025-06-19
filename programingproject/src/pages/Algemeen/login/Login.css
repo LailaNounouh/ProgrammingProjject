@@ -137,3 +137,30 @@
     padding: 0.6rem;
   }
 }
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 0.2rem;
+  }
+  .login-container .login-card {
+    padding: 0.7rem 0.3rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .login-container .login-card h2 {
+    font-size: 1.1rem;
+  }
+  .login-container .form-group label {
+    font-size: 0.85rem;
+  }
+  .login-container .form-group input,
+  .login-container .form-group select {
+    font-size: 0.95rem;
+    padding: 0.6rem;
+  }
+  .login-container .login-button {
+    padding: 0.7rem;
+    font-size: 0.95rem;
+    border-radius: 4px;
+  }
+}
