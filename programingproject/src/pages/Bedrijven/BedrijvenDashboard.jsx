@@ -79,52 +79,53 @@ function BedrijvenDashboard() {
         {/* --- WRAPPER VOOR SIDEBAR EN HOOFDINHOUD --- */}
         <div className="main-content-wrapper">
           {/* --- SIDEBAR (SNELMENU) --- */}
-          <aside className={`sidebar ${showMobileMenu ? 'active' : ''}`}>
-            <h3>Snelmenu</h3>
-            <ul>
-              {dashboardItems.map((item, index) => (
-                <li
-                  key={index}
-                  onClick={() => {
-                    item.onClick();
-                    setShowMobileMenu(false);
-                  }}
-                >
-                  <span className={`icon ${item.color}`}>{item.icon}</span>
-                  <span>{item.title}</span>
-                </li>
-              ))}
-            </ul>
+         <aside className={`sidebar ${showMobileMenu ? 'active' : ''}`}>
+  <h3>Snelmenu</h3>
 
-            {/* Zoekbalk toegevoegd onder het menu */}
-            <div className="sidebar-search">
-              <FaSearch className="search-icon" />
-              <input
-                type="text"
-                placeholder="Zoeken..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+  {/* Zoekbalk direct onder Snelmenu */}
+  <div className="sidebar-search">
+    <FaSearch className="search-icon" />
+    <input
+      type="text"
+      placeholder="Zoeken..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+    />
+  </div>
 
-            {/* Notificatiebel toegevoegd onder de zoekbalk */}
-            <div className="sidebar-notifications" ref={notificationRef}>
-              <div 
-                className="notification-bell"
-                onClick={() => setShowNotifications(!showNotifications)}
-              >
-                <FaBell />
-                <span>Meldingen</span>
-              </div>
-              {showNotifications && (
-                <div className="notifications-dropdown">
-                  <div className="notification-item">
-                    Geen nieuwe meldingen
-                  </div>
-                </div>
-              )}
-            </div>
-          </aside>
+  {/* Meldingenbel direct onder zoekbalk */}
+  <div className="sidebar-notifications" ref={notificationRef}>
+    <div
+      className="notification-bell"
+      onClick={() => setShowNotifications(!showNotifications)}
+    >
+      <FaBell />
+      <span>Meldingen</span>
+    </div>
+    {showNotifications && (
+      <div className="notifications-dropdown">
+        <div className="notification-item">Geen nieuwe meldingen</div>
+      </div>
+    )}
+  </div>
+
+  {/* Menu-items */}
+  <ul>
+    {dashboardItems.map((item, index) => (
+      <li
+        key={index}
+        onClick={() => {
+          item.onClick();
+          setShowMobileMenu(false);
+        }}
+      >
+        <span className={`icon ${item.color}`}>{item.icon}</span>
+        <span>{item.title}</span>
+      </li>
+    ))}
+  </ul>
+</aside>
+
 
           {/* --- HOOFDINHOUD (MAIN CONTENT) --- */}
           <div className="main-content-area">
