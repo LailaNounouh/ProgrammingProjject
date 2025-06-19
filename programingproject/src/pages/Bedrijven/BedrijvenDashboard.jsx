@@ -6,12 +6,18 @@ import {
   FaCog,
   FaChevronRight,
   FaSearch,
-  FaBell
+  FaBell,
+  FaCalendarCheck,
+  FaPlus,
+  FaTrash,
+  FaClock,
+  FaExclamationCircle
 } from 'react-icons/fa';
 import './BedrijvenDashboard.css';
 import { useNavigate } from 'react-router-dom';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
-// ✅ Nieuwe herbruikbare subcomponent
 function DashboardContent({
   bedrijfNaam,
   searchTerm,
@@ -20,7 +26,18 @@ function DashboardContent({
   showNotifications,
   setShowNotifications,
   notificationRef,
-  filteredCards
+  filteredCards,
+  upcomingEvents,
+  calendarDate,
+  setCalendarDate,
+  reminders,
+  addReminder,
+  deleteReminder,
+  showReminderModal,
+  setShowReminderModal,
+  newReminder,
+  setNewReminder,
+  handleReminderSubmit
 }) {
   return (
     <div className="dashboard-container">
@@ -70,26 +87,174 @@ function DashboardContent({
         </div>
       </div>
 
-      <div className="card-grid">
-        {filteredCards.map((card, index) => (
-          <div key={index} className="dashboard-card" onClick={card.onClick}>
-            <div className="card-header">
-              <div className={`card-icon ${card.iconClass}`}>
-                {card.icon}
+      <div className="dashboard-content">
+        <div className="card-grid">
+          {filteredCards.map((card, index) => (
+            <div key={index} className="dashboard-card" onClick={card.onClick}>
+              <div className="card-header">
+                <div className={`card-icon ${card.iconClass}`}>
+                  {card.icon}
+                </div>
+                <h3 className="card-title">{card.title}</h3>
               </div>
-              <h3 className="card-title">{card.title}</h3>
+              {card.description && <p className="card-description">{card.description}</p>}
+              {card.showAfspraken && (
+                <p className="card-description">Bekijk geplande afspraken</p>
+              )}
+              <div className="card-footer">
+                <span>Direct naar {card.title.toLowerCase()}</span>
+                <FaChevronRight className="chevron-icon" />
+              </div>
             </div>
-            {card.description && <p className="card-description">{card.description}</p>}
-            {card.showAfspraken && (
-              <p className="card-description">Bekijk geplande afspraken</p>
-            )}
-            <div className="card-footer">
-              <span>Direct naar {card.title.toLowerCase()}</span>
-              <FaChevronRight className="chevron-icon" />
+          ))}
+        </div>
+
+        <div className="calendar-section">
+          <div className="calendar-container">
+            <div className="calendar-header">
+              <h2>Kalender</h2>
+              <button 
+                className="add-reminder-btn"
+                onClick={() => setShowReminderModal(true)}
+              >
+                <FaPlus /> Herinnering toevoegen
+              </button>
+            </div>
+            <Calendar
+              onChange={setCalendarDate}
+              value={calendarDate}
+              locale="nl-NL"
+              tileContent={({ date, view }) => {
+                const dayReminders = reminders.filter(r => 
+                  new Date(r.date).toDateString() === date.toDateString()
+                );
+                const dayEvents = upcomingEvents.filter(event => {
+                  const eventDate = new Date(
+                    event.date.split(' ').slice(1).join(' ')
+                  ).toDateString();
+                  return eventDate === date.toDateString();
+                });
+                
+                return view === 'month' && (dayReminders.length > 0 || dayEvents.length > 0) ? (
+                  <div className="calendar-marker-container">
+                    {dayReminders.length > 0 && <div className="reminder-dot"></div>}
+                    {dayEvents.length > 0 && <div className="event-dot"></div>}
+                  </div>
+                ) : null;
+              }}
+            />
+            
+            <div className="day-events">
+              <h3>
+                {calendarDate.toLocaleDateString('nl-NL', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </h3>
+              
+              {reminders.filter(r => 
+                new Date(r.date).toDateString() === calendarDate.toDateString()
+              ).map((reminder, index) => (
+                <div key={index} className="reminder-item">
+                  <div className="reminder-time">
+                    <FaClock /> {reminder.time}
+                  </div>
+                  <div className="reminder-text">
+                    {reminder.text}
+                    <button 
+                      onClick={() => deleteReminder(index)}
+                      className="delete-reminder"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              
+              {upcomingEvents.filter(event => {
+                const eventDate = new Date(
+                  event.date.split(' ').slice(1).join(' ')
+                ).toDateString();
+                return eventDate === calendarDate.toDateString();
+              }).map((event, index) => (
+                <div key={`event-${index}`} className={`calendar-event ${event.highlight ? 'highlight-event' : ''}`}>
+                  <div className="event-time">
+                    <FaCalendarCheck /> {event.time || 'Hele dag'}
+                  </div>
+                  <div className="event-text">
+                    <strong>{event.title}</strong>
+                    <p>{event.description}</p>
+                    {event.deadline && (
+                      <span className="deadline-badge">
+                        <FaExclamationCircle /> DEADLINE
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        ))}
+        </div>
       </div>
+
+      {showReminderModal && (
+        <div className="modal-overlay">
+          <div className="reminder-modal">
+            <h3>Nieuwe herinnering</h3>
+            <form onSubmit={handleReminderSubmit}>
+              <div className="form-group">
+                <label>Datum</label>
+                <input 
+                  type="date" 
+                  value={newReminder.date}
+                  onChange={(e) => setNewReminder({
+                    ...newReminder,
+                    date: e.target.value
+                  })}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Tijd</label>
+                <input 
+                  type="time" 
+                  value={newReminder.time}
+                  onChange={(e) => setNewReminder({
+                    ...newReminder,
+                    time: e.target.value
+                  })}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Herinnering</label>
+                <textarea
+                  value={newReminder.text}
+                  onChange={(e) => setNewReminder({
+                    ...newReminder,
+                    text: e.target.value
+                  })}
+                  required
+                />
+              </div>
+              <div className="modal-actions">
+                <button 
+                  type="button" 
+                  className="cancel-btn"
+                  onClick={() => setShowReminderModal(false)}
+                >
+                  Annuleren
+                </button>
+                <button type="submit" className="save-btn">
+                  Opslaan
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -103,19 +268,54 @@ function BedrijvenDashboard() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [bedrijfNaam, setBedrijfNaam] = useState('');
   const [notifications, setNotifications] = useState([]);
+  const [calendarDate, setCalendarDate] = useState(new Date());
+  const [reminders, setReminders] = useState([]);
+  const [showReminderModal, setShowReminderModal] = useState(false);
+  const [newReminder, setNewReminder] = useState({
+    date: new Date().toISOString().split('T')[0],
+    time: '12:00',
+    text: ''
+  });
   const notificationRef = useRef(null);
 
-  // ✅ Haal bedrijfsnaam veilig uit localStorage
+  const upcomingEvents = [
+    {
+      date: "Maandag 9 maart 2026",
+      title: "Deadline voor inschrijven en stand reserveren",
+      description: "Laatste kans om uw stand te reserveren voor de Career Launch Day",
+      time: "23:59",
+      deadline: true,
+      highlight: true
+    },
+    {
+      date: "Woensdag 11 maart 2026",
+      title: "Online briefing voor bedrijven",
+      description: "Informatiesessie over het verloop van de Career Launch Day",
+      time: "14:00",
+      highlight: true
+    },
+    {
+      date: "Vrijdag 13 maart 2026",
+      title: "Career Launch Day",
+      description: "Het belangrijkste recruitment event van het jaar",
+      time: "09:00 - 17:00",
+      highlight: true
+    }
+  ];
+
   useEffect(() => {
     const userString = localStorage.getItem('ingelogdeGebruiker');
     const user = userString ? JSON.parse(userString) : null;
 
     if (user?.type === 'bedrijf') {
       setBedrijfNaam(user.naam);
+      const savedReminders = localStorage.getItem(`reminders_${user.id}`);
+      if (savedReminders) {
+        setReminders(JSON.parse(savedReminders));
+      }
     }
   }, []);
 
-  // Voor demo
   useEffect(() => {
     setBetalingen([
       { id: 1, factuur: "F2023-0456", status: "Betaald", bedrag: 1200, datum: "20-04-2023" }
@@ -126,7 +326,6 @@ function BedrijvenDashboard() {
     ]);
   }, []);
 
-  // ✅ Klik buiten dropdown sluit notificaties
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (notificationRef.current && !notificationRef.current.contains(event.target)) {
@@ -140,7 +339,6 @@ function BedrijvenDashboard() {
     };
   }, []);
 
-  // ✅ Meldingen ophalen op nette manier
   useEffect(() => {
     const userString = localStorage.getItem('ingelogdeGebruiker');
     const user = userString ? JSON.parse(userString) : null;
@@ -158,6 +356,43 @@ function BedrijvenDashboard() {
         .catch(err => console.error('Fout bij ophalen meldingen:', err));
     }
   }, []);
+
+  const addReminder = (reminder) => {
+    const userString = localStorage.getItem('ingelogdeGebruiker');
+    const user = userString ? JSON.parse(userString) : null;
+    
+    const newReminders = [...reminders, reminder];
+    setReminders(newReminders);
+    
+    if (user?.id) {
+      localStorage.setItem(`reminders_${user.id}`, JSON.stringify(newReminders));
+    }
+    
+    setShowReminderModal(false);
+    setNewReminder({
+      date: new Date().toISOString().split('T')[0],
+      time: '12:00',
+      text: ''
+    });
+  };
+
+  const deleteReminder = (index) => {
+    const userString = localStorage.getItem('ingelogdeGebruiker');
+    const user = userString ? JSON.parse(userString) : null;
+    
+    const newReminders = [...reminders];
+    newReminders.splice(index, 1);
+    setReminders(newReminders);
+    
+    if (user?.id) {
+      localStorage.setItem(`reminders_${user.id}`, JSON.stringify(newReminders));
+    }
+  };
+
+  const handleReminderSubmit = (e) => {
+    e.preventDefault();
+    addReminder(newReminder);
+  };
 
   const dashboardCards = [
     {
@@ -205,6 +440,17 @@ function BedrijvenDashboard() {
         setShowNotifications={setShowNotifications}
         notificationRef={notificationRef}
         filteredCards={filteredCards}
+        upcomingEvents={upcomingEvents}
+        calendarDate={calendarDate}
+        setCalendarDate={setCalendarDate}
+        reminders={reminders}
+        addReminder={addReminder}
+        deleteReminder={deleteReminder}
+        showReminderModal={showReminderModal}
+        setShowReminderModal={setShowReminderModal}
+        newReminder={newReminder}
+        setNewReminder={setNewReminder}
+        handleReminderSubmit={handleReminderSubmit}
       />
     </div>
   );
