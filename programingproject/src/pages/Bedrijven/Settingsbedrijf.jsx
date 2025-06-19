@@ -18,7 +18,7 @@ const Settingsbedrijf = () => {
   useEffect(() => {
     if (!gebruiker?.id) return;
 
-    fetch(`${baseUrl}/bedrijfrpofiel/${gebruiker.id}`)
+    fetch(`${baseUrl}/bedrijfprofiel/${gebruiker.id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Kon bedrijfsgegevens niet ophalen");
         return res.json();
@@ -46,7 +46,7 @@ const Settingsbedrijf = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch(`${baseUrl}/bedrijven/${gebruiker.id}`, {
+    fetch(`${baseUrl}/bedrijfprofiel/${gebruiker.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(bedrijfsgegevens),

@@ -3,8 +3,7 @@ const router = express.Router();
 const db = require('../db');
 
 // GET bedrijfsgegevens op basis van bedrijf_id
-router.get('/:id', async (req, res) => {
-  const bedrijfId = req.params.id;
+router.get('/', async (req, res) => {
 
   try {
     const [rows] = await db.execute(
@@ -32,7 +31,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // PUT update bedrijfsgegevens
-router.put('/:id', async (req, res) => {
+router.put('/', async (req, res) => {
   const bedrijfId = req.params.id;
   const {
     naam, straat, nummer, postcode, gemeente,
