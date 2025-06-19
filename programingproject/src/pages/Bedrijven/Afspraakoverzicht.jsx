@@ -11,40 +11,61 @@ import { baseUrl } from '../../config';
 import { useAuth } from '../../context/AuthProvider';
 
 const AfspraakOverzicht = () => {
-  const { bedrijf } = useAuth();
+  const { gebruiker } = useAuth(); // aangepast van bedrijf naar gebruiker
   const [afspraken, setAfspraken] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
 
-  // Naam van het ingelogde bedrijf, standaard lege string
-  const ingelogdBedrijfNaam = bedrijf?.naam || '';
+  const ingelogdGebruikerNaam = gebruiker?.naam || '';
 
   useEffect(() => {
-    if (ingelogdBedrijfNaam) {
-      fetchAfspraken();
+    if (ingelogdGebruikerNaam) {
+      fetchAfsprakenMetStudentNamen();
     } else {
-      // Geen ingelogd bedrijf => leeg maken en loading false
       setAfspraken([]);
       setIsLoading(false);
     }
-  }, [ingelogdBedrijfNaam]);
+  }, [ingelogdGebruikerNaam]);
 
-  const fetchAfspraken = async () => {
+  const fetchAfsprakenMetStudentNamen = async () => {
     setIsLoading(true);
     try {
       const response = await fetch(`${baseUrl}/afspraken`);
       if (!response.ok) throw new Error('Fout bij ophalen afspraken');
-      const data = await response.json();
+      const afsprakenData = await response.json();
 
-      // Filter afspraken op bedrijfsnaam (case-insensitive)
-      const gefilterdeAfspraken = data.filter(
+      const gefilterdeAfspraken = afsprakenData.filter(
         (afspraak) =>
           afspraak.bedrijfsnaam &&
-          afspraak.bedrijfsnaam.toLowerCase() === ingelogdBedrijfNaam.toLowerCase()
+          afspraak.bedrijfsnaam.toLowerCase() === ingelogdGebruikerNaam.toLowerCase()
       );
 
-      setAfspraken(gefilterdeAfspraken);
+      if (gefilterdeAfspraken.length === 0) {
+        setAfspraken([]);
+        setIsLoading(false);
+        return;
+      }
+
+      const studentIds = [...new Set(gefilterdeAfspraken.map((a) => a.student_id))];
+
+      const studentenResponse = await fetch(
+        `${baseUrl}/users?ids=${studentIds.join(',')}`
+      );
+      if (!studentenResponse.ok) throw new Error('Fout bij ophalen studenten');
+      const studentenData = await studentenResponse.json();
+
+      const idNaarNaam = {};
+      studentenData.forEach((student) => {
+        idNaarNaam[student.id] = student.naam;
+      });
+
+      const afsprakenMetNamen = gefilterdeAfspraken.map((afspraak) => ({
+        ...afspraak,
+        student_naam: idNaarNaam[afspraak.student_id] || 'Onbekende student',
+      }));
+
+      setAfspraken(afsprakenMetNamen);
     } catch (error) {
       console.error('Fout bij ophalen afspraken:', error);
       setAfspraken([]);
@@ -68,7 +89,7 @@ const AfspraakOverzicht = () => {
           <p className="subtitle">Overzicht van sollicitatiegesprekken met studenten</p>
         </div>
         <button
-          onClick={fetchAfspraken}
+          onClick={fetchAfsprakenMetStudentNamen}
           className="refresh-button"
           aria-label="Afspraken vernieuwen"
         >
@@ -98,7 +119,7 @@ const AfspraakOverzicht = () => {
                     className="bedrijf-logo"
                   />
                 )}
-                <h3>{afspraak.bedrijfsnaam}</h3>
+                <h3>{afspraak.student_naam}</h3>
               </header>
 
               <div className="card-body">
