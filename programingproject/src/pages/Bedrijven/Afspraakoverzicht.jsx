@@ -11,7 +11,7 @@ import { baseUrl } from '../../config';
 import { useAuth } from '../../context/AuthProvider';
 
 const AfspraakOverzicht = () => {
-  const { gebruiker } = useAuth(); // aangepast van bedrijf naar gebruiker
+  const { gebruiker } = useAuth(); 
   const [afspraken, setAfspraken] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -31,40 +31,85 @@ const AfspraakOverzicht = () => {
   const fetchAfsprakenMetStudentNamen = async () => {
     setIsLoading(true);
     try {
+      // Get all appointments
       const response = await fetch(`${baseUrl}/afspraken`);
       if (!response.ok) throw new Error('Fout bij ophalen afspraken');
-      const afsprakenData = await response.json();
-
-      const gefilterdeAfspraken = afsprakenData.filter(
-        (afspraak) =>
-          afspraak.bedrijfsnaam &&
-          afspraak.bedrijfsnaam.toLowerCase() === ingelogdGebruikerNaam.toLowerCase()
+      const alleAfspraken = await response.json();
+      
+      // Filter for this company's appointments
+      const bedrijfsAfspraken = alleAfspraken.filter(
+        afspraak => String(afspraak.bedrijf_id) === String(gebruiker.id)
       );
-
-      if (gefilterdeAfspraken.length === 0) {
+      
+      console.log('Gefilterde afspraken voor bedrijf:', bedrijfsAfspraken);
+      
+      if (bedrijfsAfspraken.length === 0) {
         setAfspraken([]);
         setIsLoading(false);
         return;
       }
-
-      const studentIds = [...new Set(gefilterdeAfspraken.map((a) => a.student_id))];
-
-      const studentenResponse = await fetch(
-        `${baseUrl}/users?ids=${studentIds.join(',')}`
-      );
-      if (!studentenResponse.ok) throw new Error('Fout bij ophalen studenten');
-      const studentenData = await studentenResponse.json();
-
-      const idNaarNaam = {};
-      studentenData.forEach((student) => {
-        idNaarNaam[student.id] = student.naam;
+      
+      // Get unique student IDs from the appointments
+      const studentIds = [...new Set(bedrijfsAfspraken.map(a => a.student_id))];
+      console.log('Unieke student IDs in afspraken:', studentIds);
+      
+      // Try several different endpoints to get student information
+      let studentInfo = {};
+      
+      // Try the /users endpoint first
+      try {
+        const usersResponse = await fetch(`${baseUrl}/users`);
+        if (usersResponse.ok) {
+          const users = await usersResponse.json();
+          console.log('Gebruikers data:', users);
+          
+          // Extract student info from users
+          users.forEach(user => {
+            if (studentIds.includes(user.id)) {
+              studentInfo[user.id] = {
+                naam: user.naam,
+                email: user.email
+              };
+            }
+          });
+        }
+      } catch (error) {
+        console.log('Fout bij ophalen gebruikers:', error);
+      }
+      
+      // If we couldn't get information for all students, try the /studenten endpoint
+      if (Object.keys(studentInfo).length < studentIds.length) {
+        try {
+          const studentenResponse = await fetch(`${baseUrl}/studenten`);
+          if (studentenResponse.ok) {
+            const studenten = await studentenResponse.json();
+            console.log('Studenten data:', studenten);
+            
+            studenten.forEach(student => {
+              const studentId = student.student_id || student.id;
+              if (studentIds.includes(studentId) && !studentInfo[studentId]) {
+                studentInfo[studentId] = {
+                  naam: student.naam,
+                  email: student.email
+                };
+              }
+            });
+          }
+        } catch (error) {
+          console.log('Fout bij ophalen studenten:', error);
+        }
+      }
+      
+      // Map the appointments with student names
+      const afsprakenMetNamen = bedrijfsAfspraken.map(afspraak => {
+        const student = studentInfo[afspraak.student_id];
+        return {
+          ...afspraak,
+          student_naam: student ? student.naam : `Student ${afspraak.student_id}`,
+          student_email: student ? student.email : ''
+        };
       });
-
-      const afsprakenMetNamen = gefilterdeAfspraken.map((afspraak) => ({
-        ...afspraak,
-        student_naam: idNaarNaam[afspraak.student_id] || 'Onbekende student',
-      }));
-
+      
       setAfspraken(afsprakenMetNamen);
     } catch (error) {
       console.error('Fout bij ophalen afspraken:', error);
@@ -120,6 +165,7 @@ const AfspraakOverzicht = () => {
                   />
                 )}
                 <h3>{afspraak.student_naam}</h3>
+                {afspraak.context && <p className="context">{afspraak.context}</p>}
               </header>
 
               <div className="card-body">

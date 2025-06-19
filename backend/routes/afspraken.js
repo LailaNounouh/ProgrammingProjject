@@ -65,10 +65,10 @@ router.get('/bedrijf/:bedrijfId', async (req, res) => {
   
   try {
     const [afspraken] = await pool.query(`
-      SELECT a.afspraak_id, a.tijdslot, a.datum,
-             s.id AS student_id, s.naam AS studentnaam, s.email AS studentemail
+      SELECT a.afspraak_id, a.tijdslot, a.datum, a.student_id,
+             s.naam AS studentnaam, s.email AS studentemail
       FROM Afspraken a
-      JOIN Studenten s ON a.student_id = s.id
+      JOIN Studenten s ON a.student_id = s.student_id
       WHERE a.bedrijf_id = ?
       ORDER BY a.datum DESC, a.tijdslot ASC
     `, [bedrijfId]);
