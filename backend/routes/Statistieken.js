@@ -6,7 +6,7 @@ router.get("/", async (req, res) => {
     const [bedrijven] = await pool.query("SELECT COUNT(*) AS count FROM Bedrijven");
     const [studenten] = await pool.query("SELECT COUNT(*) AS count FROM Studenten");
     const [werkzoekenden] = await pool.query("SELECT COUNT(*) AS count FROM Werkzoekenden");
-    const [afspraken] = await pool.query("SELECT COUNT(*) AS count FROM Afspraken WHERE actief = 1");
+    const [afspraken] = await pool.query("SELECT COUNT(*) AS count FROM Afspraken WHERE datum >= CURDATE()");
 
     res.json({
       bedrijven: bedrijven[0].count,
