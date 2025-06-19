@@ -56,3 +56,30 @@ body {
   color: #00a9b5; /* dezelfde accentkleur als andere highlights */
   font-weight: 600;
 }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .about-page {
+    padding: 0 8px;
+    max-width: 100%;
+  }
+  .header-box {
+    width: 95%;
+    padding: 20px;
+    top: 10px;
+    font-size: 1rem;
+  }
+  .content-box {
+    padding: 20px;
+  }
+  .header-box h1 {
+    font-size: 1.5rem;
+  }
+  .header-box .subtitle {
+    font-size: 1.05rem;
+  }
+  .content-box p {
+    font-size: 1rem;
+    margin-bottom: 14px;
+  }
+}
