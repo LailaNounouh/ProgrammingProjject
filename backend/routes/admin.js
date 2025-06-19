@@ -52,7 +52,6 @@ router.get('/gebruikers', async (req, res) => {
   }
 });
 
-
 router.get('/sectoren', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM sectoren');
@@ -84,7 +83,7 @@ router.put('/sectoren/:id', async (req, res) => {
 });
 
 //ophalen van de bedrijven en hun standen
-router.get('bedrijven-standen/', async (req, res) => {
+router.get('/bedrijven-standen', async (req, res) => {
   try {
     const [rows] = await pool.query(`
       SELECT 
