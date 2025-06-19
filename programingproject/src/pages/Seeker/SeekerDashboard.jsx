@@ -7,6 +7,18 @@ const SeekerDashboard = () => {
   const [bedrijven, setBedrijven] = useState([]);
   const [filterSector, setFilterSector] = useState('all');
   const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch (err) {
+        console.error("Fout bij parsen van gebruikersdata:", err);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     async function fetchBedrijven() {
@@ -41,9 +53,15 @@ const SeekerDashboard = () => {
   return (
     <div className="app">
       <main>
+        {user && (
+          <div className="gebruiker-info">
+            <p><strong>Ingelogd als:</strong> {user.voornaam} {user.achternaam} ({user.email})</p>
+          </div>
+        )}
 
         <section id="bedrijven" className="bedrijven-section">
           <h2>Deelnemende bedrijven:</h2>
+
           <label htmlFor="sectorFilter">Filter op sector:</label>
           <select
             id="sectorFilter"
@@ -57,7 +75,7 @@ const SeekerDashboard = () => {
             ))}
           </select>
 
-          <div className="bedrijven-lijst">
+          <div className="bedrijven-grid">
             {error ? (
               <p className="error">{error}</p>
             ) : bedrijven.length === 0 ? (
@@ -76,7 +94,7 @@ const SeekerDashboard = () => {
                   ) : (
                     <div className="logo-placeholder">Geen logo</div>
                   )}
-                  <p>{bedrijf.naam}</p>
+                  <p className="bedrijf-naam">{bedrijf.naam}</p>
                   <a href={`/bedrijven/${bedrijf.naam}`} className="meer-info-link">
                     Meer info
                   </a>

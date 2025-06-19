@@ -50,6 +50,10 @@ export default function App() {
  
           {/* Seeker */}
           <Route path="/werkzoekende" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
+          <Route path="/werkzoekende/bedrijven" element={<SeekerLayout><BedrijvenModule /></SeekerLayout>} />
+          <Route path="/werkzoekende/standen" element={<SeekerLayout><StandenModule /></SeekerLayout>} />
+          <Route path="/werkzoekende/profiel" element={<SeekerLayout><ProfileProvider><ProfielModule /></ProfileProvider></SeekerLayout>} />
+
  
           {/* Student */}
           <Route path="/student" element={<StudentenLayout><StudentDashboard /></StudentenLayout>} />
