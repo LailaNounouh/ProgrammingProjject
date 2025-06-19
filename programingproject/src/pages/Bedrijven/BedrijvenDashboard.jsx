@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  FaHome,
   FaEuroSign,
   FaCalendarAlt,
   FaMapMarkerAlt,
@@ -10,8 +9,8 @@ import {
   FaBell,
   FaBars
 } from 'react-icons/fa';
-import './BedrijvenDashboard.css';
 import { useNavigate } from 'react-router-dom';
+import './BedrijvenDashboard.css';
 
 function BedrijvenDashboard() {
   const navigate = useNavigate();
@@ -19,12 +18,11 @@ function BedrijvenDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const notificationRef = useRef(null);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('ingelogdeGebruiker'));
-    if (user && user.type === 'bedrijf') {
+    if (user?.type === 'bedrijf') {
       setBedrijfNaam(user.naam);
     }
   }, []);
@@ -42,14 +40,6 @@ function BedrijvenDashboard() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const dashboardItems = [
@@ -143,14 +133,12 @@ function BedrijvenDashboard() {
         </aside>
 
         <main className="main-content-area">
-          <div className={`mobile-header ${isScrolled ? 'hidden' : ''}`}>
-            <button
-              className="menu-toggle"
-              onClick={() => setShowMobileMenu(true)}
-            >
-              <FaBars />
-            </button>
-          </div>
+          <button 
+            className="mobile-menu-button"
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+          >
+            <FaBars />
+          </button>
 
           <div className="welcome-banner">
             <div className="welcome-content">
