@@ -124,24 +124,21 @@ function DashboardContent({
               onChange={setCalendarDate}
               value={calendarDate}
               locale="nl-NL"
-              tileContent={({ date, view }) => {
-                const dayReminders = reminders.filter(r => 
-                  new Date(r.date).toDateString() === date.toDateString()
-                );
-                const dayEvents = upcomingEvents.filter(event => {
-                  const eventDate = new Date(
-                    event.date.split(' ').slice(1).join(' ')
-                  ).toDateString();
-                  return eventDate === date.toDateString();
-                });
-                
-                return view === 'month' && (dayReminders.length > 0 || dayEvents.length > 0) ? (
-                  <div className="calendar-marker-container">
-                    {dayReminders.length > 0 && <div className="reminder-dot"></div>}
-                    {dayEvents.length > 0 && <div className="event-dot"></div>}
-                  </div>
-                ) : null;
-              }}
+            tileContent={({ date, view }) => {
+  const dayReminders = reminders.filter(r => 
+    new Date(r.date).toDateString() === date.toDateString()
+  );
+  const dayEvents = upcomingEvents.filter(event => 
+    event.date.toDateString() === date.toDateString()
+  );
+  
+  return view === 'month' && (dayReminders.length > 0 || dayEvents.length > 0) ? (
+    <div className="calendar-marker-container">
+      {dayReminders.length > 0 && <div className="reminder-dot"></div>}
+      {dayEvents.length > 0 && <div className="event-dot"></div>}
+    </div>
+  ) : null;
+}}
             />
             
             <div className="day-events">
@@ -173,27 +170,24 @@ function DashboardContent({
                 </div>
               ))}
               
-              {upcomingEvents.filter(event => {
-                const eventDate = new Date(
-                  event.date.split(' ').slice(1).join(' ')
-                ).toDateString();
-                return eventDate === calendarDate.toDateString();
-              }).map((event, index) => (
-                <div key={`event-${index}`} className={`calendar-event ${event.highlight ? 'highlight-event' : ''}`}>
-                  <div className="event-time">
-                    <FaCalendarCheck /> {event.time || 'Hele dag'}
-                  </div>
-                  <div className="event-text">
-                    <strong>{event.title}</strong>
-                    <p>{event.description}</p>
-                    {event.deadline && (
-                      <span className="deadline-badge">
-                        <FaExclamationCircle /> DEADLINE
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
+       {upcomingEvents.filter(event => 
+  event.date.toDateString() === calendarDate.toDateString()
+).map((event, index) => (
+  <div key={`event-${index}`} className={`calendar-event ${event.highlight ? 'highlight-event' : ''}`}>
+    <div className="event-time">
+      <FaCalendarCheck /> {event.time || 'Hele dag'}
+    </div>
+    <div className="event-text">
+      <strong>{event.title}</strong>
+      <p>{event.description}</p>
+      {event.deadline && (
+        <span className="deadline-badge">
+          <FaExclamationCircle /> DEADLINE
+        </span>
+      )}
+    </div>
+  </div>
+))}
             </div>
           </div>
         </div>
@@ -278,30 +272,30 @@ function BedrijvenDashboard() {
   });
   const notificationRef = useRef(null);
 
-  const upcomingEvents = [
-    {
-      date: "Zaterdag 7 maart 2026",
-      title: "Deadline voor inschrijven en stand reserveren",
-      description: "Laatste kans om uw stand te reserveren voor de Career Launch Day",
-      time: "23:59",
-      deadline: true,
-      highlight: true
-    },
-    {
-      date: "Woensdag 11 maart 2026",
-      title: "Online briefing voor bedrijven",
-      description: "Informatiesessie over het verloop van de Career Launch Day",
-      time: "14:00",
-      highlight: true
-    },
-    {
-      date: "Vrijdag 13 maart 2026",
-      title: "Career Launch Day",
-      description: "Het belangrijkste recruitment event van het jaar",
-      time: "09:00 - 17:00",
-      highlight: true
-    }
-  ];
+const upcomingEvents = [
+  {
+    date: new Date(2026, 2, 7), 
+    title: "Deadline voor inschrijven en stand reserveren",
+    description: "Laatste kans om uw stand te reserveren voor de Career Launch Day",
+    time: "23:59",
+    deadline: true,
+    highlight: true
+  },
+  {
+    date: new Date(2026, 2, 11),
+    title: "Online briefing voor bedrijven",
+    description: "Informatiesessie over het verloop van de Career Launch Day",
+    time: "14:00",
+    highlight: true
+  },
+  {
+    date: new Date(2026, 2, 13),
+    title: "Career Launch Day",
+    description: "Het belangrijkste recruitment event van het jaar",
+    time: "09:00 - 17:00",
+    highlight: true
+  }
+];
 
   useEffect(() => {
     const userString = localStorage.getItem('ingelogdeGebruiker');
@@ -360,14 +354,14 @@ function BedrijvenDashboard() {
   const addReminder = (reminder) => {
     const userString = localStorage.getItem('ingelogdeGebruiker');
     const user = userString ? JSON.parse(userString) : null;
-
+    
     const newReminders = [...reminders, reminder];
     setReminders(newReminders);
-
+    
     if (user?.id) {
       localStorage.setItem(`reminders_${user.id}`, JSON.stringify(newReminders));
     }
-
+    
     setShowReminderModal(false);
     setNewReminder({
       date: new Date().toISOString().split('T')[0],
@@ -379,11 +373,11 @@ function BedrijvenDashboard() {
   const deleteReminder = (index) => {
     const userString = localStorage.getItem('ingelogdeGebruiker');
     const user = userString ? JSON.parse(userString) : null;
-
+    
     const newReminders = [...reminders];
     newReminders.splice(index, 1);
     setReminders(newReminders);
-
+    
     if (user?.id) {
       localStorage.setItem(`reminders_${user.id}`, JSON.stringify(newReminders));
     }

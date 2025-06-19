@@ -646,6 +646,38 @@
   box-shadow: 0 4px 8px rgba(74, 108, 247, 0.3);
 }
 
+.calendar-event {
+  background: #f0f5ff;
+  border-left: 4px solid #4a6cf7;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+}
+
+.highlight-event {
+  background: #e6f0ff;
+  border-left-color: #ff4757;
+}
+
+.event-time {
+  font-weight: 600;
+  color: #4a6cf7;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.deadline-badge {
+  display: inline-block;
+  background: #ff4757;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: bold;
+}
 /* Responsive aanpassingen */
 @media (max-width: 1200px) {
   .dashboard-content {
