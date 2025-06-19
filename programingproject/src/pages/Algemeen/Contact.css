@@ -205,14 +205,31 @@
   box-shadow: 0 6px 24px rgba(214, 64, 69, 0.16);
 }
 
+/* Responsive */
 @media (max-width: 900px) {
-  .contact-container .contact-form-group {
-    flex-direction: column;
-    gap: 0.8rem;
+   .contact-container {
+    padding: 1rem 0.5rem;
     max-width: 100%;
   }
 
-  .contact-container .form-group-wide {
-    padding: 0.8rem 0.5rem;
+  .contact-container h1 {
+    font-size: 2rem;
+    text-align: center;
+    padding-bottom: 0.5rem;
+  }
+
+  .contact-container .contact-details-container {
+    flex-direction: column;
+    gap: 1.2rem;
+    margin: 1rem 0;
+  }
+
+  .contact-container .google-maps iframe {
+    height: 260px;
+  }
+
+  .contact-container .contact-form-section {
+    padding: 1rem 0.5rem;
+    margin: 1.2rem 0;
   }
 }

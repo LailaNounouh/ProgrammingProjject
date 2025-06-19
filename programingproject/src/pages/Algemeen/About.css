@@ -84,7 +84,6 @@ body {
   }
 }
 
-/* Responsive */
 @media (max-width: 600px) {
   body {
     padding: 6px;
