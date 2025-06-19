@@ -21,7 +21,7 @@ const afsprakenRouter = require('./routes/afspraken')
 const codeertaalRouter = require('./routes/codeertalen');
 const usersRouter = require('./routes/users');
 const statistiekenRouter = require('./routes/Statistieken');
-
+const bedrijfprofielRouter = require('./routes/bedrijfprofiel')
 const attendanceRouter = require('./routes/attendance');
 
 const app = express();
@@ -130,7 +130,7 @@ apiRouter.use('/afspraken', afsprakenRouter)
 apiRouter.use('/codeertaal', codeertaalRouter);
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/statistieken', statistiekenRouter);
-
+apiRouter.use('/bedrijfprofiel', bedrijfprofielRouter)
 apiRouter.use('/attendance', attendanceRouter)
 
 
