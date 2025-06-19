@@ -44,11 +44,34 @@ function AdminSectoren() {
     })
       .then((res) => {
         if (!res.ok) throw new Error("Verwijderen mislukt");
-        setSectoren(sectoren.filter((s) => s.id !== id));
+        setSectoren(sectoren.filter((s) => s.sector_id !== id));
       })
       .catch((err) => {
         console.error(err);
         setError("Kon sector niet verwijderen.");
+      });
+  };
+
+  const toggleZichtbaarheid = (id, huidigZichtbaar) => {
+    fetch(`${baseUrl}/sectoren/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ zichtbaar: !huidigZichtbaar }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Zichtbaarheid aanpassen mislukt");
+        return res.json();
+      })
+      .then(() => {
+        setSectoren(
+          sectoren.map((s) =>
+            s.sector_id === id ? { ...s, zichtbaar: !huidigZichtbaar } : s
+          )
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Kon zichtbaarheid niet aanpassen.");
       });
   };
 
@@ -68,15 +91,23 @@ function AdminSectoren() {
 
           <ul>
             {sectoren.map((sector) => (
-              <li key={sector.id} className="sector-item">
+              <li key={sector.sector_id} className="sector-item">
                 <span className="sector-naam">{sector.naam}</span>
                 <span className="sector-status">
                   ({sector.zichtbaar ? "zichtbaar" : "verborgen"})
                 </span>
                 <div className="sector-acties">
                   <button
+                    className="sector-toggle"
+                    onClick={() =>
+                      toggleZichtbaarheid(sector.sector_id, sector.zichtbaar)
+                    }
+                  >
+                    {sector.zichtbaar ? "Verberg" : "Toon"}
+                  </button>
+                  <button
                     className="sector-verwijder"
-                    onClick={() => verwijderSector(sector.id)}
+                    onClick={() => verwijderSector(sector.sector_id)}
                   >
                     Verwijder
                   </button>
