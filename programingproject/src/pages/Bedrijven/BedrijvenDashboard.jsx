@@ -10,17 +10,19 @@ function BedrijvenDashboard() {
   const [afspraken, setAfspraken] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
-  const [bedrijfNaam, setBedrijfNaam] = useState(''); // ✅ toegevoegd
+  const [bedrijfNaam, setBedrijfNaam] = useState('');
+  const [notifications, setNotifications] = useState([]); // state voor meldingen
   const notificationRef = useRef(null);
 
+  // Haal bedrijfsnaam uit localStorage
   useEffect(() => {
-    // ✅ Haal bedrijfsnaam op uit localStorage
     const user = JSON.parse(localStorage.getItem('ingelogdeGebruiker'));
     if (user && user.type === 'bedrijf') {
       setBedrijfNaam(user.naam);
     }
   }, []);
 
+  // Voor demo: statische betalingen en afspraken
   useEffect(() => {
     setBetalingen([{ id: 1, factuur: "F2023-0456", status: "Betaald", bedrag: 1200, datum: "20-04-2023" }]);
     setAfspraken([
@@ -29,6 +31,7 @@ function BedrijvenDashboard() {
     ]);
   }, []);
 
+  // Klik buiten melding dropdown sluiten
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (notificationRef.current && !notificationRef.current.contains(event.target)) {
@@ -42,10 +45,26 @@ function BedrijvenDashboard() {
     };
   }, []);
 
-  const notifications = [
-    { id: 1, message: "Student Lisa Janssens heeft een afspraak gemaakt voor 17 juni om 10:00.", time: "1 uur geleden" },
-    { id: 2, message: "Factuur F2023-0457 moet nog betaald worden (Tom Peeters).", time: "2 uur geleden" }
-  ];
+  // ** Nieuw: haal meldingen op voor ingelogd bedrijf **
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('ingelogdeGebruiker'));
+    if (user && user.type === 'bedrijf') {
+      const bedrijfId = user.id; // dynamisch bedrijfId vanuit ingelogde gebruiker
+      fetch(`/api/notifications/${bedrijfId}`)
+        .then(res => {
+          if (!res.ok) {
+            throw new Error('Netwerkfout bij ophalen meldingen');
+          }
+          return res.json();
+        })
+        .then(data => {
+          setNotifications(data); // zet opgehaalde meldingen in state
+        })
+        .catch(err => {
+          console.error('Fout bij ophalen meldingen:', err);
+        });
+    }
+  }, []);
 
   const dashboardCards = [
     {
@@ -85,7 +104,7 @@ function BedrijvenDashboard() {
   const renderDashboard = () => (
     <div className="dashboard-container">
       <div className="welcome-banner">
-        <h1>Welkom terug, {bedrijfNaam}!</h1> {/* ✅ Dynamisch */}
+        <h1>Welkom terug, {bedrijfNaam}!</h1>
         <p>Hier vindt u een overzicht van uw activiteiten en status</p>
       </div>
 
@@ -111,12 +130,16 @@ function BedrijvenDashboard() {
           {showNotifications && (
             <div className="notification-dropdown">
               <ul>
-                {notifications.map((notif) => (
-                  <li key={notif.id}>
-                    <p>{notif.message}</p>
-                    <small>{notif.time}</small>
-                  </li>
-                ))}
+                {notifications.length === 0 ? (
+                  <li><p>Geen nieuwe meldingen</p></li>
+                ) : (
+                  notifications.map((notif) => (
+                    <li key={notif.id}>
+                      <p>{notif.message}</p>
+                      <small>{notif.time}</small>
+                    </li>
+                  ))
+                )}
               </ul>
             </div>
           )}
