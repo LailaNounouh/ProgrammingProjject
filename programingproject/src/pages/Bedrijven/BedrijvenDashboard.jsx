@@ -1,7 +1,98 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaEuroSign, FaCalendarAlt, FaMapMarkerAlt, FaCog, FaChevronRight, FaSearch, FaBell } from 'react-icons/fa';
+import {
+  FaEuroSign,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaCog,
+  FaChevronRight,
+  FaSearch,
+  FaBell
+} from 'react-icons/fa';
 import './BedrijvenDashboard.css';
 import { useNavigate } from 'react-router-dom';
+
+// ✅ Nieuwe herbruikbare subcomponent
+function DashboardContent({
+  bedrijfNaam,
+  searchTerm,
+  setSearchTerm,
+  notifications,
+  showNotifications,
+  setShowNotifications,
+  notificationRef,
+  filteredCards
+}) {
+  return (
+    <div className="dashboard-container">
+      <div className="welcome-banner">
+        <h1>Welkom terug, {bedrijfNaam}!</h1>
+        <p>Hier vindt u een overzicht van uw activiteiten en status</p>
+      </div>
+
+      <div className="dashboard-toolbar">
+        <div className="search-box">
+          <FaSearch className="search-icon" />
+          <input
+            type="text"
+            placeholder="Zoeken..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <div className="notification-wrapper" ref={notificationRef}>
+          <div
+            className="notification-bell"
+            onClick={() => setShowNotifications(!showNotifications)}
+          >
+            <FaBell />
+            {notifications.length > 0 && (
+              <span className="notification-badge">{notifications.length}</span>
+            )}
+          </div>
+
+          {showNotifications && (
+            <div className="notification-dropdown">
+              <ul>
+                {notifications.length === 0 ? (
+                  <li><p>Geen nieuwe meldingen</p></li>
+                ) : (
+                  notifications.map((notif) => (
+                    <li key={notif.id}>
+                      <p>{notif.message}</p>
+                      <small>{new Date(notif.time).toLocaleString('nl-BE')}</small>
+                    </li>
+                  ))
+                )}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="card-grid">
+        {filteredCards.map((card, index) => (
+          <div key={index} className="dashboard-card" onClick={card.onClick}>
+            <div className="card-header">
+              <div className={`card-icon ${card.iconClass}`}>
+                {card.icon}
+              </div>
+              <h3 className="card-title">{card.title}</h3>
+            </div>
+            {card.description && <p className="card-description">{card.description}</p>}
+            {card.showAfspraken && (
+              <p className="card-description">Bekijk geplande afspraken</p>
+            )}
+            <div className="card-footer">
+              <span>Direct naar {card.title.toLowerCase()}</span>
+              <FaChevronRight className="chevron-icon" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function BedrijvenDashboard() {
   const navigate = useNavigate();
@@ -11,27 +102,31 @@ function BedrijvenDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [bedrijfNaam, setBedrijfNaam] = useState('');
-  const [notifications, setNotifications] = useState([]); // state voor meldingen
+  const [notifications, setNotifications] = useState([]);
   const notificationRef = useRef(null);
 
-  // Haal bedrijfsnaam uit localStorage
+  // ✅ Haal bedrijfsnaam veilig uit localStorage
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('ingelogdeGebruiker'));
-    if (user && user.type === 'bedrijf') {
+    const userString = localStorage.getItem('ingelogdeGebruiker');
+    const user = userString ? JSON.parse(userString) : null;
+
+    if (user?.type === 'bedrijf') {
       setBedrijfNaam(user.naam);
     }
   }, []);
 
-  // Voor demo: statische betalingen en afspraken
+  // Voor demo
   useEffect(() => {
-    setBetalingen([{ id: 1, factuur: "F2023-0456", status: "Betaald", bedrag: 1200, datum: "20-04-2023" }]);
+    setBetalingen([
+      { id: 1, factuur: "F2023-0456", status: "Betaald", bedrag: 1200, datum: "20-04-2023" }
+    ]);
     setAfspraken([
       { id: 1, student: "Lisa Janssens", type: "Afspraak", datum: "2025-06-17", tijd: "10:00" },
       { id: 2, student: "Tom Peeters", type: "Betaling vereist", bedrag: 800, factuur: "F2023-0457" }
     ]);
   }, []);
 
-  // Klik buiten melding dropdown sluiten
+  // ✅ Klik buiten dropdown sluit notificaties
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (notificationRef.current && !notificationRef.current.contains(event.target)) {
@@ -45,11 +140,13 @@ function BedrijvenDashboard() {
     };
   }, []);
 
-  // ** Nieuw: haal meldingen op voor ingelogd bedrijf **
+  // ✅ Meldingen ophalen op nette manier
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('ingelogdeGebruiker'));
-if (user && user.type === 'bedrijf') {
-  const bedrijfId = user.id;
+    const userString = localStorage.getItem('ingelogdeGebruiker');
+    const user = userString ? JSON.parse(userString) : null;
+    const bedrijfId = user?.id;
+
+    if (user?.type === 'bedrijf' && bedrijfId) {
       fetch(`/api/notifications/${bedrijfId}`)
         .then(res => {
           if (!res.ok) {
@@ -57,12 +154,8 @@ if (user && user.type === 'bedrijf') {
           }
           return res.json();
         })
-        .then(data => {
-          setNotifications(data); // zet opgehaalde meldingen in state
-        })
-        .catch(err => {
-          console.error('Fout bij ophalen meldingen:', err);
-        });
+        .then(data => setNotifications(data))
+        .catch(err => console.error('Fout bij ophalen meldingen:', err));
     }
   }, []);
 
@@ -101,77 +194,18 @@ if (user && user.type === 'bedrijf') {
     card.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const renderDashboard = () => (
-    <div className="dashboard-container">
-      <div className="welcome-banner">
-        <h1>Welkom terug, {bedrijfNaam}!</h1>
-        <p>Hier vindt u een overzicht van uw activiteiten en status</p>
-      </div>
-
-      <div className="dashboard-toolbar">
-        <div className="search-box">
-          <FaSearch className="search-icon" />
-          <input
-            type="text"
-            placeholder="Zoeken..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-
-        <div className="notification-wrapper" ref={notificationRef}>
-          <div className="notification-bell" onClick={() => setShowNotifications(!showNotifications)}>
-            <FaBell />
-            {notifications.length > 0 && (
-              <span className="notification-badge">{notifications.length}</span>
-            )}
-          </div>
-
-          {showNotifications && (
-            <div className="notification-dropdown">
-              <ul>
-                {notifications.length === 0 ? (
-                  <li><p>Geen nieuwe meldingen</p></li>
-                ) : (
-                  notifications.map((notif) => (
-                    <li key={notif.id}>
-                      <p>{notif.message}</p>
-                      <small>{notif.time}</small>
-                    </li>
-                  ))
-                )}
-              </ul>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="card-grid">
-        {filteredCards.map((card, index) => (
-          <div key={index} className="dashboard-card" onClick={card.onClick}>
-            <div className="card-header">
-              <div className={`card-icon ${card.iconClass}`}>
-                {card.icon}
-              </div>
-              <h3 className="card-title">{card.title}</h3>
-            </div>
-            {card.description && <p className="card-description">{card.description}</p>}
-            {card.showAfspraken && (
-              <p className="card-description">Bekijk geplande afspraken</p>
-            )}
-            <div className="card-footer">
-              <span>Direct naar {card.title.toLowerCase()}</span>
-              <FaChevronRight className="chevron-icon" />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
   return (
     <div className="bedrijven-dashboard">
-      {renderDashboard()}
+      <DashboardContent
+        bedrijfNaam={bedrijfNaam}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        notifications={notifications}
+        showNotifications={showNotifications}
+        setShowNotifications={setShowNotifications}
+        notificationRef={notificationRef}
+        filteredCards={filteredCards}
+      />
     </div>
   );
 }
