@@ -360,14 +360,14 @@ function BedrijvenDashboard() {
   const addReminder = (reminder) => {
     const userString = localStorage.getItem('ingelogdeGebruiker');
     const user = userString ? JSON.parse(userString) : null;
-    
+
     const newReminders = [...reminders, reminder];
     setReminders(newReminders);
-    
+
     if (user?.id) {
       localStorage.setItem(`reminders_${user.id}`, JSON.stringify(newReminders));
     }
-    
+
     setShowReminderModal(false);
     setNewReminder({
       date: new Date().toISOString().split('T')[0],
@@ -379,11 +379,11 @@ function BedrijvenDashboard() {
   const deleteReminder = (index) => {
     const userString = localStorage.getItem('ingelogdeGebruiker');
     const user = userString ? JSON.parse(userString) : null;
-    
+
     const newReminders = [...reminders];
     newReminders.splice(index, 1);
     setReminders(newReminders);
-    
+
     if (user?.id) {
       localStorage.setItem(`reminders_${user.id}`, JSON.stringify(newReminders));
     }

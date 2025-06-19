@@ -71,8 +71,7 @@
 .search-box {
   position: relative;
   flex: 1;
-  min-width: 250px;
-  max-width: 100%;
+  max-width: 1040px;
 }
 
 .search-box input {
