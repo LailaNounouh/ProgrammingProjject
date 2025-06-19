@@ -33,7 +33,10 @@ import BedrijvenModule from "./pages/Modules/BedrijvenModule";
 import StandenModule from "./pages/Modules/StandenModule";
 import ProfielSettingsModule from "./pages/Modules/ProfielSettingsModule";
 import ProfielModule from "./pages/Modules/ProfielModule";
- 
+
+import Attendance from "./pages/Admin/Aanwezigheid";
+
+import CheckIn from "./pages/Algemeen/CheckIn";
  
  
 export default function App() {
@@ -65,12 +68,15 @@ export default function App() {
           <Route path="/admin/Bedrijf" element={<AdminLayout><AdminBedrijf /></AdminLayout>} />
           <Route path="/admin/standen" element={<AdminLayout><AdminStanden /></AdminLayout>} />
           <Route path="/admin/gebruikers" element={<AdminLayout><AdminGebruikers /></AdminLayout>} />
+  <Route path="/admin/attendance" element={<AdminLayout><Attendance /></AdminLayout>} />
  
           {/* Bedrijven */}
           <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
           <Route path="/bedrijf/betaling" element={<BedrijvenLayout><StatusBetaling /></BedrijvenLayout>} />
           <Route path="/bedrijf/afspraken" element={<BedrijvenLayout><AfspraakOverzicht /></BedrijvenLayout>} />
           <Route path="/bedrijf/Settingsbedrijf" element={<BedrijvenLayout><Settingsbedrijf /></BedrijvenLayout>} />
+
+          <Route path="/checkIn" element={<Layout><CheckIn /></Layout>} />
         </Routes>
       </AuthProvider>
   );
