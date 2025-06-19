@@ -9,6 +9,7 @@ const Header = () => {
   const { user, logout } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const closeMobileMenu = () => setShowMobileMenu(false);
 
 
   useEffect(() => {
@@ -39,9 +40,9 @@ const Header = () => {
 
       <nav className={showMobileMenu ? 'show' : ''}>
         <ul>
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/about">About</Link></li>
-          <li><Link to="/contact">Contact</Link></li>
+          <li><Link to="/" onClick={closeMobileMenu}>Home</Link></li>
+          <li><Link to="/about" onClick={closeMobileMenu}>About</Link></li>
+          <li><Link to="/contact" onClick={closeMobileMenu}>Contact</Link></li>
 
 
           {user ? (
@@ -51,7 +52,7 @@ const Header = () => {
               <li><LogoutButton /></li>
             </>
           ) : (
-            <li><Link to="/login">Login / Registreren</Link></li>
+            <li><Link to="/login" onClick={closeMobileMenu}>Login / Registreren</Link></li>
           )}
         </ul>
       </nav>
