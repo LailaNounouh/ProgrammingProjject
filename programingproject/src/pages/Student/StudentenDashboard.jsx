@@ -11,8 +11,6 @@ const StudentDashboard = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState('');
   
-  const CURRENT_USER = "simonbeelen";
-
   useEffect(() => {
     const fetchBedrijven = async () => {
       try {
