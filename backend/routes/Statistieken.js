@@ -1,3 +1,6 @@
+const express = require('express');
+const router = express.Router();
+const db = require('../db');
 router.get('/', async (req, res) => {
   try {
     const [rows] = await db.query(`
@@ -8,7 +11,7 @@ router.get('/', async (req, res) => {
         (SELECT COUNT(*) FROM Afspraken) AS afsprakenCount
     `);
 
-    const counts = rows; // rows is al het resultaat, geen .rows property
+    const counts = rows;
     res.json({
       bedrijven: parseInt(counts.bedrijvenCount, 10),
       studenten: parseInt(counts.studentenCount, 10),
