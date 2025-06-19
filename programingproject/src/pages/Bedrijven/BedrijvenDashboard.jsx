@@ -49,7 +49,8 @@ function BedrijvenDashboard() {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('ingelogdeGebruiker'));
     if (user && user.type === 'bedrijf') {
-      const bedrijfId = user.id; // dynamisch bedrijfId vanuit ingelogde gebruiker
+     const user = JSON.parse(localStorage.getItem('ingelogdeGebruiker'));
+const bedrijfId = user?.id;
       fetch(`/api/notifications/${bedrijfId}`)
         .then(res => {
           if (!res.ok) {
