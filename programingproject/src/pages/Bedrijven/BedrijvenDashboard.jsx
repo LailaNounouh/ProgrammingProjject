@@ -48,9 +48,8 @@ function BedrijvenDashboard() {
   // ** Nieuw: haal meldingen op voor ingelogd bedrijf **
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('ingelogdeGebruiker'));
-    if (user && user.type === 'bedrijf') {
-     const user = JSON.parse(localStorage.getItem('ingelogdeGebruiker'));
-const bedrijfId = user?.id;
+if (user && user.type === 'bedrijf') {
+  const bedrijfId = user.id;
       fetch(`/api/notifications/${bedrijfId}`)
         .then(res => {
           if (!res.ok) {
