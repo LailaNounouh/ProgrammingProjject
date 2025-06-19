@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import Plattegrond from '../../components/plattegrond/Plattegrond';
+import Plattegrond from '../../components/plattegrond/plattegrond';
 import './SeekerDashboard.css';
 import { baseUrl } from '../../config';
  

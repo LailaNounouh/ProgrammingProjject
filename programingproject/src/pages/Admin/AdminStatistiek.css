@@ -1,0 +1,74 @@
+/* AdminStatistiek.css */
+
+.admin-dashboard {
+  padding: 2rem;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.admin-main {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.statistieken-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+.statistieken-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+}
+
+.stat-card {
+  background-color: #eef6f9;
+  border-left: 6px solid #3498db;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card h3 {
+  font-size: 1.4rem;
+  color: #2c7da0;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card p,
+.stat-card ul {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.stat-card ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+
+.stat-card li {
+  margin-bottom: 0.4rem;
+}
+
+.terug-knop-container {
+  margin-bottom: 1.5rem;
+}
+
+.terug-button {
+  background-color: #2c7da0;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.terug-button:hover {
+  background-color: #256a8a;
+}

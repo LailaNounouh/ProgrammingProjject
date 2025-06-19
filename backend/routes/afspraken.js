@@ -116,15 +116,20 @@ router.get('/beschikbaar/:bedrijfId', async (req, res) => {
     let alleTijdsloten = STANDAARD_TIJDEN;
 
     if (bedrijf.beschikbare_tijdsloten) {
-      try {
-        const bedrijfTijdsloten = JSON.parse(bedrijf.beschikbare_tijdsloten);
-        if (Array.isArray(bedrijfTijdsloten) && bedrijfTijdsloten.length > 0) {
-          alleTijdsloten = bedrijfTijdsloten;
-        }
-      } catch (e) {
-        console.warn('Kon bedrijfstijdsloten niet parsen:', e);
-      }
+  try {
+    const bedrijfTijdsloten = JSON.parse(bedrijf.beschikbare_tijdsloten);
+    if (Array.isArray(bedrijfTijdsloten) && bedrijfTijdsloten.length > 0) {
+      alleTijdsloten = bedrijfTijdsloten;
     }
+  } catch (e) {
+    console.warn('Kon bedrijfstijdsloten niet parsen als JSON, probeer als CSV:', e);
+    // fallback: split op komma en trim spaties
+    alleTijdsloten = bedrijf.beschikbare_tijdsloten
+      .split(',')
+      .map(tijd => tijd.trim())
+      .filter(tijd => tijd.length > 0);
+  }
+}
 
     const bezetteTijdsloten = afspraken.map((a) => a.tijdslot);
     const beschikbareTijdsloten = alleTijdsloten.filter(

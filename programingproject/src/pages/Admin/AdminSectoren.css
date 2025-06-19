@@ -1,0 +1,90 @@
+.admin-dashboard {
+  padding: 2rem;
+  background-color: #f4f6f8;
+  min-height: 100vh;
+}
+
+.terug-knop-container {
+  margin-bottom: 1rem;
+}
+
+.terug-button {
+  background-color: #2c7da0;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.terug-button:hover {
+  background-color: #256a8a;
+}
+
+.admin-main {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.sectoren-section h2 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.sectoren-section ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.sectoren-section li {
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sectoren-section button {
+  margin-left: 1rem;
+  padding: 0.4rem 0.8rem;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sectoren-section button:hover {
+  background-color: #5a6268;
+}
+
+.sectoren-section input {
+  padding: 0.5rem;
+  width: 60%;
+  margin-right: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.sector-acties {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.sector-verwijder {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sector-verwijder:hover {
+  background-color: #b02a37;
+}
+

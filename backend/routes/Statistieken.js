@@ -1,34 +1,22 @@
-const express = require('express');
-const router = express.Router();
-const db = require('../db'); // jouw database module
-
 router.get('/', async (req, res) => {
   try {
-    // Query om aantal bedrijven te tellen
-    const bedrijvenCountResult = await db.query('SELECT COUNT(*) AS count FROM Bedrijven');
-    const bedrijvenCount = parseInt(bedrijvenCountResult.rows[0].count, 10);
+    const [rows] = await db.query(`
+      SELECT
+        (SELECT COUNT(*) FROM Bedrijven) AS bedrijvenCount,
+        (SELECT COUNT(*) FROM Studenten) AS studentenCount,
+        (SELECT COUNT(*) FROM Werkzoekenden) AS werkzoekendenCount,
+        (SELECT COUNT(*) FROM Afspraken) AS afsprakenCount
+    `);
 
-    // Query om aantal studenten te tellen
-    const studentenCountResult = await db.query('SELECT COUNT(*) AS count FROM Studenten');
-    const studentenCount = parseInt(studentenCountResult.rows[0].count, 10);
-
-    // Query om aantal werkzoekenden te tellen
-    const werkzoekendenCountResult = await db.query('SELECT COUNT(*) AS count FROM Werkzoekenden');
-    const werkzoekendenCount = parseInt(werkzoekendenCountResult.rows[0].count, 10);
-
-    const afsprakenCountResult = await db.query('SELECT COUNT(*) AS count FROM Afspraken');
-    const afsprakenCount = parseInt(afsprakenCountResult.rows[0].count, 10);
-
+    const counts = rows; // rows is al het resultaat, geen .rows property
     res.json({
-      bedrijven: bedrijvenCount,
-      studenten: studentenCount,
-      werkzoekenden: werkzoekendenCount,
-      afspraken: afsprakenCount,
+      bedrijven: parseInt(counts.bedrijvenCount, 10),
+      studenten: parseInt(counts.studentenCount, 10),
+      werkzoekenden: parseInt(counts.werkzoekendenCount, 10),
+      afspraken: parseInt(counts.afsprakenCount, 10),
     });
   } catch (error) {
-    console.error('Fout bij ophalen statistieken:', error);
+    console.error('Fout bij ophalen statistieken:', error.stack || error);
     res.status(500).json({ error: 'Kon statistieken niet ophalen' });
   }
 });
-
-module.exports = router;
