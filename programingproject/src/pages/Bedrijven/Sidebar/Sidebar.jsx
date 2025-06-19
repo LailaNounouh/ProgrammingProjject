@@ -4,6 +4,7 @@ import {
   FaCalendarAlt,
   FaMapMarkerAlt,
   FaCog,
+  FaHome // Nieuw home icoon toegevoegd
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -41,6 +42,18 @@ export const Sidebar = ({ showMobileMenu, setShowMobileMenu }) => {
 
   return (
     <aside className={`sidebar ${showMobileMenu ? 'active' : ''}`}>
+      {/* Home link toegevoegd */}
+      <div 
+        className="sidebar-home"
+        onClick={() => {
+          navigate('/bedrijf/dashboard');
+          setShowMobileMenu(false);
+        }}
+      >
+        <FaHome className="home-icon" />
+        <span>Dashboard</span>
+      </div>
+      
       <h3>Snelmenu</h3>
       <ul>
         {menuItems.map((item, index) => (

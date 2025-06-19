@@ -51,6 +51,28 @@
 .icon.green { background-color: var(--green); }
 .icon.orange { background-color: var(--orange); }
 .icon.purple { background-color: var(--purple); }
+/* Home link styling */
+.sidebar-home {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--gray-700);
+  font-weight: 500;
+}
+
+.sidebar-home:hover {
+  background-color: var(--gray-100);
+}
+
+.home-icon {
+  font-size: 1.25rem;
+  color: var(--primary-blue);
+}
 
 /* --- MOBILE SIDEBAR --- */
 @media (max-width: 768px) {
