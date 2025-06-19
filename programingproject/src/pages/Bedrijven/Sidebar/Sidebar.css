@@ -51,6 +51,9 @@
 .icon.green { background-color: var(--green); }
 .icon.orange { background-color: var(--orange); }
 .icon.purple { background-color: var(--purple); }
+.icon.primary-blue { 
+  background-color: var(--primary-blue); 
+}
 /* Home link styling */
 .sidebar-home {
   display: flex;
