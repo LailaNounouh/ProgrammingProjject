@@ -83,3 +83,33 @@ body {
     margin-bottom: 14px;
   }
 }
+
+@media (max-width: 600px) {
+  body {
+    padding: 6px;
+  }
+  .about-page {
+    padding: 0 2px;
+  }
+  .header-box {
+    width: 100%;
+    padding: 12px 6px;
+    border-radius: 0;
+    top: 0;
+  }
+  .header-box h1 {
+    font-size: 1.1rem;
+  }
+  .header-box .subtitle {
+    font-size: 0.95rem;
+  }
+  .content-box {
+    padding: 10px 4px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .content-box p {
+    font-size: 0.97rem;
+    margin-bottom: 10px;
+  }
+}
