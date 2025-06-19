@@ -7,7 +7,9 @@ const StudentDashboard = () => {
   const { gebruiker } = useAuth();
   const [bedrijven, setBedrijven] = useState([]);
   const [afspraken, setAfspraken] = useState([]);
-
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteStatus, setDeleteStatus] = useState('');
+  
   useEffect(() => {
     // Haal deelnemende bedrijven op
     const fetchBedrijven = async () => {

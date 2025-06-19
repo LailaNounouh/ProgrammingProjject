@@ -7,6 +7,20 @@ import './SeekerDashboard.css';
 const SeekerDashboard = () => {
   const { gebruiker } = useAuth();
   const [bedrijven, setBedrijven] = useState([]);
+  const [filterSector, setFilterSector] = useState('all');
+  const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch (err) {
+        console.error("Fout bij parsen van gebruikersdata:", err);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const fetchBedrijven = async () => {
@@ -25,27 +39,53 @@ const SeekerDashboard = () => {
   }, []);
 
   return (
-    <div className="dashboard-container">
-
-      <div className="welcome-section">
-        <h1>Welkom{gebruiker ? `, ${gebruiker.naam}` : ' op het dashboard'}</h1>
-        <p>Bekijk hieronder de deelnemende bedrijven aan de CareerLaunch</p>
-      </div>
-
-      <div className="dashboard-grid">
-        <div className="dashboard-card">
-          <div className="card-header">
-            <h2>Deelnemende Bedrijven</h2>
-            <Link to="/Seeker/bedrijven" className="view-all">
-              Bekijk alles →
-            </Link>
+    <div className="app">
+      <main>
+        {user && (
+          <div className="gebruiker-info">
+            <p><strong>Ingelogd als:</strong> {user.voornaam} {user.achternaam} ({user.email})</p>
           </div>
-          <div className="bedrijven-list">
-            {bedrijven.length > 0 ? (
-              bedrijven.map((bedrijf, index) => (
-                <div key={`bedrijf-${bedrijf.id || index}`} className="bedrijf-item">
-                  <span>{bedrijf.naam}</span>
-                  <span className="bedrijf-sector">{bedrijf.sector}</span>
+        )}
+
+        <section id="bedrijven" className="bedrijven-section">
+          <h2>Deelnemende bedrijven:</h2>
+
+          <label htmlFor="sectorFilter">Filter op sector:</label>
+          <select
+            id="sectorFilter"
+            value={filterSector}
+            onChange={e => setFilterSector(e.target.value)}
+            className="filter-select"
+          >
+            <option value="all">Alle sectoren</option>
+            {alleSectoren.map((sector, idx) => (
+              <option key={idx} value={sector}>{sector}</option>
+            ))}
+          </select>
+
+          <div className="bedrijven-grid">
+            {error ? (
+              <p className="error">{error}</p>
+            ) : bedrijven.length === 0 ? (
+              <p>Bedrijven worden geladen...</p>
+            ) : gefilterdeBedrijven.length === 0 ? (
+              <p>Geen bedrijven gevonden in deze sector.</p>
+            ) : (
+              gefilterdeBedrijven.map((bedrijf, index) => (
+                <div className="bedrijf-kaart" key={`${bedrijf.naam}-${index}`}>
+                  {bedrijf.logo_url ? (
+                    <img
+                      src={bedrijf.logo_url}
+                      alt={`${bedrijf.naam} logo`}
+                      className="bedrijf-logo"
+                    />
+                  ) : (
+                    <div className="logo-placeholder">Geen logo</div>
+                  )}
+                  <p className="bedrijf-naam">{bedrijf.naam}</p>
+                  <a href={`/bedrijven/${bedrijf.naam}`} className="meer-info-link">
+                    Meer info
+                  </a>
                 </div>
               ))
             ) : (
