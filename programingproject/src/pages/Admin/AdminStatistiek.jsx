@@ -44,17 +44,17 @@ function AdminStatistiek() {
             <>
               <div className="stat-card">
                 <h3>Gebruikers</h3>
-                <p>Totaal aantal gebruikers: {stats.totaal_gebruikers}</p>
                 <ul>
-                  <li>Studenten: {stats.aantal_studenten}</li>
-                  <li>Bedrijven: {stats.aantal_bedrijven}</li>
-                  <li>Werkzoekenden: {stats.aantal_werkzoekenden}</li>
+                  <li>Studenten: {stats.studenten}</li>
+                  <li>Bedrijven: {stats.bedrijven}</li>
+                  <li>Werkzoekenden: {stats.werkzoekenden}</li>
                 </ul>
+                <p>Totaal aantal gebruikers: {stats.studenten + stats.bedrijven + stats.werkzoekenden}</p>
               </div>
 
               <div className="stat-card">
-                <h3>Actieve standen</h3>
-                <p>Er zijn momenteel {stats.actieve_standen} actieve standen op de plattegrond.</p>
+                <h3>Afspraken</h3>
+                <p>Er zijn momenteel {stats.afspraken} afspraken geregistreerd.</p>
               </div>
             </>
           )}
