@@ -1,32 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./AdminStatistiek.css";
-import { useNavigate } from "react-router-dom"; // ✅ Toevoegen
+import { useNavigate } from "react-router-dom";
+import { baseUrl } from "../../config"; // Zorg dat dit pad klopt!
 
 function AdminStatistiek() {
-  const navigate = useNavigate(); // ✅ Hook gebruiken
+  const navigate = useNavigate();
 
-  const gebruikers = [
-    { rol: "student" },
-    { rol: "bedrijf" },
-    { rol: "werkzoekende" },
-    { rol: "student" },
-    { rol: "bedrijf" },
-    { rol: "werkzoekende" },
-    { rol: "student" },
-    { rol: "bedrijf" },
-    { rol: "student" }
-  ];
+  const [stats, setStats] = useState(null);
+  const [error, setError] = useState(null);
 
-  const total = gebruikers.length;
-  const aantalStudenten = gebruikers.filter(g => g.rol === "student").length;
-  const aantalBedrijven = gebruikers.filter(g => g.rol === "bedrijf").length;
-  const aantalWerkzoekenden = gebruikers.filter(g => g.rol === "werkzoekende").length;
-
-  const actieveStanden = 12;
+  useEffect(() => {
+    fetch(`${baseUrl}/statistieken`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Statistieken ophalen mislukt");
+        return res.json();
+      })
+      .then((data) => {
+        setStats(data);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Kon statistieken niet ophalen.");
+      });
+  }, []);
 
   return (
     <div className="admin-dashboard">
-      {/* ✅ Terugknop */}
       <div className="terug-knop-container">
         <button className="terug-button" onClick={() => navigate('/admin')}>
           ← Terug naar dashboard
@@ -37,20 +36,28 @@ function AdminStatistiek() {
         <section className="statistieken-section">
           <h2>Overzicht van Statistieken</h2>
 
-          <div className="stat-card">
-            <h3>Gebruikers</h3>
-            <p>Totaal aantal gebruikers: {total}</p>
-            <ul>
-              <li>Studenten: {aantalStudenten}</li>
-              <li>Bedrijven: {aantalBedrijven}</li>
-              <li>Werkzoekenden: {aantalWerkzoekenden}</li>
-            </ul>
-          </div>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
 
-          <div className="stat-card">
-            <h3>Actieve standen</h3>
-            <p>Er zijn momenteel {actieveStanden} actieve standen op de plattegrond.</p>
-          </div>
+          {!stats ? (
+            <p>Statistieken worden geladen...</p>
+          ) : (
+            <>
+              <div className="stat-card">
+                <h3>Gebruikers</h3>
+                <p>Totaal aantal gebruikers: {stats.totaal_gebruikers}</p>
+                <ul>
+                  <li>Studenten: {stats.aantal_studenten}</li>
+                  <li>Bedrijven: {stats.aantal_bedrijven}</li>
+                  <li>Werkzoekenden: {stats.aantal_werkzoekenden}</li>
+                </ul>
+              </div>
+
+              <div className="stat-card">
+                <h3>Actieve standen</h3>
+                <p>Er zijn momenteel {stats.actieve_standen} actieve standen op de plattegrond.</p>
+              </div>
+            </>
+          )}
         </section>
       </main>
     </div>
