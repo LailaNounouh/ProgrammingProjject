@@ -15,10 +15,10 @@ const SeekerHeader = () => {
       </Link>
       <nav>
         <ul>
-          <li><Link to="/student">Dashboard</Link></li>
-          <li><Link to="/bedrijven">Deelnemende Bedrijven</Link></li>
-          <li><Link to="/standen">Standen</Link></li>
-          <li><Link to="/student/profiel">Profiel</Link></li>
+          <li><Link to="/werkzoekende">Dashboard</Link></li>
+          <li><Link to="/werkzoekende/bedrijven">Deelnemende Bedrijven</Link></li>
+          <li><Link to="/werkzoekende/standen">Standen</Link></li>
+          <li><Link to="/werkzoekende/profiel">Profiel</Link></li>
           <li><LogoutButton /></li>
         </ul>
 
