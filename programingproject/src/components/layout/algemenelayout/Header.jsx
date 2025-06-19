@@ -8,6 +8,7 @@ import LogoutButton from '../../button/logoutbutton';
 const Header = () => {
   const { user, logout } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
 
   useEffect(() => {
@@ -30,8 +31,13 @@ const Header = () => {
         />
       </Link>
 
+      {/* Hamburger knop voor mobiel */}
+      <button className="hamburger" onClick={() => setShowMobileMenu(!showMobileMenu)}>
+        ☰
+      </button>
 
-      <nav>
+
+      <nav className={showMobileMenu ? 'show' : ''}>
         <ul>
           <li><Link to="/">Home</Link></li>
           <li><Link to="/about">About</Link></li>
