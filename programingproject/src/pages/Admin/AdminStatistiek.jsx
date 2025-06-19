@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./AdminStatistiek.css";
 import { useNavigate } from "react-router-dom";
-import { baseUrl } from "../../config"; // Zorg dat dit pad klopt!
+import { baseUrl } from "../../config";
 
 function AdminStatistiek() {
   const navigate = useNavigate();
