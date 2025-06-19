@@ -22,6 +22,8 @@ const codeertaalRouter = require('./routes/codeertalen');
 const usersRouter = require('./routes/users');
 const statistiekenRouter = require('./routes/Statistieken');
 
+const attendanceRouter = require('./routes/attendance');
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
@@ -128,6 +130,8 @@ apiRouter.use('/afspraken', afsprakenRouter)
 apiRouter.use('/codeertaal', codeertaalRouter);
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/statistieken', statistiekenRouter);
+
+apiRouter.use('/attendance', attendanceRouter)
 
 
 app.use('/api', apiRouter);

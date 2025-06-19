@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import Plattegrond from '../../components/plattegrond/plattegrond';
-import './SeekerDashboard.css';
-import { baseUrl } from '../../config';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthProvider';
+import './SeekerDashboard.css'; 
+
 
 const SeekerDashboard = () => {
+  const { gebruiker } = useAuth();
   const [bedrijven, setBedrijven] = useState([]);
   const [filterSector, setFilterSector] = useState('all');
   const [error, setError] = useState(null);
@@ -21,34 +23,20 @@ const SeekerDashboard = () => {
   }, []);
 
   useEffect(() => {
-    async function fetchBedrijven() {
+    const fetchBedrijven = async () => {
       try {
-        const response = await fetch(`${baseUrl}/bedrijvenmodule`);
-        if (!response.ok) {
-          throw new Error(`HTTP-fout! status: ${response.status}`);
+        const response = await fetch('http://10.2.160.211:3000/api/bedrijvenmodule');
+        if (response.ok) {
+          const data = await response.json();
+          setBedrijven(data.slice(0, 5)); // Toon enkel eerste 5 bedrijven
         }
-        const data = await response.json();
-        setBedrijven(data);
-        setError(null);
       } catch (error) {
-        console.error("Fout bij laden bedrijven:", error);
-        setError("Fout bij laden bedrijven, probeer later opnieuw.");
+        console.error('Fout bij ophalen bedrijven:', error);
       }
-    }
+    };
+
     fetchBedrijven();
   }, []);
-
-  const alleSectoren = useMemo(() => {
-    const sectorSet = new Set();
-    bedrijven.forEach(b => {
-      if (b.sector_naam) sectorSet.add(b.sector_naam);
-    });
-    return Array.from(sectorSet).sort();
-  }, [bedrijven]);
-
-  const gefilterdeBedrijven = filterSector === 'all'
-    ? bedrijven
-    : bedrijven.filter(b => b.sector_naam === filterSector);
 
   return (
     <div className="app">
@@ -100,17 +88,12 @@ const SeekerDashboard = () => {
                   </a>
                 </div>
               ))
+            ) : (
+              <p>Laden van bedrijven...</p>
             )}
           </div>
-        </section>
-
-        <section id="plattegrond" className="plattegrond-section">
-          <h2>Plattegrond:</h2>
-          <div className="plattegrond-container">
-            <Plattegrond bewerkModus={false} />
-          </div>
-        </section>
-      </main>
+        </div>
+      </div>
     </div>
   );
 };
