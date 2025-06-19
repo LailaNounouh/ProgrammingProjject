@@ -140,6 +140,15 @@
     font-size: 0.85rem;
     padding: 0.6rem;
   }
+
+  .login-container .form-group input,
+  .login-container .form-group select {
+    font-size: 0.95rem;
+    padding: 0.6rem;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
 }
 
 @media (max-width: 480px) {
@@ -165,6 +174,9 @@
   .login-container .form-group select {
     font-size: 0.95rem;
     padding: 0.6rem;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
 
   .login-container .login-button {
