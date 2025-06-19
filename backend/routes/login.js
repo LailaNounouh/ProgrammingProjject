@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
         break;
       case 'werkzoekende':
         tableName = 'Werkzoekenden';
-        idColumn = 'werkzoekende';
+        idColumn = 'werkzoekende_id';
         break;
       default:
         return res.status(400).json({ error: 'Ongeldig account type' });

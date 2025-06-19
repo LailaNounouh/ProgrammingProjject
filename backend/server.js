@@ -7,6 +7,7 @@ const multer = require('multer');
 const http = require('http');
 const socketIo = require('socket.io');
 
+
 // Routers
 const homeRouter = require('./routes/home');
 const registerRouter = require('./routes/register');
@@ -18,6 +19,10 @@ const profielRouter = require('./routes/profiel');
 const adminRouter = require('./routes/admin');
 const afsprakenRouter = require('./routes/afspraken')
 const codeertaalRouter = require('./routes/codeertalen');
+const usersRouter = require('./routes/users');
+const statistiekenRouter = require('./routes/Statistieken');
+
+const attendanceRouter = require('./routes/attendance');
 
 const app = express();
 const server = http.createServer(app);
@@ -86,7 +91,6 @@ app.post('/api/studentenaccount', upload.single('profilePicture'), async (req, r
     res.status(500).json({ error: 'Er ging iets mis bij het opslaan van het profiel.' });
   }
 });
-
 // Set up Socket.IO connection
 io.on('connection', (socket) => {
   console.log('New client connected');
@@ -124,6 +128,11 @@ apiRouter.use('/profiel', profielRouter);
 apiRouter.use('/admin', adminRouter);
 apiRouter.use('/afspraken', afsprakenRouter)
 apiRouter.use('/codeertaal', codeertaalRouter);
+apiRouter.use('/users', usersRouter);
+apiRouter.use('/statistieken', statistiekenRouter);
+
+apiRouter.use('/attendance', attendanceRouter)
+
 
 app.use('/api', apiRouter);
 

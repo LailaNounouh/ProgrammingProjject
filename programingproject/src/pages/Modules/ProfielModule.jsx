@@ -8,6 +8,7 @@ const ProfielModule = () => {
   const { profiel, fetchProfiel, loading } = useProfile();
 
   const [formData, setFormData] = useState({
+    voornaam: "", 
     naam: "",
     email: "",
     studie: "",
@@ -26,6 +27,7 @@ const ProfielModule = () => {
     if (profiel) {
       setFormData({
         naam: profiel.naam || "",
+        voornaam: profiel.voornaam || "",
         email: profiel.email || "",
         studie: profiel.studie || "",
         telefoon: profiel.telefoon || "",
@@ -47,9 +49,14 @@ const ProfielModule = () => {
         <h3>Persoonlijke Informatie</h3>
         <div className="profiel-info">
           <div className="info-item">
-            <label>Naam:</label>
-            <p>{formData.naam}</p>
+            <label>Voornaam:</label>
+            <p>{formData.voornaam}</p>
           </div>
+          <div className="info-item">
+          <label>Naam</label>
+          <p>{formData.naam}</p>
+          </div>
+          
           <div className="info-item">
             <label>Email:</label>
             <p>{formData.email}</p>
