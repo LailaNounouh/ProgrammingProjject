@@ -23,3 +23,6 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Kon statistieken niet ophalen' });
   }
 });
+
+module.exports = router;
+
