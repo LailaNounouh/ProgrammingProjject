@@ -96,6 +96,25 @@ function AdminDashboard() {
             </div>
           </div>
 
+          <div
+  className="dashboard-card"
+  onClick={() => navigate("/admin/aanwezigheid")}
+>
+  <div className="icon-container">
+    <div className="icon-wrapper icon-turquoise">🧾</div>
+    <h3>Aanwezigheden</h3>
+  </div>
+  <hr className="card-divider" />
+  <p className="card-description">
+    Bekijk en beheer de check-ins van deelnemers
+  </p>
+  <div className="card-footer">
+    <span className="card-link">Ga naar aanwezigheden</span>
+    <span className="card-arrow">→</span>
+  </div>
+</div>
+
+
 
 
         </div>
