@@ -52,29 +52,6 @@ function AdminSectoren() {
       });
   };
 
-  const toggleZichtbaarheid = (id, huidigZichtbaar) => {
-    fetch(`${baseUrl}/sectoren/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ zichtbaar: !huidigZichtbaar }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Zichtbaarheid aanpassen mislukt");
-        return res.json();
-      })
-      .then(() => {
-        setSectoren(
-          sectoren.map((s) =>
-            s.sector_id === id ? { ...s, zichtbaar: !huidigZichtbaar } : s
-          )
-        );
-      })
-      .catch((err) => {
-        console.error(err);
-        setError("Kon zichtbaarheid niet aanpassen.");
-      });
-  };
-
   return (
     <div className="admin-dashboard">
       <div className="terug-knop-container">
@@ -93,18 +70,7 @@ function AdminSectoren() {
             {sectoren.map((sector) => (
               <li key={sector.sector_id} className="sector-item">
                 <span className="sector-naam">{sector.naam}</span>
-                <span className="sector-status">
-                  ({sector.zichtbaar ? "zichtbaar" : "verborgen"})
-                </span>
                 <div className="sector-acties">
-                  <button
-                    className="sector-toggle"
-                    onClick={() =>
-                      toggleZichtbaarheid(sector.sector_id, sector.zichtbaar)
-                    }
-                  >
-                    {sector.zichtbaar ? "Verberg" : "Toon"}
-                  </button>
                   <button
                     className="sector-verwijder"
                     onClick={() => verwijderSector(sector.sector_id)}
