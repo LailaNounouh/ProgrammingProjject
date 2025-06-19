@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useProfile } from "../../context/ProfileContext";
 import { useAuth } from "../../context/AuthProvider";
+import Studierichtingen from "../../components/dropdowns/Studierichtingen";
 import CodeerTaalSelector from "../../components/dropdowns/CodeerTaalSelector";
 import TaalSelector from "../../components/dropdowns/TaalSelector";
 import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
@@ -15,6 +16,7 @@ const ProfielSettingsModule = () => {
 
   const [formData, setFormData] = useState({
     naam: "",
+    voornaam: "",
     studie: "",
     telefoon: "",
     beschrijving: "",
@@ -63,6 +65,9 @@ const ProfielSettingsModule = () => {
     setSuccess(false);
     try {
       const editableData = {
+        naam: formData.naam,
+        voornaam: formData.voornaam,
+        email: gebruiker?.email || "",
         telefoon: formData.telefoon,
         beschrijving: formData.beschrijving,
         linkedin: formData.linkedin,
@@ -112,7 +117,17 @@ const ProfielSettingsModule = () => {
           <h3>Persoonlijke Informatie</h3>
 
           <div className="form-group">
-            <label htmlFor="naam">Naam</label>
+            <label htmlFor="naam">Voornaam</label>
+            <input
+              id="voornaam"
+              type="text"
+              value={formData.voornaam}
+              onChange={(e) => handleInputChange("voornaam", e.target.value)}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="voornaam">Naam</label>
             <input
               id="naam"
               type="text"
@@ -133,12 +148,10 @@ const ProfielSettingsModule = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="studie">Studie</label>
-            <input
-              id="studie"
-              type="text"
-              value={formData.studie}
-              onChange={(e) => handleInputChange("studie", e.target.value)}
+            <label htmlFor="studie">Studierichting</label>
+            <Studierichtingen
+              selectedStudie={formData.studie}
+              onChange={(selected) => handleInputChange("studie", selected)}
             />
           </div>
         </section>
@@ -208,7 +221,9 @@ const ProfielSettingsModule = () => {
               rows="4"
               maxLength="1000"
               value={formData.beschrijving}
-              onChange={(e) => handleInputChange("beschrijving", e.target.value)}
+              onChange={(e) =>
+                handleInputChange("beschrijving", e.target.value)
+              }
               placeholder="Vertel iets over jezelf..."
             />
             <small className="char-count">
@@ -223,11 +238,7 @@ const ProfielSettingsModule = () => {
             className={`save-button${success ? " success" : ""}`}
             disabled={isSubmitting}
           >
-            {isSubmitting
-              ? "Opslaan..."
-              : success
-              ? "Opgeslagen"
-              : "Opslaan"}
+            {isSubmitting ? "Opslaan..." : success ? "Opgeslagen" : "Opslaan"}
           </button>
         </div>
       </form>

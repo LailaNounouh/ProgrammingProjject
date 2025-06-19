@@ -34,7 +34,7 @@ function AdminDashboard() {
             </div>
           </div>
 
-          <div className="dashboard-card" onClick={() => navigate("/standen")}>
+          <div className="dashboard-card" onClick={() => navigate("/Admin/standen")}>
             <div className="icon-container">
               <div className="icon-wrapper icon-rood">📍</div>
               <h3>Beheer van standen</h3>
@@ -51,7 +51,7 @@ function AdminDashboard() {
 
           <div
             className="dashboard-card"
-            onClick={() => navigate("/gebruikers")}
+            onClick={() => navigate("/Admin/gebruikers")}
           >
             <div className="icon-container">
               <div className="icon-wrapper icon-paars">👥</div>
