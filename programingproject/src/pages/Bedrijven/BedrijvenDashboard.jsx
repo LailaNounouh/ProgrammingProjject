@@ -12,21 +12,16 @@ import {
 } from 'react-icons/fa';
 import './BedrijvenDashboard.css';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthProvider';
 
 function BedrijvenDashboard() {
   const navigate = useNavigate();
-  const [bedrijfNaam, setBedrijfNaam] = useState('');
+  const { gebruiker } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationRef = useRef(null);
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('ingelogdeGebruiker'));
-    if (user && user.type === 'bedrijf') {
-      setBedrijfNaam(user.naam);
-    }
-  }, []);
 
   // Dashboard menu items
   const dashboardItems = [
@@ -137,7 +132,7 @@ function BedrijvenDashboard() {
           <div className="main-content-area">
             <div className="welcome-banner">
               <div className="welcome-content">
-                <h1>Welkom terug, {bedrijfNaam}!</h1>
+                <h1>Welkom terug, {gebruiker?.naam || 'Bedrijf'}!</h1>
                 <p>Hier vindt u een overzicht van uw activiteiten en status</p>
               </div>
             </div>
