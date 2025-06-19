@@ -242,24 +242,23 @@
   }
 
   .contact-container h1 {
-    font-size: 1.3rem;
+    font-size: 2rem;
     padding-bottom: 0.3rem;
   }
 
   .contact-container .contact-intro {
     font-size: 1rem;
-    text-align: center;
   }
 
   .contact-container .contact-form-section h2 {
-    font-size: 1rem;
+    font-size: 1.5rem;
     text-align: center;
     margin-bottom: 0.7rem;
   }
 
   .contact-container .contact-details strong {
     min-width: 70px;
-    font-size: 0.97rem;
+    font-size: 0.7rem;
   }
 
   .contact-container .google-maps iframe {
