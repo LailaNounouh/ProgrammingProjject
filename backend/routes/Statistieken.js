@@ -3,10 +3,10 @@ const router = express.Router();
 const pool = require("../db");
 router.get("/", async (req, res) => {
   try {
-    const [bedrijven] = await pool.query("SELECT COUNT(*) AS count FROM bedrijven");
-    const [studenten] = await pool.query("SELECT COUNT(*) AS count FROM studenten");
-    const [werkzoekenden] = await pool.query("SELECT COUNT(*) AS count FROM werkzoekenden");
-    const [afspraken] = await pool.query("SELECT COUNT(*) AS count FROM afspraken WHERE actief = 1");
+    const [bedrijven] = await pool.query("SELECT COUNT(*) AS count FROM Bedrijven");
+    const [studenten] = await pool.query("SELECT COUNT(*) AS count FROM Studenten");
+    const [werkzoekenden] = await pool.query("SELECT COUNT(*) AS count FROM Werkzoekenden");
+    const [afspraken] = await pool.query("SELECT COUNT(*) AS count FROM Afspraken WHERE actief = 1");
 
     res.json({
       bedrijven: bedrijven[0].count,
