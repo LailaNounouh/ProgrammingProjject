@@ -195,6 +195,31 @@ function DashboardContent({
                 </div>
               ))}
             </div>
+
+            {/* Belangrijkste events sectie */}
+            <div className="important-events">
+              <h3>Belangrijkste events</h3>
+              {upcomingEvents
+                .filter(event => event.highlight)
+                .sort((a, b) => new Date(a.date.split(' ').slice(1).join(' ')) - new Date(b.date.split(' ').slice(1).join(' ')))
+                .map((event, index) => (
+                  <div key={`important-${index}`} className="calendar-event highlight-event">
+                    <div className="event-time">
+                      <FaCalendarCheck /> {event.time || 'Hele dag'}
+                    </div>
+                    <div className="event-text">
+                      <strong>{event.title}</strong>
+                      <p>{event.description}</p>
+                      <small className="event-date">{event.date}</small>
+                      {event.deadline && (
+                        <span className="deadline-badge">
+                          <FaExclamationCircle /> DEADLINE
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
       </div>
@@ -202,6 +227,12 @@ function DashboardContent({
       {showReminderModal && (
         <div className="modal-overlay">
           <div className="reminder-modal">
+            <button 
+              className="close-modal-btn"
+              onClick={() => setShowReminderModal(false)}
+            >
+              &times;
+            </button>
             <h3>Nieuwe herinnering</h3>
             <form onSubmit={handleReminderSubmit}>
               <div className="form-group">

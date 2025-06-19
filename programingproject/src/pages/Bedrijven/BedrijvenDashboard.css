@@ -1,4 +1,4 @@
-/* Algemene stijlen */
+/* Algemene stijlen */ 
 .bedrijven-dashboard {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
@@ -63,9 +63,10 @@
 .dashboard-toolbar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin-bottom: 25px;
   flex-wrap: wrap;
+  gap: 15px;
+  align-items: flex-start; 
   gap: 15px;
 }
 
@@ -73,7 +74,7 @@
   position: relative;
   flex: 1;
   min-width: 250px;
-  max-width: 400px;
+  max-width: 100%;
 }
 
 .search-box input {
@@ -105,6 +106,8 @@
 /* Notificaties */
 .notification-wrapper {
   position: relative;
+   flex-shrink: 0; 
+  margin-left: auto;
 }
 
 .notification-bell {
@@ -514,6 +517,13 @@
   font-size: 14px;
 }
 
+.event-date {
+  display: block;
+  margin-top: 5px;
+  color: #4a5568;
+  font-size: 13px;
+}
+
 .highlight-event {
   border-left: 4px solid #4a6cf7;
   background: linear-gradient(to right, #f0f5ff, #ffffff);
@@ -534,6 +544,20 @@
   border-radius: 4px;
   font-size: 12px;
   font-weight: bold;
+}
+
+/* Important events section */
+.important-events {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.important-events h3 {
+  font-size: 18px;
+  color: #2d3748;
+  margin-bottom: 18px;
+  font-weight: 600;
 }
 
 /* Modal */
@@ -558,6 +582,25 @@
   width: 100%;
   max-width: 450px;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.close-modal-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #777;
+  transition: color 0.2s;
+  padding: 5px;
+  line-height: 1;
+}
+
+.close-modal-btn:hover {
+  color: #333;
 }
 
 .reminder-modal h3 {
@@ -684,7 +727,7 @@
   }
   
   .card-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
   
   .reminder-modal {
@@ -692,6 +735,24 @@
     margin: 0 15px;
   }
 }
+
+@media (max-width: 600px) {
+  .search-box {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .search-box input {
+    padding: 10px 15px 10px 40px;
+    font-size: 14px;
+  }
+
+  .search-icon {
+    left: 15px;
+    font-size: 14px;
+  }
+}
+
 
 @media (max-width: 480px) {
   .welcome-banner {
