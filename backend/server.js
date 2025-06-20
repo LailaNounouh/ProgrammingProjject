@@ -17,18 +17,18 @@ const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
 const sectorenRouter = require('./routes/sectoren');
 const profielRouter = require('./routes/profiel');
 const adminRouter = require('./routes/admin');
-const afsprakenRouter = require('./routes/afspraken');
+const afsprakenRouter = require('./routes/afspraken')
 const codeertaalRouter = require('./routes/codeertalen');
 const usersRouter = require('./routes/users');
 const statistiekenRouter = require('./routes/Statistieken');
+
 const attendanceRouter = require('./routes/attendance');
-const notificationsRouter = require('./routes/notifications');
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
-  cors: {
-    origin: "*", // Pas aan naar wens voor security
+  cors: { 
+    origin: "*", // Adjust according to your security needs
     methods: ["GET", "POST"]
   }
 });
@@ -91,7 +91,6 @@ app.post('/api/studentenaccount', upload.single('profilePicture'), async (req, r
     res.status(500).json({ error: 'Er ging iets mis bij het opslaan van het profiel.' });
   }
 });
-
 // Set up Socket.IO connection
 io.on('connection', (socket) => {
   console.log('New client connected');
@@ -127,12 +126,13 @@ apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
 apiRouter.use('/sectoren', sectorenRouter);
 apiRouter.use('/profiel', profielRouter);
 apiRouter.use('/admin', adminRouter);
-apiRouter.use('/afspraken', afsprakenRouter);
+apiRouter.use('/afspraken', afsprakenRouter)
 apiRouter.use('/codeertaal', codeertaalRouter);
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/statistieken', statistiekenRouter);
-apiRouter.use('/attendance', attendanceRouter);
-apiRouter.use('/notifications', notificationsRouter);
+
+apiRouter.use('/attendance', attendanceRouter)
+
 
 app.use('/api', apiRouter);
 
