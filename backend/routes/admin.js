@@ -82,17 +82,16 @@ router.put('/sectoren/:id', async (req, res) => {
   }
 });
 
-//ophalen van de bedrijven en hun standen
+// ophalen van de bedrijven en hun standen
 router.get('/bedrijven-standen', async (req, res) => {
   try {
     const [rows] = await pool.query(`
-      SELECT 
-        b.bedrijf_id, 
-        b.naam as company_name, 
+      SELECT
+        b.bedrijf_id,
+        b.naam as company_name,
         b.contactpersoon_beurs as contact_person,
         b.email_beurs as email,
         b.speeddates as speeddate_enabled,
-        b.speeddate_price,
         p.plaats_id,
         p.type as location_type,
         p.nummer as location_number
@@ -107,17 +106,16 @@ router.get('/bedrijven-standen', async (req, res) => {
   }
 });
 
-// Update plattegrond toewijzing voor een bedrijf
+//  Plattegrond toewijzing voor een bedrijf
 router.put('/bedrijven/:id/stand', async (req, res) => {
   const { id } = req.params;
-  const { plaats_id, speeddate_enabled, speeddate_price } = req.body;
-  
-  try {
+  const { plaats_id, speeddate_enabled } = req.body;
+ 
+   try {
  // zorgen voor een soepele beweging in de database 
     await pool.query('START TRANSACTION'); 
-    
-    // Verwijder bestaande toewijzing van dit bedrijf
-    await pool.query('UPDATE plattegrond SET bedrijf_id = NULL WHERE bedrijf_id = ?', [id]);
+
+     await pool.query('UPDATE plattegrond SET bedrijf_id = NULL WHERE bedrijf_id = ?', [id]);
     
     // Als een nieuwe plaats is geselecteerd, wijs deze toe
     if (plaats_id) {
@@ -141,10 +139,9 @@ router.put('/bedrijven/:id/stand', async (req, res) => {
       );
     }
     
-    // Update speed dating instellingen in Bedrijven tabel
     await pool.query(
-      'UPDATE Bedrijven SET speeddates = ?, speeddate_price = ? WHERE bedrijf_id = ?',
-      [speeddate_enabled || 0, speeddate_price || null, id]
+      'UPDATE Bedrijven SET speeddates = ? WHERE bedrijf_id = ?',
+      [speeddate_enabled || 0, id]
     );
     
     await pool.query('COMMIT');
@@ -272,9 +269,7 @@ router.get('/plattegrond', async (req, res) => {
         p.type,
         p.nummer,
         p.bedrijf_id,
-        b.naam as company_name,
-        b.speeddates as speeddate_enabled,
-        b.speeddate_price
+        b.naam as company_name
       FROM plattegrond p
       LEFT JOIN Bedrijven b ON p.bedrijf_id = b.bedrijf_id
       ORDER BY p.type, p.nummer

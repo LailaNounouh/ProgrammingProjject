@@ -10,7 +10,7 @@ function BeheerStanden() {
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedPlaats, setSelectedPlaats] = useState('');
   const [speedDateEnabled, setSpeedDateEnabled] = useState(false);
-  const [speedDatePrice, setSpeedDatePrice] = useState('');
+
   const navigate = useNavigate();
 
   // Haal bedrijven en plattegrond data op bij component mount
@@ -19,15 +19,35 @@ function BeheerStanden() {
     fetchPlattegrondData();
   }, []);
 
-    const fetchBedrijvenMetStanden = async () => {
-    try {
-      const response = await fetch("/api/admin/bedrijven-standen/");
-      const data = await response.json();
-      setBedrijven(data);
-    } catch (error) {
-      console.error('Fout bij ophalen bedrijven:', error);
+    // AdminStanden.jsx
+const fetchBedrijvenMetStanden = async () => {
+  try {
+    const response = await fetch("/api/admin/bedrijven-standen/");
+
+    // Controleer of de response succesvol was
+    if (!response.ok) {
+      const errorData = await response.json(); // Probeer de foutmelding van de backend te parsen
+      console.error('Backend fout bij ophalen bedrijven:', errorData.error || response.statusText);
+      setBedrijven([]); // Zorg ervoor dat bedrijven een lege array is bij een fout
+      return; // Stop de functie hier
     }
-  };
+
+    const data = await response.json();
+    // Controleer of de ontvangen data daadwerkelijk een array is
+    if (Array.isArray(data)) {
+      setBedrijven(data);
+    } else {
+      console.error('Verwachte array, maar kreeg:', data);
+      setBedrijven([]); // Zorg ervoor dat bedrijven een lege array is
+    }
+  } catch (error) {
+    console.error('Netwerkfout of parseerfout bij ophalen bedrijven:', error);
+    setBedrijven([]); // Zorg ervoor dat bedrijven een lege array is bij een fout
+  } finally {
+    // Dit zorgt ervoor dat loading altijd op false wordt gezet, ongeacht succes of fout
+  }
+};
+
 
   const fetchPlattegrondData = async () => {
     try {
@@ -56,7 +76,6 @@ function BeheerStanden() {
         body: JSON.stringify({
           plaats_id: selectedPlaats || null,
           speeddate_enabled: speedDateEnabled,
-          speeddate_price: speedDatePrice ? parseFloat(speedDatePrice) : null
         }),
       });
 
@@ -90,8 +109,7 @@ function BeheerStanden() {
         },
         body: JSON.stringify({
           plaats_id: null,
-          speeddate_enabled: false,
-          speeddate_price: null
+         speeddate_enabled: false,
         }),
       });
 
@@ -134,16 +152,14 @@ function BeheerStanden() {
   const openAssignModal = (bedrijf) => {
     setSelectedBedrijf(bedrijf);
     setSelectedPlaats(bedrijf.plaats_id || '');
-    setSpeedDateEnabled(bedrijf.speeddate_enabled || false);
-    setSpeedDatePrice(bedrijf.speeddate_price || '');
-    setShowAssignModal(true);
+      setSpeedDateEnabled(bedrijf.speeddate_enabled || false);
+       setShowAssignModal(true);
   };
 
   const resetForm = () => {
     setSelectedBedrijf(null);
     setSelectedPlaats('');
     setSpeedDateEnabled(false);
-    setSpeedDatePrice('');
   };
 
   const getLocationDisplay = (bedrijf) => {
@@ -268,7 +284,6 @@ function BeheerStanden() {
                 <span>Contact</span>
                 <span>Locatie</span>
                 <span>Speed Dating</span>
-                <span>Prijs</span>
                 <span>Acties</span>
               </div>
               
@@ -282,11 +297,8 @@ function BeheerStanden() {
                   <span className={`location ${bedrijf.plaats_id ? 'assigned' : 'unassigned'}`}>
                     {getLocationDisplay(bedrijf)}
                   </span>
-                  <span className={`speeddate ${bedrijf.speeddate_enabled ? 'enabled' : 'disabled'}`}>
+                   <span className={`speeddate ${bedrijf.speeddate_enabled ? 'enabled' : 'disabled'}`}>
                     {bedrijf.speeddate_enabled ? 'Ja' : 'Nee'}
-                  </span>
-                  <span className="price">
-                    {bedrijf.speeddate_price ? `€${bedrijf.speeddate_price}` : '-'}
                   </span>
                   <span className="actions">
                     <button 
