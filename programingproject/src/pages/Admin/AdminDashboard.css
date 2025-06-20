@@ -3,6 +3,9 @@
   min-height: 100vh;
   padding: 20px 40px;
   font-family: "Segoe UI", sans-serif;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .admin-dashboard-header {
@@ -11,11 +14,8 @@
   text-align: left;
 }
 
-.admin-dashboard-header h2 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: bold;
-  color: black;
+.admin-dashboard-header h1 {
+  text-align: left;
 }
 
 .admin-dashboard-header p {
@@ -105,12 +105,15 @@
 }
 
 .dashboard-card {
-  cursor: pointer;
-  padding: 1.5rem;
-  border-radius: 8px;
   background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
 }
 
 .dashboard-card:hover {
@@ -153,7 +156,7 @@
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  
   color: #4f46e5;
   font-weight: 600;
   font-size: 14px;
