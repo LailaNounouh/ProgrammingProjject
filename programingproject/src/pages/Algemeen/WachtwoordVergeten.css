@@ -1,0 +1,78 @@
+.wachtwoordvergeten-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #d3d9e0;
+  padding: 1rem;
+}
+
+.wachtwoordvergeten-card {
+  background: white;
+  padding: 2.5rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  width: 100%;
+  max-width: 400px;
+}
+
+.wachtwoordvergeten-card h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.wachtwoordvergeten-card p {
+  text-align: center;
+  margin-bottom: 1.2rem;
+  color: #4a5568;
+  font-size: 1rem;
+}
+
+.wachtwoordvergeten-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.wachtwoordvergeten-card input[type="email"] {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f9fbfc;
+}
+
+.wachtwoordvergeten-card button {
+  padding: 0.9rem;
+  background: #00a9b5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.wachtwoordvergeten-card button:hover {
+  background: #00838f;
+}
+
+.wachtwoordvergeten-terug-link {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.wachtwoordvergeten-terug-link a {
+  color: #00a9b5;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.wachtwoordvergeten-terug-link a:hover {
+  text-decoration: underline;
+}
