@@ -83,6 +83,10 @@ export default function Login() {
             />
           </div>
 
+          <div className="forgot-password-link">
+            <Link to="/wachtwoord-vergeten">Wachtwoord vergeten?</Link>
+          </div>
+
           <button type="submit" className="login-button">
             Inloggen
           </button>

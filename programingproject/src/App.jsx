@@ -12,6 +12,7 @@ import SeekerLayout from "./components/layout/Seekerlayout/SeekerLayout";
  
 import Home from "./pages/Algemeen/Home";
 import Login from "./pages/Algemeen/login/Login";
+import WachtwoordVergeten from "./pages/Algemeen/WachtwoordVergeten";
 import Register from "./pages/Algemeen/register/Register";
 import Notfound from "./pages/Algemeen/NotFound";
 import About from "./pages/Algemeen/About";
@@ -48,6 +49,7 @@ export default function App() {
           {/* Algemene pagina's */}
           <Route path="/" element={<Layout><Home /></Layout>} />
           <Route path="/login" element={<Layout><Login /></Layout>} />
+          <Route path="/wachtwoord-vergeten" element={<Layout><WachtwoordVergeten /></Layout>} />
           <Route path="/register" element={<Layout><Register /></Layout>} />
           <Route path="/about" element={<Layout><About /></Layout>} />
           <Route path="/contact" element={<Layout><Contact /></Layout>} />
@@ -74,7 +76,7 @@ export default function App() {
           <Route path="/admin/gebruikers" element={<AdminLayout><AdminGebruikers /></AdminLayout>} />
           <Route path="/admin/statistiek" element={<AdminLayout><AdminStatistiek /></AdminLayout>} />
           <Route path="/admin/sectoren" element={<AdminLayout><AdminSectoren /></AdminLayout>} />
-  <Route path="/admin/attendance" element={<AdminLayout><Attendance /></AdminLayout>} />
+          <Route path="/admin/attendance" element={<AdminLayout><Attendance /></AdminLayout>} />
  
           {/* Bedrijven */}
           <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
