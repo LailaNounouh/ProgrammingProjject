@@ -12,7 +12,7 @@ import SeekerLayout from "./components/layout/Seekerlayout/SeekerLayout";
  
 import Home from "./pages/Algemeen/Home";
 import Login from "./pages/Algemeen/login/Login";
-import WachtwoordVergeten from "./pages/Algemeen/WachtwoordVergeten";
+import WachtwoordVergeten from "./pages/Algemeen/login/WachtwoordVergeten";
 import Register from "./pages/Algemeen/register/Register";
 import Notfound from "./pages/Algemeen/NotFound";
 import About from "./pages/Algemeen/About";
