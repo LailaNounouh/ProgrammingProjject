@@ -13,6 +13,7 @@ const homeRouter = require('./routes/home');
 const registerRouter = require('./routes/register');
 const newsletterRouter = require('./routes/newsletter');
 const loginRouter = require('./routes/login');
+const wachtwoordVergetenRouter = require('./routes/wachtwoordVergeten');
 const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
 const sectorenRouter = require('./routes/sectoren');
 const profielRouter = require('./routes/profiel');
@@ -27,7 +28,7 @@ const attendanceRouter = require('./routes/attendance');
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
-  cors: {
+  cors: { 
     origin: "*", // Adjust according to your security needs
     methods: ["GET", "POST"]
   }
@@ -122,6 +123,7 @@ apiRouter.use('/', homeRouter);
 apiRouter.use('/register', registerRouter);
 apiRouter.use('/newsletter', newsletterRouter);
 apiRouter.use('/login', loginRouter);
+apiRouter.use('/wachtwoord-vergeten', wachtwoordVergetenRouter);
 apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
 apiRouter.use('/sectoren', sectorenRouter);
 apiRouter.use('/profiel', profielRouter);

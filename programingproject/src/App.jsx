@@ -12,6 +12,7 @@ import SeekerLayout from "./components/layout/Seekerlayout/SeekerLayout";
  
 import Home from "./pages/Algemeen/Home";
 import Login from "./pages/Algemeen/login/Login";
+import WachtwoordVergeten from "./pages/Algemeen/login/WachtwoordVergeten";
 import Register from "./pages/Algemeen/register/Register";
 import Notfound from "./pages/Algemeen/NotFound";
 import About from "./pages/Algemeen/About";
@@ -30,6 +31,7 @@ import BedrijvenDashboard from "./pages/Bedrijven/BedrijvenDashboard";
 import StatusBetaling from './pages/Bedrijven/statusbetaling';
 import AfspraakOverzicht from "./pages/Bedrijven/Afspraakoverzicht";
 import Settingsbedrijf from "./pages/Bedrijven/Settingsbedrijf";
+import Standen from "./pages/Bedrijven/Standen";
  
 import AfsprakenModule from "./pages/Modules/AfsprakenModule";
 import BedrijvenModule from "./pages/Modules/BedrijvenModule";
@@ -49,6 +51,7 @@ export default function App() {
           {/* Algemene pagina's */}
           <Route path="/" element={<Layout><Home /></Layout>} />
           <Route path="/login" element={<Layout><Login /></Layout>} />
+          <Route path="/wachtwoord-vergeten" element={<Layout><WachtwoordVergeten /></Layout>} />
           <Route path="/register" element={<Layout><Register /></Layout>} />
           <Route path="/about" element={<Layout><About /></Layout>} />
           <Route path="/contact" element={<Layout><Contact /></Layout>} />
@@ -83,6 +86,8 @@ export default function App() {
           <Route path="/bedrijf/betaling" element={<BedrijvenLayout><StatusBetaling /></BedrijvenLayout>} />
           <Route path="/bedrijf/afspraken" element={<BedrijvenLayout><AfspraakOverzicht /></BedrijvenLayout>} />
           <Route path="/bedrijf/Settingsbedrijf" element={<BedrijvenLayout><Settingsbedrijf /></BedrijvenLayout>} />
+          <Route path="/bedrijf/standen" element={<BedrijvenLayout><Standen /></BedrijvenLayout>} />
+
 
           <Route path="/checkIn" element={<Layout><CheckIn /></Layout>} />
         </Routes>

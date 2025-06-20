@@ -81,6 +81,9 @@ export default function Login() {
               onChange={handleChange}
               required
             />
+            <div className="forgot-password-link">
+             <Link to="/wachtwoord-vergeten">Wachtwoord vergeten?</Link>
+            </div>
           </div>
 
           <button type="submit" className="login-button">

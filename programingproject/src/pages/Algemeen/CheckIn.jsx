@@ -33,7 +33,7 @@ const CheckIn = () => {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch('/api/attendance/check-in', {
+      const response = await fetch(`${baseUrl}/api/attendance/stats`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

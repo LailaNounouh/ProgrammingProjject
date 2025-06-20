@@ -169,6 +169,7 @@ const Attendance = () => {
               </tbody>
             </table>
           </div>
+
           {totalPages > 1 && (
             <div className="pagination">
               <button 
