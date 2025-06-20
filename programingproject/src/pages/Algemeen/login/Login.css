@@ -67,6 +67,11 @@
   outline: none;
 }
 
+/* Wachtwoord vergeten */
+.login-container .forgot-password-link a {
+  color:  #00a9b5;
+}
+
 /* Knop login */
 .login-container .login-button {
   margin-top: 0.5rem;
