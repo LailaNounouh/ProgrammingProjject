@@ -151,7 +151,7 @@ const Attendance = () => {
             <tbody>
               {attendees.length > 0 ? (
                 attendees.map((attendee) => (
-                  <tr key={attendee.attendance_id}>
+                  <tr key={attendee.id}>
                     <td>{attendee.participant_name}</td>
                     <td>{attendee.participant_email}</td>
                     <td>
