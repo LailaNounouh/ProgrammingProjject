@@ -20,10 +20,10 @@ const AdminHeader = () => {
 
       <nav className={isOpen ? 'open' : ''}>
         <ul>
-          <li><Link to="/admin/bedrijven">Deelnemende bedrijven</Link></li>
-          <li><Link to="/admin/standen">Beheer van standen</Link></li>
-          <li><Link to="/admin/users">Beheer van gebruikers</Link></li>
-          <li><Link to="/admin/stats">Statistieken</Link></li>
+          <li><Link to="/Admin/Bedrijf">Deelnemende bedrijven</Link></li>
+          <li><Link to="/Admin/standen">Beheer van standen</Link></li>
+          <li><Link to="/Admin/gebruikers">Beheer van gebruikers</Link></li>
+          <li><Link to="/admin/statistiek">Statistieken</Link></li>
           <li><Link to="/admin/attendance">Aanwezigheid</Link></li>
         </ul>
       </nav>

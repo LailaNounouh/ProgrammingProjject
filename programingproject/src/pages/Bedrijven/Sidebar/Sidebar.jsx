@@ -1,24 +1,29 @@
-import React from 'react';
-import {
-  FaHome,
-  FaEuroSign,
-  FaCalendarAlt,
-  FaMapMarkerAlt,
-  FaCog,
+import React, { useState, useRef } from 'react';
+import { 
+  FaHome, 
+  FaEuroSign, 
+  FaCalendarAlt, 
+  FaMapMarkerAlt, 
+  FaCog, 
+  FaSearch, 
+  FaBell 
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import './Sidebar.css'; 
+import './Sidebar.css';
 
 export const Sidebar = ({ showMobileMenu, setShowMobileMenu }) => {
   const navigate = useNavigate();
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const notificationRef = useRef(null);
 
   const menuItems = [
     {
-      title: 'Dashboard',  // Nieuw dashboard item
+      title: 'Dashboard',
       icon: <FaHome />,
       onClick: () => navigate('/bedrijf'),
-      color: 'primary-blue'  // Nieuwe kleur of gebruik bestaande
+      color: 'yellow'
     },
     {
       title: 'Staat van betaling',
@@ -48,7 +53,35 @@ export const Sidebar = ({ showMobileMenu, setShowMobileMenu }) => {
 
   return (
     <aside className={`sidebar ${showMobileMenu ? 'active' : ''}`}>
-      <h3>Snelmenu</h3>
+      <div className="sidebar-header">
+        <h3>Dashboard</h3>
+        <div className="sidebar-notification-toggle" ref={notificationRef}>
+          <button
+            onClick={() => setShowNotifications(!showNotifications)}
+            className="notification-bell"
+            title="Meldingen"
+          >
+            <FaBell />
+          </button>
+        </div>
+      </div>
+      
+      {showNotifications && (
+        <div className="notifications-dropdown">
+          <div className="notification-item">Geen nieuwe meldingen</div>
+        </div>
+      )}
+
+      <div className="sidebar-search">
+        <FaSearch className="search-icon" />
+        <input
+          type="text"
+          placeholder="Zoeken..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
       <ul>
         {menuItems.map((item, index) => (
           <li
@@ -69,5 +102,5 @@ export const Sidebar = ({ showMobileMenu, setShowMobileMenu }) => {
 
 Sidebar.propTypes = {
   showMobileMenu: PropTypes.bool,
-  setShowMobileMenu: PropTypes.func,
+  setShowMobileMenu: PropTypes.func
 };

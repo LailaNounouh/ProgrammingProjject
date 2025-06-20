@@ -4,15 +4,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #e0e8ea;
+  background:  #d3d9e0;
   padding: 1rem;
 }
 
 /* Witte kader met formulier */
 .login-container .login-card {
   background: white;
-  padding: 2.5rem;
-  border-radius: 12px;
+  padding: 3rem 2rem;
+  border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.10);
   width: 100%;
   max-width: 400px;
@@ -49,13 +49,15 @@
 /* Input velden en select dropdown */
 .login-container .form-group input,
 .login-container .form-group select {
-  padding: 0.8rem;
-  border: 1.5px solid #c0d3dd;
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
   transition: all 0.2s ease;
   background: #f9fbfc;
   box-shadow: 0 2px 8px rgba(0, 169, 181, 0.04);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .login-container .form-group input:focus,
@@ -106,7 +108,7 @@
 /* Foutmelding */
 .login-container .error-message {
   background: #fed7d7;
-  color: #c53030;
+  color: #d32f2f;
   padding: 0.8rem;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -127,7 +129,7 @@
   }
 
   .login-container .login-card h2 {
-    font-size: 1.3rem;
+    font-size: 1.7rem;
     margin-bottom: 1.2rem;
   }
 
@@ -154,7 +156,7 @@
   }
 
   .login-container .login-card h2 {
-    font-size: 1.1rem;
+    font-size: 1.7rem;
   }
 
   .login-container .form-group label {
@@ -165,6 +167,9 @@
   .login-container .form-group select {
     font-size: 0.95rem;
     padding: 0.6rem;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
 
   .login-container .login-button {
