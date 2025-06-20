@@ -9,6 +9,12 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.header + * {
+  margin-top: 0 !important;
 }
 
 .logo {
