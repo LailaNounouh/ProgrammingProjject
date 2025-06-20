@@ -321,6 +321,12 @@
   border: 1px solid #e0e6ed;
 }
 
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
 .calendar-header {
   display: flex;
   justify-content: space-between;
@@ -442,6 +448,36 @@
   display: inline-block;
 }
 
+/* Upcoming events */
+.upcoming-events-container {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 15px;
+}
+
+.upcoming-events-container h3 {
+  font-size: 18px;
+  color: #2d3748;
+  margin: 0 0 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e6ed;
+  font-weight: 600;
+}
+
+.no-events {
+  color: #718096;
+  font-size: 14px;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 /* Day events */
 .day-events {
   margin-top: 25px;
@@ -537,6 +573,27 @@
   border-radius: 4px;
   font-size: 12px;
   font-weight: bold;
+}
+
+.add-reminder-event-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #e6f0ff;
+  color: #4a6cf7;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 10px;
+  align-self: flex-start;
+}
+
+.add-reminder-event-btn:hover {
+  background: #d0e1ff;
 }
 
 /* Modal */
@@ -646,38 +703,6 @@
   box-shadow: 0 4px 8px rgba(74, 108, 247, 0.3);
 }
 
-.calendar-event {
-  background: #f0f5ff;
-  border-left: 4px solid #4a6cf7;
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-}
-
-.highlight-event {
-  background: #e6f0ff;
-  border-left-color: #ff4757;
-}
-
-.event-time {
-  font-weight: 600;
-  color: #4a6cf7;
-  margin-bottom: 5px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.deadline-badge {
-  display: inline-block;
-  background: #ff4757;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  margin-top: 5px;
-  font-weight: bold;
-}
 /* Responsive aanpassingen */
 @media (max-width: 1200px) {
   .dashboard-content {
@@ -685,7 +710,7 @@
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 992px) {
   .dashboard-content {
     grid-template-columns: 1fr;
   }
@@ -693,6 +718,10 @@
   .calendar-section {
     order: -1;
     margin-bottom: 30px;
+  }
+  
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
 }
 
@@ -787,5 +816,4 @@
   
   .card-grid {
     grid-template-columns: 1fr;
-  }
-}
+  }}
