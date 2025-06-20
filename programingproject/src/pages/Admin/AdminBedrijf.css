@@ -185,3 +185,44 @@ body {
 .terug-button:hover {
   background-color: #256a8a;
 }
+
+.terug-button {
+  display: inline-block;
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 16px;
+  margin: 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.terug-button:hover {
+  background-color: #2563eb;
+}
+
+.back-button {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.back-button:hover {
+  background-color: #2563eb;
+}
+
+/* Zorg dat er ruimte bovenaan is */
+.admin-dashboard {
+  position: relative;
+  padding-top: 80px;
+}
