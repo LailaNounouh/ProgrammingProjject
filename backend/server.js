@@ -135,23 +135,17 @@ apiRouter.use('/statistieken', statistiekenRouter);
 
 apiRouter.use('/attendance', attendanceRouter)
 
-console.log('server.js: Subroutes gekoppeld aan apiRouter.');
+
 app.use('/api', apiRouter);
 
 // de conflict tussen de vite.config en server te vermijden maken we een tweede ingang 
 const viteProxyRouter = express.Router();
-console.log('server.js: viteProxyRouter aangemaakt.');
-viteProxyRouter.use((req, res, next) => {
-  console.log(`[VITE_PROXY_ROUTER] Aanvraag: ${req.method} ${req.originalUrl} (Pad: ${req.path})`);
-  next();
-});
+
 viteProxyRouter.use('/admin', adminRouter);
 viteProxyRouter.use('/attendance', attendanceRouter);
-console.log('server.js: attendanceRouter gekoppeld aan viteProxyRouter onder /attendance.'); 
 
-console.log('server.js: adminRouter gekoppeld aan viteProxyRouter');
 app.use('/', viteProxyRouter);
-console.log('server.js: viteProxyRouter gemonteerd op /.'); 
+ 
 
 
 
