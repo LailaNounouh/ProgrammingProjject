@@ -1,3 +1,4 @@
+/* Buiten container */
 .wachtwoordvergeten-container {
   min-height: 100vh;
   display: flex;
@@ -7,6 +8,7 @@
   padding: 1rem;
 }
 
+/* Witte kader met formulier */
 .wachtwoordvergeten-card {
   background: white;
   padding: 2.5rem 2rem;
@@ -16,6 +18,7 @@
   max-width: 400px;
 }
 
+/* Titel */
 .wachtwoordvergeten-card h1 {
   text-align: center;
   margin-bottom: 1.5rem;
@@ -24,6 +27,7 @@
   color: #2c3e50;
 }
 
+/* Informatietekst onder de titel */
 .wachtwoordvergeten-card p {
   text-align: center;
   margin-bottom: 1.2rem;
@@ -31,12 +35,14 @@
   font-size: 1rem;
 }
 
+/* Formulier */
 .wachtwoordvergeten-card form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
+/* E-mail inputveld */
 .wachtwoordvergeten-card input[type="email"] {
   padding: 0.5rem;
   border: 1px solid #ccc;
@@ -44,7 +50,7 @@
   font-size: 1rem;
   background: #f9fbfc;
 }
-
+ /* Verstuur knop */
 .wachtwoordvergeten-card button {
   padding: 0.9rem;
   background: #00a9b5;
@@ -61,6 +67,7 @@
   background: #00838f;
 }
 
+/* Link terug naar inloggen */
 .wachtwoordvergeten-terug-link {
   text-align: center;
   margin-top: 1rem;
@@ -68,11 +75,12 @@
 }
 
 .wachtwoordvergeten-terug-link a {
-  color: #00a9b5;
+  color: #D64045;
   text-decoration: none;
   font-weight: 500;
 }
 
 .wachtwoordvergeten-terug-link a:hover {
   text-decoration: underline;
+   color: #BF393E;
 }
