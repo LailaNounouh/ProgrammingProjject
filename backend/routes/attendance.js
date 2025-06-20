@@ -64,7 +64,7 @@ router.post("/check-in", async (req, res) => {
 // in de aanwezigheid pagina opslagen
 router.get("/stats", async (req, res) => {
     try {
-        // Ttotaal aantal aanwezigheid
+        // Totaal aantal aanwezigheid
        const [totalResult] = await db.execute(
     "SELECT COUNT(*) as total FROM checkins WHERE status = 'checked_in'"
 );

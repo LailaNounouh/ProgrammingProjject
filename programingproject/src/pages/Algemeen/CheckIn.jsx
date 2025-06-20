@@ -33,14 +33,12 @@ const CheckIn = () => {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch(`${baseUrl}/api/attendance/stats`, {
-        method: 'POST',
+      const response = await fetch("/api/attendance/check-in", {
+        method: 'Post',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...formData
-        }),
+        body: JSON.stringify(formData)
       });
 
       const data = await response.json();
