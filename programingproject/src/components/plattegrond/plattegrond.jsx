@@ -26,7 +26,7 @@ const Plattegrond = ({ bewerkModus }) => {
     fetchBedrijven();
   }, []);
 
-  const plaatsen = [...bedrijven, ...Array(maxPlaatsen - bedrijven.length).fill(null)];
+  const plaatsen = [...bedrijven, ...Array(Math.max(0, maxPlaatsen - bedrijven.length)).fill(null)];
 
   const tafelsBoven = plaatsen.slice(0, 8);
   const tafelsOnder = plaatsen.slice(8, 16);

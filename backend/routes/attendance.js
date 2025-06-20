@@ -148,13 +148,6 @@ router.get("/attendees", async (req, res) => {
     }
 });
 
-router.get('/test', async (req, res) => {
-  try {
-    const [rows] = await db.execute('SELECT 1 + 1 AS result');
-    res.json(rows[0]);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+
 
 module.exports = router;
