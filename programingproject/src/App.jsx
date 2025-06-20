@@ -24,6 +24,7 @@ import AdminStanden from "./pages/Admin/AdminStanden";
 import AdminGebruikers from "./pages/Admin/AdminGebruikers";
 import AdminStatistiek from "./pages/Admin/AdminStatistiek";
 import AdminSectoren from "./pages/Admin/AdminSectoren";
+import Aanwezigheid from "./pages/Admin/Aanwezigheid";
 import SeekerDashboard from "./pages/Seeker/SeekerDashboard";
 import BedrijvenDashboard from "./pages/Bedrijven/BedrijvenDashboard";
 import StatusBetaling from './pages/Bedrijven/statusbetaling';
@@ -74,6 +75,7 @@ export default function App() {
           <Route path="/admin/gebruikers" element={<AdminLayout><AdminGebruikers /></AdminLayout>} />
           <Route path="/admin/statistiek" element={<AdminLayout><AdminStatistiek /></AdminLayout>} />
           <Route path="/admin/sectoren" element={<AdminLayout><AdminSectoren /></AdminLayout>} />
+          <Route path="/admin/aanwezigheid" element={<AdminLayout><Aanwezigheid /></AdminLayout>} />
   <Route path="/admin/attendance" element={<AdminLayout><Attendance /></AdminLayout>} />
  
           {/* Bedrijven */}
