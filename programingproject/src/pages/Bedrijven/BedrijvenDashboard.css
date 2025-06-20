@@ -808,7 +808,7 @@
     color: #555;
   }
 
-  .card-grid {
+  /* .card-grid {
     grid-template-columns: 1fr;
     gap: 12px;
   }
@@ -825,7 +825,7 @@
 
   .react-calendar__month-view__weekdays {
     font-size: 12px;
-  }
+  } */
 }
 
 /* Klein mobiel (max 480px) */
