@@ -1,6 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Plattegrond = () => {
+  const [bedrijven] = useState([]);
+  const [selectedInfo, setSelectedInfo] = useState(null);
+  const maxPlaatsen = 16;
+
+  const plaatsen = [...bedrijven, ...Array(maxPlaatsen - bedrijven.length).fill(null)];
+  const tafelsBoven = plaatsen.slice(0, 8);
+  const tafelsOnder = plaatsen.slice(8, 16);
+
+  const handleTableClick = (bedrijf) => {
+    if (!bedrijf) {
+      setSelectedInfo("Deze plaats heeft voorlopig nog geen bedrijf.");
+    } else {
+      setSelectedInfo(`Bedrijf: ${bedrijf}`);
+    }
+  };
+
   return (
     <div className="plattegrond-container">
       <svg width="1200px" height="1000px" viewBox="0 0 800 1000" xmlns="http://www.w3.org/2000/svg">
@@ -14,31 +30,31 @@ const Plattegrond = () => {
         <rect x="150" y="300" width="500" height="400" fill="#f5f5f5" stroke="black" strokeWidth="2" />
         <text x="400" y="520" fontSize="24" textAnchor="middle" fill="black">Gang 016</text>
 
-        {/* Tafels boven (statisch) */}
-        {[...Array(8)].map((_, index) => {
+        {/* Tafels boven */}
+        {tafelsBoven.map((bedrijf, index) => {
           const tafelWidth = 500 / 8;
           const x = 150 + index * tafelWidth;
           const y = 310;
           return (
-            <g key={`boven-${index}`}>
-              <rect x={x} y={y} width={tafelWidth - 5} height="40" fill="#ffcccb" stroke="black" strokeWidth="1" />
+            <g key={`boven-${index}`} onClick={() => handleTableClick(bedrijf)}>
+              <rect x={x} y={y} width={tafelWidth - 5} height="40" fill={bedrijf ? "#c8e6c9" : "#ffcccb"} stroke="black" strokeWidth="1" />
               <text x={x + (tafelWidth / 2) - 2} y={y + 25} fontSize="10" textAnchor="middle" fill="black">
-                X
+                {bedrijf || "X"}
               </text>
             </g>
           );
         })}
 
-        {/* Tafels onder (statisch) */}
-        {[...Array(8)].map((_, index) => {
+        {/* Tafels onder */}
+        {tafelsOnder.map((bedrijf, index) => {
           const tafelWidth = 500 / 8;
           const x = 150 + index * tafelWidth;
           const y = 640;
           return (
-            <g key={`onder-${index}`}>
-              <rect x={x} y={y} width={tafelWidth - 5} height="40" fill="#ffcccb" stroke="black" strokeWidth="1" />
+            <g key={`onder-${index}`} onClick={() => handleTableClick(bedrijf)}>
+              <rect x={x} y={y} width={tafelWidth - 5} height="40" fill={bedrijf ? "#ffe082" : "#ffcccb"} stroke="black" strokeWidth="1" />
               <text x={x + (tafelWidth / 2) - 2} y={y + 25} fontSize="10" textAnchor="middle" fill="black">
-                X
+                {bedrijf || "X"}
               </text>
             </g>
           );
@@ -61,7 +77,7 @@ const Plattegrond = () => {
 
       <div className="extra-info">
         <h3>Informatie over de geselecteerde tafel:</h3>
-        <p>Klik op een tafel om meer informatie te zien.</p>
+        <p>{selectedInfo || "Klik op een tafel om meer informatie te zien."}</p>
       </div>
     </div>
   );
