@@ -138,7 +138,7 @@ router.post('/nieuw', async (req, res) => {
   }
 
   try {
-    // Controleer of tijdslot nog vrij is
+
     const [bestaande] = await pool.query(
       'SELECT * FROM Afspraken WHERE bedrijf_id = ? AND datum = ? AND tijdslot = ?',
       [bedrijf_id, datum, tijdslot]
@@ -148,7 +148,7 @@ router.post('/nieuw', async (req, res) => {
       return res.status(409).json({ error: 'Tijdslot is al bezet' });
     }
 
-    // Voeg afspraak toe
+
     const [result] = await pool.query(
       `INSERT INTO Afspraken (student_id, bedrijf_id, tijdslot, datum)
        VALUES (?, ?, ?, ?)`,
@@ -157,13 +157,12 @@ router.post('/nieuw', async (req, res) => {
 
     const afspraak_id = result.insertId;
 
-    // Melding toevoegen voor bedrijf
-    const message = `Nieuwe afspraak op ${datum} om ${tijdslot} met student ID ${student_id}`;
-    await pool.query(
-      `INSERT INTO Bedrijf_Notifications
+
+    await pool.query(`
+      INSERT INTO Bedrijf_Notifications
         (bedrijf_id, type, message, is_read, created_at)
-       VALUES (?, 'afspraak', ?, 0, NOW())`,
-      [bedrijf_id, message]
+       VALUES (?, 'appointment', ?, 0, NOW())`, 
+      [bedrijf_id, `Nieuwe afspraak op ${datum} om ${tijdslot} met student ID ${student_id}`]
     );
 
     return res.status(201).json({

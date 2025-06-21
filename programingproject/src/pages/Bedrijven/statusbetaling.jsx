@@ -1,118 +1,146 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './StatusBetaling.css';
-import { FiDownload, FiFile, FiArrowLeft } from 'react-icons/fi';
+import { FiDownload, FiFile } from 'react-icons/fi';
+import axios from 'axios';
 
 const StatusBetaling = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [betalingData, setBetalingData] = useState(null);
+  const [progressHeight, setProgressHeight] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const timelineRef = useRef(null);
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setUploadedFile({
-        name: file.name,
-        size: (file.size / 1024).toFixed(2) + ' KB'
-      });
-    }
+  const bedrijfId = 1;
+
+  useEffect(() => {
+    const fetchBetaling = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/betaling/${bedrijfId}`);
+        setBetalingData(response.data);
+
+        const statusen = response.data.statusen || [];
+        const completedSteps = statusen.filter(s => s.completed).length;
+        const newHeight = Math.max(0, (completedSteps - 1) * 72);
+
+        setTimeout(() => {
+          setProgressHeight(newHeight);
+        }, 300);
+      } catch (err) {
+        console.error('Fout bij ophalen betaling:', err);
+      }
+    };
+
+    fetchBetaling();
+  }, [bedrijfId]);
+
+  const getStepStatus = (stepName) => {
+    if (!betalingData?.status) return '';
+    const statusOrder = ['factuur_verzonden', 'in_behandeling', 'ontvangen', 'verwerkt'];
+    const currentStatusIndex = statusOrder.indexOf(betalingData.status);
+    const stepIndex = statusOrder.indexOf(stepName);
+
+    if (stepIndex === -1) return '';
+    if (stepIndex < currentStatusIndex) return 'completed';
+    if (stepIndex === currentStatusIndex) return 'current';
+    return '';
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (betalingData?.statusen) {
+        const completedSteps = betalingData.statusen.filter(s => s.completed).length;
+        const newHeight = Math.max(0, (completedSteps - 1) * 72);
+        setProgressHeight(newHeight);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [betalingData]);
+
+  const handleDownloadClick = () => {
+    setShowModal(true);
   };
 
   return (
     <div className="payment-status-page">
-      {/* Terugknop met correcte import */}
-      <a href="/bedrijf" className="back-button">
-        <FiArrowLeft /> Terug naar dashboard
-      </a>
+      <div className="payment-status-container">
+        <div className="payment-status">
+          <h3>Staat van betaling</h3>
 
+          <div className="payment-card">
+            <h4>Betaalkaart</h4>
 
-      {/* Pagina header 
-      <header>
-        <h1>Staat van betaling</h1>
-      </header>*/}
-      
-      {/* Betalingsinformatie sectie */}
-      <div className="payment-status">
-        <h3>Staat van betaling</h3>
-        
-        {/* Betaalkaart met alle details */}
-        <div className="payment-card">
-          <h4>Betaalkaart</h4>
-          
-          <div className="payment-info">
-            <span>Bedrag: €1.200</span>
-          </div>
-          
-          <div className="payment-info">
-            <span>Status: <span className="status-badge status-paid">Betaald</span></span>
-            <span>Datum: 20 april 2025</span>
-          </div>
-          
-          <div className="payment-info">
-            <span>Methode: Overschrijving</span>
-          </div>
-          
-            
-          <div className="download-section">
-  <p>Factuur downloaden (PDF)</p>
-  
-  <button className="download-btn" onClick={() => window.open('/pad/naar/factuur.pdf', '_blank')}>
-    <FiDownload style={{ marginRight: '5px' }} />
-    Factuur downloaden
-  </button>
-  
-  {uploadedFile && (
-    <div className="downloaded-file">
-      <FiFile className="file-icon" />
-      <div>
-        <div>Factuur_2025.pdf</div>
-        <small>378,30 KB</small>
-      </div>
-    </div>
-  )}
-</div>
-          
-        </div>
-      </div>
-      
-      {/* Scheidingslijn tussen secties */}
-      <div className="divider"></div>
-      
-      {/* Betalingsproces tijdlijn */}
-      <div className="payment-status">
-        <h3>Betalingsproces</h3>
-        
-        <div className="payment-timeline">
-          {/* Stap 1 - Factuur verzonden */}
-          <div className="timeline-step completed">
-            <div className="timeline-content">
-              Factuur verzonden
-              <div className="timeline-date">15 april 2025</div>
+            <div className="payment-info">
+              <span>Bedrag: €{betalingData?.bedrag ?? '...'}</span>
             </div>
-          </div>
-          
-          {/* Stap 2 - In behandeling */}
-          <div className="timeline-step completed">
-            <div className="timeline-content">
-              Factuur in behandeling
-              <div className="timeline-date">17 april 2025</div>
+
+            <div className="payment-info">
+              <span>
+                Status:{' '}
+                <span className={`status-badge ${betalingData?.status === 'betaald' ? 'status-paid' : ''}`}>
+                  {betalingData?.status ?? '...'}
+                </span>
+              </span>
+              <span>Datum: {betalingData?.datum ?? '...'}</span>
             </div>
-          </div>
-          
-          {/* Stap 3 - Betaling ontvangen */}
-          <div className="timeline-step completed">
-            <div className="timeline-content">
-              Betaling ontvangen
-              <div className="timeline-date">20 april 2025</div>
+
+            <div className="payment-info">
+              <span>Methode: {betalingData?.methode ?? '...'}</span>
             </div>
-          </div>
-          
-          {/* Stap 4 - Betaling verwerkt */}
-          <div className="timeline-step">
-            <div className="timeline-content">
-              Betaling verwerkt
-              <div className="timeline-date">Verwacht: 22 april 2025</div>
+
+            <div className="download-section">
+              <p>Factuur downloaden (PDF)</p>
+              <button className="download-btn" onClick={handleDownloadClick}>
+                <FiDownload style={{ marginRight: '5px' }} />
+                Factuur downloaden
+              </button>
+              {uploadedFile && (
+                <div className="downloaded-file">
+                  <FiFile className="file-icon" />
+                  <div>
+                    <div>{uploadedFile.name}</div>
+                    <small>{uploadedFile.size}</small>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
+
+        <div className="payment-status">
+          <h3>Betalingsproces</h3>
+
+          <div className="payment-timeline" ref={timelineRef}>
+            <div className="timeline-progress" style={{ height: `${progressHeight}px` }} />
+
+            {['factuur_verzonden', 'in_behandeling', 'ontvangen', 'verwerkt'].map((step) => (
+              <div key={step} className={`timeline-step ${getStepStatus(step)}`}>
+                <div className="timeline-content">
+                  <strong>
+                    {{
+                      factuur_verzonden: 'Factuur verzonden',
+                      in_behandeling: 'Factuur in behandeling',
+                      ontvangen: 'Betaling ontvangen',
+                      verwerkt: 'Betaling verwerkt',
+                    }[step]}
+                  </strong>
+                  <div className="timeline-date">{betalingData?.[step] ?? '...'}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Factuur</h3>
+            <p>U ontvangt de factuur binnenkort via e-mail.</p>
+            <button onClick={() => setShowModal(false)}>Sluiten</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

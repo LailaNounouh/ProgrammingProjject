@@ -249,7 +249,7 @@ router.post('/bedrijven-toewijzen', async (req, res) => {
 });
 
 // Reset alle stand toewijzingen
-router.post('/reset-stands', async (req, res) => {
+router.post('/reset-standen', async (req, res) => {
   try {
     await pool.query('UPDATE plattegrond SET bedrijf_id = NULL');
     res.json({ success: true, message: 'Alle stand toewijzingen gereset' });

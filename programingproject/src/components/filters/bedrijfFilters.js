@@ -2,7 +2,7 @@ const bedrijfFilters = {
     // Filter op sector
     filterOpSector: function(bedrijven, sector) {
         if (sector === 'all') return bedrijven;
-        return bedrijven.filter(bedrijf => bedrijf.sector_naam === sector);
+        return bedrijven.filter(bedrijf => bedrijf.sector === sector);
     },
 
     // Filter op bedrijfsnaam
@@ -31,13 +31,6 @@ const bedrijfFilters = {
         );
     },
 
-    // Filter op logo
-    filterOpLogo: function(bedrijven, heeftLogo) {
-        return bedrijven.filter(bedrijf => 
-            heeftLogo ? bedrijf.logo_url : !bedrijf.logo_url
-        );
-    },
-
     // Filter op beschrijving lengte
     filterOpBeschrijvingLengte: function(bedrijven, minLengte, maxLengte) {
         return bedrijven.filter(bedrijf => {
@@ -48,4 +41,4 @@ const bedrijfFilters = {
     }
 };
 
-module.exports = bedrijfFilters;
+export default bedrijfFilters;

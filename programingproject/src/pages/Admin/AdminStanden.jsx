@@ -10,7 +10,6 @@ function BeheerStanden() {
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedPlaats, setSelectedPlaats] = useState('');
   const [speedDateEnabled, setSpeedDateEnabled] = useState(false);
-
   const navigate = useNavigate();
 
   // Haal bedrijven en plattegrond data op bij component mount
@@ -22,7 +21,7 @@ function BeheerStanden() {
     // AdminStanden.jsx
 const fetchBedrijvenMetStanden = async () => {
   try {
-    const response = await fetch("/api/admin/bedrijven-standen/");
+    const response = await fetch("/api/admin/bedrijven-standen");
 
     // Controleer of de response succesvol was
     if (!response.ok) {
@@ -51,7 +50,7 @@ const fetchBedrijvenMetStanden = async () => {
 
   const fetchPlattegrondData = async () => {
     try {
-      const response = await fetch('/api/admin/beschikbare-standen');
+      const response = await fetch("/api/admin/beschikbare-standen");
       const data = await response.json();
       setPlattegrondData(data);
       setLoading(false);
@@ -132,7 +131,7 @@ const fetchBedrijvenMetStanden = async () => {
     }
 
     try {
-      const response = await fetch('/api/admin/reset-standen', {
+      const response = await fetch(/api/admin/reset-stands, {
         method: 'POST',
       });
 
@@ -367,19 +366,6 @@ const fetchBedrijvenMetStanden = async () => {
                     Speed Dating Aanbieden
                   </label>
                 </div>
-
-                {speedDateEnabled && (
-                  <div className="form-group">
-                    <label>Prijs per Speed Date Sessie (€):</label>
-                    <input 
-                      type="number" 
-                      step="0.01"
-                      value={speedDatePrice}
-                      onChange={(e) => setSpeedDatePrice(e.target.value)}
-                      placeholder="0.00"
-                    />
-                  </div>
-                )}
 
                 <div className="modal-actions">
                   <button 

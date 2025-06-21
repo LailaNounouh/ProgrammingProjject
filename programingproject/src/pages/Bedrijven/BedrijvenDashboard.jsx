@@ -450,7 +450,7 @@ function BedrijvenDashboard() {
       title: "Beschikbaarheid van standen",
       icon: <FaMapMarkerAlt className="icon-fix" />,
       description: "Beheer uw standlocaties en reserveringen",
-      onClick: () => setActiveTab('standen'),
+      onClick: () => navigate('/bedrijf/standen'),
       iconClass: "bg-orange"
     },
     {
