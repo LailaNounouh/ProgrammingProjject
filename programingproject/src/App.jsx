@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthProvider";
 import { ProfileProvider } from "./context/ProfileContext";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
  
 import Layout from "./components/layout/algemenelayout/Layout";
 import StudentenLayout from "./components/layout/studentenlayout/StudentenLayout";
@@ -56,36 +57,124 @@ export default function App() {
           <Route path="/contact" element={<Layout><Contact /></Layout>} />
           <Route path="*" element={<Notfound />} />
  
-          {/* Seeker */}
-          <Route path="/werkzoekende" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
-          <Route path="/werkzoekende/bedrijven" element={<SeekerLayout><BedrijvenModule /></SeekerLayout>} />
-          <Route path="/werkzoekende/standen" element={<SeekerLayout><StandenModule /></SeekerLayout>} />
-          <Route path="/werkzoekende/account" element={<SeekerLayout><ProfileProvider><AccountModule /></ProfileProvider></SeekerLayout>} />
+          {/* Seeker - Protected Routes */}
+          <Route path="/werkzoekende" element={
+            <ProtectedRoute allowedRoles={['werkzoekende']}>
+              <SeekerLayout><SeekerDashboard /></SeekerLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/werkzoekende/bedrijven" element={
+            <ProtectedRoute allowedRoles={['werkzoekende']}>
+              <SeekerLayout><BedrijvenModule /></SeekerLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/werkzoekende/standen" element={
+            <ProtectedRoute allowedRoles={['werkzoekende']}>
+              <SeekerLayout><StandenModule /></SeekerLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/werkzoekende/account" element={
+            <ProtectedRoute allowedRoles={['werkzoekende']}>
+              <SeekerLayout><ProfileProvider><AccountModule /></ProfileProvider></SeekerLayout>
+            </ProtectedRoute>
+          } />
 
  
-          {/* Student */}
-          <Route path="/student" element={<StudentenLayout><StudentDashboard /></StudentenLayout>} />
-          <Route path="/student/bedrijven" element={<StudentenLayout><BedrijvenModule /></StudentenLayout>} />
-          <Route path="/student/account" element={<StudentenLayout><ProfileProvider><AccountModule /></ProfileProvider></StudentenLayout>} />
-          <Route path="/student/afspraken" element={<StudentenLayout><AfsprakenModule /></StudentenLayout>} />
-          <Route path="/student/standen" element={<StudentenLayout><StandenModule /></StudentenLayout>} />
+          {/* Student - Protected Routes */}
+          <Route path="/student" element={
+            <ProtectedRoute allowedRoles={['student']}>
+              <StudentenLayout><StudentDashboard /></StudentenLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/student/bedrijven" element={
+            <ProtectedRoute allowedRoles={['student']}>
+              <StudentenLayout><BedrijvenModule /></StudentenLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/student/account" element={
+            <ProtectedRoute allowedRoles={['student']}>
+              <StudentenLayout><ProfileProvider><AccountModule /></ProfileProvider></StudentenLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/student/afspraken" element={
+            <ProtectedRoute allowedRoles={['student']}>
+              <StudentenLayout><AfsprakenModule /></StudentenLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/student/standen" element={
+            <ProtectedRoute allowedRoles={['student']}>
+              <StudentenLayout><StandenModule /></StudentenLayout>
+            </ProtectedRoute>
+          } />
           
-          {/* Admin */}
-          <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
-          <Route path="/admin/Bedrijf" element={<AdminLayout><AdminBedrijf /></AdminLayout>} />
-          <Route path="/admin/standen" element={<AdminLayout><AdminStanden /></AdminLayout>} />
-          <Route path="/admin/gebruikers" element={<AdminLayout><AdminGebruikers /></AdminLayout>} />
-          <Route path="/admin/statistiek" element={<AdminLayout><AdminStatistiek /></AdminLayout>} />
-          <Route path="/admin/sectoren" element={<AdminLayout><AdminSectoren /></AdminLayout>} />
-          <Route path="/admin/aanwezigheid" element={<AdminLayout><Aanwezigheid /></AdminLayout>} />
-          <Route path="/admin/attendance" element={<AdminLayout><Attendance /></AdminLayout>} />
+          {/* Admin - Protected Routes */}
+          <Route path="/admin" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminLayout><AdminDashboard /></AdminLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/Bedrijf" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminLayout><AdminBedrijf /></AdminLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/standen" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminLayout><AdminStanden /></AdminLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/gebruikers" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminLayout><AdminGebruikers /></AdminLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/statistiek" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminLayout><AdminStatistiek /></AdminLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/sectoren" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminLayout><AdminSectoren /></AdminLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/aanwezigheid" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminLayout><Aanwezigheid /></AdminLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/attendance" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminLayout><Attendance /></AdminLayout>
+            </ProtectedRoute>
+          } />
  
-          {/* Bedrijven */}
-          <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
-          <Route path="/bedrijf/betaling" element={<BedrijvenLayout><StatusBetaling /></BedrijvenLayout>} />
-          <Route path="/bedrijf/afspraken" element={<BedrijvenLayout><AfspraakOverzicht /></BedrijvenLayout>} />
-          <Route path="/bedrijf/Settingsbedrijf" element={<BedrijvenLayout><Settingsbedrijf /></BedrijvenLayout>} />
-          <Route path="/bedrijf/standen" element={<BedrijvenLayout><Standen /></BedrijvenLayout>} />
+          {/* Bedrijven - Protected Routes */}
+          <Route path="/bedrijf" element={
+            <ProtectedRoute allowedRoles={['bedrijf']}>
+              <BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/bedrijf/betaling" element={
+            <ProtectedRoute allowedRoles={['bedrijf']}>
+              <BedrijvenLayout><StatusBetaling /></BedrijvenLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/bedrijf/afspraken" element={
+            <ProtectedRoute allowedRoles={['bedrijf']}>
+              <BedrijvenLayout><AfspraakOverzicht /></BedrijvenLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/bedrijf/Settingsbedrijf" element={
+            <ProtectedRoute allowedRoles={['bedrijf']}>
+              <BedrijvenLayout><Settingsbedrijf /></BedrijvenLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/bedrijf/standen" element={
+            <ProtectedRoute allowedRoles={['bedrijf']}>
+              <BedrijvenLayout><Standen /></BedrijvenLayout>
+            </ProtectedRoute>
+          } />
 
 
           <Route path="/checkIn" element={<Layout><CheckIn /></Layout>} />
