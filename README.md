@@ -16,6 +16,21 @@ Om deze dag zo vlot en interactief mogelijk te laten verlopen, ontwikkelen wij e
 
 Zo combineren we een fysiek netwerkevent met de kracht van IT en innovatie.
 
+## Technologieën
+
+- **Frontend**:
+         - React
+         - Handmatige styling met CSS
+         - Componentgebaseerde structuur (`components/`, `pages/`, `hooks/`, `context/`)
+- **Backend**: 
+        - Node.js
+        - Express.js
+        - MySQL (database)
+        - Eigen routing (`routes/`) en middleware (`middleware/`)
+        - Environment-variabelen via `.env`
+- **Versiebeheer**: 
+        - Git & GitHub
+
 ## Aanpak
 
 Om ons project gestructureerd aan te pakken, hebben we cursussen gevolgd over:
