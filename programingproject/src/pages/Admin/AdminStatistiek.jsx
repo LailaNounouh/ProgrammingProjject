@@ -12,15 +12,17 @@ function AdminStatistiek() {
   useEffect(() => {
     fetch(`${baseUrl}/statistieken`)
       .then((res) => {
-        if (!res.ok) throw new Error("Statistieken ophalen mislukt");
+        console.log("Statistieken response status:", res.status);
+        if (!res.ok) throw new Error(`HTTP ${res.status}: Statistieken ophalen mislukt`);
         return res.json();
       })
       .then((data) => {
+        console.log("Statistieken data received:", data);
         setStats(data);
       })
       .catch((err) => {
-        console.error(err);
-        setError("Kon statistieken niet ophalen.");
+        console.error("Statistieken error:", err);
+        setError(`Kon statistieken niet ophalen: ${err.message}`);
       });
   }, []);
 

@@ -45,34 +45,7 @@ const AdminSectoren = () => {
     }
   };
 
-  // Toggle sector visibility
-  const toggleSectorVisibility = async (sectorId, currentVisibility) => {
-    try {
-      const response = await fetch(`${baseUrl}/sectoren/${sectorId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          zichtbaar: !currentVisibility
-        }),
-      });
 
-      if (!response.ok) {
-        throw new Error("Fout bij wijzigen zichtbaarheid");
-      }
-
-      // Update local state
-      setSectoren(sectoren.map(sector =>
-        sector.sector_id === sectorId
-          ? { ...sector, zichtbaar: !currentVisibility }
-          : sector
-      ));
-    } catch (err) {
-      console.error("Fout bij wijzigen zichtbaarheid:", err);
-      setError("Kon zichtbaarheid niet wijzigen");
-    }
-  };
 
   // Add new sector
   const handleAddSector = async (e) => {
@@ -125,13 +98,15 @@ const AdminSectoren = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Fout bij verwijderen sector");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Fout bij verwijderen sector");
       }
 
       setSectoren(sectoren.filter(sector => sector.sector_id !== sectorId));
+      setError(""); // Clear any previous errors
     } catch (err) {
       console.error("Fout bij verwijderen sector:", err);
-      setError("Kon sector niet verwijderen");
+      setError(err.message);
     }
   };
 
@@ -172,7 +147,6 @@ const AdminSectoren = () => {
           <div className="sectoren-list">
             <div className="list-header">
               <span>Sectornaam</span>
-              <span>Zichtbaarheid</span>
               <span>Acties</span>
             </div>
 
@@ -184,14 +158,6 @@ const AdminSectoren = () => {
               sectoren.map((sector) => (
                 <div key={sector.sector_id} className="sector-item">
                   <span className="sector-name">{sector.naam}</span>
-                  <span className="sector-visibility">
-                    <button
-                      className={`visibility-toggle ${sector.zichtbaar ? 'visible' : 'hidden'}`}
-                      onClick={() => toggleSectorVisibility(sector.sector_id, sector.zichtbaar)}
-                    >
-                      {sector.zichtbaar ? '👁️ Zichtbaar' : '🙈 Verborgen'}
-                    </button>
-                  </span>
                   <span className="sector-actions">
                     <button
                       className="delete-button"
