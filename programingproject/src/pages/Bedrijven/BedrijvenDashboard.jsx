@@ -15,6 +15,8 @@ import {
 } from 'react-icons/fa';
 import './BedrijvenDashboard.css';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthProvider';
+import apiClient from '../../utils/apiClient';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
@@ -288,12 +290,14 @@ function DashboardContent({
 
 function BedrijvenDashboard() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const { gebruiker } = useAuth();
   const [betalingen, setBetalingen] = useState([]);
   const [afspraken, setAfspraken] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [bedrijfNaam, setBedrijfNaam] = useState('');
+  const [bedrijfData, setBedrijfData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [reminders, setReminders] = useState([]);
@@ -330,18 +334,38 @@ function BedrijvenDashboard() {
     }
   ];
 
+  // Fetch company data when component mounts
   useEffect(() => {
-    const userString = localStorage.getItem('ingelogdeGebruiker');
-    const user = userString ? JSON.parse(userString) : null;
-
-    if (user?.type === 'bedrijf') {
-      setBedrijfNaam(user.naam);
-      const savedReminders = localStorage.getItem(`reminders_${user.id}`);
-      if (savedReminders) {
-        setReminders(JSON.parse(savedReminders));
+    const fetchBedrijfData = async () => {
+      if (!gebruiker?.id || gebruiker?.type !== 'bedrijf') {
+        setLoading(false);
+        return;
       }
-    }
-  }, []);
+
+      try {
+        setLoading(true);
+        const data = await apiClient.get(`/bedrijfprofiel/${gebruiker.id}`);
+
+        setBedrijfData(data);
+        setBedrijfNaam(data.naam || gebruiker.naam || 'Bedrijf');
+
+        // Load saved reminders
+        const savedReminders = localStorage.getItem(`reminders_${gebruiker.id}`);
+        if (savedReminders) {
+          setReminders(JSON.parse(savedReminders));
+        }
+
+      } catch (error) {
+        console.error('Fout bij ophalen bedrijfsgegevens:', error);
+        // Fallback to user data from auth context
+        setBedrijfNaam(gebruiker.naam || 'Bedrijf');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBedrijfData();
+  }, [gebruiker]);
 
   useEffect(() => {
     setBetalingen([
@@ -366,35 +390,40 @@ function BedrijvenDashboard() {
     };
   }, []);
 
+  // Fetch notifications
   useEffect(() => {
-    const userString = localStorage.getItem('ingelogdeGebruiker');
-    const user = userString ? JSON.parse(userString) : null;
-    const bedrijfId = user?.id;
+    const fetchNotifications = async () => {
+      if (!gebruiker?.id || gebruiker?.type !== 'bedrijf') {
+        return;
+      }
 
-    if (user?.type === 'bedrijf' && bedrijfId) {
-      fetch(`/api/notifications/${bedrijfId}`)
-        .then(res => {
-          if (!res.ok) {
-            throw new Error('Netwerkfout bij ophalen meldingen');
+      try {
+        const data = await apiClient.get(`/notifications/${gebruiker.id}`);
+        setNotifications(data);
+      } catch (error) {
+        console.error('Fout bij ophalen meldingen:', error);
+        // Set some default notifications for demo
+        setNotifications([
+          {
+            id: 1,
+            message: 'Welkom bij Career Launch Day!',
+            time: new Date().toISOString()
           }
-          return res.json();
-        })
-        .then(data => setNotifications(data))
-        .catch(err => console.error('Fout bij ophalen meldingen:', err));
-    }
-  }, []);
+        ]);
+      }
+    };
+
+    fetchNotifications();
+  }, [gebruiker]);
 
   const addReminder = (reminder) => {
-    const userString = localStorage.getItem('ingelogdeGebruiker');
-    const user = userString ? JSON.parse(userString) : null;
-    
     const newReminders = [...reminders, reminder];
     setReminders(newReminders);
-    
-    if (user?.id) {
-      localStorage.setItem(`reminders_${user.id}`, JSON.stringify(newReminders));
+
+    if (gebruiker?.id) {
+      localStorage.setItem(`reminders_${gebruiker.id}`, JSON.stringify(newReminders));
     }
-    
+
     setShowReminderModal(false);
     setNewReminder({
       date: new Date().toISOString().split('T')[0],
@@ -414,15 +443,12 @@ function BedrijvenDashboard() {
   };
 
   const deleteReminder = (index) => {
-    const userString = localStorage.getItem('ingelogdeGebruiker');
-    const user = userString ? JSON.parse(userString) : null;
-    
     const newReminders = [...reminders];
     newReminders.splice(index, 1);
     setReminders(newReminders);
-    
-    if (user?.id) {
-      localStorage.setItem(`reminders_${user.id}`, JSON.stringify(newReminders));
+
+    if (gebruiker?.id) {
+      localStorage.setItem(`reminders_${gebruiker.id}`, JSON.stringify(newReminders));
     }
   };
 
@@ -465,6 +491,18 @@ function BedrijvenDashboard() {
   const filteredCards = dashboardCards.filter(card =>
     card.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Show loading state while fetching data
+  if (loading) {
+    return (
+      <div className="bedrijven-dashboard">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Bedrijfsgegevens worden geladen...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bedrijven-dashboard">
