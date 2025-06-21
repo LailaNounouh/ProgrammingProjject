@@ -1,17 +1,26 @@
+require('dotenv').config();
 const express = require('express');
 const pool = require('./db');
 const cors = require('cors');
+const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
+const rateLimit = require('express-rate-limit');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const multer = require('multer');
 const http = require('http');
 const socketIo = require('socket.io');
 
+// Import security middleware and configuration
+const { sanitizeInputs } = require('./middleware/validation');
+const securityConfig = require('./config/security');
+
 // Routers
 const homeRouter = require('./routes/home');
 const registerRouter = require('./routes/register');
 const newsletterRouter = require('./routes/newsletter');
 const loginRouter = require('./routes/login');
+const logoutRouter = require('./routes/logout');
 const wachtwoordVergetenRouter = require('./routes/wachtwoordVergeten');
 const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
 const sectorenRouter = require('./routes/sectoren');
@@ -36,14 +45,37 @@ const io = socketIo(server, {
   }
 });
 
-const corsOptions = {
-  origin: ['http://localhost:5173', 'http://localhost:5174'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  credentials: true,
-};
+// Security middleware (simplified for development)
+if (process.env.NODE_ENV === 'production') {
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: securityConfig.csp.directives,
+    },
+    crossOriginEmbedderPolicy: false
+  }));
 
-app.use(cors(corsOptions));
-app.use(express.json());
+  // Rate limiting (only in production)
+  const generalLimiter = rateLimit({
+    windowMs: securityConfig.rateLimiting.windowMs,
+    max: securityConfig.rateLimiting.maxRequests,
+    message: {
+      error: 'Te veel verzoeken van dit IP. Probeer later opnieuw.'
+    }
+  });
+
+  app.use('/api', generalLimiter);
+} else {
+  // Development mode - basic helmet only
+  app.use(helmet({ contentSecurityPolicy: false }));
+}
+
+app.use(cors(securityConfig.cors));
+app.use(cookieParser());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Apply input sanitization to all routes
+app.use(sanitizeInputs);
 
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -126,6 +158,7 @@ apiRouter.use('/', homeRouter);
 apiRouter.use('/register', registerRouter);
 apiRouter.use('/newsletter', newsletterRouter);
 apiRouter.use('/login', loginRouter);
+apiRouter.use('/logout', logoutRouter);
 apiRouter.use('/wachtwoord-vergeten', wachtwoordVergetenRouter);
 apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
 apiRouter.use('/sectoren', sectorenRouter);

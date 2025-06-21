@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from 'react-icons/fi';
 import LogoUploadForm from "../../components/forms/LogoUploadform";
 import { useAuth } from "../../context/AuthProvider";
+import apiClient from "../../utils/apiClient";
 import { baseUrl } from "../../config";
 import "./Settingsbedrijf.css";
 
@@ -63,13 +64,7 @@ const Settingsbedrijf = () => {
 
       try {
         setLoading(true);
-        const response = await fetch(`${baseUrl}/bedrijfprofiel/${user.id}`);
-
-        if (!response.ok) {
-          throw new Error("Kon bedrijfsgegevens niet ophalen");
-        }
-
-        const data = await response.json();
+        const data = await apiClient.get(`/bedrijfprofiel/${user.id}`);
 
         // Map database fields to form fields
         setBedrijfsgegevens({
@@ -122,33 +117,23 @@ const Settingsbedrijf = () => {
       setSaving(true);
       setError("");
 
-      const response = await fetch(`${baseUrl}/bedrijfprofiel/${user.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          naam: bedrijfsgegevens.bedrijfsnaam,
-          sector_id: bedrijfsgegevens.sector,
-          straat: bedrijfsgegevens.straat,
-          nummer: bedrijfsgegevens.nummer,
-          postcode: bedrijfsgegevens.postcode,
-          gemeente: bedrijfsgegevens.gemeente,
-          telefoonnummer: bedrijfsgegevens.telefoon,
-          email: bedrijfsgegevens.email,
-          btw_nummer: bedrijfsgegevens.stwNummer,
-          contactpersoon_facturatie: bedrijfsgegevens.facturatieContact,
-          email_facturatie: bedrijfsgegevens.facturatieEmail,
-          po_nummer: bedrijfsgegevens.poNummer,
-          contactpersoon_beurs: bedrijfsgegevens.beursContact,
-          email_beurs: bedrijfsgegevens.beursEmail,
-          website_of_linkedin: bedrijfsgegevens.website
-        }),
+      await apiClient.put(`/bedrijfprofiel/${user.id}`, {
+        naam: bedrijfsgegevens.bedrijfsnaam,
+        sector_id: bedrijfsgegevens.sector,
+        straat: bedrijfsgegevens.straat,
+        nummer: bedrijfsgegevens.nummer,
+        postcode: bedrijfsgegevens.postcode,
+        gemeente: bedrijfsgegevens.gemeente,
+        telefoonnummer: bedrijfsgegevens.telefoon,
+        email: bedrijfsgegevens.email,
+        btw_nummer: bedrijfsgegevens.stwNummer,
+        contactpersoon_facturatie: bedrijfsgegevens.facturatieContact,
+        email_facturatie: bedrijfsgegevens.facturatieEmail,
+        po_nummer: bedrijfsgegevens.poNummer,
+        contactpersoon_beurs: bedrijfsgegevens.beursContact,
+        email_beurs: bedrijfsgegevens.beursEmail,
+        website_of_linkedin: bedrijfsgegevens.website
       });
-
-      if (!response.ok) {
-        throw new Error("Kon bedrijfsgegevens niet opslaan");
-      }
 
       alert("Bedrijfsgegevens succesvol opgeslagen!");
       navigate("/bedrijf");
