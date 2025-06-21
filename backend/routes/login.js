@@ -9,16 +9,19 @@ const securityConfig = require('../config/security');
 // Rate limiting for login attempts (lenient in development)
 const loginLimiter = rateLimit({
   windowMs: securityConfig.rateLimiting.windowMs,
-  max: process.env.NODE_ENV === 'production' ? 5 : 100, // More lenient in development
+  max: process.env.NODE_ENV === 'production' ? 5 : 1000, // Very lenient in development
   message: {
     error: 'Te veel inlogpogingen. Probeer over 15 minuten opnieuw.'
   },
   standardHeaders: true,
   legacyHeaders: false,
-  skip: process.env.NODE_ENV === 'development' // Skip rate limiting in development
+  skip: (req, res) => process.env.NODE_ENV === 'development' // Skip function for development
 });
 
-router.post('/', loginLimiter, async (req, res) => {
+// Apply rate limiter only in production
+const middlewares = process.env.NODE_ENV === 'production' ? [loginLimiter] : [];
+
+router.post('/', ...middlewares, async (req, res) => {
   const { email, password, type } = req.body;
 
   // Input validation
