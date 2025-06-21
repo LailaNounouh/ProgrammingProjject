@@ -404,14 +404,14 @@ function BedrijvenDashboard() {
   };
 
   const addEventReminder = (event) => {
-    const reminder = {
-      date: event.date.toISOString().split('T')[0],
-      time: event.time?.split('-')[0].trim() || '09:00',
-      text: `Herinnering: ${event.title} - ${event.description}`
-    };
-    
-    addReminder(reminder);
-  };
+  setNewReminder({
+    date: event.date.toISOString().split('T')[0],
+    time: event.time?.split('-')[0].trim() || '09:00',
+    text: `Herinnering: ${event.title} - ${event.description}`
+  });
+  setShowReminderModal(true);
+};
+
 
   const deleteReminder = (index) => {
     const userString = localStorage.getItem('ingelogdeGebruiker');

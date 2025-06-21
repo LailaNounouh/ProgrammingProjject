@@ -31,7 +31,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: { 
-    origin: "*", // Pas aan indien nodig voor veiligheid
+    origin: "*", 
     methods: ["GET", "POST"]
   }
 });
@@ -45,7 +45,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Statische map voor uploads (foto's e.d.)
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // --- Multer configuratie voor profielfoto upload ---
@@ -76,7 +76,7 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // max 5MB
 });
 
-// --- Nieuwe route voor profiel opslaan inclusief upload ---
+
 app.post('/api/studentenaccount', upload.single('profilePicture'), async (req, res) => {
   try {
     // Uit formData:
