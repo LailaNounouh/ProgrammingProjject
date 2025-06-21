@@ -4,7 +4,7 @@ import { useAuth } from '../../../context/AuthProvider';
 import './BedrijvenHeader.css';
 
 const Header = () => {
-  const { logout } = useAuth();
+  const { uitloggen } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -47,7 +47,7 @@ const Header = () => {
         <div className="logout-popup-overlay">
           <div className="logout-popup">
             <p>Weet je zeker dat je wilt uitloggen?</p>
-            <button onClick={logout} className="confirm-button">Bevestig uitloggen</button>
+            <button onClick={uitloggen} className="confirm-button">Bevestig uitloggen</button>
             <button onClick={() => setShowLogoutPopup(false)} className="cancel-button">Annuleer</button>
           </div>
         </div>
