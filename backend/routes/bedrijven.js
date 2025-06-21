@@ -1,35 +1,30 @@
 const express = require("express");
 const router = express.Router();
-const { getAlleBedrijven } = require("../modules/bedrijfsmodule");
-const upload = require("../middleware/upload"); // Multer middleware
-const pool = require("../db"); // Nodig om de database te updaten
+const pool = require("../db"); // database connectie
 
-// Haalt alle bedrijven op
+// Haal alle bedrijven op
 router.get("/", async (req, res) => {
   try {
-    const bedrijven = await getAlleBedrijven();
-    res.json(bedrijven);
+    const [rows] = await pool.query("SELECT * FROM Bedrijven");
+    res.json(rows);
   } catch (err) {
     console.error("Fout bij ophalen bedrijven:", err);
     res.status(500).json({ error: "Interne serverfout" });
   }
 });
 
-// Upload bedrijfslogo en update logo_url in database
-router.post("/upload-logo/:bedrijfId", upload.single("logo"), async (req, res) => {
+// Nieuwe route: haal één bedrijf op basis van bedrijfId
+router.get("/:bedrijfId", async (req, res) => {
   try {
     const { bedrijfId } = req.params;
-    const logoPath = `/uploads/${req.file.filename}`; // relatieve URL
-
-    await pool.query(
-      "UPDATE Bedrijven SET logo_url = ? WHERE bedrijf_id = ?",
-      [logoPath, bedrijfId]
-    );
-
-    res.json({ message: "Logo succesvol geüpload", logo_url: logoPath });
+    const [rows] = await pool.query("SELECT * FROM Bedrijven WHERE bedrijf_id = ?", [bedrijfId]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Bedrijf niet gevonden" });
+    }
+    res.json(rows[0]);
   } catch (err) {
-    console.error("Fout bij uploaden logo:", err);
-    res.status(500).json({ error: "Fout bij uploaden logo" });
+    console.error("Fout bij ophalen bedrijf:", err);
+    res.status(500).json({ error: "Interne serverfout" });
   }
 });
 
