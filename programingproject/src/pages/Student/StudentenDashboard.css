@@ -186,3 +186,264 @@
   font-size: 12px;
   display: block;
 }
+
+/* Dashboard layout */
+.dashboard-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* Card grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e6ed;
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+  border-color: #4a6cf7;
+}
+
+.dashboard-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #4a6cf7 0%, #5bb4b7 100%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.dashboard-card:hover::after {
+  opacity: 1;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.card-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 18px;
+  color: white;
+  font-size: 22px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.icon-fix {
+  transform: translateY(1px);
+}
+
+.bg-blue {
+  background-color: #4a6cf7;
+}
+
+.bg-green {
+  background-color: #28a745;
+}
+
+.bg-orange {
+  background-color: #fd7e14;
+}
+
+.bg-purple {
+  background-color: #6f42c1;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.card-description {
+  margin: 0 0 18px;
+  color: #666;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #4a6cf7;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 15px;
+}
+
+.chevron-icon {
+  font-size: 13px;
+  transition: transform 0.2s;
+}
+
+.dashboard-card:hover .chevron-icon {
+  transform: translateX(3px);
+}
+
+/* Calendar section */
+.calendar-section {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  height: fit-content;
+  border: 1px solid #e0e6ed;
+}
+
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendar-header h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #2d3748;
+  font-weight: 700;
+}
+
+.add-reminder-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #4a6cf7;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 5px rgba(74, 108, 247, 0.3);
+}
+
+.add-reminder-btn:hover {
+  background: #3a5bd9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(74, 108, 247, 0.3);
+}
+
+/* React Calendar overrides */
+.react-calendar {
+  width: 100%;
+  border: none;
+  font-family: inherit;
+  background: transparent;
+}
+
+.react-calendar__navigation {
+  margin-bottom: 10px;
+}
+
+.react-calendar__navigation button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d3748;
+  min-width: 44px;
+  padding: 8px;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.react-calendar__month-view__weekdays {
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 600;
+  color: #718096;
+  margin-bottom: 5px;
+}
+
+.react-calendar__month-view__days__day {
+  padding: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.react-calendar__tile {
+  border-radius: 8px;
+  padding: 10px 6px;
+  position: relative;
+}
+
+.react-calendar__tile--now {
+  background: #e6f7ff;
+  color: #2d3748;
+}
+
+.react-calendar__tile--active {
+  background: #4a6cf7;
+  color: white;
+}
+
+.react-calendar__tile--active:enabled:hover {
+  background: #3a5bd9;
+}
+
+.calendar-marker-container {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  margin-top: 2px;
+}
+
+.reminder-dot {
+  height: 8px;
+  width: 8px;
+  background-color: #ff4757;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.event-dot {
+  height: 8px;
+  width: 8px;
+  background-color: #4a6cf7;
+  border-radius: 50%;
+  display: inline-block;
+}
