@@ -7,7 +7,6 @@ const multer = require('multer');
 const http = require('http');
 const socketIo = require('socket.io');
 
-
 // Routers
 const homeRouter = require('./routes/home');
 const registerRouter = require('./routes/register');
@@ -18,18 +17,20 @@ const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
 const sectorenRouter = require('./routes/sectoren');
 const profielRouter = require('./routes/profiel');
 const adminRouter = require('./routes/admin');
-const afsprakenRouter = require('./routes/afspraken')
+const afsprakenRouter = require('./routes/afspraken');
 const codeertaalRouter = require('./routes/codeertalen');
 const usersRouter = require('./routes/users');
 const statistiekenRouter = require('./routes/Statistieken');
-
 const attendanceRouter = require('./routes/attendance');
+const betalingRouter = require('./routes/betaling');
+
 console.log('server.js: Alle routers geïmporteerd.');
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: { 
-    origin: "*", // Adjust according to your security needs
+    origin: "*", // Pas aan indien nodig voor veiligheid
     methods: ["GET", "POST"]
   }
 });
@@ -92,7 +93,8 @@ app.post('/api/studentenaccount', upload.single('profilePicture'), async (req, r
     res.status(500).json({ error: 'Er ging iets mis bij het opslaan van het profiel.' });
   }
 });
-// Set up Socket.IO connection
+
+// Socket.IO connection setup
 io.on('connection', (socket) => {
   console.log('New client connected');
   
@@ -128,26 +130,22 @@ apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
 apiRouter.use('/sectoren', sectorenRouter);
 apiRouter.use('/profiel', profielRouter);
 apiRouter.use('/admin', adminRouter);
-apiRouter.use('/afspraken', afsprakenRouter)
+apiRouter.use('/afspraken', afsprakenRouter);
 apiRouter.use('/codeertaal', codeertaalRouter);
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/statistieken', statistiekenRouter);
-
-apiRouter.use('/attendance', attendanceRouter)
-
+apiRouter.use('/attendance', attendanceRouter);
+apiRouter.use('/betaling', betalingRouter);
 
 app.use('/api', apiRouter);
 
-// de conflict tussen de vite.config en server te vermijden maken we een tweede ingang 
+// De conflict tussen de vite.config en server vermijden, tweede ingang
 const viteProxyRouter = express.Router();
 
 viteProxyRouter.use('/admin', adminRouter);
 viteProxyRouter.use('/attendance', attendanceRouter);
 
 app.use('/', viteProxyRouter);
- 
-
-
 
 // Root route
 app.get('/', (req, res) => {
