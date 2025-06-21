@@ -17,10 +17,14 @@ const StatusBetaling = () => {
         const response = await axios.get(`http://localhost:3000/api/betaling/${bedrijfId}`);
         setBetalingData(response.data);
         
-        // Start animatie na data laden
+        // Bereken progress height na data laden
+        const completedSteps = response.data.statusen ? 
+          response.data.statusen.filter((s) => s.completed).length : 0;
+        const newHeight = (completedSteps - 1) * 72; // 72px per stap
+        
         setTimeout(() => {
-          calculateProgress(response.data.status);
-        }, 300);
+          setProgressHeight(newHeight);
+        }, 100);
       } catch (err) {
         console.error('Fout bij ophalen betaling:', err);
       }
@@ -28,38 +32,6 @@ const StatusBetaling = () => {
 
     fetchBetaling();
   }, [bedrijfId]);
-
-  const calculateProgress = (status) => {
-    if (!timelineRef.current) return;
-
-   const statusOrder = [
-  'factuur_verzonden',
-  'in_behandeling',
-  'ontvangen',
-  'verwerkt'
-];
-    
-    const currentStatusIndex = statusOrder.indexOf(status);
-    const steps = timelineRef.current.querySelectorAll('.timeline-step');
-    
-    if (currentStatusIndex >= 0 && steps.length > 0) {
-      let totalHeight = 0;
-      
-      // Bereken hoogte tot de huidige stap
-      for (let i = 0; i < currentStatusIndex; i++) {
-        if (steps[i]) {
-          totalHeight += steps[i].offsetHeight;
-        }
-      }
-      
-      // Voeg deel van huidige stap toe voor progressie-effect
-      if (currentStatusIndex < steps.length) {
-        totalHeight += steps[currentStatusIndex].offsetHeight * 0.5;
-      }
-      
-      setProgressHeight(totalHeight);
-    }
-  };
 
   const getStepStatus = (stepName) => {
     if (!betalingData?.status) return '';
@@ -82,8 +54,10 @@ const StatusBetaling = () => {
   // Herbereken bij resize
   useEffect(() => {
     const handleResize = () => {
-      if (betalingData?.status) {
-        calculateProgress(betalingData.status);
+      if (betalingData?.statusen) {
+        const completedSteps = betalingData.statusen.filter((s) => s.completed).length;
+        const newHeight = (completedSteps - 1) * 72;
+        setProgressHeight(newHeight);
       }
     };
 
@@ -146,36 +120,35 @@ const StatusBetaling = () => {
           <div 
             className="timeline-progress" 
             style={{ height: `${progressHeight}px` }}
-          ></div>
+          />
 
-      <div className={`timeline-step ${getStepStatus('factuur_verzonden')}`}>
-  <div className="timeline-content">
-    <strong>Factuur verzonden</strong>
-    <div className="timeline-date">{betalingData?.factuur_verzonden ?? '...'}</div>
-  </div>
-</div>
+          <div className={`timeline-step ${getStepStatus('factuur_verzonden')}`}>
+            <div className="timeline-content">
+              <strong>Factuur verzonden</strong>
+              <div className="timeline-date">{betalingData?.factuur_verzonden ?? '...'}</div>
+            </div>
+          </div>
 
-<div className={`timeline-step ${getStepStatus('in_behandeling')}`}>
-  <div className="timeline-content">
-    <strong>Factuur in behandeling</strong>
-    <div className="timeline-date">{betalingData?.in_behandeling ?? '...'}</div>
-  </div>
-</div>
+          <div className={`timeline-step ${getStepStatus('in_behandeling')}`}>
+            <div className="timeline-content">
+              <strong>Factuur in behandeling</strong>
+              <div className="timeline-date">{betalingData?.in_behandeling ?? '...'}</div>
+            </div>
+          </div>
 
-<div className={`timeline-step ${getStepStatus('ontvangen')}`}>
-  <div className="timeline-content">
-    <strong>Betaling ontvangen</strong>
-    <div className="timeline-date">{betalingData?.ontvangen ?? '...'}</div>
-  </div>
-</div>
+          <div className={`timeline-step ${getStepStatus('ontvangen')}`}>
+            <div className="timeline-content">
+              <strong>Betaling ontvangen</strong>
+              <div className="timeline-date">{betalingData?.ontvangen ?? '...'}</div>
+            </div>
+          </div>
 
-<div className={`timeline-step ${getStepStatus('verwerkt')}`}>
-  <div className="timeline-content">
-    <strong>Betaling verwerkt</strong>
-    <div className="timeline-date">{betalingData?.verwerkt ?? '...'}</div>
-  </div>
-</div>
-
+          <div className={`timeline-step ${getStepStatus('verwerkt')}`}>
+            <div className="timeline-content">
+              <strong>Betaling verwerkt</strong>
+              <div className="timeline-date">{betalingData?.verwerkt ?? '...'}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
