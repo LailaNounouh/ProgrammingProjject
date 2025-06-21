@@ -43,6 +43,18 @@ router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
+    // Check if sector is referenced by companies
+    const [references] = await db.query(
+      'SELECT COUNT(*) as count FROM Bedrijf_Sector WHERE sector_id = ?',
+      [id]
+    );
+
+    if (references[0].count > 0) {
+      return res.status(400).json({
+        error: `Kan sector niet verwijderen: ${references[0].count} bedrijf(ven) gebruiken deze sector nog. Verwijder eerst de bedrijven of wijzig hun sector.`
+      });
+    }
+
     const [result] = await db.query('DELETE FROM Sectoren WHERE sector_id = ?', [id]);
 
     if (result.affectedRows === 0) {
@@ -52,7 +64,13 @@ router.delete('/:id', async (req, res) => {
     res.status(204).send();
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Fout bij verwijderen sector' });
+    if (err.code === 'ER_ROW_IS_REFERENCED_2') {
+      res.status(400).json({
+        error: 'Kan sector niet verwijderen: er zijn nog bedrijven gekoppeld aan deze sector. Verwijder eerst de bedrijven of wijzig hun sector.'
+      });
+    } else {
+      res.status(500).json({ error: 'Fout bij verwijderen sector' });
+    }
   }
 });
 

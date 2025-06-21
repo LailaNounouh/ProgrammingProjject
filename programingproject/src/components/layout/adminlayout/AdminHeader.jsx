@@ -32,8 +32,8 @@ const AdminHeader = () => {
             <li><Link to="/Admin/Bedrijf">Deelnemende bedrijven</Link></li>
             <li><Link to="/Admin/standen">Beheer van standen</Link></li>
             <li><Link to="/Admin/gebruikers">Beheer van gebruikers</Link></li>
-            <li><Link to="/admin/statistiek">Statistieken</Link></li>
-            <li><Link to="/admin/attendance">Aanwezigheid</Link></li>
+            <li><Link to="/Admin/statistiek">Statistieken</Link></li>
+            <li><Link to="/Admin/attendance">Aanwezigheid</Link></li>
             <li>
               <button onClick={() => setShowLogoutPopup(true)} className="logout-link">
                 Uitloggen

@@ -35,6 +35,7 @@ export const ProfileProvider = ({ children }) => {
           linkedin: databaseProfile.linkedin_url,
           github: databaseProfile.github_url,
           foto_url: databaseProfile.foto_url,
+          studie: databaseProfile.studie,
           // Add other fields as needed
         };
 
