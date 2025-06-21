@@ -6,15 +6,16 @@ const jwt = require('jsonwebtoken');
 const rateLimit = require('express-rate-limit');
 const securityConfig = require('../config/security');
 
-// Rate limiting for login attempts
+// Rate limiting for login attempts (lenient in development)
 const loginLimiter = rateLimit({
   windowMs: securityConfig.rateLimiting.windowMs,
-  max: securityConfig.rateLimiting.loginMaxAttempts,
+  max: process.env.NODE_ENV === 'production' ? 5 : 100, // More lenient in development
   message: {
     error: 'Te veel inlogpogingen. Probeer over 15 minuten opnieuw.'
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: process.env.NODE_ENV === 'development' // Skip rate limiting in development
 });
 
 router.post('/', loginLimiter, async (req, res) => {

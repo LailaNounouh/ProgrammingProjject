@@ -13,8 +13,8 @@ const securityConfig = {
   // Rate Limiting Configuration
   rateLimiting: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-    maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
-    loginMaxAttempts: parseInt(process.env.LOGIN_RATE_LIMIT_MAX) || 5
+    maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 1000, // Increased for development
+    loginMaxAttempts: parseInt(process.env.LOGIN_RATE_LIMIT_MAX) || 50 // Increased for development
   },
 
   // Password Configuration
