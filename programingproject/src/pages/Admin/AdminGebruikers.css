@@ -69,3 +69,26 @@
   font-weight: bold;
   cursor: pointer;
 }
+
+.bewerken-button {
+  background-color: #007bff;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-bottom: 1rem;
+}
+
+.bewerken-button:hover {
+  background-color: #0056b3;
+}
+
+.gebruikers-section input {
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+}
