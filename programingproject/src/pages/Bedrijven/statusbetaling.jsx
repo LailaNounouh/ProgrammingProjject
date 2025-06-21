@@ -1,38 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './StatusBetaling.css';
-import { FiDownload, FiFile, FiArrowLeft, FiUpload } from 'react-icons/fi';
+import { FiDownload, FiFile, FiArrowLeft } from 'react-icons/fi';
+import axios from 'axios';
 
 const StatusBetaling = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [betalingData, setBetalingData] = useState(null);
 
-  const betaling = {
-    bedrag: "1200",
-    status: "Betaald",
-    datum: "20 april 2025",
-    methode: "Overschrijving",
-    factuur_url: "/uploads/factuur_2025.pdf",
-    factuur_verzonden: "15 april 2025",
-    in_behandeling: "17 april 2025",
-    ontvangen: "20 april 2025",
-    verwerkt: "22 april 2025"
-  };
+  // Vervang dit met het bedrijf_id dat je wil ophalen (bijvoorbeeld ingelogd bedrijf)
+  const bedrijfId = 1;
 
-  const statusColors = {
-    Betaald: "status-paid",
-    "In behandeling": "status-pending",
-    "Verwerkt": "status-processed"
-  };
+  useEffect(() => {
+    const fetchBetaling = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/betaling/${bedrijfId}`);
+        setBetalingData(response.data);
+      } catch (err) {
+        console.error('Fout bij ophalen betaling:', err);
+      }
+    };
 
-  const timelineSteps = [
-    { label: "Factuur verzonden", date: betaling.factuur_verzonden },
-    { label: "Factuur in behandeling", date: betaling.in_behandeling },
-    { label: "Betaling ontvangen", date: betaling.ontvangen },
-    { label: "Betaling verwerkt", date: `Verwacht: ${betaling.verwerkt}` }
-  ];
-  const completedIndex = betaling.status === "Betaald" ? 2
-    : betaling.status === "Verwerkt" ? 3
-    : betaling.status === "In behandeling" ? 1
-    : 0;
+    fetchBetaling();
+  }, [bedrijfId]);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -49,35 +38,39 @@ const StatusBetaling = () => {
       <a href="/bedrijf" className="back-button">
         <FiArrowLeft /> Terug naar dashboard
       </a>
+
       <div className="payment-status">
         <h3>Staat van betaling</h3>
+
         <div className="payment-card">
           <h4>Betaalkaart</h4>
+
           <div className="payment-info">
-            <span>Bedrag: €{betaling.bedrag}</span>
+            <span>Bedrag: €{betalingData?.bedrag ?? '...'}</span>
           </div>
+
           <div className="payment-info">
             <span>
-              Status: <span className={`status-badge ${statusColors[betaling.status] || ""}`}>{betaling.status}</span>
+              Status:{' '}
+              <span className={`status-badge ${betalingData?.status === 'Betaald' ? 'status-paid' : 'status-unpaid'}`}>
+                {betalingData?.status ?? '...'}
+              </span>
             </span>
-            <span>Datum: {betaling.datum}</span>
+            <span>Datum: {betalingData?.datum ?? '...'}</span>
           </div>
+
           <div className="payment-info">
-            <span>Methode: {betaling.methode}</span>
+            <span>Methode: {betalingData?.methode ?? '...'}</span>
           </div>
+
           <div className="download-section">
             <p>Factuur downloaden (PDF)</p>
-            <button className="download-btn" onClick={() => window.open(betaling.factuur_url, '_blank')}>
+
+            <button className="download-btn" onClick={() => window.open(betalingData?.factuur_url ?? '#', '_blank')}>
               <FiDownload style={{ marginRight: '5px' }} />
               Factuur downloaden
             </button>
-            <div style={{ marginTop: "10px" }}>
-              <label className="upload-btn">
-                <FiUpload style={{ marginRight: '5px' }} />
-                Upload nieuwe factuur
-                <input type="file" style={{ display: "none" }} onChange={handleFileUpload} />
-              </label>
-            </div>
+
             {uploadedFile && (
               <div className="downloaded-file">
                 <FiFile className="file-icon" />
@@ -90,21 +83,40 @@ const StatusBetaling = () => {
           </div>
         </div>
       </div>
+
       <div className="divider"></div>
+
       <div className="payment-status">
         <h3>Betalingsproces</h3>
+
         <div className="payment-timeline">
-          {timelineSteps.map((step, idx) => (
-            <div
-              key={step.label}
-              className={`timeline-step${idx <= completedIndex ? " completed" : ""}`}
-            >
-              <div className="timeline-content">
-                {step.label}
-                <div className="timeline-date">{step.date}</div>
-              </div>
+          <div className="timeline-step completed">
+            <div className="timeline-content">
+              Factuur verzonden
+              <div className="timeline-date">{betalingData?.factuur_verzonden ?? '...'}</div>
             </div>
-          ))}
+          </div>
+
+          <div className="timeline-step completed">
+            <div className="timeline-content">
+              Factuur in behandeling
+              <div className="timeline-date">{betalingData?.in_behandeling ?? '...'}</div>
+            </div>
+          </div>
+
+          <div className="timeline-step completed">
+            <div className="timeline-content">
+              Betaling ontvangen
+              <div className="timeline-date">{betalingData?.ontvangen ?? '...'}</div>
+            </div>
+          </div>
+
+          <div className="timeline-step">
+            <div className="timeline-content">
+              Betaling verwerkt
+              <div className="timeline-date">{betalingData?.verwerkt ?? '...'}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
