@@ -78,8 +78,10 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={{
       gebruiker,
+      user: gebruiker, // Alias for consistency
       inloggen,
       uitloggen,
+      logout: uitloggen, // Alias for consistency
       checkAuthStatus,
       isIngelogd: () => !!gebruiker
     }}>
