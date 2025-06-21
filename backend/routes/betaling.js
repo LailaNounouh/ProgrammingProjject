@@ -1,12 +1,25 @@
-const mysql = require('mysql2/promise');
-require('dotenv').config();
+const express = require('express');
+const router = express.Router();
+const pool = require('../db');
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || '10.2.160.211',
-  user: process.env.DB_USER || 'groep13',
-  password: process.env.DB_PASS || 'aijQ8ZSp',
-  database: process.env.DB_NAME || 'careerlaunch',
-  port: process.env.DB_PORT || 3306
+router.get('/:bedrijf_id', async (req, res) => {
+  const bedrijfId = req.params.bedrijf_id;
+
+  try {
+    const [rows] = await pool.query(
+      'SELECT * FROM betalingen WHERE bedrijf_id = ? LIMIT 1',
+      [bedrijfId]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Geen betaling gevonden.' });
+    }
+
+    res.json(rows[0]);
+  } catch (err) {
+    console.error('Databasefout bij ophalen betaling:', err);
+    res.status(500).json({ message: 'Fout bij ophalen betaling.' });
+  }
 });
 
-module.exports = pool;
+module.exports = router;
