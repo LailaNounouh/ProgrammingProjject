@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import "./AccountModule.css";
-import { FaEdit, FaEye, FaSave, FaTimes } from "react-icons/fa";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaEdit, FaEye, FaSave, FaTimes, FaExclamationTriangle } from 'react-icons/fa';
 
 export default function AccountModule() {
   const navigate = useNavigate();
+  
   const [userData, setUserData] = useState({
+    student_id: null,
     email: "",
     naam: "",
     studie: "",
@@ -24,11 +25,12 @@ export default function AccountModule() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [editMode, setEditMode] = useState(false);
+  const [fotoPreview, setFotoPreview] = useState(null);
   
   const studieOpties = [
     "Informatica",
     "Toegepaste Informatica",
-    "Graduaat Programmeren",
+    "Graduaat Programmeren", 
     "Toegepaste Informatica: AI",
     "Toegepaste Informatica: Applicatieontwikkeling",
     "Toegepaste Informatica: Systemen en Netwerken",
@@ -36,42 +38,53 @@ export default function AccountModule() {
   ];
 
   useEffect(() => {
-    const haalGebruikerOp = async () => {
-      try {
-        setLoading(true);
-        
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        const email = localStorage.getItem('email');
-        const naam = localStorage.getItem('naam');
-        
-        if (!token) {
+    haalStudentOp();
+  }, []);
+
+  const haalStudentOp = async () => {
+    try {
+      setLoading(true);
+      setErrorMessage("");
+
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/studenten/profiel`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        if(response.status === 401) {
           navigate('/login');
           return;
         }
-        
-        setUserData({
-          email: email || "",
-          naam: naam || "",
-          studie: "",
-          foto_url: null,
-          linkedin_url: "",
-          github_url: "",
-          jobstudent: false,
-          werkzoekend: false,
-          stage_gewenst: false,
-          telefoon: "",
-          aboutMe: "",
-        });
-        
-        setLoading(false);
-      } catch (error) {
-        setErrorMessage("Er is een probleem opgetreden bij het laden van je gegevens.");
-        setLoading(false);
+        throw new Error(`Server gaf foutcode ${response.status}`);
       }
-    };
-
-    haalGebruikerOp();
-  }, [navigate]);
+      
+      const student = await response.json();
+      
+      setUserData({
+        student_id: student.student_id,
+        email: student.email || "",
+        naam: student.naam || "",
+        studie: student.studie || "",
+        foto_url: student.foto_url ? `${process.env.REACT_APP_API_URL}/${student.foto_url}` : null,
+        linkedin_url: student.linkedin_url || "",
+        github_url: student.github_url || "",
+        jobstudent: student.jobstudent === 1 || student.jobstudent === true,
+        werkzoekend: student.werkzoekend === 1 || student.werkzoekend === true,
+        stage_gewenst: student.stage_gewenst === 1 || student.stage_gewenst === true,
+        telefoon: student.telefoon || "",
+        aboutMe: student.aboutMe || "",
+      });
+      
+    } catch (error) {
+      console.error("Fout bij ophalen student:", error);
+      setErrorMessage("Er was een probleem bij het ophalen van je profiel. Probeer het later opnieuw.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -95,6 +108,9 @@ export default function AccountModule() {
       return;
     }
     
+    const fileURL = URL.createObjectURL(file);
+    setFotoPreview(fileURL);
+    
     setUserData({
       ...userData,
       foto_url: file
@@ -111,18 +127,74 @@ export default function AccountModule() {
       setErrorMessage("");
       setSuccessMessage("");
       
-      setTimeout(() => {
-        setSuccessMessage("Je gegevens zijn succesvol opgeslagen!");
-        setEditMode(false);
-        setSaving(false);
+      const token = localStorage.getItem('token');
+      const studentData = {
+        naam: userData.naam,
+        email: userData.email,
+        studie: userData.studie,
+        telefoon: userData.telefoon,
+        linkedin_url: userData.linkedin_url,
+        github_url: userData.github_url,
+        aboutMe: userData.aboutMe,
+        jobstudent: userData.jobstudent,
+        werkzoekend: userData.werkzoekend,
+        stage_gewenst: userData.stage_gewenst
+      };
+
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/studenten/profiel`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(studentData)
+      });
+
+      if (!response.ok) {
+        if(response.status === 401) {
+          navigate('/login');
+          return;
+        }
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Server gaf foutcode ${response.status}`);
+      }
+      
+      if (userData.foto_url instanceof File) {
+        const fotoData = new FormData();
+        fotoData.append('profielfoto', userData.foto_url);
         
-        setTimeout(() => {
-          setSuccessMessage("");
-        }, 3000);
-      }, 1000);
+        const fotoResponse = await fetch(`${process.env.REACT_APP_API_URL}/studenten/profiel/foto`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: fotoData
+        });
+        
+        if (!fotoResponse.ok) {
+          console.error('Fout bij uploaden foto', await fotoResponse.json());
+          setSuccessMessage("Profiel opgeslagen, maar er was een probleem met het uploaden van de foto.");
+          setEditMode(false);
+          setFotoPreview(null);
+          haalStudentOp();
+          return;
+        }
+      }
+      
+      setSuccessMessage("Je profiel is succesvol opgeslagen!");
+      setEditMode(false);
+      setFotoPreview(null);
+      
+      haalStudentOp();
+      
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 3000);
       
     } catch (error) {
-      setErrorMessage("Er is een probleem opgetreden bij het opslaan van je gegevens.");
+      console.error("Fout bij opslaan profiel:", error);
+      setErrorMessage(`Er was een probleem bij het opslaan van je profiel: ${error.message}`);
+    } finally {
       setSaving(false);
     }
   };
@@ -130,6 +202,8 @@ export default function AccountModule() {
   const cancelEdit = () => {
     setEditMode(false);
     setErrorMessage("");
+    setFotoPreview(null);
+    haalStudentOp();
   };
 
   if (loading) {
@@ -147,6 +221,11 @@ export default function AccountModule() {
     <div className="page-container account-module">
       <div className="account-header">
         <h2 className="module-title">Mijn Account</h2>
+        {errorMessage && errorMessage.includes("niet gevonden") && (
+          <div className="error-badge">
+            <FaExclamationTriangle /> Profiel niet compleet
+          </div>
+        )}
         <button 
           onClick={() => setEditMode(!editMode)} 
           className={`toggle-mode-btn ${editMode ? 'viewing' : 'editing'}`}
@@ -178,8 +257,8 @@ export default function AccountModule() {
                   id="email"
                   name="email"
                   value={userData.email}
-                  readOnly
-                  className="readonly-field"
+                  onChange={handleInputChange}
+                  required
                 />
               </div>
               
@@ -190,8 +269,8 @@ export default function AccountModule() {
                   id="naam"
                   name="naam"
                   value={userData.naam}
-                  readOnly
-                  className="readonly-field"
+                  onChange={handleInputChange}
+                  required
                 />
               </div>
               
@@ -265,9 +344,12 @@ export default function AccountModule() {
                     accept="image/*"
                     onChange={handleFileChange}
                   />
-                  {(userData.foto_url && typeof userData.foto_url === 'string') && (
+                  {(fotoPreview || (userData.foto_url && typeof userData.foto_url === 'string')) && (
                     <div className="profielfoto-preview">
-                      <img src={userData.foto_url} alt="Profielfoto preview" />
+                      <img 
+                        src={fotoPreview || userData.foto_url} 
+                        alt="Profielfoto preview" 
+                      />
                     </div>
                   )}
                 </div>

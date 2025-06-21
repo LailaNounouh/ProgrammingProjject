@@ -23,6 +23,7 @@ const usersRouter = require('./routes/users');
 const statistiekenRouter = require('./routes/Statistieken');
 const attendanceRouter = require('./routes/attendance');
 const betalingRouter = require('./routes/betaling');
+const studentenRouter = require('./routes/studenten');
 
 console.log('server.js: Alle routers geïmporteerd.');
 
@@ -136,6 +137,7 @@ apiRouter.use('/users', usersRouter);
 apiRouter.use('/statistieken', statistiekenRouter);
 apiRouter.use('/attendance', attendanceRouter);
 apiRouter.use('/betaling', betalingRouter);
+apiRouter.use('/studenten', studentenRouter);
 
 app.use('/api', apiRouter);
 
