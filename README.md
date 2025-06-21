@@ -19,17 +19,17 @@ Zo combineren we een fysiek netwerkevent met de kracht van IT en innovatie.
 ## Technologieën
 
 - **Frontend**:
-         - React
-         - Handmatige styling met CSS
-         - Componentgebaseerde structuur (`components/`, `pages/`, `hooks/`, `context/`)
+  - React
+  - Handmatige styling met CSS
+  - Componentgebaseerde structuur (`components/`, `pages/`, `hooks/`, `context/`)
 - **Backend**: 
-        - Node.js
-        - Express.js
-        - MySQL (database)
-        - Eigen routing (`routes/`) en middleware (`middleware/`)
-        - Environment-variabelen via `.env`
+  - Node.js
+  - Express.js
+  - MySQL (database)
+  - Eigen routing (`routes/`) en middleware (`middleware/`)
+  - Environment-variabelen via `.env`
 - **Versiebeheer**: 
-        - Git & GitHub
+  - Git & GitHub
 
 ## Aanpak
 
