@@ -28,9 +28,29 @@ const Settingsbedrijf = () => {
     website: ""
   });
 
+  const [sectoren, setSectoren] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+
+  // Fetch available sectors
+  useEffect(() => {
+    const fetchSectoren = async () => {
+      try {
+        const response = await fetch(`${baseUrl}/sectoren`);
+        if (response.ok) {
+          const data = await response.json();
+          const zichtbare = data.filter(sector => sector.zichtbaar);
+          setSectoren(zichtbare);
+        }
+      } catch (err) {
+        console.error('Fout bij ophalen sectoren:', err);
+        setSectoren([]);
+      }
+    };
+
+    fetchSectoren();
+  }, []);
 
   // Fetch company data when component mounts
   useEffect(() => {
@@ -54,7 +74,7 @@ const Settingsbedrijf = () => {
         // Map database fields to form fields
         setBedrijfsgegevens({
           bedrijfsnaam: data.naam || "",
-          sector: data.sector || "",
+          sector: data.sector_id || "",
           straat: data.straat || "",
           nummer: data.nummer || "",
           postcode: data.postcode || "",
@@ -109,7 +129,7 @@ const Settingsbedrijf = () => {
         },
         body: JSON.stringify({
           naam: bedrijfsgegevens.bedrijfsnaam,
-          sector: bedrijfsgegevens.sector,
+          sector_id: bedrijfsgegevens.sector,
           straat: bedrijfsgegevens.straat,
           nummer: bedrijfsgegevens.nummer,
           postcode: bedrijfsgegevens.postcode,
@@ -201,25 +221,19 @@ const Settingsbedrijf = () => {
 
               <div className="formulier-groep">
                 <label className="formulier-label required">Sector</label>
-                <select 
-                  name="sector" 
+                <select
+                  name="sector"
                   value={bedrijfsgegevens.sector}
                   onChange={handleChange}
                   required
                   className="formulier-input"
                 >
                   <option value="">-- Selecteer een sector --</option>
-                  <option value="IT">IT & Technologie</option>
-                  <option value="finance">Financiën & Bankwezen</option>
-                  <option value="healthcare">Gezondheidszorg</option>
-                  <option value="education">Onderwijs</option>
-                  <option value="construction">Bouw & Vastgoed</option>
-                  <option value="retail">Retail & Handel</option>
-                  <option value="manufacturing">Productie & Industrie</option>
-                  <option value="transport">Transport & Logistiek</option>
-                  <option value="hospitality">Horeca & Toerisme</option>
-                  <option value="marketing">Marketing & Communicatie</option>
-                  <option value="other">Andere</option>
+                  {sectoren.map((sector) => (
+                    <option key={sector.sector_id} value={sector.sector_id}>
+                      {sector.naam}
+                    </option>
+                  ))}
                 </select>
               </div>
 
