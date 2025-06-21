@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './StatusBetaling.css';
-import { FiDownload, FiFile, FiArrowLeft } from 'react-icons/fi';
+import { FiDownload, FiFile, FiArrowLeft, FiUpload } from 'react-icons/fi';
 
 const StatusBetaling = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -23,7 +23,6 @@ const StatusBetaling = () => {
     "Verwerkt": "status-processed"
   };
 
- 
   const timelineSteps = [
     { label: "Factuur verzonden", date: betaling.factuur_verzonden },
     { label: "Factuur in behandeling", date: betaling.in_behandeling },
@@ -72,6 +71,13 @@ const StatusBetaling = () => {
               <FiDownload style={{ marginRight: '5px' }} />
               Factuur downloaden
             </button>
+            <div style={{ marginTop: "10px" }}>
+              <label className="upload-btn">
+                <FiUpload style={{ marginRight: '5px' }} />
+                Upload nieuwe factuur
+                <input type="file" style={{ display: "none" }} onChange={handleFileUpload} />
+              </label>
+            </div>
             {uploadedFile && (
               <div className="downloaded-file">
                 <FiFile className="file-icon" />
