@@ -2,26 +2,29 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-router.get('/:bedrijf_id', async (req, res) => {
-  const bedrijfId = req.params.bedrijf_id;
+// Dynamische data uit frontend
+router.post('/', async (req, res) => {
+  const { bedrijf_id, bedrag, methode, status, factuur_pdf, factuur_naam } = req.body;
+
+  if (!bedrijf_id || !bedrag || !methode || !status || !factuur_naam) {
+    return res.status(400).json({ message: 'Verplichte velden ontbreken.' });
+  }
 
   try {
-    const [rows] = await pool.query(
-      'SELECT * FROM betalingen WHERE bedrijf_id = ? LIMIT 1',
-      [bedrijfId]
+    const [result] = await pool.query(
+      `INSERT INTO betalingen (bedrijf_id, bedrag, methode, status, factuur_pdf, factuur_naam)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [bedrijf_id, bedrag, methode, status, factuur_pdf || null, factuur_naam]
     );
 
-    if (rows.length === 0) {
-      return res.status(404).json({ message: 'Geen betaling gevonden.' });
-    }
-
-    res.json(rows[0]);
-  } catch (err) {
-    console.error('Databasefout bij ophalen betaling:', err);
-    res.status(500).json({ message: 'Fout bij ophalen betaling.' });
+    res.status(201).json({ message: 'Betaling toegevoegd', insertId: result.insertId });
+  } catch (error) {
+    console.error('Fout bij toevoegen betaling:', error);
+    res.status(500).json({ message: 'Fout bij toevoegen betaling.' });
   }
 });
 
+// Hardcoded voorbeelddata invoegen test
 router.post('/add-samples', async (req, res) => {
   try {
     const samples = [
@@ -33,8 +36,7 @@ router.post('/add-samples', async (req, res) => {
 
     for (const sample of samples) {
       await pool.query(
-        `INSERT INTO betalingen 
-         (bedrijf_id, bedrag, methode, status, factuur_pdf, factuur_naam) 
+        `INSERT INTO betalingen (bedrijf_id, bedrag, methode, status, factuur_pdf, factuur_naam) 
          VALUES (?, ?, ?, ?, ?, ?)`,
         sample
       );
