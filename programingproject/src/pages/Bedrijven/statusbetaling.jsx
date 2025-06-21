@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'; 
+import React, { useEffect, useState, useRef } from 'react';
 import './StatusBetaling.css';
 import { FiDownload, FiFile } from 'react-icons/fi';
 import axios from 'axios';
@@ -7,6 +7,7 @@ const StatusBetaling = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [betalingData, setBetalingData] = useState(null);
   const [progressHeight, setProgressHeight] = useState(0);
+  const [showModal, setShowModal] = useState(false);
   const timelineRef = useRef(null);
 
   const bedrijfId = 1;
@@ -16,11 +17,11 @@ const StatusBetaling = () => {
       try {
         const response = await axios.get(`http://localhost:3000/api/betaling/${bedrijfId}`);
         setBetalingData(response.data);
-        
+
         const statusen = response.data.statusen || [];
         const completedSteps = statusen.filter(s => s.completed).length;
-
         const newHeight = Math.max(0, (completedSteps - 1) * 72);
+
         setTimeout(() => {
           setProgressHeight(newHeight);
         }, 300);
@@ -57,8 +58,7 @@ const StatusBetaling = () => {
   }, [betalingData]);
 
   const handleDownloadClick = () => {
-    alert('U ontvangt de factuur binnenkort via e-mail.');
-    window.open(betalingData?.factuur_url ?? '#', '_blank');
+    setShowModal(true);
   };
 
   return (
@@ -109,7 +109,7 @@ const StatusBetaling = () => {
 
         <div className="payment-status">
           <h3>Betalingsproces</h3>
-          
+
           <div className="payment-timeline" ref={timelineRef}>
             <div className="timeline-progress" style={{ height: `${progressHeight}px` }} />
 
@@ -131,6 +131,16 @@ const StatusBetaling = () => {
           </div>
         </div>
       </div>
+
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Factuur</h3>
+            <p>U ontvangt de factuur binnenkort via e-mail.</p>
+            <button onClick={() => setShowModal(false)}>Sluiten</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
