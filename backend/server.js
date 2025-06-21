@@ -45,24 +45,29 @@ const io = socketIo(server, {
   }
 });
 
-// Security middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: securityConfig.csp.directives,
-  },
-  crossOriginEmbedderPolicy: false
-}));
+// Security middleware (simplified for development)
+if (process.env.NODE_ENV === 'production') {
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: securityConfig.csp.directives,
+    },
+    crossOriginEmbedderPolicy: false
+  }));
 
-// Rate limiting
-const generalLimiter = rateLimit({
-  windowMs: securityConfig.rateLimiting.windowMs,
-  max: securityConfig.rateLimiting.maxRequests,
-  message: {
-    error: 'Te veel verzoeken van dit IP. Probeer later opnieuw.'
-  }
-});
+  // Rate limiting (only in production)
+  const generalLimiter = rateLimit({
+    windowMs: securityConfig.rateLimiting.windowMs,
+    max: securityConfig.rateLimiting.maxRequests,
+    message: {
+      error: 'Te veel verzoeken van dit IP. Probeer later opnieuw.'
+    }
+  });
 
-app.use('/api', generalLimiter);
+  app.use('/api', generalLimiter);
+} else {
+  // Development mode - basic helmet only
+  app.use(helmet({ contentSecurityPolicy: false }));
+}
 
 app.use(cors(securityConfig.cors));
 app.use(cookieParser());
