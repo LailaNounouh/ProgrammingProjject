@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
       bedrijven: bedrijven[0].count,
       studenten: studenten[0].count,
       werkzoekenden: werkzoekenden[0].count,
-      afspraken: afspraken[0].count,
+      afspraken: afspraken[0],
     });
   } catch (err) {
     console.error("Fout bij ophalen statistieken:", err);
