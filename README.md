@@ -71,17 +71,28 @@ Zo combineren we een fysiek netwerkevent met de kracht van IT en innovatie.
    ```bash
    npm run dev
 
-## Aanpak
+## Aanpak & Methodologie
 
 Om ons project gestructureerd aan te pakken, hebben we cursussen gevolgd over:
 
-- **Agile werken**
+- **Agile werken** (Scrum-methodiek)
 - **Design Thinking**
 
 via LinkedIn Learning.
 
+## Teamleden
+
+| Naam                        | Rol                  | Taken                                      |
+|-----------------------------|----------------------|--------------------------------------------|
+| Laila, Nehla, Nawfel, Simon | Frontend Developer   | Pagina’s (Home, About, Contact), styling   |
+| Bjorn, Simon, Roger, Nolween| Backend Developer    | API's, Express-routes, MySQL-integratie    |
+| Laila, Nawfel, Nehla        | UX/UI Designer       | Design, gebruikersflow, wireframes         |
+| Roger & Nolween             |Projectleider & Tester| Coördinatie, testplannen, documentatie     |
+
+
 ## Gebruikte bronnen
 
-- **Career Launch Dag**
+- **Career Launch Dag** (ter inspiratie)
 - LinkedIn Learning – Agile Foundations
 - LinkedIn Learning – Design Thinking
+- React documentatie (https://react.dev)
