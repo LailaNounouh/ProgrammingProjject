@@ -1,154 +1,154 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthProvider";
-import { useProfile } from "../../context/ProfileContext";
-import Studierichtingen from "../../components/dropdowns/Studierichtingen";
-import CodeerTaalSelector from "../../components/dropdowns/CodeerTaalSelector";
-import TaalSelector from "../../components/dropdowns/TaalSelector";
-import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
-import SoftSkillsSelector from "../../components/dropdowns/SoftSkillsSelector";
-import { FaEdit, FaEye, FaSave, FaTimes } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./AccountModule.css";
+import { FaEdit, FaEye, FaSave, FaTimes } from "react-icons/fa";
 
-const AccountModule = () => {
-  const { gebruiker } = useAuth();
-  const { profiel, fetchProfiel, updateProfiel, loading } = useProfile();
-  const [editMode, setEditMode] = useState(false);
-
-  const [formData, setFormData] = useState({
-    naam: "",
-    voornaam: "",
+export default function AccountModule() {
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState({
     email: "",
+    naam: "",
     studie: "",
+    foto_url: null,
+    linkedin_url: "",
+    github_url: "",
+    jobstudent: false,
+    werkzoekend: false,
+    stage_gewenst: false,
     telefoon: "",
-    beschrijving: "",
-    linkedin: "",
-    codeertaal: [],
-    talen: [],
-    hardSkills: [],
-    softSkills: [],
+    aboutMe: "",
   });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
+  
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [editMode, setEditMode] = useState(false);
+  
+  const studieOpties = [
+    "Informatica",
+    "Toegepaste Informatica",
+    "Graduaat Programmeren",
+    "Toegepaste Informatica: AI",
+    "Toegepaste Informatica: Applicatieontwikkeling",
+    "Toegepaste Informatica: Systemen en Netwerken",
+    "Andere"
+  ];
 
   useEffect(() => {
-    if (gebruiker?.id) {
-      fetchProfiel();
-    }
-  }, [gebruiker]);
-
-  useEffect(() => {
-    if (profiel) {
-      setFormData({
-        naam: profiel.naam || "",
-        voornaam: profiel.voornaam || "",
-        email: profiel.email || "",
-        studie: profiel.studie || "",
-        telefoon: profiel.telefoon || "",
-        beschrijving: profiel.beschrijving || "",
-        linkedin: profiel.linkedin || "",
-        codeertaal: profiel.codeertaal || [],
-        talen: profiel.talen || [],
-        hardSkills: profiel.hardSkills || [],
-        softSkills: profiel.softSkills || [],
-      });
-    }
-  }, [profiel]);
-
-  const handleInputChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSuccess(false);
-    try {
-      const editableData = {
-        naam: formData.naam,
-        voornaam: formData.voornaam,
-        email: gebruiker?.email || "",
-        telefoon: formData.telefoon,
-        beschrijving: formData.beschrijving,
-        linkedin: formData.linkedin,
-        codeertaal: formData.codeertaal,
-        talen: formData.talen,
-        hardSkills: formData.hardSkills,
-        softSkills: formData.softSkills,
-        studie: formData.studie
-      };
-
-      const result = await updateProfiel(editableData);
-      if (result.success) {
-        setSuccess(true);
-        // Schakelen naar kijkmodus na succesvol opslaan
-        setTimeout(() => {
-          setEditMode(false);
-          setSuccess(false);
-        }, 1500);
-      } else {
-        throw new Error(result.error || "Kon profiel niet updaten");
+    const haalGebruikerOp = async () => {
+      try {
+        setLoading(true);
+        
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        const email = localStorage.getItem('email');
+        const naam = localStorage.getItem('naam');
+        
+        if (!token) {
+          navigate('/login');
+          return;
+        }
+        
+        setUserData({
+          email: email || "",
+          naam: naam || "",
+          studie: "",
+          foto_url: null,
+          linkedin_url: "",
+          github_url: "",
+          jobstudent: false,
+          werkzoekend: false,
+          stage_gewenst: false,
+          telefoon: "",
+          aboutMe: "",
+        });
+        
+        setLoading(false);
+      } catch (error) {
+        setErrorMessage("Er is een probleem opgetreden bij het laden van je gegevens.");
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Fout bij bijwerken profiel:", error);
-      alert("Er ging iets mis bij het bijwerken van je profiel");
-    } finally {
-      setIsSubmitting(false);
-    }
+    };
+
+    haalGebruikerOp();
+  }, [navigate]);
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setUserData({
+      ...userData,
+      [name]: type === 'checkbox' ? checked : value
+    });
   };
 
-  const toggleEditMode = () => {
-    setEditMode(!editMode);
-    setSuccess(false);
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('image/')) {
+      setErrorMessage("Profielfoto moet een afbeelding zijn (JPEG, PNG, etc.).");
+      return;
+    }
+    
+    if (file.size > 5 * 1024 * 1024) {
+      setErrorMessage("Profielfoto mag niet groter zijn dan 5MB.");
+      return;
+    }
+    
+    setUserData({
+      ...userData,
+      foto_url: file
+    });
+    
+    setErrorMessage("");
+  };
+
+  const opslaanWijzigingen = async (e) => {
+    e.preventDefault();
+    
+    try {
+      setSaving(true);
+      setErrorMessage("");
+      setSuccessMessage("");
+      
+      setTimeout(() => {
+        setSuccessMessage("Je gegevens zijn succesvol opgeslagen!");
+        setEditMode(false);
+        setSaving(false);
+        
+        setTimeout(() => {
+          setSuccessMessage("");
+        }, 3000);
+      }, 1000);
+      
+    } catch (error) {
+      setErrorMessage("Er is een probleem opgetreden bij het opslaan van je gegevens.");
+      setSaving(false);
+    }
   };
 
   const cancelEdit = () => {
-    // Reset formData naar huidige profiel data
-    if (profiel) {
-      setFormData({
-        naam: profiel.naam || "",
-        voornaam: profiel.voornaam || "",
-        email: profiel.email || "",
-        studie: profiel.studie || "",
-        telefoon: profiel.telefoon || "",
-        beschrijving: profiel.beschrijving || "",
-        linkedin: profiel.linkedin || "",
-        codeertaal: profiel.codeertaal || [],
-        talen: profiel.talen || [],
-        hardSkills: profiel.hardSkills || [],
-        softSkills: profiel.softSkills || [],
-      });
-    }
     setEditMode(false);
+    setErrorMessage("");
   };
 
   if (loading) {
     return (
-      <div className="account-container">
-        <div className="loading">Profiel laden...</div>
-      </div>
-    );
-  }
-
-  if (!gebruiker) {
-    return (
-      <div className="account-container">
-        <div className="error">
-          Je moet ingelogd zijn om je profiel te bekijken.
+      <div className="page-container account-module">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Gegevens laden...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="account-container">
+    <div className="page-container account-module">
       <div className="account-header">
         <h2 className="module-title">Mijn Account</h2>
         <button 
-          onClick={toggleEditMode} 
+          onClick={() => setEditMode(!editMode)} 
           className={`toggle-mode-btn ${editMode ? 'viewing' : 'editing'}`}
         >
           {editMode ? (
@@ -162,277 +162,248 @@ const AccountModule = () => {
           )}
         </button>
       </div>
-
-      {editMode ? (
-        // Bewerk modus (formulier)
-        <form onSubmit={handleSubmit} className="account-form">
-          <section className="account-section">
+      
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
+      {successMessage && <div className="success-message">{successMessage}</div>}
+      
+      <div className="account-sections">
+        {editMode ? (
+          <div className="persoonlijke-info">
             <h3>Persoonlijke Informatie</h3>
-
-            <div className="form-group">
-              <label htmlFor="voornaam">Voornaam</label>
-              <input
-                id="voornaam"
-                type="text"
-                value={formData.voornaam}
-                onChange={(e) => handleInputChange("voornaam", e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="naam">Naam</label>
-              <input
-                id="naam"
-                type="text"
-                value={formData.naam}
-                onChange={(e) => handleInputChange("naam", e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                id="email"
-                type="email"
-                value={gebruiker?.email || ""}
-                readOnly
-                className="readonly-field"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="studie">Studierichting</label>
-              <Studierichtingen
-                selectedStudie={formData.studie}
-                onChange={(selected) => handleInputChange("studie", selected)}
-              />
-            </div>
-          </section>
-
-          <section className="account-section">
-            <h3>Contact Informatie</h3>
-            <div className="form-group">
-              <label htmlFor="telefoon">Telefoonnummer</label>
-              <input
-                type="tel"
-                id="telefoon"
-                value={formData.telefoon}
-                onChange={(e) => handleInputChange("telefoon", e.target.value)}
-                placeholder="Bijv. +32 123 456 789"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="linkedin">LinkedIn</label>
-              <input
-                type="url"
-                id="linkedin"
-                value={formData.linkedin}
-                onChange={(e) => handleInputChange("linkedin", e.target.value)}
-                placeholder="https://www.linkedin.com/in/jouwnaam"
-              />
-            </div>
-          </section>
-
-          <section className="account-section">
-            <h3>Vaardigheden</h3>
-            <div className="form-group">
-              <label>Codeertalen</label>
-              <CodeerTaalSelector
-                selectedSkills={formData.codeertaal}
-                onChange={(selected) => handleInputChange("codeertaal", selected)}
-              />
-            </div>
-            <div className="form-group">
-              <label>Talen</label>
-              <TaalSelector
-                selectedTalen={formData.talen}
-                onChange={(selected) => handleInputChange("talen", selected)}
-              />
-            </div>
-            <div className="form-group">
-              <label>Hard Skills</label>
-              <HardSkillsSelector
-                selectedOpleiding={formData.hardSkills}
-                onChange={(selected) => handleInputChange("hardSkills", selected)}
-              />
-            </div>
-            <div className="form-group">
-              <label>Soft Skills</label>
-              <SoftSkillsSelector
-                selectedErvaring={formData.softSkills}
-                onChange={(selected) => handleInputChange("softSkills", selected)}
-              />
-            </div>
-          </section>
-
-          <section className="account-section">
-            <h3>Over Mij</h3>
-            <div className="form-group">
-              <label htmlFor="beschrijving">Beschrijving</label>
-              <textarea
-                id="beschrijving"
-                rows="4"
-                maxLength="1000"
-                value={formData.beschrijving}
-                onChange={(e) =>
-                  handleInputChange("beschrijving", e.target.value)
-                }
-                placeholder="Vertel iets over jezelf..."
-              />
-              <small className="char-count">
-                {formData.beschrijving.length}/1000 karakters
-              </small>
-            </div>
-          </section>
-
-          <div className="form-actions">
-            <button
-              type="button"
-              className="cancel-button"
-              onClick={cancelEdit}
-            >
-              <FaTimes /> Annuleren
-            </button>
-            <button
-              type="submit"
-              className={`save-button${success ? " success" : ""}`}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                "Opslaan..."
-              ) : success ? (
-                "Opgeslagen!"
-              ) : (
-                <>
-                  <FaSave /> Opslaan
-                </>
-              )}
-            </button>
-          </div>
-        </form>
-      ) : (
-        // Bekijk modus (profiel overzicht)
-        <div className="account-details">
-          <section className="account-section">
-            <h3>Persoonlijke Informatie</h3>
-            <div className="info-grid">
-              <div className="info-item">
-                <label>Voornaam</label>
-                <p>{formData.voornaam || "Niet ingevuld"}</p>
+            <form onSubmit={opslaanWijzigingen}>
+              <div className="form-group">
+                <label htmlFor="email">E-mailadres</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={userData.email}
+                  readOnly
+                  className="readonly-field"
+                />
               </div>
-              <div className="info-item">
-                <label>Naam</label>
-                <p>{formData.naam || "Niet ingevuld"}</p>
+              
+              <div className="form-group">
+                <label htmlFor="naam">Naam</label>
+                <input
+                  type="text"
+                  id="naam"
+                  name="naam"
+                  value={userData.naam}
+                  readOnly
+                  className="readonly-field"
+                />
               </div>
-              <div className="info-item">
-                <label>Email</label>
-                <p>{formData.email || "Niet ingevuld"}</p>
+              
+              <div className="form-group">
+                <label htmlFor="telefoon">Telefoonnummer</label>
+                <input
+                  type="tel"
+                  id="telefoon"
+                  name="telefoon"
+                  value={userData.telefoon}
+                  onChange={handleInputChange}
+                />
               </div>
-              <div className="info-item">
-                <label>Studie</label>
-                <p>{formData.studie || "Niet ingevuld"}</p>
+              
+              <div className="form-group">
+                <label htmlFor="studie">Opleiding</label>
+                <select
+                  id="studie"
+                  name="studie"
+                  value={userData.studie}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Selecteer opleiding</option>
+                  {studieOpties.map(optie => (
+                    <option key={optie} value={optie}>{optie}</option>
+                  ))}
+                </select>
               </div>
-            </div>
-          </section>
-
-          <section className="account-section">
-            <h3>Contact Informatie</h3>
-            <div className="info-grid">
-              <div className="info-item">
-                <label>Telefoonnummer</label>
-                <p>{formData.telefoon || "Niet ingevuld"}</p>
+              
+              <div className="form-group">
+                <label htmlFor="aboutMe">Over mij</label>
+                <textarea
+                  id="aboutMe"
+                  name="aboutMe"
+                  value={userData.aboutMe}
+                  onChange={handleInputChange}
+                  rows="4"
+                ></textarea>
               </div>
-              <div className="info-item">
-                <label>LinkedIn</label>
-                <p>
-                  {formData.linkedin ? (
-                    <a href={formData.linkedin} target="_blank" rel="noopener noreferrer">
-                      {formData.linkedin}
-                    </a>
-                  ) : (
-                    "Niet ingevuld"
+              
+              <div className="form-group">
+                <label htmlFor="linkedin_url">LinkedIn URL</label>
+                <input
+                  type="url"
+                  id="linkedin_url"
+                  name="linkedin_url"
+                  value={userData.linkedin_url}
+                  onChange={handleInputChange}
+                  placeholder="https://www.linkedin.com/in/jouw-profiel"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="github_url">GitHub URL</label>
+                <input
+                  type="url"
+                  id="github_url"
+                  name="github_url"
+                  value={userData.github_url}
+                  onChange={handleInputChange}
+                  placeholder="https://github.com/jouw-gebruikersnaam"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="foto">Profielfoto</label>
+                <div className="file-upload-container">
+                  <input
+                    type="file"
+                    id="foto"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                  {(userData.foto_url && typeof userData.foto_url === 'string') && (
+                    <div className="profielfoto-preview">
+                      <img src={userData.foto_url} alt="Profielfoto preview" />
+                    </div>
                   )}
-                </p>
+                </div>
               </div>
-            </div>
-          </section>
-
-          <section className="account-section">
-            <h3>Over Mij</h3>
-            <div className="info-item beschrijving">
-              <p>{formData.beschrijving || "Geen beschrijving toegevoegd."}</p>
-            </div>
-          </section>
-
-          <section className="account-section">
-            <h3>Vaardigheden</h3>
-            <div className="skills-container">
-              {formData.codeertaal && formData.codeertaal.length > 0 && (
-                <div className="skills-section">
-                  <h4>Codeertalen</h4>
-                  <div className="tags">
-                    {formData.codeertaal.map((taal, index) => (
-                      <span key={index} className="tag codeertaal-tag">
-                        {taal}
-                      </span>
-                    ))}
-                  </div>
+              
+              <div className="checkboxen-groep">
+                <div className="checkbox-item">
+                  <input
+                    type="checkbox"
+                    id="jobstudent"
+                    name="jobstudent"
+                    checked={userData.jobstudent}
+                    onChange={handleInputChange}
+                  />
+                  <label htmlFor="jobstudent">Ik zoek een studentenjob</label>
                 </div>
-              )}
-
-              {formData.talen && formData.talen.length > 0 && (
-                <div className="skills-section">
-                  <h4>Talen</h4>
-                  <div className="tags">
-                    {formData.talen.map((taal, index) => (
-                      <span key={index} className="tag taal-tag">
-                        {taal}
-                      </span>
-                    ))}
-                  </div>
+                
+                <div className="checkbox-item">
+                  <input
+                    type="checkbox"
+                    id="werkzoekend"
+                    name="werkzoekend"
+                    checked={userData.werkzoekend}
+                    onChange={handleInputChange}
+                  />
+                  <label htmlFor="werkzoekend">Ik ben werkzoekend</label>
                 </div>
-              )}
-
-              {formData.hardSkills && formData.hardSkills.length > 0 && (
-                <div className="skills-section">
-                  <h4>Hard Skills</h4>
-                  <div className="tags">
-                    {formData.hardSkills.map((skill, index) => (
-                      <span key={index} className="tag hardskill-tag">
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
+                
+                <div className="checkbox-item">
+                  <input
+                    type="checkbox"
+                    id="stage_gewenst"
+                    name="stage_gewenst"
+                    checked={userData.stage_gewenst}
+                    onChange={handleInputChange}
+                  />
+                  <label htmlFor="stage_gewenst">Ik zoek een stageplaats</label>
                 </div>
-              )}
-
-              {formData.softSkills && formData.softSkills.length > 0 && (
-                <div className="skills-section">
-                  <h4>Soft Skills</h4>
-                  <div className="tags">
-                    {formData.softSkills.map((skill, index) => (
-                      <span key={index} className="tag softskill-tag">
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
+              </div>
+              
+              <div className="form-actions">
+                <button type="button" className="cancel-button" onClick={cancelEdit}>
+                  <FaTimes /> Annuleren
+                </button>
+                <button type="submit" className="opslaan-btn" disabled={saving}>
+                  {saving ? "Opslaan..." : <><FaSave /> Wijzigingen opslaan</>}
+                </button>
+              </div>
+            </form>
+          </div>
+        ) : (
+          <div className="account-details">
+            <section className="account-section">
+              <h3>Persoonlijke Informatie</h3>
+              <div className="info-grid">
+                <div className="info-item">
+                  <label>Email</label>
+                  <p>{userData.email || "Niet ingevuld"}</p>
                 </div>
-              )}
-
-              {(!formData.codeertaal || formData.codeertaal.length === 0) &&
-                (!formData.talen || formData.talen.length === 0) &&
-                (!formData.hardSkills || formData.hardSkills.length === 0) &&
-                (!formData.softSkills || formData.softSkills.length === 0) && (
-                  <p className="no-skills">
-                    Geen vaardigheden toegevoegd. Klik op 'Bewerken' om vaardigheden toe te voegen.
-                  </p>
+                <div className="info-item">
+                  <label>Naam</label>
+                  <p>{userData.naam || "Niet ingevuld"}</p>
+                </div>
+                <div className="info-item">
+                  <label>Telefoonnummer</label>
+                  <p>{userData.telefoon || "Niet ingevuld"}</p>
+                </div>
+                <div className="info-item">
+                  <label>Opleiding</label>
+                  <p>{userData.studie || "Niet ingevuld"}</p>
+                </div>
+              </div>
+            </section>
+            
+            <section className="account-section">
+              <h3>Profielfoto</h3>
+              <div className="profile-photo-container">
+                {userData.foto_url ? (
+                  <img src={userData.foto_url} alt="Profielfoto" className="profile-photo" />
+                ) : (
+                  <div className="no-photo">Geen profielfoto geüpload</div>
                 )}
-            </div>
-          </section>
-        </div>
-      )}
+              </div>
+            </section>
+
+            <section className="account-section">
+              <h3>Contact & Links</h3>
+              <div className="info-grid">
+                <div className="info-item">
+                  <label>LinkedIn</label>
+                  <p>
+                    {userData.linkedin_url ? (
+                      <a href={userData.linkedin_url} target="_blank" rel="noopener noreferrer">
+                        {userData.linkedin_url}
+                      </a>
+                    ) : (
+                      "Niet ingevuld"
+                    )}
+                  </p>
+                </div>
+                <div className="info-item">
+                  <label>GitHub</label>
+                  <p>
+                    {userData.github_url ? (
+                      <a href={userData.github_url} target="_blank" rel="noopener noreferrer">
+                        {userData.github_url}
+                      </a>
+                    ) : (
+                      "Niet ingevuld"
+                    )}
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section className="account-section">
+              <h3>Over Mij</h3>
+              <div className="info-item beschrijving">
+                <p>{userData.aboutMe || "Geen beschrijving toegevoegd."}</p>
+              </div>
+            </section>
+
+            <section className="account-section">
+              <h3>Status</h3>
+              <div className="status-indicators">
+                {userData.jobstudent && <span className="status-tag jobstudent">Zoekt studentenjob</span>}
+                {userData.werkzoekend && <span className="status-tag werkzoekend">Werkzoekend</span>}
+                {userData.stage_gewenst && <span className="status-tag stage">Zoekt stageplaats</span>}
+                {!userData.jobstudent && !userData.werkzoekend && !userData.stage_gewenst && 
+                  <p>Geen status geselecteerd</p>
+                }
+              </div>
+            </section>
+          </div>
+        )}
+      </div>
     </div>
   );
-};
-
-export default AccountModule;
+}
