@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { FaSearch, FaFilter, FaTimes, FaBuilding, FaGraduationCap, FaGlobe, FaEnvelope, FaPhone, FaLink, FaChevronDown, FaChevronUp, FaCalendarAlt } from "react-icons/fa";
+import { FaSearch, FaFilter, FaTimes, FaGraduationCap, FaGlobe, FaEnvelope, FaPhone, FaLink, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { useAuth } from "../../context/AuthProvider";
 import "./BedrijvenModule.css";
 import { baseUrl } from "../../config";
 
 export default function Bedrijven() {
+  const { gebruiker } = useAuth();
   const [bedrijven, setBedrijven] = useState([]);
   const [filteredBedrijven, setFilteredBedrijven] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,12 +15,10 @@ export default function Bedrijven() {
   const [expandedBedrijf, setExpandedBedrijf] = useState(null);
   
   const [naamFilter, setNaamFilter] = useState("");
-  const [sectorFilter, setSectorFilter] = useState("");
   const [studierichtingFilter, setStudierichtingFilter] = useState("");
   const [aanbiedingenFilter, setAanbiedingenFilter] = useState("");
   const [speeddateFilter, setSpeedDateFilter] = useState("");
   
-  const [sectors, setSectors] = useState([]);
   const [studierichtingen, setStudierichtingen] = useState([]);
   const [aanbiedingenOpties, setAanbiedingenOpties] = useState([]);
 
@@ -41,11 +40,9 @@ export default function Bedrijven() {
         if (!res.ok) throw new Error("Kon bedrijven niet ophalen");
         
         const data = await res.json();
+        
         setBedrijven(data);
         setFilteredBedrijven(data);
-        
-        const uniqueSectors = [...new Set(data.map(bedrijf => bedrijf.sector).filter(Boolean))];
-        setSectors(uniqueSectors);
         
         let alleStudierichtingen = [];
         data.forEach(bedrijf => {
@@ -95,10 +92,6 @@ export default function Bedrijven() {
         );
       }
       
-      if (sectorFilter) {
-        filtered = filtered.filter(bedrijf => bedrijf.sector === sectorFilter);
-      }
-      
       if (studierichtingFilter) {
         filtered = filtered.filter(bedrijf => {
           if (!bedrijf.doelgroep_opleiding) return false;
@@ -139,11 +132,10 @@ export default function Bedrijven() {
     }, 300);
     
     return () => clearTimeout(timer);
-  }, [naamFilter, sectorFilter, studierichtingFilter, aanbiedingenFilter, speeddateFilter, bedrijven]);
+  }, [naamFilter, studierichtingFilter, aanbiedingenFilter, speeddateFilter, bedrijven]);
 
   const resetFilters = () => {
     setNaamFilter("");
-    setSectorFilter("");
     setStudierichtingFilter("");
     setAanbiedingenFilter("");
     setSpeedDateFilter("");
@@ -161,6 +153,11 @@ export default function Bedrijven() {
   const getBedrijfAanbiedingen = (bedrijf) => {
     if (!bedrijf.aanbiedingen || bedrijf.aanbiedingen === 'undefined') return [];
     return splitAanbiedingen(bedrijf.aanbiedingen);
+  };
+
+  const formateerWebsiteUrl = (url) => {
+    if (!url) return "";
+    return url.startsWith('http') ? url : `https://${url}`;
   };
 
   return (
@@ -198,20 +195,6 @@ export default function Bedrijven() {
                 onChange={(e) => setNaamFilter(e.target.value)}
                 className="search-input"
               />
-            </div>
-            
-            <div className="filter-group">
-              <div className="filter-icon"><FaBuilding /></div>
-              <select 
-                value={sectorFilter}
-                onChange={(e) => setSectorFilter(e.target.value)}
-                className="sector-select"
-              >
-                <option value="">Alle sectoren</option>
-                {sectors.map((sector, index) => (
-                  <option key={index} value={sector}>{sector}</option>
-                ))}
-              </select>
             </div>
             
             <div className="filter-group">
@@ -294,7 +277,6 @@ export default function Bedrijven() {
                     </div>
                     <h3 className="bedrijf-naam">{bedrijf.naam}</h3>
                     <div className="bedrijf-tags">
-                      {bedrijf.sector && <span className="bedrijf-tag sector-tag">{bedrijf.sector}</span>}
                       {bedrijf.speeddates === 1 && <span className="bedrijf-tag speeddate-tag">Speeddate</span>}
                     </div>
                   </div>
@@ -338,14 +320,6 @@ export default function Bedrijven() {
                   </div>
                   
                   <div className="bedrijf-card-footer">
-                    <Link 
-                      to={`/student/afspraken?bedrijf=${bedrijf.bedrijf_id}`} 
-                      className="afspraak-btn"
-                    >
-                      <FaCalendarAlt className="btn-icon" />
-                      Plan afspraak
-                    </Link>
-                    
                     <button 
                       className="details-toggle-btn" 
                       onClick={() => toggleBedrijfDetails(bedrijf.bedrijf_id)}
@@ -371,6 +345,41 @@ export default function Bedrijven() {
                         <div className="details-section">
                           <h4>Specialisatie</h4>
                           <p>{bedrijf.specialisatie}</p>
+                        </div>
+                      )}
+                      
+                      {(bedrijf.website_of_LinkedIn || bedrijf.website) && (
+                        <div className="details-section">
+                          <h4>Online</h4>
+                          <div className="links-grid">
+                            {bedrijf.website_of_LinkedIn && (
+                              <div className="link-item">
+                                <a 
+                                  href={formateerWebsiteUrl(bedrijf.website_of_LinkedIn)} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="website-link"
+                                >
+                                  <FaGlobe className="link-icon" />
+                                  Website/LinkedIn
+                                </a>
+                              </div>
+                            )}
+                            
+                            {bedrijf.website && bedrijf.website !== bedrijf.website_of_LinkedIn && (
+                              <div className="link-item">
+                                <a 
+                                  href={formateerWebsiteUrl(bedrijf.website)} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="website-link"
+                                >
+                                  <FaLink className="link-icon" />
+                                  Website
+                                </a>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       )}
                       
@@ -400,20 +409,6 @@ export default function Bedrijven() {
                               <a href={`tel:${bedrijf.telefoonnummer}`}>
                                 <FaPhone className="contact-icon" />
                                 {bedrijf.telefoonnummer}
-                              </a>
-                            </div>
-                          )}
-                          
-                          {bedrijf.website && (
-                            <div className="contact-item">
-                              <strong>Website</strong>
-                              <a 
-                                href={bedrijf.website.startsWith('http') ? bedrijf.website : `https://${bedrijf.website}`} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                              >
-                                <FaLink className="contact-icon" />
-                                Bezoek website
                               </a>
                             </div>
                           )}
@@ -449,18 +444,6 @@ export default function Bedrijven() {
                             <h5>Speeddate:</h5>
                             <p>{bedrijf.speeddates === 1 ? "Ja" : "Nee"}</p>
                           </div>
-                        </div>
-                      </div>
-                      
-                      <div className="details-section">
-                        <div className="cta-wrapper">
-                          <Link 
-                            to={`/student/afspraken?bedrijf=${bedrijf.bedrijf_id}`} 
-                            className="cta-afspraak-btn"
-                          >
-                            <FaCalendarAlt className="btn-icon" />
-                            Plan een afspraak met {bedrijf.naam}
-                          </Link>
                         </div>
                       </div>
                     </div>
