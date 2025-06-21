@@ -31,6 +31,39 @@ Zo combineren we een fysiek netwerkevent met de kracht van IT en innovatie.
 - **Versiebeheer**: 
   - Git & GitHub
 
+## Backend
+1. Navigeer naar de backend-map:
+   ```bash
+   cd backend
+
+2. Installeer dependencies:
+   npm install
+
+3. Voeg een .env bestand toe met de volgende variabelen:
+   DB_HOST=10.2.160.211
+   DB_USER=groep13
+   DB_PASS=aijQ8ZSp
+   DB_NAME=careerlaunch
+   DB_PORT=3306
+
+4. Start de server:
+   node server.j
+
+
+## Frontend
+
+1. Navigeer naar de programingproject-map:
+   cd programingproject
+
+2. Installeer dependencies:
+   npm install
+
+3. Maak een .env bestand aan in de programingproject/-map met volgende inhoud:
+   VITE_API_BASE_URL=http://10.2.160.211:3000/api
+
+4. Start de applicatie: 
+   npm run dev
+
 ## Aanpak
 
 Om ons project gestructureerd aan te pakken, hebben we cursussen gevolgd over:
