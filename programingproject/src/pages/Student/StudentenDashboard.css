@@ -1,452 +1,59 @@
-body, html, .app {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-  background-color: #f5f5f5;
+.studenten-dashboard {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+  padding: 20px;
 }
 
-main {
-  padding: 15px;
-}
-
-.linkedin-section {
-  margin-bottom: 20px;
-}
-
-.linkedin-section input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 50px;
-  box-sizing: border-box;
-}
-
-.bedrijven-section h2 {
-  margin-top: 0;
-}
-
-.filter-button {
-  margin-bottom: 10px;
-  padding: 6px 12px;
-}
-
-.bedrijven-lijst,
-.plattegrond-container {
-  background-color: #aaa;
-  padding: 10px;
-  max-width: 1000px;
-  margin: 0 auto;
-  border-radius: 8px;
-}
-
-.bedrijf-kaart {
-  background: white;
-  padding: 15px;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  width: 45%;
+/* Welkomstbanner */
+.welcome-banner {
+  background: linear-gradient(135deg, #5bb4b7 0%, #3a8a8d 100%);
+  color: white;
   text-align: center;
+  padding: 30px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
-.bedrijf-kaart a {
-  display: inline-block;
-  margin-top: 10px;
-  font-weight: bold;
-  color: #00a9b5;
-  text-decoration: none;
-}
-
-.bedrijf-kaart a:hover {
-  text-decoration: underline;
-}
-
-.plattegrond-section {
-  margin-top: 30px;
-}
-
-.plattegrond-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.dashboard-container {
-  padding: 24px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.welcome-section {
-  margin-bottom: 24px;
-}
-
-.welcome-section h1 {
-  font-size: 1.8rem;
-  margin-bottom: 8px;
-}
-
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.dashboard-card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  padding: 20px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.card-header h2 {
-  font-size: 1.4rem;
-  margin: 0;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.view-all {
-  color: #007bff;
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-
-.view-all:hover {
-  text-decoration: underline;
-}
-
-.bedrijven-list, .afspraken-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.bedrijf-item, .afspraak-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  border-radius: 6px;
-  background: #f9f9f9;
-  border: 1px solid #eee;
-}
-
-.bedrijf-info, .afspraak-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.bedrijf-naam, .afspraak-bedrijf {
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.bedrijf-details {
-  display: flex;
-  gap: 10px;
-  font-size: 0.85rem;
-  color: #666;
-}
-
-.view-bedrijf-btn {
-  padding: 6px 12px;
-  background: #007bff;
-  color: white;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-
-.delete-btn {
-  background: #ff4d4f;
-  color: white;
-  border: none;
+.welcome-banner::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  font-weight: bold;
-  cursor: pointer;
 }
 
-.geen-afspraken {
-  text-align: center;
-  color: #666;
-  padding: 20px 0;
+.welcome-banner::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: -30px;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
 }
 
-.maak-afspraak {
-  display: block;
-  margin-top: 10px;
-  color: #007bff;
-  text-decoration: none;
-}
-
-.filter-group {
-  display: flex;
-  align-items: center;
-  background-color: #f5f5f7;
-  border-radius: 6px;
-  overflow: hidden;
-  flex: 1;
-  min-width: 180px;
-  border: 1px solid #e0e0e0;
-}
-
-.filter-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 12px;
-  color: #666;
-  background-color: #f0f0f2;
-}
-
-.filter-group input,
-.filter-group select {
-  border: none;
-  background: transparent;
-  padding: 10px;
-  flex: 1;
-  outline: none;
-  font-size: 0.9rem;
-}
-
-.filter-toggle-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #f5f5f7;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 8px 12px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.filter-toggle-btn:hover {
-  background: #e0e0e0;
-}
-
-.filter-row {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.beschikbaarheid-select {
-  min-width: 160px;
-}
-
-.filter-controls {
-  background: #f9f9f9;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
-  border: 1px solid #e0e0e0;
-  animation: slideDown 0.3s ease-out;
-}
-
-.status-message {
-  background-color: #d4edda;
-  color: #155724;
-  padding: 10px 15px;
-  margin-bottom: 20px;
-  border-radius: 4px;
-  border-left: 4px solid #28a745;
-}
-
-.error-message {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 10px 15px;
-  margin-bottom: 20px;
-  border-radius: 4px;
-  border-left: 4px solid #dc3545;
-}
-
-.reset-btn {
-  background: #f44336;
+.welcome-banner h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
   color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  cursor: pointer;
-  font-weight: 500;
+  position: relative;
+  z-index: 1;
 }
 
-.reset-btn:hover {
-  background: #d32f2f;
-}
-
-.no-results {
-  text-align: center;
-  padding: 20px;
-  color: #666;
-}
-
-.results-count {
-  font-size: 0.85rem;
-  color: #666;
-  margin-top: 12px;
-  text-align: right;
-}
-
-.see-all-link {
-  color: #007bff;
-  text-decoration: none;
-}
-
-.see-all-link:hover {
-  text-decoration: underline;
-}
-
-.bedrijf-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.bedrijf-item:last-child {
-  border-bottom: none;
-}
-
-.bedrijf-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.bedrijf-naam {
-  font-weight: 500;
-  margin-bottom: 4px;
-}
-
-.bedrijf-details {
-  display: flex;
-  gap: 8px;
-  font-size: 0.85rem;
-  color: #757575;
-}
-
-.bedrijf-sector, .bedrijf-locatie {
-  display: inline-block;
-}
-
-.bedrijf-sector:after {
-  content: "•";
-  margin-left: 8px;
-}
-
-.view-bedrijf-btn {
-  background-color: #1976d2;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 6px 12px;
-  font-size: 0.8rem;
-  text-decoration: none;
-  transition: background-color 0.2s;
-}
-
-.view-bedrijf-btn:hover {
-  background-color: #1565c0;
-}
-
-.filter-group {
-  display: flex;
-  align-items: center;
-  background-color: #f5f5f7;
-  border-radius: 6px;
-  overflow: hidden;
-  flex: 1;
-  min-width: 180px;
-  border: 1px solid #e0e0e0;
-}
-
-.filter-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 12px;
-  color: #666;
-  background-color: #f0f0f2;
-}
-
-.filter-group input,
-.filter-group select {
-  border: none;
-  background: transparent;
-  padding: 10px;
-  flex: 1;
-  outline: none;
-  font-size: 0.9rem;
-}
-
-.beschikbaarheid-select {
-  min-width: 160px;
-}
-
-.status-message {
-  background-color: #d4edda;
-  color: #155724;
-  padding: 10px 15px;
-  margin-bottom: 20px;
-  border-radius: 4px;
-  border-left: 4px solid #28a745;
-}
-
-.error-message {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 10px 15px;
-  margin-bottom: 20px;
-  border-radius: 4px;
-  border-left: 4px solid #dc3545;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Make filters more responsive on mobile */
-@media (max-width: 768px) {
-  .filter-row {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .filter-group {
-    width: 100%;
-  }
-  
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .reset-btn {
-    width: 100%;
-  }
+.welcome-banner p {
+  margin: 10px 0 0;
+  opacity: 0.9;
+  font-size: 16px;
+  position: relative;
+  z-index: 1;
 }
