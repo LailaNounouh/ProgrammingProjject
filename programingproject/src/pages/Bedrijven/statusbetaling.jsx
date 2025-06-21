@@ -5,7 +5,6 @@ import { FiDownload, FiFile, FiArrowLeft } from 'react-icons/fi';
 const StatusBetaling = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
 
- 
   const betaling = {
     bedrag: "1200",
     status: "Betaald",
@@ -17,6 +16,24 @@ const StatusBetaling = () => {
     ontvangen: "20 april 2025",
     verwerkt: "22 april 2025"
   };
+
+  const statusColors = {
+    Betaald: "status-paid",
+    "In behandeling": "status-pending",
+    "Verwerkt": "status-processed"
+  };
+
+ 
+  const timelineSteps = [
+    { label: "Factuur verzonden", date: betaling.factuur_verzonden },
+    { label: "Factuur in behandeling", date: betaling.in_behandeling },
+    { label: "Betaling ontvangen", date: betaling.ontvangen },
+    { label: "Betaling verwerkt", date: `Verwacht: ${betaling.verwerkt}` }
+  ];
+  const completedIndex = betaling.status === "Betaald" ? 2
+    : betaling.status === "Verwerkt" ? 3
+    : betaling.status === "In behandeling" ? 1
+    : 0;
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -33,7 +50,6 @@ const StatusBetaling = () => {
       <a href="/bedrijf" className="back-button">
         <FiArrowLeft /> Terug naar dashboard
       </a>
-
       <div className="payment-status">
         <h3>Staat van betaling</h3>
         <div className="payment-card">
@@ -42,7 +58,9 @@ const StatusBetaling = () => {
             <span>Bedrag: €{betaling.bedrag}</span>
           </div>
           <div className="payment-info">
-            <span>Status: <span className="status-badge status-paid">{betaling.status}</span></span>
+            <span>
+              Status: <span className={`status-badge ${statusColors[betaling.status] || ""}`}>{betaling.status}</span>
+            </span>
             <span>Datum: {betaling.datum}</span>
           </div>
           <div className="payment-info">
@@ -70,30 +88,17 @@ const StatusBetaling = () => {
       <div className="payment-status">
         <h3>Betalingsproces</h3>
         <div className="payment-timeline">
-          <div className="timeline-step completed">
-            <div className="timeline-content">
-              Factuur verzonden
-              <div className="timeline-date">{betaling.factuur_verzonden}</div>
+          {timelineSteps.map((step, idx) => (
+            <div
+              key={step.label}
+              className={`timeline-step${idx <= completedIndex ? " completed" : ""}`}
+            >
+              <div className="timeline-content">
+                {step.label}
+                <div className="timeline-date">{step.date}</div>
+              </div>
             </div>
-          </div>
-          <div className="timeline-step completed">
-            <div className="timeline-content">
-              Factuur in behandeling
-              <div className="timeline-date">{betaling.in_behandeling}</div>
-            </div>
-          </div>
-          <div className="timeline-step completed">
-            <div className="timeline-content">
-              Betaling ontvangen
-              <div className="timeline-date">{betaling.ontvangen}</div>
-            </div>
-          </div>
-          <div className="timeline-step">
-            <div className="timeline-content">
-              Betaling verwerkt
-              <div className="timeline-date">Verwacht: {betaling.verwerkt}</div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
