@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const { authenticateToken, requireRole, requireOwnership } = require('../middleware/auth');
 
 // GET bedrijfsgegevens op basis van bedrijf_id
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateToken, requireRole(['bedrijf', 'admin']), requireOwnership, async (req, res) => {
   const bedrijfId = req.params.id;
 
   try {
@@ -35,7 +36,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // PUT update bedrijfsgegevens
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, requireRole(['bedrijf', 'admin']), requireOwnership, async (req, res) => {
   const bedrijfId = req.params.id;
   const {
     naam, straat, nummer, postcode, gemeente,

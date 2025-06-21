@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const { authenticateToken, requireRole } = require('../middleware/auth');
 
 router.get('/stats', async (req, res) => {
   try {
@@ -19,7 +20,7 @@ router.get('/stats', async (req, res) => {
   }
 });
 
-router.get('/bedrijven', async (req, res) => {
+router.get('/bedrijven', authenticateToken, requireRole(['admin']), async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM Bedrijven');
     res.json(rows);
