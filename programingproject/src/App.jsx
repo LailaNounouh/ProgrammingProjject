@@ -36,8 +36,7 @@ import Standen from "./pages/Bedrijven/Standen";
 import AfsprakenModule from "./pages/Modules/AfsprakenModule";
 import BedrijvenModule from "./pages/Modules/BedrijvenModule";
 import StandenModule from "./pages/Modules/StandenModule";
-import ProfielSettingsModule from "./pages/Modules/ProfielSettingsModule";
-import ProfielModule from "./pages/Modules/ProfielModule";
+import AccountModule from "./pages/Modules/AccountModule";
 
 import Attendance from "./pages/Admin/Aanwezigheid";
 
@@ -61,16 +60,16 @@ export default function App() {
           <Route path="/werkzoekende" element={<SeekerLayout><SeekerDashboard /></SeekerLayout>} />
           <Route path="/werkzoekende/bedrijven" element={<SeekerLayout><BedrijvenModule /></SeekerLayout>} />
           <Route path="/werkzoekende/standen" element={<SeekerLayout><StandenModule /></SeekerLayout>} />
-          <Route path="/werkzoekende/profiel" element={<SeekerLayout><ProfileProvider><ProfielModule /></ProfileProvider></SeekerLayout>} />
+          <Route path="/werkzoekende/account" element={<SeekerLayout><ProfileProvider><AccountModule /></ProfileProvider></SeekerLayout>} />
 
  
           {/* Student */}
           <Route path="/student" element={<StudentenLayout><StudentDashboard /></StudentenLayout>} />
           <Route path="/student/bedrijven" element={<StudentenLayout><BedrijvenModule /></StudentenLayout>} />
-          <Route path="/student/instellingen" element={<StudentenLayout><ProfileProvider><ProfielSettingsModule /></ProfileProvider></StudentenLayout>} />
-          <Route path="/student/profiel" element={<StudentenLayout><ProfileProvider><ProfielModule /></ProfileProvider></StudentenLayout>} />
+          <Route path="/student/account" element={<StudentenLayout><ProfileProvider><AccountModule /></ProfileProvider></StudentenLayout>} />
           <Route path="/student/afspraken" element={<StudentenLayout><AfsprakenModule /></StudentenLayout>} />
           <Route path="/student/standen" element={<StudentenLayout><StandenModule /></StudentenLayout>} />
+          
           {/* Admin */}
           <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
           <Route path="/admin/Bedrijf" element={<AdminLayout><AdminBedrijf /></AdminLayout>} />
@@ -79,7 +78,7 @@ export default function App() {
           <Route path="/admin/statistiek" element={<AdminLayout><AdminStatistiek /></AdminLayout>} />
           <Route path="/admin/sectoren" element={<AdminLayout><AdminSectoren /></AdminLayout>} />
           <Route path="/admin/aanwezigheid" element={<AdminLayout><Aanwezigheid /></AdminLayout>} />
-  <Route path="/admin/attendance" element={<AdminLayout><Attendance /></AdminLayout>} />
+          <Route path="/admin/attendance" element={<AdminLayout><Attendance /></AdminLayout>} />
  
           {/* Bedrijven */}
           <Route path="/bedrijf" element={<BedrijvenLayout><BedrijvenDashboard /></BedrijvenLayout>} />
