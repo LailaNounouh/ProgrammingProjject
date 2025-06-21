@@ -30,27 +30,32 @@ export const AuthProvider = ({ children }) => {
       const response = await fetch(`${baseUrl}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Include cookies
         body: JSON.stringify({ email, password: wachtwoord, type }),
       });
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.error || 'Inloggen mislukt');
       }
 
-      // Store user data
+      // Store user data and token
       const userData = {
         ...data.user,
+        token: data.token,
         lastLogin: new Date().toISOString()
       };
 
       console.log('Storing user data:', userData);
       setGebruiker(userData);
-      
+
+      // Store token for API requests
+      localStorage.setItem('auth_token', data.token);
+
       // Navigate to dashboard
       navigate(`/${type}`);
-      
+
       return { success: true };
     } catch (error) {
       console.error('Login error:', error);
@@ -58,10 +63,24 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const uitloggen = () => {
+  const uitloggen = async () => {
     console.log('Logging out user');
-    localStorage.removeItem('user')
+
+    // Clear local storage
+    localStorage.removeItem('user');
     localStorage.removeItem('userprofile');
+    localStorage.removeItem('auth_token');
+
+    // Clear cookies by calling logout endpoint
+    try {
+      await fetch(`${baseUrl}/logout`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+
     setGebruiker(null);
     navigate('/login');
   };

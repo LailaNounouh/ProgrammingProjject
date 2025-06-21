@@ -4,6 +4,7 @@ const pool = require('../db');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
+const { validateEmail, validatePassword, validatePhoneNumber, validatePostalCode, validateBTWNumber } = require('../middleware/validation');
 
 // Multer configuratie (bestanden in /uploads)
 const storage = multer.diskStorage({
@@ -64,6 +65,26 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       return res.status(400).json({ error: 'Type, naam en e-mailadres zijn verplicht' });
     }
 
+    // Email validation
+    if (!validateEmail(email)) {
+      return res.status(400).json({ error: 'Ongeldig email formaat' });
+    }
+
+    // Check if email already exists
+    const [existingUsers] = await pool.query(`
+      SELECT email FROM Studenten WHERE email = ?
+      UNION
+      SELECT email FROM Bedrijven WHERE email = ?
+      UNION
+      SELECT email FROM Werkzoekenden WHERE email = ?
+      UNION
+      SELECT email FROM Admins WHERE email = ?
+    `, [email, email, email, email]);
+
+    if (existingUsers.length > 0) {
+      return res.status(400).json({ error: 'Email adres is al in gebruik' });
+    }
+
     // Studenten registratie
     if (type === 'student') {
       if (!wachtwoord || !studie) {
@@ -71,6 +92,12 @@ router.post('/', upload.single('bestand'), async (req, res) => {
       }
       if (!email.endsWith('@student.ehb.be')) {
         return res.status(400).json({ error: 'Alleen EHB student e-mailadressen zijn toegestaan.' });
+      }
+
+      // Password validation
+      const passwordValidation = validatePassword(wachtwoord);
+      if (!passwordValidation.valid) {
+        return res.status(400).json({ error: passwordValidation.message });
       }
 
       const hashedPassword = await bcrypt.hash(wachtwoord, 10);
