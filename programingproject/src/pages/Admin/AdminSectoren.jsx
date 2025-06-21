@@ -20,37 +20,25 @@ const AdminSectoren = () => {
   const fetchSectoren = async () => {
     try {
       setLoading(true);
-      console.log("Fetching sectoren from:", `${baseUrl}/sectoren`);
       const response = await fetch(`${baseUrl}/sectoren`);
 
-      console.log("Response status:", response.status);
-
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: Fout bij ophalen sectoren`);
+        throw new Error("Fout bij ophalen sectoren");
       }
 
       const data = await response.json();
-      console.log("Sectoren data received:", data);
 
       // Convert zichtbaar from 0/1 to boolean
-      const normalizedData = data.map(sector => {
-        console.log("Processing sector:", sector.sector_id, "type:", typeof sector.sector_id, "zichtbaar:", sector.zichtbaar);
-        return {
-          ...sector,
-          zichtbaar: Boolean(sector.zichtbaar)
-        };
-      });
+      const normalizedData = data.map(sector => ({
+        ...sector,
+        zichtbaar: Boolean(sector.zichtbaar)
+      }));
 
       setSectoren(normalizedData);
       setError("");
     } catch (err) {
       console.error("Fout bij ophalen sectoren:", err);
-      console.error("Error details:", {
-        message: err.message,
-        stack: err.stack,
-        name: err.name
-      });
-      setError(`Kon sectoren niet laden: ${err.message}`);
+      setError("Kon sectoren niet laden");
       setSectoren([]);
     } finally {
       setLoading(false);
@@ -60,61 +48,29 @@ const AdminSectoren = () => {
   // Toggle sector visibility
   const toggleSectorVisibility = async (sectorId, currentVisibility) => {
     try {
-      console.log("Toggling sector:", sectorId, "current visibility:", currentVisibility, "new visibility:", !currentVisibility);
-
-      const url = `${baseUrl}/sectoren/${sectorId}`;
-      const requestBody = {
-        zichtbaar: !currentVisibility
-      };
-
-      console.log("Making PATCH request to:", url);
-      console.log("Request body:", requestBody);
-      console.log("baseUrl:", baseUrl);
-
-      const response = await fetch(url, {
+      const response = await fetch(`${baseUrl}/sectoren/${sectorId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify({
+          zichtbaar: !currentVisibility
+        }),
       });
-
-      console.log("Toggle response received:", response);
-      console.log("Toggle response status:", response.status);
 
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Toggle error response:", errorData);
-        throw new Error(`HTTP ${response.status}: ${errorData.error || "Fout bij wijzigen zichtbaarheid"}`);
+        throw new Error("Fout bij wijzigen zichtbaarheid");
       }
-
-      const result = await response.json();
-      console.log("Toggle success result:", result);
 
       // Update local state
-      console.log("Updating local state for sector:", sectorId, "type:", typeof sectorId);
-      setSectoren(sectoren.map(sector => {
-        console.log("Comparing:", sector.sector_id, "===", sectorId, "result:", sector.sector_id == sectorId);
-        return sector.sector_id == sectorId  // Use == instead of === for type-flexible comparison
+      setSectoren(sectoren.map(sector =>
+        sector.sector_id === sectorId
           ? { ...sector, zichtbaar: !currentVisibility }
-          : sector;
-      }));
-
-      setError(""); // Clear any previous errors
+          : sector
+      ));
     } catch (err) {
       console.error("Fout bij wijzigen zichtbaarheid:", err);
-      console.error("Error type:", err.constructor.name);
-      console.error("Error details:", {
-        message: err.message,
-        stack: err.stack,
-        name: err.name
-      });
-
-      if (err.message === "Failed to fetch") {
-        setError("Netwerkfout: Kan geen verbinding maken met de server. Controleer of de server draait.");
-      } else {
-        setError(`Kon zichtbaarheid niet wijzigen: ${err.message}`);
-      }
+      setError("Kon zichtbaarheid niet wijzigen");
     }
   };
 
@@ -169,20 +125,13 @@ const AdminSectoren = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Fout bij verwijderen sector");
+        throw new Error("Fout bij verwijderen sector");
       }
 
-      console.log("Deleting sector:", sectorId, "type:", typeof sectorId);
-      setSectoren(sectoren.filter(sector => {
-        console.log("Filter comparing:", sector.sector_id, "!=", sectorId, "result:", sector.sector_id != sectorId);
-        return sector.sector_id != sectorId;  // Use != instead of !== for type-flexible comparison
-      }));
-
-      setError(""); // Clear any previous errors
+      setSectoren(sectoren.filter(sector => sector.sector_id !== sectorId));
     } catch (err) {
       console.error("Fout bij verwijderen sector:", err);
-      setError(`Kon sector niet verwijderen: ${err.message}`);
+      setError("Kon sector niet verwijderen");
     }
   };
 
