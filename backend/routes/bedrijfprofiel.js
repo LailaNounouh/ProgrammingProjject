@@ -15,7 +15,7 @@ router.get('/:id', async (req, res) => {
         website_of_linkedin, logo_url, staat_van_betaling, standselectie,
         opleidingsmatch, beschikbare_tijdsloten, speeddates,
         aanbiedingen, doelgroep_opleiding
-      FROM bedrijven
+      FROM Bedrijven
       WHERE bedrijf_id = ?`,
       [bedrijfId]
     );
@@ -45,7 +45,7 @@ router.put('/:id', async (req, res) => {
 
   try {
     const [result] = await db.execute(
-      `UPDATE bedrijven SET
+      `UPDATE Bedrijven SET
         naam = ?, straat = ?, nummer = ?, postcode = ?, gemeente = ?,
         telefoonnummer = ?, email = ?, btw_nummer = ?, contactpersoon_facturatie = ?,
         email_facturatie = ?, po_nummer = ?, contactpersoon_beurs = ?, email_beurs = ?,
