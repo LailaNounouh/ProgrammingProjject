@@ -16,17 +16,83 @@ Om deze dag zo vlot en interactief mogelijk te laten verlopen, ontwikkelen wij e
 
 Zo combineren we een fysiek netwerkevent met de kracht van IT en innovatie.
 
-## Aanpak
+## Technologieën
+
+- **Frontend**:
+  - React
+  - Handmatige styling met CSS
+  - Componentgebaseerde structuur (`components/`, `pages/`, `hooks/`, `context/`)
+- **Backend**: 
+  - Node.js
+  - Express.js
+  - MySQL (database)
+  - Eigen routing (`routes/`) en middleware (`middleware/`)
+  - Environment-variabelen via `.env`
+- **Versiebeheer**: 
+  - Git & GitHub
+
+## Backend
+1. Navigeer naar de backend-map:
+   ```bash
+   cd backend
+
+2. Installeer dependencies:
+   ```bash
+   npm install
+
+3. Voeg een .env bestand toe met de volgende variabelen:
+   ```bash
+   DB_HOST=10.2.160.211
+   DB_USER=groep13
+   DB_PASS=aijQ8ZSp
+   DB_NAME=careerlaunch
+   DB_PORT=3306
+
+4. Start de server:
+   ```bash
+   node server.j
+
+
+## Frontend
+
+1. Navigeer naar de programingproject-map:
+   ```bash
+   cd programingproject
+
+2. Installeer dependencies:
+   ```bash
+   npm install
+
+3. Maak een .env bestand aan in de programingproject/-map met volgende inhoud:
+   ```bash
+   VITE_API_BASE_URL=http://10.2.160.211:3000/api
+
+4. Start de applicatie: 
+   ```bash
+   npm run dev
+
+## Aanpak & Methodologie
 
 Om ons project gestructureerd aan te pakken, hebben we cursussen gevolgd over:
 
-- **Agile werken**
+- **Agile werken** (Scrum-methodiek)
 - **Design Thinking**
 
 via LinkedIn Learning.
 
+## Teamleden
+
+| Naam                        | Rol                  | Taken                                      |
+|-----------------------------|----------------------|--------------------------------------------|
+| Laila, Nehla, Nawfel, Simon | Frontend Developer   | Pagina’s (Home, About, Contact), styling   |
+| Bjorn, Simon, Roger, Nolween| Backend Developer    | API's, Express-routes, MySQL-integratie    |
+| Laila, Nawfel, Nehla        | UX/UI Designer       | Design, gebruikersflow, wireframes         |
+| Roger & Nolween             |Projectleider & Tester| Coördinatie, testplannen, documentatie     |
+
+
 ## Gebruikte bronnen
 
-- **Career Launch Dag**
+- **Career Launch Dag** (ter inspiratie)
 - LinkedIn Learning – Agile Foundations
 - LinkedIn Learning – Design Thinking
+- React documentatie (https://react.dev)
