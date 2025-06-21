@@ -6,9 +6,10 @@ import { baseUrl } from '../../config';
 function AdminBedrijf() {
   const [bedrijven, setBedrijven] = useState([]);
   const [filter, setFilter] = useState('');
+  const [toonBewerken, setToonBewerken] = useState(false);
+  const [nieuweNaam, setNieuweNaam] = useState('');
   const navigate = useNavigate();
 
-  // Haal bedrijven op uit database bij laden van de component
   useEffect(() => {
     fetch(`${baseUrl}/bedrijvenmodule`)
       .then((res) => {
@@ -26,6 +27,47 @@ function AdminBedrijf() {
         console.error('Fout bij ophalen bedrijven:', err.message);
       });
   }, []);
+
+  const vernieuwBedrijven = () => {
+    fetch(`${baseUrl}/bedrijvenmodule`)
+      .then((res) => res.json())
+      .then((data) => {
+        const bedrijvenLijst = Array.isArray(data) ? data : data.bedrijven;
+        setBedrijven(bedrijvenLijst);
+      });
+  };
+
+  const voegBedrijfToe = () => {
+    if (!nieuweNaam.trim()) return;
+    fetch(`${baseUrl}/bedrijvenmodule`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ naam: nieuweNaam })
+    })
+      .then(() => {
+        setNieuweNaam('');
+        vernieuwBedrijven();
+      })
+      .catch(console.error);
+  };
+
+  const verwijderBedrijf = (id) => {
+    fetch(`${baseUrl}/bedrijvenmodule/${id}`, {
+      method: 'DELETE'
+    })
+      .then(vernieuwBedrijven)
+      .catch(console.error);
+  };
+
+  const wijzigBedrijf = (id, nieuweNaam) => {
+    fetch(`${baseUrl}/bedrijvenmodule/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ naam: nieuweNaam })
+    })
+      .then(vernieuwBedrijven)
+      .catch(console.error);
+  };
 
   return (
     <div className="admin-dashboard">
@@ -47,21 +89,54 @@ function AdminBedrijf() {
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             />
+            <button className="bewerken-button" onClick={() => setToonBewerken(!toonBewerken)}>
+              {toonBewerken ? 'Opslaan' : 'Bewerken'}
+            </button>
           </div>
 
-          <div className="bedrijven-grid">
-            {bedrijven
-              .filter((bedrijf) => bedrijf.naam?.toLowerCase().includes(filter.toLowerCase()))
-              .map((bedrijf, index) => (
-                <div key={bedrijf.bedrijf_id || index} className="bedrijf-card">
-                  <div className="bedrijf-image">
-                    <div className="bedrijf-logo-placeholder"></div>
+          {!toonBewerken && (
+            <div className="bedrijven-grid">
+              {bedrijven
+                .filter((bedrijf) => bedrijf.naam?.toLowerCase().includes(filter.toLowerCase()))
+                .map((bedrijf, index) => (
+                  <div key={bedrijf.bedrijf_id || index} className="bedrijf-card">
+                    <div className="bedrijf-image">
+                      <div className="bedrijf-logo-placeholder"></div>
+                    </div>
+                    <strong>{bedrijf.naam}</strong>
+                    <p className="meer-info">• Meer info</p>
                   </div>
-                  <strong>{bedrijf.naam}</strong>
-                  <p className="meer-info">• Meer info</p>
-                </div>
-              ))}
-          </div>
+                ))}
+            </div>
+          )}
+
+          {toonBewerken && (
+            <div className="bewerken-container">
+              <div className="toevoegen-container">
+                <input
+                  type="text"
+                  placeholder="Nieuwe bedrijfsnaam"
+                  value={nieuweNaam}
+                  onChange={(e) => setNieuweNaam(e.target.value)}
+                />
+                <button className="toevoegen-button" onClick={voegBedrijfToe}>Toevoegen</button>
+              </div>
+
+              <ul className="bedrijven-lijst">
+                {bedrijven.map((bedrijf) => (
+                  <li key={bedrijf.bedrijf_id} className="bedrijf-item">
+                    <input
+                      defaultValue={bedrijf.naam}
+                      onBlur={(e) => wijzigBedrijf(bedrijf.bedrijf_id, e.target.value)}
+                    />
+                    <button className="verwijder-button" onClick={() => verwijderBedrijf(bedrijf.bedrijf_id)}>
+                      Verwijderen
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </section>
       </main>
     </div>

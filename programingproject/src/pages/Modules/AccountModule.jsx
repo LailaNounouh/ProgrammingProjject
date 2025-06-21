@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthProvider";
+import { useProfile } from "../../context/ProfileContext";
 import "./AccountModule.css";
 import { FaEdit, FaEye, FaSave, FaTimes } from "react-icons/fa";
 
 export default function AccountModule() {
   const navigate = useNavigate();
+  const { gebruiker } = useAuth();
+  const { updateProfiel, profiel, fetchProfiel } = useProfile();
   const [userData, setUserData] = useState({
     email: "",
     naam: "",
@@ -39,30 +43,16 @@ export default function AccountModule() {
     const haalGebruikerOp = async () => {
       try {
         setLoading(true);
-        
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        const email = localStorage.getItem('email');
-        const naam = localStorage.getItem('naam');
-        
-        if (!token) {
+
+        // Check if user is logged in via AuthProvider
+        if (!gebruiker) {
           navigate('/login');
           return;
         }
-        
-        setUserData({
-          email: email || "",
-          naam: naam || "",
-          studie: "",
-          foto_url: null,
-          linkedin_url: "",
-          github_url: "",
-          jobstudent: false,
-          werkzoekend: false,
-          stage_gewenst: false,
-          telefoon: "",
-          aboutMe: "",
-        });
-        
+
+        // Fetch profile data
+        await fetchProfiel();
+
         setLoading(false);
       } catch (error) {
         setErrorMessage("Er is een probleem opgetreden bij het laden van je gegevens.");
@@ -70,8 +60,45 @@ export default function AccountModule() {
       }
     };
 
-    haalGebruikerOp();
-  }, [navigate]);
+    if (gebruiker) {
+      haalGebruikerOp();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate, gebruiker]);
+
+  // Update userData when profiel changes
+  useEffect(() => {
+    if (profiel) {
+      setUserData({
+        email: profiel.email || gebruiker?.email || "",
+        naam: profiel.naam || gebruiker?.naam || "",
+        studie: profiel.studie || "",
+        foto_url: profiel.foto_url || null,
+        linkedin_url: profiel.linkedin || "",
+        github_url: profiel.github || "",
+        jobstudent: profiel.jobstudent || false,
+        werkzoekend: profiel.werkzoekend || false,
+        stage_gewenst: profiel.stage_gewenst || false,
+        telefoon: profiel.telefoon || "",
+        aboutMe: profiel.beschrijving || "",
+      });
+    } else if (gebruiker) {
+      // Fallback to gebruiker data if no profile
+      setUserData({
+        email: gebruiker.email || "",
+        naam: gebruiker.naam || "",
+        studie: gebruiker.studie || "",
+        foto_url: gebruiker.foto_url || null,
+        linkedin_url: gebruiker.linkedin_url || "",
+        github_url: gebruiker.github_url || "",
+        jobstudent: gebruiker.jobstudent || false,
+        werkzoekend: gebruiker.werkzoekend || false,
+        stage_gewenst: gebruiker.stage_gewenst || false,
+        telefoon: gebruiker.telefoon || "",
+        aboutMe: gebruiker.aboutMe || "",
+      });
+    }
+  }, [profiel, gebruiker]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -105,24 +132,43 @@ export default function AccountModule() {
 
   const opslaanWijzigingen = async (e) => {
     e.preventDefault();
-    
+
     try {
       setSaving(true);
       setErrorMessage("");
       setSuccessMessage("");
-      
-      setTimeout(() => {
+
+      // Actually save the data using ProfileContext
+      const result = await updateProfiel({
+        naam: userData.naam,
+        email: userData.email,
+        telefoon: userData.telefoon,
+        beschrijving: userData.aboutMe,
+        linkedin: userData.linkedin_url,
+        github: userData.github_url,
+        jobstudent: userData.jobstudent,
+        werkzoekend: userData.werkzoekend,
+        stage_gewenst: userData.stage_gewenst,
+        studie: userData.studie,
+        foto_url: userData.foto_url
+      });
+
+      if (result.success) {
         setSuccessMessage("Je gegevens zijn succesvol opgeslagen!");
         setEditMode(false);
-        setSaving(false);
-        
+
+        // Clear success message after 3 seconds
         setTimeout(() => {
           setSuccessMessage("");
         }, 3000);
-      }, 1000);
-      
+      } else {
+        throw new Error(result.error || "Kon gegevens niet opslaan");
+      }
+
     } catch (error) {
+      console.error("Fout bij opslaan:", error);
       setErrorMessage("Er is een probleem opgetreden bij het opslaan van je gegevens.");
+    } finally {
       setSaving(false);
     }
   };

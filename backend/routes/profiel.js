@@ -53,7 +53,7 @@ router.get("/:id", async (req, res) => {
 
 // POST profiel bijwerken + foto uploaden
 router.post("/", upload.single("profilePicture"), async (req, res) => {
-  const { naam, email, telefoon, aboutMe, github, linkedin } = req.body;
+  const { naam, email, telefoon, aboutMe, github, linkedin, studie } = req.body;
   const nieuweFotoUrl = req.file ? req.file.path : null;
 
   if (!email) {
@@ -70,9 +70,9 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
       const defaultPassword = "geheim123"; // Pas aan of behandel dit beter in registratieproces
 
       await pool.query(
-        `INSERT INTO Studenten 
-          (naam, email, telefoon, aboutMe, foto_url, github_url, linkedin_url, wachtwoord)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO Studenten
+          (naam, email, telefoon, aboutMe, foto_url, github_url, linkedin_url, studie, wachtwoord)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           naam || null,
           email,
@@ -81,6 +81,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
           finalFotoUrl,
           github || null,
           linkedin || null,
+          studie || null,
           defaultPassword,
         ]
       );
@@ -92,7 +93,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
 
       await pool.query(
         `UPDATE Studenten
-         SET naam = ?, telefoon = ?, aboutMe = ?, foto_url = ?, github_url = ?, linkedin_url = ?
+         SET naam = ?, telefoon = ?, aboutMe = ?, foto_url = ?, github_url = ?, linkedin_url = ?, studie = ?
          WHERE email = ?`,
         [
           naam || null,
@@ -101,6 +102,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
           finalFotoUrl,
           github || null,
           linkedin || null,
+          studie || null,
           email,
         ]
       );

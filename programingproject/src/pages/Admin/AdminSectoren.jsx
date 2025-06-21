@@ -1,137 +1,221 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { baseUrl } from "../../config";
+import "./AdminSectoren.css";
 
-const Plattegrond = ({ bewerkModus }) => {
-  const [bedrijven, setBedrijven] = useState([]);
-  const [selectedInfo, setSelectedInfo] = useState(null);
-  const maxPlaatsen = 16;
+const AdminSectoren = () => {
+  const navigate = useNavigate();
+  const [sectoren, setSectoren] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newSectorName, setNewSectorName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Fetch sectoren from API
   useEffect(() => {
-    async function fetchBedrijven() {
-      try {
-        const response = await fetch("/api/bedrijvenmodule");
-        const data = await response.json();
-
-        if (Array.isArray(data)) {
-          setBedrijven(data.map((bedrijf) => bedrijf.naam));
-        } else {
-          console.error("Ongeldig formaat van API-response:", data);
-          setBedrijven([]);
-        }
-      } catch (error) {
-        console.error("Fout bij ophalen bedrijven:", error);
-        setBedrijven([]);
-      }
-    }
-
-    fetchBedrijven();
+    fetchSectoren();
   }, []);
 
-  const plaatsen = [...bedrijven, ...Array(maxPlaatsen - bedrijven.length).fill(null)];
+  const fetchSectoren = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${baseUrl}/sectoren`);
 
-  const tafelsBoven = plaatsen.slice(0, 8);
-  const tafelsOnder = plaatsen.slice(8, 16);
+      if (!response.ok) {
+        throw new Error("Fout bij ophalen sectoren");
+      }
 
-  const handleTableClick = (bedrijf) => {
-    if (!bedrijf) {
-      setSelectedInfo("Deze plaats heeft voorlopig nog geen bedrijf.");
-    } else {
-      setSelectedInfo(`Bedrijf: ${bedrijf}`);
+      const data = await response.json();
+
+      // Convert zichtbaar from 0/1 to boolean
+      const normalizedData = data.map(sector => ({
+        ...sector,
+        zichtbaar: Boolean(sector.zichtbaar)
+      }));
+
+      setSectoren(normalizedData);
+      setError("");
+    } catch (err) {
+      console.error("Fout bij ophalen sectoren:", err);
+      setError("Kon sectoren niet laden");
+      setSectoren([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
-    <div className="plattegrond-container">
-      <svg width="1200px" height="1000px" viewBox="0 0 800 1000" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100%" height="100%" fill="white" />
 
-        {/* Inkom */}
-        <rect x="50" y="300" width="100" height="400" fill="#eeeeee" stroke="black" strokeWidth="2" />
-        <text x="100" y="500" fontSize="20" textAnchor="middle" fill="black" transform="rotate(-90 100,500)">
-          Inkom
-        </text>
 
-        {/* Gang 016 */}
-        <rect x="150" y="300" width="500" height="400" fill="#f5f5f5" stroke="black" strokeWidth="2" />
-        <text x="400" y="520" fontSize="24" textAnchor="middle" fill="black">
-          Gang 016
-        </text>
+  // Add new sector
+  const handleAddSector = async (e) => {
+    e.preventDefault();
 
-        {/* Tafels boven */}
-        {tafelsBoven.map((bedrijf, index) => {
-          const tafelWidth = 500 / 8;
-          const x = 150 + index * tafelWidth;
-          const y = 310;
-          return (
-            <g key={`boven-${index}`} onClick={() => handleTableClick(bedrijf)}>
-              <rect
-                x={x}
-                y={y}
-                width={tafelWidth - 5}
-                height="40"
-                fill={bedrijf ? "#c8e6c9" : "#ffcccb"}
-                stroke="black"
-                strokeWidth="1"
-              />
-              <text x={x + tafelWidth / 2 - 2} y={y + 25} fontSize="10" textAnchor="middle" fill="black">
-                {bedrijf || "X"}
-              </text>
-            </g>
-          );
-        })}
+    if (!newSectorName.trim()) {
+      setError("Sectornaam is verplicht");
+      return;
+    }
 
-        {/* Tafels onder */}
-        {tafelsOnder.map((bedrijf, index) => {
-          const tafelWidth = 500 / 8;
-          const x = 150 + index * tafelWidth;
-          const y = 640;
-          return (
-            <g key={`onder-${index}`} onClick={() => handleTableClick(bedrijf)}>
-              <rect
-                x={x}
-                y={y}
-                width={tafelWidth - 5}
-                height="40"
-                fill={bedrijf ? "#ffe082" : "#ffcccb"}
-                stroke="black"
-                strokeWidth="1"
-              />
-              <text x={x + tafelWidth / 2 - 2} y={y + 25} fontSize="10" textAnchor="middle" fill="black">
-                {bedrijf || "X"}
-              </text>
-            </g>
-          );
-        })}
+    try {
+      setIsSubmitting(true);
+      const response = await fetch(`${baseUrl}/sectoren`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          naam: newSectorName.trim(),
+          zichtbaar: true
+        }),
+      });
 
-        {/* Auditoria boven */}
-        <rect x="150" y="100" width="250" height="200" fill="#e0f7fa" stroke="black" strokeWidth="2" />
-        <text x="275" y="220" fontSize="20" textAnchor="middle" fill="black">
-          Auditorium 1
-        </text>
+      if (!response.ok) {
+        throw new Error("Fout bij toevoegen sector");
+      }
 
-        <rect x="400" y="100" width="250" height="200" fill="#e0f7fa" stroke="black" strokeWidth="2" />
-        <text x="525" y="220" fontSize="20" textAnchor="middle" fill="black">
-          Auditorium 2
-        </text>
+      const newSector = await response.json();
+      setSectoren([...sectoren, newSector]);
+      setNewSectorName("");
+      setShowAddModal(false);
+      setError("");
+    } catch (err) {
+      console.error("Fout bij toevoegen sector:", err);
+      setError("Kon sector niet toevoegen");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-        {/* Auditoria onder */}
-        <rect x="150" y="700" width="250" height="200" fill="#e0f7fa" stroke="black" strokeWidth="2" />
-        <text x="275" y="820" fontSize="20" textAnchor="middle" fill="black">
-          Auditorium 3
-        </text>
+  // Delete sector
+  const handleDeleteSector = async (sectorId, sectorName) => {
+    if (!confirm(`Weet je zeker dat je de sector "${sectorName}" wilt verwijderen?`)) {
+      return;
+    }
 
-        <rect x="400" y="700" width="250" height="200" fill="#e0f7fa" stroke="black" strokeWidth="2" />
-        <text x="525" y="820" fontSize="20" textAnchor="middle" fill="black">
-          Auditorium 4
-        </text>
-      </svg>
+    try {
+      const response = await fetch(`${baseUrl}/sectoren/${sectorId}`, {
+        method: 'DELETE',
+      });
 
-      {/* Extra informatie onder de kaart */}
-      <div className="extra-info">
-        <h3>Informatie over de geselecteerde tafel:</h3>
-        <p>{selectedInfo || "Klik op een tafel om meer informatie te zien."}</p>
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Fout bij verwijderen sector");
+      }
+
+      setSectoren(sectoren.filter(sector => sector.sector_id !== sectorId));
+      setError(""); // Clear any previous errors
+    } catch (err) {
+      console.error("Fout bij verwijderen sector:", err);
+      setError(err.message);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="admin-dashboard">
+        <div className="loading">Sectoren laden...</div>
       </div>
+    );
+  }
+
+  return (
+    <div className="admin-dashboard">
+      <div className="terug-knop-container">
+        <button className="terug-button" onClick={() => navigate("/admin")}>
+          ← Terug naar dashboard
+        </button>
+      </div>
+
+      <main className="admin-main">
+        <section className="sectoren-section">
+          <div className="section-header">
+            <h2>Beheer van Sectoren</h2>
+            <button
+              className="add-button"
+              onClick={() => setShowAddModal(true)}
+            >
+              + Nieuwe Sector
+            </button>
+          </div>
+
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
+
+          <div className="sectoren-list">
+            <div className="list-header">
+              <span>Sectornaam</span>
+              <span>Acties</span>
+            </div>
+
+            {sectoren.length === 0 ? (
+              <div className="no-data">
+                Geen sectoren gevonden. Voeg een nieuwe sector toe.
+              </div>
+            ) : (
+              sectoren.map((sector) => (
+                <div key={sector.sector_id} className="sector-item">
+                  <span className="sector-name">{sector.naam}</span>
+                  <span className="sector-actions">
+                    <button
+                      className="delete-button"
+                      onClick={() => handleDeleteSector(sector.sector_id, sector.naam)}
+                    >
+                      🗑️ Verwijder
+                    </button>
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+
+        {/* Add Sector Modal */}
+        {showAddModal && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <h3>Nieuwe Sector Toevoegen</h3>
+              <form onSubmit={handleAddSector}>
+                <div className="form-group">
+                  <label htmlFor="sectorName">Sectornaam:</label>
+                  <input
+                    type="text"
+                    id="sectorName"
+                    value={newSectorName}
+                    onChange={(e) => setNewSectorName(e.target.value)}
+                    placeholder="Bijv. IT & Software"
+                    required
+                  />
+                </div>
+                <div className="modal-actions">
+                  <button
+                    type="submit"
+                    className="save-button"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Toevoegen...' : 'Toevoegen'}
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-button"
+                    onClick={() => {
+                      setShowAddModal(false);
+                      setNewSectorName("");
+                      setError("");
+                    }}
+                  >
+                    Annuleren
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 };
 
-export default Plattegrond;
+export default AdminSectoren;

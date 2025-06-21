@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AdminStanden.css';
 import { useNavigate } from "react-router-dom";
+import Plattegrond from "../../components/plattegrond/plattegrond"; 
 
 function BeheerStanden() {
   const [bedrijven, setBedrijven] = useState([]);
@@ -18,7 +19,7 @@ function BeheerStanden() {
     fetchPlattegrondData();
   }, []);
 
-    // AdminStanden.jsx
+   
 const fetchBedrijvenMetStanden = async () => {
   try {
     const response = await fetch("/api/admin/bedrijven-standen");
@@ -131,7 +132,7 @@ const fetchBedrijvenMetStanden = async () => {
     }
 
     try {
-      const response = await fetch(`${BASE_ADMIN_API_URL}/reset-stands`, {
+      const response = await fetch("/api/admin/reset-stands", {
         method: 'POST',
       });
 
@@ -204,7 +205,7 @@ const fetchBedrijvenMetStanden = async () => {
             <h3>Overzicht Locaties</h3>
             <div className="location-grid">
               <div className="location-card">
-                <h4>Aula's</h4>
+                <h4>Auditoria</h4>
                 <p>{plattegrondData.stats.aula?.occupied || 0} / {plattegrondData.stats.aula?.total || 0} bezet</p>
                 <div className="progress-bar">
                   <div 
@@ -236,42 +237,7 @@ const fetchBedrijvenMetStanden = async () => {
           {/* Plattegrond Visualisatie */}
           <div className="plattegrond-visual">
             <h3>Plattegrond Overzicht</h3>
-            
-            <div className="plattegrond-section">
-              <h4>Aula's</h4>
-              <div className="aula-grid">
-                {plattegrondData.plaatsen.aula.map((plaats) => (
-                  <div 
-                    key={plaats.plaats_id} 
-                    className={`plaats-item aula ${plaats.bedrijf_id ? 'occupied' : 'available'}`}
-                    title={plaats.company_name || 'Beschikbaar'}
-                  >
-                    <span className="plaats-nummer">Aula {plaats.nummer}</span>
-                    <span className="plaats-bedrijf">
-                      {plaats.company_name || 'Vrij'}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="plattegrond-section">
-              <h4>Tafels</h4>
-              <div className="tafel-grid">
-                {plattegrondData.plaatsen.tafel.map((plaats) => (
-                  <div 
-                    key={plaats.plaats_id} 
-                    className={`plaats-item tafel ${plaats.bedrijf_id ? 'occupied' : 'available'}`}
-                    title={plaats.company_name || 'Beschikbaar'}
-                  >
-                    <span className="plaats-nummer">T{plaats.nummer}</span>
-                    <span className="plaats-bedrijf">
-                      {plaats.company_name ? plaats.company_name.substring(0, 10) + '...' : 'Vrij'}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <Plattegrond plattegrondData={plattegrondData} />
           </div>
 
           {/* Bedrijven lijst */}
@@ -333,12 +299,12 @@ const fetchBedrijvenMetStanden = async () => {
                     onChange={(e) => setSelectedPlaats(e.target.value)}
                   >
                     <option value="">Geen toewijzing</option>
-                    <optgroup label="Aula's">
+                    <optgroup label="Auditoria">
                       {plattegrondData.plaatsen.aula
                         .filter(plaats => !plaats.bedrijf_id || plaats.bedrijf_id === selectedBedrijf?.bedrijf_id)
                         .map(plaats => (
                           <option key={plaats.plaats_id} value={plaats.plaats_id}>
-                            Aula {plaats.nummer}
+                            Auditorium {plaats.nummer}
                           </option>
                         ))
                       }
@@ -385,7 +351,7 @@ const fetchBedrijvenMetStanden = async () => {
                   </button>
                 </div>
               </div>
-            </div>
+            </div> 
           )}
         </section>
       </main>

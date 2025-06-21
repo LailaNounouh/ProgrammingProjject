@@ -1,32 +1,106 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from 'react-icons/fi';
 import LogoUploadForm from "../../components/forms/LogoUploadform";
-import { useAuth } from "../../context/AuthProvider"; // voor bedrijfId
+import { useAuth } from "../../context/AuthProvider";
+import { baseUrl } from "../../config";
 import "./Settingsbedrijf.css";
 
 const Settingsbedrijf = () => {
-  const { user } = useAuth(); // haalt ingelogde bedrijf-ID op
+  const { user } = useAuth();
   const navigate = useNavigate();
-  
-  // Mockdata : bedrijfsgegevens
-  const [bedrijfsgegevens, setBedrijfsgegevens] = React.useState({
-    bedrijfsnaam: "TechSolutions BV",
-    sector: "IT",
-    straat: "Innovatielaan",
-    nummer: "42",
-    postcode: "2000",
-    gemeente: "Antwerpen",
-    telefoon: "+32 3 123 45 67",
-    email: "info@techsolutions.be",
-    stwNummer: "BE123456789",
-    facturatieContact: "Jan Janssens",
-    facturatieEmail: "jan.janssens@techsolutions.be",
-    poNummer: "PO2023-123",
-    beursContact: "Marie Verstraeten",
-    beursEmail: "marie.verstraeten@techsolutions.be",
-    website: "https://www.techsolutions.be"
+
+  const [bedrijfsgegevens, setBedrijfsgegevens] = useState({
+    bedrijfsnaam: "",
+    sector: "",
+    straat: "",
+    nummer: "",
+    postcode: "",
+    gemeente: "",
+    telefoon: "",
+    email: "",
+    stwNummer: "",
+    facturatieContact: "",
+    facturatieEmail: "",
+    poNummer: "",
+    beursContact: "",
+    beursEmail: "",
+    website: ""
   });
+
+  const [sectoren, setSectoren] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  // Fetch available sectors
+  useEffect(() => {
+    const fetchSectoren = async () => {
+      try {
+        const response = await fetch(`${baseUrl}/sectoren`);
+        if (response.ok) {
+          const data = await response.json();
+          const zichtbare = data.filter(sector => sector.zichtbaar);
+          setSectoren(zichtbare);
+        }
+      } catch (err) {
+        console.error('Fout bij ophalen sectoren:', err);
+        setSectoren([]);
+      }
+    };
+
+    fetchSectoren();
+  }, []);
+
+  // Fetch company data when component mounts
+  useEffect(() => {
+    const fetchBedrijfsgegevens = async () => {
+      if (!user?.id) {
+        setError("Geen bedrijf ingelogd");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const response = await fetch(`${baseUrl}/bedrijfprofiel/${user.id}`);
+
+        if (!response.ok) {
+          throw new Error("Kon bedrijfsgegevens niet ophalen");
+        }
+
+        const data = await response.json();
+
+        // Map database fields to form fields
+        setBedrijfsgegevens({
+          bedrijfsnaam: data.naam || "",
+          sector: data.sector_id || "",
+          straat: data.straat || "",
+          nummer: data.nummer || "",
+          postcode: data.postcode || "",
+          gemeente: data.gemeente || "",
+          telefoon: data.telefoonnummer || "",
+          email: data.email || "",
+          stwNummer: data.btw_nummer || "",
+          facturatieContact: data.contactpersoon_facturatie || "",
+          facturatieEmail: data.email_facturatie || "",
+          poNummer: data.po_nummer || "",
+          beursContact: data.contactpersoon_beurs || "",
+          beursEmail: data.email_beurs || "",
+          website: data.website_of_linkedin || ""
+        });
+
+        setError("");
+      } catch (err) {
+        console.error("Fout bij ophalen bedrijfsgegevens:", err);
+        setError("Kon bedrijfsgegevens niet laden");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBedrijfsgegevens();
+  }, [user?.id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,15 +110,71 @@ const Settingsbedrijf = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Bedrijfsgegevens succesvol opgeslagen!");
-    navigate("/Bedrijvendashboard");
+
+    if (!user?.id) {
+      setError("Geen bedrijf ingelogd");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setError("");
+
+      const response = await fetch(`${baseUrl}/bedrijfprofiel/${user.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          naam: bedrijfsgegevens.bedrijfsnaam,
+          sector_id: bedrijfsgegevens.sector,
+          straat: bedrijfsgegevens.straat,
+          nummer: bedrijfsgegevens.nummer,
+          postcode: bedrijfsgegevens.postcode,
+          gemeente: bedrijfsgegevens.gemeente,
+          telefoonnummer: bedrijfsgegevens.telefoon,
+          email: bedrijfsgegevens.email,
+          btw_nummer: bedrijfsgegevens.stwNummer,
+          contactpersoon_facturatie: bedrijfsgegevens.facturatieContact,
+          email_facturatie: bedrijfsgegevens.facturatieEmail,
+          po_nummer: bedrijfsgegevens.poNummer,
+          contactpersoon_beurs: bedrijfsgegevens.beursContact,
+          email_beurs: bedrijfsgegevens.beursEmail,
+          website_of_linkedin: bedrijfsgegevens.website
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Kon bedrijfsgegevens niet opslaan");
+      }
+
+      alert("Bedrijfsgegevens succesvol opgeslagen!");
+      navigate("/bedrijf");
+    } catch (err) {
+      console.error("Fout bij opslaan bedrijfsgegevens:", err);
+      setError("Kon bedrijfsgegevens niet opslaan");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleTerug = () => {
-    navigate("/Bedrijf");
+    navigate("/bedrijf");
   };
+
+  if (loading) {
+    return (
+      <div className="instellingen-pagina">
+        <div className="instellingen-container">
+          <div className="loading-message">
+            Bedrijfsgegevens worden geladen...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="instellingen-pagina">
@@ -57,6 +187,19 @@ const Settingsbedrijf = () => {
           <h1>Instellingen</h1>
           <p className="instellingen-subtitel">Beheer hier de contactgegevens van uw bedrijf</p>
         </div>
+
+        {error && (
+          <div className="error-message" style={{
+            backgroundColor: '#f8d7da',
+            color: '#721c24',
+            padding: '1rem',
+            borderRadius: '8px',
+            marginBottom: '1rem',
+            border: '1px solid #f5c6cb'
+          }}>
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="bedrijfsformulier">
           {/* Sectie 1: Bedrijfsgegevens */}
@@ -78,25 +221,19 @@ const Settingsbedrijf = () => {
 
               <div className="formulier-groep">
                 <label className="formulier-label required">Sector</label>
-                <select 
-                  name="sector" 
+                <select
+                  name="sector"
                   value={bedrijfsgegevens.sector}
                   onChange={handleChange}
                   required
                   className="formulier-input"
                 >
                   <option value="">-- Selecteer een sector --</option>
-                  <option value="IT">IT & Technologie</option>
-                  <option value="finance">Financiën & Bankwezen</option>
-                  <option value="healthcare">Gezondheidszorg</option>
-                  <option value="education">Onderwijs</option>
-                  <option value="construction">Bouw & Vastgoed</option>
-                  <option value="retail">Retail & Handel</option>
-                  <option value="manufacturing">Productie & Industrie</option>
-                  <option value="transport">Transport & Logistiek</option>
-                  <option value="hospitality">Horeca & Toerisme</option>
-                  <option value="marketing">Marketing & Communicatie</option>
-                  <option value="other">Andere</option>
+                  {sectoren.map((sector) => (
+                    <option key={sector.sector_id} value={sector.sector_id}>
+                      {sector.naam}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -244,7 +381,13 @@ const Settingsbedrijf = () => {
             <h2 className="sectie-titel">Logo uploaden</h2>
             <LogoUploadForm bedrijfId={user?.id} />
           </div>
-          <button type="submit" className="opslaan-knop">Wijzigingen opslaan</button>
+          <button
+            type="submit"
+            className="opslaan-knop"
+            disabled={saving}
+          >
+            {saving ? 'Opslaan...' : 'Wijzigingen opslaan'}
+          </button>
         </form>
       </div>
     </div>
