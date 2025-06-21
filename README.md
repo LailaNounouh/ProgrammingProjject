@@ -37,9 +37,11 @@ Zo combineren we een fysiek netwerkevent met de kracht van IT en innovatie.
    cd backend
 
 2. Installeer dependencies:
+   ```bash
    npm install
 
 3. Voeg een .env bestand toe met de volgende variabelen:
+   ```bash
    DB_HOST=10.2.160.211
    DB_USER=groep13
    DB_PASS=aijQ8ZSp
@@ -47,21 +49,26 @@ Zo combineren we een fysiek netwerkevent met de kracht van IT en innovatie.
    DB_PORT=3306
 
 4. Start de server:
+   ```bash
    node server.j
 
 
 ## Frontend
 
 1. Navigeer naar de programingproject-map:
+   ```bash
    cd programingproject
 
 2. Installeer dependencies:
+   ```bash
    npm install
 
 3. Maak een .env bestand aan in de programingproject/-map met volgende inhoud:
+   ```bash
    VITE_API_BASE_URL=http://10.2.160.211:3000/api
 
 4. Start de applicatie: 
+   ```bash
    npm run dev
 
 ## Aanpak
