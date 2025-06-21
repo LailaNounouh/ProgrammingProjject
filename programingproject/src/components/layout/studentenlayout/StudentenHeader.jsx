@@ -21,14 +21,12 @@ const StudentenHeader = () => {
          <li><Link to="/student/bedrijven">Deelnemende Bedrijven</Link></li>
          <li><Link to="/student/standen">Standen</Link></li>
          <li><Link to="/student/afspraken">Afspraak maken</Link></li>
-         <li><Link to="/student/profiel">Profiel</Link></li> 
-         <li><Link to="/student/instellingen">Instellingen</Link></li>
+         <li><Link to="/student/account">Account</Link></li>
          <li><LogoutButton /></li>
        </ul>
      </nav>
    </header>
  );
 };
-
 
 export default StudentenHeader;
