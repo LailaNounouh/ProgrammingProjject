@@ -131,7 +131,7 @@ const fetchBedrijvenMetStanden = async () => {
     }
 
     try {
-      const response = await fetch(/api/admin/reset-stands, {
+      const response = await fetch("/api/admin/reset-stands", {
         method: 'POST',
       });
 
