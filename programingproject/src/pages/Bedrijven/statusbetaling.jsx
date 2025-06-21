@@ -148,33 +148,34 @@ const StatusBetaling = () => {
             style={{ height: `${progressHeight}px` }}
           ></div>
 
-          <div className={`timeline-step ${getStepStatus('Factuur verzonden')}`}>
-            <div className="timeline-content">
-              <strong>Factuur verzonden</strong>
-              <div className="timeline-date">{betalingData?.factuur_verzonden ?? '...'}</div>
-            </div>
-          </div>
+      <div className={`timeline-step ${getStepStatus('factuur_verzonden')}`}>
+  <div className="timeline-content">
+    <strong>Factuur verzonden</strong>
+    <div className="timeline-date">{betalingData?.factuur_verzonden ?? '...'}</div>
+  </div>
+</div>
 
-          <div className={`timeline-step ${getStepStatus('Factuur in behandeling')}`}>
-            <div className="timeline-content">
-              <strong>Factuur in behandeling</strong>
-              <div className="timeline-date">{betalingData?.in_behandeling ?? '...'}</div>
-            </div>
-          </div>
+<div className={`timeline-step ${getStepStatus('in_behandeling')}`}>
+  <div className="timeline-content">
+    <strong>Factuur in behandeling</strong>
+    <div className="timeline-date">{betalingData?.in_behandeling ?? '...'}</div>
+  </div>
+</div>
 
-          <div className={`timeline-step ${getStepStatus('Betaling ontvangen')}`}>
-            <div className="timeline-content">
-              <strong>Betaling ontvangen</strong>
-              <div className="timeline-date">{betalingData?.ontvangen ?? '...'}</div>
-            </div>
-          </div>
+<div className={`timeline-step ${getStepStatus('ontvangen')}`}>
+  <div className="timeline-content">
+    <strong>Betaling ontvangen</strong>
+    <div className="timeline-date">{betalingData?.ontvangen ?? '...'}</div>
+  </div>
+</div>
 
-          <div className={`timeline-step ${getStepStatus('Betaling verwerkt')}`}>
-            <div className="timeline-content">
-              <strong>Betaling verwerkt</strong>
-              <div className="timeline-date">{betalingData?.verwerkt ?? '...'}</div>
-            </div>
-          </div>
+<div className={`timeline-step ${getStepStatus('verwerkt')}`}>
+  <div className="timeline-content">
+    <strong>Betaling verwerkt</strong>
+    <div className="timeline-date">{betalingData?.verwerkt ?? '...'}</div>
+  </div>
+</div>
+
         </div>
       </div>
     </div>
