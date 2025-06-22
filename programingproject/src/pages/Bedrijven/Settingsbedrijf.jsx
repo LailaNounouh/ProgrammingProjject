@@ -164,9 +164,6 @@ const Settingsbedrijf = () => {
   return (
     <div className="instellingen-pagina">
       <div className="instellingen-container">
-        <button onClick={handleTerug} className="terug-knop">
-          <FiArrowLeft className="terug-icoon" /> Terug naar dashboard
-        </button>
 
         <div className="instellingen-header">
           <h1>Instellingen</h1>
