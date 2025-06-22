@@ -419,7 +419,7 @@ function StudentenDashboard() {
   const baseUrl = 'http://10.2.160.211:3000/api';
 
   useEffect(() => {
-    if (gebruiker?.naam) {
+    if (gebruiker?.id) {
       setStudentNaam(gebruiker.naam);
       const savedReminders = localStorage.getItem(`reminders_${gebruiker.id}`);
       if (savedReminders) {
@@ -478,26 +478,36 @@ function StudentenDashboard() {
   // Functie om interessante bedrijven op te halen
   const fetchInteressanteBedrijven = async (studentId) => {
     try {
-      // Haal eerst de studierichting van de student op
-      let studierichting = "";
+      // Probeer eerst de studierichting uit de gebruiker te halen
+      let studierichting = gebruiker?.studie || '';
       
-      try {
-        const studentResponse = await fetch(`${baseUrl}/studenten/${studentId}`);
-        if (studentResponse.ok) {
-          const studentData = await studentResponse.json();
-          if (studentData.studie) {
-            studierichting = studentData.studie;
-          }
-        }
-      } catch (error) {
-        console.error("Kon studentgegevens niet ophalen:", error);
-      }
-      
-      // Als we geen studierichting hebben, kunnen we niet filteren
+      // Als de studierichting niet in de gebruiker zit, probeer dan de API
       if (!studierichting) {
-        setInteressanteBedrijven([]);
-        return;
+        try {
+          const studentResponse = await fetch(`${baseUrl}/users/${studentId}`);
+          if (studentResponse.ok) {
+            const studentData = await studentResponse.json();
+            studierichting = studentData.studie || '';
+          } else {
+            // Probeer alternatieve endpoint
+            const altResponse = await fetch(`${baseUrl}/studenten/profiel/${studentId}`);
+            if (altResponse.ok) {
+              const altData = await altResponse.json();
+              studierichting = altData.studie || '';
+            }
+          }
+        } catch (error) {
+          console.error("Kon studentgegevens niet ophalen:", error);
+        }
       }
+      
+      // Als we nog steeds geen studierichting hebben, gebruik een fallback
+      if (!studierichting) {
+        console.log("Geen studierichting gevonden, gebruik fallback");
+        studierichting = "Informatica"; // Fallback studierichting
+      }
+      
+      console.log("Studierichting van student:", studierichting);
       
       // Haal alle bedrijven op
       const bedrijvenResponse = await fetch(`${baseUrl}/bedrijvenmodule`);
@@ -506,26 +516,36 @@ function StudentenDashboard() {
       }
       
       const bedrijvenData = await bedrijvenResponse.json();
+      console.log("Aantal opgehaalde bedrijven:", bedrijvenData.length);
       
-      // Filter bedrijven op basis van studierichting
-      const gefilterdeBedrijven = bedrijvenData.filter(bedrijf => {
+      // Filter bedrijven die de studierichting van de student zoeken
+      const matchendeBedrijven = bedrijvenData.filter(bedrijf => {
         if (!bedrijf.doelgroep_opleiding) return false;
         
-        // Split de doelgroep_opleiding string op komma's en verwijder witruimte
         const doelgroepen = bedrijf.doelgroep_opleiding
           .split(',')
-          .map(d => d.trim())
+          .map(d => d.trim().toLowerCase())
           .filter(d => d.length > 0);
         
-        // Check of de studierichting van de student voorkomt in de doelgroepen
-        return doelgroepen.some(doelgroep => 
-          studierichting.toLowerCase().includes(doelgroep.toLowerCase()) || 
-          doelgroep.toLowerCase().includes(studierichting.toLowerCase())
+        const studentRichting = studierichting.toLowerCase();
+        
+        // Check of een van de doelgroepen overeenkomt met de studierichting
+        const match = doelgroepen.some(doelgroep => 
+          studentRichting.includes(doelgroep) || 
+          doelgroep.includes(studentRichting)
         );
+        
+        if (match) {
+          console.log(`Match gevonden: ${bedrijf.naam} zoekt ${bedrijf.doelgroep_opleiding}`);
+        }
+        
+        return match;
       });
       
+      console.log("Aantal matchende bedrijven:", matchendeBedrijven.length);
+      
       // Beperk tot maximaal 5 bedrijven
-      setInteressanteBedrijven(gefilterdeBedrijven.slice(0, 5));
+      setInteressanteBedrijven(matchendeBedrijven.slice(0, 5));
       
     } catch (error) {
       console.error('Fout bij ophalen interessante bedrijven:', error);
