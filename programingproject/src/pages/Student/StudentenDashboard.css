@@ -7,7 +7,7 @@
 }
 
 /* Welkomstbanner */
-.welcome-banner {
+.studenten-welcome-banner {
   background: linear-gradient(135deg, #5bb4b7 0%, #3a8a8d 100%);
   color: white;
   text-align: center;
@@ -701,4 +701,80 @@
   background: #3a5bd9;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(74, 108, 247, 0.3);
+}
+
+/* Responsive aanpassingen */
+@media (max-width: 1024px) {
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .calendar-section {
+    order: -1;
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .welcome-banner h1 {
+    font-size: 24px;
+  }
+  
+  .welcome-banner p {
+    font-size: 14px;
+  }
+  
+  .dashboard-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-box {
+    max-width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .notification-wrapper {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-banner {
+    padding: 20px 15px;
+  }
+  
+  .dashboard-card {
+    padding: 15px;
+  }
+  
+  .card-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    margin-right: 12px;
+  }
+  
+  .card-title {
+    font-size: 16px;
+  }
+  
+  .card-description {
+    font-size: 13px;
+  }
+  
+  .calendar-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .add-reminder-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
