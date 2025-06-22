@@ -60,7 +60,7 @@ const Header = () => {
             >
               &times;
             </button>
-            <p>Weet je zeker dat je wilt uitloggen?</p>
+            <p>Weet u zeker dat u wilt uitloggen?</p>
             <div className="button-container">
               <button 
                 onClick={uitloggen} 
