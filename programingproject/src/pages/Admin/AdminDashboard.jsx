@@ -7,10 +7,10 @@ function AdminDashboard() {
 
   return (
     <div className="admin-dashboard">
-      <div className="admin-dashboard-header">
+      <div className="dashboard-welcome-banner">
         <h1>Welkom terug, Admin!</h1>
         <p>Beheer hier gebruikers, bedrijven, standen en statistieken.</p>
-      </div>
+</div>
 
       <div className="admin-dashboard-content">
         {/* Kaarten */}

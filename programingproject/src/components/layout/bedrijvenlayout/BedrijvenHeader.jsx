@@ -34,10 +34,10 @@ const Header = () => {
         <nav className={showMobileMenu ? 'show' : ''}>
           <ul>
             <li><Link to="/bedrijf">Dashboard</Link></li>
-            <li><Link to="/bedrijf/betaling">Staat van betaling</Link></li>
-            <li><Link to="/bedrijf/afspraken">Afspraakoverzicht</Link></li>
-            <li><Link to="/bedrijf/standen">Standenbeheer</Link></li>
-            <li><Link to="/bedrijf/Settingsbedrijf">Bedrijfsinstellingen</Link></li>
+            <li><Link to="/bedrijf/betaling">Betalingstatus</Link></li>
+            <li><Link to="/bedrijf/afspraken">Afspraakbeheer</Link></li>
+            <li><Link to="/bedrijf/standen">Standbeheer</Link></li>
+            <li><Link to="/bedrijf/Settingsbedrijf">Instellingen</Link></li>
             <li>
               <button 
                 onClick={() => setShowLogoutPopup(true)} 
@@ -60,7 +60,7 @@ const Header = () => {
             >
               &times;
             </button>
-            <p>Weet je zeker dat je wilt uitloggen?</p>
+            <p>Weet u zeker dat u wilt uitloggen?</p>
             <div className="button-container">
               <button 
                 onClick={uitloggen} 

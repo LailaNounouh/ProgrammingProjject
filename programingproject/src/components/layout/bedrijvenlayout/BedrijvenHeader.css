@@ -85,7 +85,7 @@
   text-align: center;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   min-width: 300px;
-  position: relative;
+  position: relative; 
 }
 
 /* Close button */
@@ -151,7 +151,7 @@
   cursor: pointer;
 }
 
-
+/* Media Queries */
 @media (max-width: 1024px) {
   .bedrijf-header nav ul {
     gap: 1.2rem;
@@ -168,7 +168,7 @@
   }
 }
 
-/* Mobiel (≤768px) - bestaat al maar hier aangevuld */
+/* Mobiel (≤768px) */
 @media (max-width: 768px) {
   .bedrijf-header .hamburger {
     display: block;

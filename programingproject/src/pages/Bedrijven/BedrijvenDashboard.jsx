@@ -348,12 +348,19 @@ function BedrijvenDashboard() {
 
         setBedrijfData(data);
         setBedrijfNaam(data.naam || gebruiker.naam || 'Bedrijf');
+// Load saved reminders
+try {
+  const saved = localStorage.getItem(`reminders_${gebruiker.id}`);
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    if (Array.isArray(parsed)) {
+      setReminders(parsed);
+    }
+  }
+} catch (error) {
+  console.error("Fout bij lezen van herinneringen:", error);
+}
 
-        // Load saved reminders
-        const savedReminders = localStorage.getItem(`reminders_${gebruiker.id}`);
-        if (savedReminders) {
-          setReminders(JSON.parse(savedReminders));
-        }
 
       } catch (error) {
         console.error('Fout bij ophalen bedrijfsgegevens:', error);
