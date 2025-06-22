@@ -18,7 +18,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="header">
+      <header className="bedrijf-header">
         <Link to="/">
           <img src="/afbeelding/logo-ehb.png" alt="Logo" className="logo" />
         </Link>
