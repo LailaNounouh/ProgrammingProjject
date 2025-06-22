@@ -14,7 +14,7 @@ import { baseUrl as API_URL } from "../../config";
 export default function AccountModule() {
   const navigate = useNavigate();
   const { gebruiker } = useAuth();
-  const { updateProfiel: contextUpdateProfiel, profiel, fetchProfiel } = useProfile();
+  const { fetchProfiel, profiel } = useProfile();
   const [userData, setUserData] = useState({
     email: "",
     naam: "",
@@ -48,9 +48,11 @@ export default function AccountModule() {
     studentenjob: false
   });
   const [socialLinks, setSocialLinks] = useState({
-    linkedin: '',
-    github: ''
+    github: '',
+    linkedin: ''
   });
+  // State voor nieuwe taal
+  const [nieuweTaal, setNieuweTaal] = useState({name: "", ervaring: ""});
 
   const studieOpties = [
     "Bachelor Toegepaste Informatica",
@@ -129,33 +131,27 @@ export default function AccountModule() {
         setHardskills([]);
       }
       
-      // Verwerk codeertalen
-      console.log("AccountModule - Controleren van codeertalen in profiel:", profiel);
-      if (Array.isArray(profiel.codeertalen)) {
+      // Verwerk programmeertalen
+      console.log("AccountModule - Controleren van programmeertalen in profiel:", profiel);
+      
+      // Controleer alle mogelijke veldnamen voor programmeertalen
+      if (Array.isArray(profiel.codeertalen) && profiel.codeertalen.length > 0) {
         console.log("AccountModule - Codeertalen uit profiel (array):", profiel.codeertalen);
         setCodeertalen(profiel.codeertalen);
-      } else if (Array.isArray(profiel.programmeertalen)) {
+      } else if (Array.isArray(profiel.programmeertalen) && profiel.programmeertalen.length > 0) {
         console.log("AccountModule - Programmeertalen uit profiel (array):", profiel.programmeertalen);
         setCodeertalen(profiel.programmeertalen);
-      } else if (typeof profiel.programmeertalen === 'string') {
+      } else if (typeof profiel.programmeertalen === 'string' && profiel.programmeertalen) {
         try {
           const parsedTalen = JSON.parse(profiel.programmeertalen);
           console.log("AccountModule - Programmeertalen geparsed uit string:", parsedTalen);
-          setCodeertalen(parsedTalen);
+          setCodeertalen(Array.isArray(parsedTalen) ? parsedTalen : []);
         } catch (e) {
           console.error("AccountModule - Fout bij parsen programmeertalen:", e);
           setCodeertalen([]);
         }
-      } else if (typeof profiel.codeertalen === 'string') {
-        try {
-          const parsedTalen = JSON.parse(profiel.codeertalen);
-          console.log("AccountModule - Codeertalen geparsed uit string:", parsedTalen);
-          setCodeertalen(parsedTalen);
-        } catch (e) {
-          console.error("AccountModule - Fout bij parsen codeertalen:", e);
-          setCodeertalen([]);
-        }
       } else {
+        console.log("AccountModule - Geen programmeertalen gevonden in profiel");
         setCodeertalen([]);
       }
       
@@ -183,6 +179,39 @@ export default function AccountModule() {
       setSocialLinks({
         linkedin: profiel.linkedin_url || '',
         github: profiel.github_url || ''
+      });
+    }
+  }, [profiel]);
+
+  // Zorg ervoor dat de voorkeuren correct worden ingesteld vanuit het profiel
+  useEffect(() => {
+    if (profiel) {
+      console.log("AccountModule - Voorkeuren uit profiel:", {
+        stage: profiel.stage_gewenst,
+        job: profiel.werkzoekend,
+        bachelorproef: profiel.bachelorproef_gewenst,
+        studentenjob: profiel.jobstudent
+      });
+      
+      setVoorkeuren({
+        stage: profiel.stage_gewenst || false,
+        job: profiel.werkzoekend || false,
+        bachelorproef: profiel.bachelorproef_gewenst || false,
+        studentenjob: profiel.jobstudent || false
+      });
+    }
+  }, [profiel]);
+
+  // Zorg ervoor dat de social links correct worden ingesteld vanuit het profiel
+  useEffect(() => {
+    if (profiel) {
+      console.log("AccountModule - Social links uit profiel:", {
+        github: profiel.github_url || profiel.github || '',
+      });
+      
+      setSocialLinks({
+        ...socialLinks,
+        github: profiel.github_url || profiel.github || ''
       });
     }
   }, [profiel]);
@@ -223,103 +252,98 @@ export default function AccountModule() {
 
   const handleSocialLinkChange = (e) => {
     const { name, value } = e.target;
+    console.log(`Social link changed: ${name} = ${value}`);
     setSocialLinks({
       ...socialLinks,
       [name]: value
     });
   };
 
+  // Zorg ervoor dat de data correct wordt opgeslagen
   const opslaanWijzigingen = async (e) => {
     e.preventDefault();
-    if (saving) return;
-    
     setSaving(true);
     setErrorMessage("");
     setSuccessMessage("");
 
     try {
       console.log("AccountModule - Formulier verzonden");
-      console.log("AccountModule - Codeertalen:", codeertalen);
-      console.log("AccountModule - Talen:", talen);
+      
+      // Log de huidige staat van codeertalen
+      console.log("AccountModule - Huidige codeertalen:", codeertalen);
       
       // Maak een kopie van userData om mee te werken
-      let profielData = { ...userData };
-      
-      // Voeg de skills toe aan de profielData
-      profielData.softskills = Array.isArray(softskills) ? softskills : [];
-      profielData.hardskills = Array.isArray(hardskills) ? hardskills : [];
-      profielData.codeertalen = Array.isArray(codeertalen) ? codeertalen : [];
-      profielData.programmeertalen = Array.isArray(codeertalen) ? codeertalen : [];
-      profielData.talen = Array.isArray(talen) ? talen : [];
-      
-      // Voeg de voorkeuren toe
-      profielData.stage_gewenst = voorkeuren.stage;
-      profielData.werkzoekend = voorkeuren.job;
-      profielData.bachelorproef_gewenst = voorkeuren.bachelorproef;
-      profielData.jobstudent = voorkeuren.studentenjob;
-      
-      // Voeg de social links toe
-      profielData.linkedin_url = socialLinks.linkedin;
-      profielData.github_url = socialLinks.github;
-      
-      console.log("Opslaan profiel met voorkeuren en social links:", profielData);
-      
-      // Bepaal of we een PUT of POST request moeten doen
-      let response;
-      
-      if (profielData.foto_url && typeof profielData.foto_url !== "string") {
-        console.log("Uploaden met foto");
-        const formData = new FormData();
-        formData.append("naam", profielData.naam || "");
-        formData.append("email", profielData.email || "");
-        formData.append("telefoon", profielData.telefoon || "");
-        formData.append("aboutMe", profielData.aboutMe || "");
-        formData.append("github", profielData.github_url || "");
-        formData.append("linkedin", profielData.linkedin_url || "");
-        formData.append("studie", profielData.studie || "");
-        formData.append("profilePicture", profielData.foto_url);
+      const profielData = {
+        ...userData,
+        github: socialLinks.github,
         
-        // Voeg de voorkeuren toe aan de FormData
-        formData.append("jobstudent", profielData.jobstudent);
-        formData.append("werkzoekend", profielData.werkzoekend);
-        formData.append("stage_gewenst", profielData.stage_gewenst);
-        formData.append("bachelorproef_gewenst", profielData.bachelorproef_gewenst);
+        // Voeg alle skills en talen toe om te behouden
+        softskills: softskills,
+        hardskills: hardskills,
+        // Gebruik zowel programmeertalen als codeertalen om compatibiliteit te garanderen
+        programmeertalen: codeertalen,
+        codeertalen: codeertalen,
+        talen: talen,
         
-        // Voeg de skills toe
-        formData.append("softskills", JSON.stringify(profielData.softskills));
-        formData.append("hardskills", JSON.stringify(profielData.hardskills));
-        formData.append("codeertalen", JSON.stringify(profielData.codeertalen));
-        formData.append("talen", JSON.stringify(profielData.talen));
+        // Voeg voorkeuren toe
+        stage_gewenst: voorkeuren.stage,
+        werkzoekend: voorkeuren.job,
+        bachelorproef_gewenst: voorkeuren.bachelorproef,
+        jobstudent: voorkeuren.studentenjob
+      };
+      
+      console.log("AccountModule - Data die wordt verzonden:", profielData);
+      console.log("AccountModule - Programmeertalen die worden verzonden:", profielData.programmeertalen);
+      
+      // Stuur de data naar de server
+      const response = await axios.put(`${API_URL}/profiel/${userData.email}`, profielData);
+      
+      if (response.status === 200) {
+        console.log("AccountModule - Profiel succesvol bijgewerkt");
+        setSuccessMessage("Profiel succesvol bijgewerkt");
         
-        response = await fetch(`${API_URL}/profiel`, {
-          method: "POST",
-          body: formData,
-        });
+        // Werk het profiel bij in de context
+        await fetchProfiel();
       } else {
-        // PUT request zonder foto
-        response = await fetch(`${API_URL}/profiel/${profielData.email}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(profielData),
-        });
+        console.error("AccountModule - Fout bij bijwerken profiel:", response.data);
+        setErrorMessage("Fout bij bijwerken profiel: " + (response.data.error || "Onbekende fout"));
       }
+    } catch (error) {
+      console.error("AccountModule - Fout bij verzenden formulier:", error);
+      setErrorMessage("Fout bij verzenden formulier: " + (error.response?.data?.error || error.message || "Onbekende fout"));
+    } finally {
+      setSaving(false);
+    }
+  };
 
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.error || "Fout bij opslaan profiel");
-      }
+  // Functie om alleen programmeertalen bij te werken
+  const updateProgrammeertalen = async () => {
+    setSaving(true);
+    setErrorMessage("");
+    setSuccessMessage("");
 
-      // Als we hier komen, is het profiel succesvol opgeslagen
-      setSuccessMessage("Profiel succesvol opgeslagen!");
-      setEditMode(false);
+    try {
+      console.log("AccountModule - Programmeertalen bijwerken");
+      console.log("AccountModule - Huidige codeertalen:", codeertalen);
       
-      // Direct het profiel opnieuw ophalen
-      await fetchProfiel();
-    } catch (err) {
-      console.error("AccountModule - Fout bij opslaan:", err);
-      setErrorMessage("Fout bij opslaan profiel: " + (err.message || "Onbekende fout"));
+      // Stuur alleen de programmeertalen naar de server
+      const response = await axios.post(`${API_URL}/profiel/update-programmeertalen/${userData.email}`, {
+        programmeertalen: codeertalen
+      });
+      
+      if (response.status === 200) {
+        console.log("AccountModule - Programmeertalen succesvol bijgewerkt");
+        setSuccessMessage("Programmeertalen succesvol bijgewerkt");
+        
+        // Werk het profiel bij in de context
+        await fetchProfiel();
+      } else {
+        console.error("AccountModule - Fout bij bijwerken programmeertalen:", response.data);
+        setErrorMessage("Fout bij bijwerken programmeertalen: " + (response.data.error || "Onbekende fout"));
+      }
+    } catch (error) {
+      console.error("AccountModule - Fout bij verzenden programmeertalen:", error);
+      setErrorMessage("Fout bij verzenden programmeertalen: " + (error.response?.data?.error || error.message || "Onbekende fout"));
     } finally {
       setSaving(false);
     }
@@ -585,36 +609,32 @@ export default function AccountModule() {
               {activeTab === 'social' && (
                 <div className="tab-content">
                   <h3>Social Media</h3>
-                  <div className="social-links-container">
-                    <div className="form-group">
-                      <label htmlFor="linkedin">
-                        <FaLinkedin className="social-icon" /> LinkedIn URL
-                      </label>
-                      <input
-                        type="url"
-                        id="linkedin"
-                        name="linkedin"
-                        value={socialLinks.linkedin}
-                        onChange={handleSocialLinkChange}
-                        placeholder="https://www.linkedin.com/in/jouwprofiel"
-                        className="form-control"
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label htmlFor="github">
-                        <FaGithub className="social-icon" /> GitHub URL
-                      </label>
-                      <input
-                        type="url"
-                        id="github"
-                        name="github"
-                        value={socialLinks.github}
-                        onChange={handleSocialLinkChange}
-                        placeholder="https://github.com/jouwgebruikersnaam"
-                        className="form-control"
-                      />
-                    </div>
+                  <div className="form-group">
+                    <label htmlFor="github">GitHub URL</label>
+                    <input
+                      type="url"
+                      id="github"
+                      name="github"
+                      value={socialLinks.github}
+                      onChange={handleSocialLinkChange}
+                      placeholder="https://github.com/jouw-gebruikersnaam"
+                    />
+                  </div>
+                </div>
+              )}
+              
+              {/* Programmeertalen tab */}
+              {activeTab === 'codeertalen' && (
+                <div className="tab-content">
+                  <h3>Programmeertalen</h3>
+                  <div className="skills-container">
+                    <CodeerTaalSelector value={codeertalen} onChange={setCodeertalen} readOnly={false} />
+                  </div>
+                  
+                  <div className="form-actions">
+                    <button type="button" className="opslaan-btn" onClick={updateProgrammeertalen} disabled={saving}>
+                      {saving ? "Opslaan..." : <><FaSave /> Programmeertalen opslaan</>}
+                    </button>
                   </div>
                 </div>
               )}
@@ -661,13 +681,6 @@ export default function AccountModule() {
             <section className="account-section">
               <h3>Social Media</h3>
               <div className="social-links-view">
-                {socialLinks.linkedin && (
-                  <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="social-link">
-                    <FaLinkedin className="social-icon" />
-                    <span>LinkedIn Profiel</span>
-                  </a>
-                )}
-                
                 {socialLinks.github && (
                   <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" className="social-link">
                     <FaGithub className="social-icon" />
@@ -675,8 +688,8 @@ export default function AccountModule() {
                   </a>
                 )}
                 
-                {!socialLinks.linkedin && !socialLinks.github && (
-                  <p>Geen social media links toegevoegd</p>
+                {!socialLinks.github && (
+                  <p>Geen GitHub profiel toegevoegd</p>
                 )}
               </div>
             </section>
