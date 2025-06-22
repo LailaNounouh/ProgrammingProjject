@@ -28,10 +28,12 @@ const profielRouter = require('./routes/profiel');
 const bedrijfprofielRouter = require('./routes/bedrijfprofiel');
 const adminRouter = require('./routes/admin');
 const afsprakenRouter = require('./routes/afspraken');
+//const codeertaalRouter = require('./routes/codeertalen');
 const usersRouter = require('./routes/users');
 const statistiekenRouter = require('./routes/Statistieken');
 const attendanceRouter = require('./routes/attendance');
 const betalingRouter = require('./routes/betaling');
+const notificationsRouter = require('./routes/notifications');
 
 
 console.log('server.js: Alle routers geïmporteerd.');
@@ -124,10 +126,12 @@ apiRouter.use('/profiel', profielRouter); // <-- Hier wordt je profiel-router ge
 apiRouter.use('/bedrijfprofiel', bedrijfprofielRouter);
 apiRouter.use('/admin', adminRouter);
 apiRouter.use('/afspraken', afsprakenRouter);
+//apiRouter.use('/codeertaal', codeertaalRouter);
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/statistieken', statistiekenRouter);
 apiRouter.use('/attendance', attendanceRouter);
 apiRouter.use('/betaling', betalingRouter);
+apiRouter.use('/notifications', notificationsRouter);
 
 
 app.use('/api', apiRouter);

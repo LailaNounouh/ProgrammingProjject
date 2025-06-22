@@ -415,3 +415,30 @@
     font-size: 0.9rem;
   }
 }
+
+.event-date {
+  font-size: 1.1rem;
+  color: #4a6cf7;
+  margin-bottom: 20px;
+  font-weight: 600;
+  background-color: #f0f4ff;
+  padding: 8px 15px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.fixed-date {
+  font-weight: 600;
+  padding: 10px;
+  background-color: #f0f4ff;
+  border-radius: 5px;
+  color: #4a6cf7;
+  border: 1px solid #d0d9ff;
+}
+
+.date-info {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 5px;
+  font-style: italic;
+}

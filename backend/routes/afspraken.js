@@ -7,6 +7,9 @@ const STANDAARD_TIJDEN = [
   '15:00', '15:15', '15:30', '15:45', '16:00', '16:15',
 ];
 
+// Constante voor de datum van de Career Launch Day
+const CAREER_LAUNCH_DAY = '2026-03-13';
+
 /**
  * @route GET /api/afspraken
  * @desc Haal alle afspraken op (voor admin)
@@ -74,12 +77,13 @@ router.get('/bedrijf/:bedrijfId', async (req, res) => {
 });
 
 /**
- * @route GET /api/afspraken/beschikbaar/:bedrijfId?datum=yyyy-mm-dd
- * @desc Haal beschikbare tijdsloten op voor een bedrijf op een bepaalde dag
+ * @route GET /api/afspraken/beschikbaar/:bedrijfId
+ * @desc Haal beschikbare tijdsloten op voor een bedrijf op de Career Launch Day
  */
 router.get('/beschikbaar/:bedrijfId', async (req, res) => {
   const { bedrijfId } = req.params;
-  const datum = req.query.datum || new Date().toISOString().split('T')[0];
+  // Gebruik altijd de vaste datum voor Career Launch Day
+  const datum = CAREER_LAUNCH_DAY;
 
   try {
     const [bedrijven] = await pool.query('SELECT * FROM Bedrijven WHERE bedrijf_id = ?', [bedrijfId]);
@@ -117,6 +121,7 @@ router.get('/beschikbaar/:bedrijfId', async (req, res) => {
       beschikbaar: beschikbareTijdsloten,
       bezet: bezetteTijdsloten,
       alle: alleTijdsloten,
+      datum: datum
     });
   } catch (err) {
     console.error('[Serverfout] Tijdsloten ophalen mislukt:', err);
@@ -278,21 +283,39 @@ router.put('/:id/status', async (req, res) => {
   }
 
   try {
-    const [result] = await pool.execute(
-      'UPDATE Afspraken SET status = ? WHERE afspraak_id = ?',
-      [status, afspraakId]
-    );
+    // Als de status 'geweigerd' is, verwijder de afspraak
+    if (status === 'geweigerd') {
+      const [result] = await pool.execute(
+        'DELETE FROM Afspraken WHERE afspraak_id = ?',
+        [afspraakId]
+      );
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: 'Afspraak niet gevonden' });
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Afspraak niet gevonden' });
+      }
+
+      return res.json({
+        message: 'Afspraak geweigerd en verwijderd',
+        afspraak_id: afspraakId,
+        status: 'geweigerd'
+      });
+    } else {
+      // Anders update de status
+      const [result] = await pool.execute(
+        'UPDATE Afspraken SET status = ? WHERE afspraak_id = ?',
+        [status, afspraakId]
+      );
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Afspraak niet gevonden' });
+      }
+
+      res.json({
+        message: 'Afspraak status succesvol bijgewerkt',
+        afspraak_id: afspraakId,
+        status: status
+      });
     }
-
-    res.json({
-      message: 'Afspraak status succesvol bijgewerkt',
-      afspraak_id: afspraakId,
-      status: status
-    });
-
   } catch (error) {
     console.error('Fout bij bijwerken afspraak status:', error);
     res.status(500).json({ error: 'Interne serverfout' });
@@ -321,6 +344,81 @@ router.get('/bezet', async (req, res) => {
   } catch (err) {
     console.error('[Serverfout] Bezetting ophalen mislukt:', err);
     res.status(500).json({ error: 'Fout bij ophalen bezette tijdsloten', message: err.message });
+  }
+});
+
+/**
+ * @route GET /api/afspraken/student-details/:studentId
+ * @desc Haal gedetailleerde informatie op over een student voor een afspraak
+ */
+router.get('/student-details/:studentId', async (req, res) => {
+  const { studentId } = req.params;
+  
+  try {
+    // Haal basisinformatie op over de student
+    const [studentRows] = await pool.query(`
+      SELECT s.student_id, s.naam, s.email, s.telefoon, s.studie, 
+             s.github_url, s.linkedin_url, s.aboutMe, 
+             s.softskills, s.hardskills, s.programmeertalen, s.talen
+      FROM Studenten s
+      WHERE s.student_id = ?
+    `, [studentId]);
+    
+    if (studentRows.length === 0) {
+      return res.status(404).json({ error: 'Student niet gevonden' });
+    }
+    
+    const student = studentRows[0];
+    
+    // Verwerk de skills en talen
+    let studentDetails = {
+      ...student,
+      softskills: [],
+      hardskills: [],
+      programmeertalen: [],
+      talen: []
+    };
+    
+    // Parse softskills
+    if (student.softskills) {
+      try {
+        studentDetails.softskills = JSON.parse(student.softskills);
+      } catch (e) {
+        console.error('Fout bij parsen softskills:', e);
+      }
+    }
+    
+    // Parse hardskills
+    if (student.hardskills) {
+      try {
+        studentDetails.hardskills = JSON.parse(student.hardskills);
+      } catch (e) {
+        console.error('Fout bij parsen hardskills:', e);
+      }
+    }
+    
+    // Parse programmeertalen
+    if (student.programmeertalen) {
+      try {
+        studentDetails.programmeertalen = JSON.parse(student.programmeertalen);
+      } catch (e) {
+        console.error('Fout bij parsen programmeertalen:', e);
+      }
+    }
+    
+    // Parse talen
+    if (student.talen) {
+      try {
+        studentDetails.talen = JSON.parse(student.talen);
+      } catch (e) {
+        console.error('Fout bij parsen talen:', e);
+      }
+    }
+    
+    res.json(studentDetails);
+  } catch (err) {
+    console.error('[Serverfout] Student details ophalen mislukt:', err);
+    res.status(500).json({ error: 'Fout bij ophalen student details', message: err.message });
   }
 });
 
