@@ -7,7 +7,7 @@ const path = require("path");
 // Opslaginstellingen profielfoto
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Zorg dat deze map bestaat
+    cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -24,7 +24,10 @@ router.get("/:email", async (req, res) => {
     if (rows.length === 0) return res.status(404).json({ error: "Student niet gevonden" });
 
     const student = rows[0];
-    delete student.wachtwoord; // Wachtwoord niet teruggeven
+    delete student.wachtwoord;
+    student.softskills = JSON.parse(student.softskills || '[]');
+    student.hardskills = JSON.parse(student.hardskills || '[]');
+
     res.json(student);
   } catch (err) {
     console.error("Fout bij ophalen profiel:", err);
@@ -33,17 +36,16 @@ router.get("/:email", async (req, res) => {
 });
 
 // GET profiel ophalen via ID
-router.get("/:id", async (req, res) => {
+router.get("/id/:id", async (req, res) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM Studenten WHERE id = ?", [req.params.id]);
-
+    const [rows] = await pool.query("SELECT * FROM Studenten WHERE student_id = ?", [req.params.id]);
     if (rows.length === 0) {
       return res.status(404).json({ error: "Profiel niet gevonden" });
     }
-
     const profiel = rows[0];
-    delete profiel.wachtwoord; // Verwijder gevoelige data
-
+    delete profiel.wachtwoord;
+    profiel.softskills = JSON.parse(profiel.softskills || '[]');
+    profiel.hardskills = JSON.parse(profiel.hardskills || '[]');
     res.json(profiel);
   } catch (error) {
     console.error("Database error:", error);
@@ -53,7 +55,33 @@ router.get("/:id", async (req, res) => {
 
 // POST profiel bijwerken + foto uploaden
 router.post("/", upload.single("profilePicture"), async (req, res) => {
-  const { naam, email, telefoon, aboutMe, github, linkedin, studie } = req.body;
+  // Log altijd dat de route wordt aangeroepen
+  console.log("PROFIEL POST ROUTE AANGEROEPEN");
+
+  const {
+    naam,
+    email,
+    telefoon,
+    aboutMe,
+    github,
+    linkedin,
+    studie,
+  } = req.body;
+
+  let { softskills, hardskills } = req.body;
+
+  // Altijd een geldige JSON-string opslaan
+  if (!softskills || softskills === "null" || softskills === "undefined" || softskills.trim() === "") {
+    softskills = "[]";
+  }
+  if (!hardskills || hardskills === "null" || hardskills === "undefined" || hardskills.trim() === "") {
+    hardskills = "[]";
+  }
+
+  // Log ontvangen skills
+  console.log("softskills ontvangen:", softskills);
+  console.log("hardskills ontvangen:", hardskills);
+
   const nieuweFotoUrl = req.file ? req.file.path : null;
 
   if (!email) {
@@ -62,17 +90,15 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
 
   try {
     const [rows] = await pool.query("SELECT * FROM Studenten WHERE email = ?", [email]);
-
     let finalFotoUrl = nieuweFotoUrl;
 
     if (rows.length === 0) {
-      // Nieuwe student: wachtwoord verplicht, hier tijdelijk default wachtwoord
-      const defaultPassword = "geheim123"; // Pas aan of behandel dit beter in registratieproces
-
+      const defaultPassword = "geheim123";
+      // INSERT
       await pool.query(
         `INSERT INTO Studenten
-          (naam, email, telefoon, aboutMe, foto_url, github_url, linkedin_url, studie, wachtwoord)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          (naam, email, telefoon, aboutMe, foto_url, github_url, linkedin_url, studie, wachtwoord, softskills, hardskills)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           naam || null,
           email,
@@ -83,17 +109,18 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
           linkedin || null,
           studie || null,
           defaultPassword,
+          softskills,
+          hardskills,
         ]
       );
     } else {
-      // Bestaande student, foto behouden indien niet meegegeven
       if (!finalFotoUrl) {
-        finalFotoUrl = rows[0].foto_url; // behoud huidige foto
+        finalFotoUrl = rows[0].foto_url;
       }
-
+      // UPDATE
       await pool.query(
         `UPDATE Studenten
-         SET naam = ?, telefoon = ?, aboutMe = ?, foto_url = ?, github_url = ?, linkedin_url = ?, studie = ?
+         SET naam = ?, telefoon = ?, aboutMe = ?, foto_url = ?, github_url = ?, linkedin_url = ?, studie = ?, softskills = ?, hardskills = ?
          WHERE email = ?`,
         [
           naam || null,
@@ -103,6 +130,8 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
           github || null,
           linkedin || null,
           studie || null,
+          softskills,
+          hardskills,
           email,
         ]
       );
@@ -111,6 +140,8 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
     const [updatedRows] = await pool.query("SELECT * FROM Studenten WHERE email = ?", [email]);
     const updatedStudent = updatedRows[0];
     delete updatedStudent.wachtwoord;
+    updatedStudent.softskills = JSON.parse(updatedStudent.softskills || '[]');
+    updatedStudent.hardskills = JSON.parse(updatedStudent.hardskills || '[]');
 
     res.json({ success: true, student: updatedStudent });
   } catch (err) {
@@ -120,3 +151,5 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
 });
 
 module.exports = router;
+
+
