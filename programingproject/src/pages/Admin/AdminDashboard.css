@@ -190,7 +190,7 @@
 }
 
 .dashboard-welcome-banner {
-  background: linear-gradient(135deg, #74b3ce, #508991);
+  background: linear-gradient(135deg, #5bb4b7 0%, #3a8a8d 100%);
   padding: 24px 40px; /* minder hoog, breedte blijft */
   border-radius: 16px;
   color: white;
