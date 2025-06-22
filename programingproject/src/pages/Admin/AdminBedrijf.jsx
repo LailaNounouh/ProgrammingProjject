@@ -7,66 +7,141 @@ function AdminBedrijf() {
   const [bedrijven, setBedrijven] = useState([]);
   const [filter, setFilter] = useState('');
   const [toonBewerken, setToonBewerken] = useState(false);
-  const [nieuweNaam, setNieuweNaam] = useState('');
+  const [bewerkFormulier, setBewerkFormulier] = useState({
+    bedrijf_id: '',
+    naam: '',
+    straat: '',
+    nummer: '',
+    postcode: '',
+    gemeente: '',
+    telefoonnummer: '',
+    email: '',
+    btw_nummer: '',
+    contactpersoon_facturatie: '',
+    email_facturatie: '',
+    po_nummer: '',
+    contactpersoon_beurs: '',
+    email_beurs: '',
+    website_of_linkedin: '',
+    logo_url: '',
+    staat_van_betaling: '',
+    standselectie: '',
+    opleidingsmatch: '',
+    beschikbare_tijdsloten: '',
+    speeddates: false,
+    aanbiedingen: '',
+    doelgroep_opleiding: '',
+    sector: '',
+    wachtwoord: ''
+  });
+
   const navigate = useNavigate();
 
+  const haalBedrijvenOp = async () => {
+    try {
+      const response = await fetch(`${baseUrl}/bedrijvenmodule`);
+      if (!response.ok) throw new Error('Netwerkfout');
+      const data = await response.json();
+      setBedrijven(data);
+    } catch (error) {
+      console.error('Fout bij ophalen bedrijven:', error);
+    }
+  };
+
   useEffect(() => {
-    fetch(`${baseUrl}/bedrijvenmodule`)
-      .then((res) => {
-        if (!res.ok) throw new Error('Netwerkfout');
-        return res.json();
-      })
-      .then((data) => {
-        const bedrijvenLijst = Array.isArray(data) ? data : data.bedrijven;
-        if (!bedrijvenLijst || !Array.isArray(bedrijvenLijst)) {
-          throw new Error("Ongeldig formaat van API-response");
-        }
-        setBedrijven(bedrijvenLijst);
-      })
-      .catch((err) => {
-        console.error('Fout bij ophalen bedrijven:', err.message);
-      });
+    haalBedrijvenOp();
   }, []);
 
-  const vernieuwBedrijven = () => {
-    fetch(`${baseUrl}/bedrijvenmodule`)
-      .then((res) => res.json())
-      .then((data) => {
-        const bedrijvenLijst = Array.isArray(data) ? data : data.bedrijven;
-        setBedrijven(bedrijvenLijst);
+  const handleFormulierVerzenden = async (e) => {
+    e.preventDefault();
+    const isNieuw = !bewerkFormulier.bedrijf_id;
+
+    const formData = new FormData();
+    
+    Object.keys(bewerkFormulier).forEach(key => {
+      if (key === 'speeddates') {
+        formData.append(key, bewerkFormulier[key] ? 1 : 0);
+      } else if (bewerkFormulier[key] !== null) {
+        formData.append(key, bewerkFormulier[key]);
+      }
+    });
+
+    try {
+      const response = await fetch(`${baseUrl}/bedrijvenmodule${isNieuw ? '' : `/${bewerkFormulier.bedrijf_id}`}`, {
+        method: isNieuw ? 'POST' : 'PUT',
+        body: formData
       });
+
+      if (!response.ok) {
+        const foutBericht = await response.text();
+        throw new Error(foutBericht);
+      }
+
+      await haalBedrijvenOp();
+      resetFormulier();
+    } catch (error) {
+      console.error('Fout:', error.message);
+      alert(error.message);
+    }
   };
 
-  const voegBedrijfToe = () => {
-    if (!nieuweNaam.trim()) return;
-    fetch(`${baseUrl}/bedrijvenmodule`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ naam: nieuweNaam })
-    })
-      .then(() => {
-        setNieuweNaam('');
-        vernieuwBedrijven();
-      })
-      .catch(console.error);
+  const verwijderBedrijf = async (id) => {
+    if (!window.confirm('Weet je zeker dat je dit bedrijf wilt verwijderen?')) return;
+
+    try {
+      const response = await fetch(`${baseUrl}/bedrijvenmodule/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        const foutBericht = await response.text();
+        throw new Error(foutBericht);
+      }
+      await haalBedrijvenOp();
+    } catch (error) {
+      console.error('Fout:', error.message);
+      alert(error.message);
+    }
   };
 
-  const verwijderBedrijf = (id) => {
-    fetch(`${baseUrl}/bedrijvenmodule/${id}`, {
-      method: 'DELETE'
-    })
-      .then(vernieuwBedrijven)
-      .catch(console.error);
+  const startBewerken = (bedrijf) => {
+    setBewerkFormulier({
+      ...bewerkFormulier,
+      ...bedrijf,
+      speeddates: !!bedrijf.speeddates
+    });
+    setToonBewerken(true);
   };
 
-  const wijzigBedrijf = (id, nieuweNaam) => {
-    fetch(`${baseUrl}/bedrijvenmodule/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ naam: nieuweNaam })
-    })
-      .then(vernieuwBedrijven)
-      .catch(console.error);
+  const resetFormulier = () => {
+    setBewerkFormulier({
+      bedrijf_id: '',
+      naam: '',
+      straat: '',
+      nummer: '',
+      postcode: '',
+      gemeente: '',
+      telefoonnummer: '',
+      email: '',
+      btw_nummer: '',
+      contactpersoon_facturatie: '',
+      email_facturatie: '',
+      po_nummer: '',
+      contactpersoon_beurs: '',
+      email_beurs: '',
+      website_of_linkedin: '',
+      logo_url: '',
+      staat_van_betaling: '',
+      standselectie: '',
+      opleidingsmatch: '',
+      beschikbare_tijdsloten: '',
+      speeddates: false,
+      aanbiedingen: '',
+      doelgroep_opleiding: '',
+      sector: '',
+      wachtwoord: ''
+    });
+    setToonBewerken(false);
   };
 
   return (
@@ -79,7 +154,7 @@ function AdminBedrijf() {
 
       <main className="admin-main">
         <section className="bedrijven-section">
-          <h2>Deelnemende bedrijven:</h2>
+          <h2>Deelnemende bedrijven</h2>
 
           <div className="bedrijven-header">
             <input
@@ -94,48 +169,78 @@ function AdminBedrijf() {
             </button>
           </div>
 
-          {!toonBewerken && (
+          {!toonBewerken ? (
             <div className="bedrijven-grid">
               {bedrijven
                 .filter((bedrijf) => bedrijf.naam?.toLowerCase().includes(filter.toLowerCase()))
-                .map((bedrijf, index) => (
-                  <div key={bedrijf.bedrijf_id || index} className="bedrijf-card">
+                .map((bedrijf) => (
+                  <div key={bedrijf.bedrijf_id} className="bedrijf-card">
                     <div className="bedrijf-image">
-                      <div className="bedrijf-logo-placeholder"></div>
+                      {bedrijf.logo_url ? (
+                        <img src={bedrijf.logo_url} alt={`${bedrijf.naam} logo`} />
+                      ) : (
+                        <div className="bedrijf-logo-placeholder"></div>
+                      )}
                     </div>
                     <strong>{bedrijf.naam}</strong>
-                    <p className="meer-info">• Meer info</p>
-                  </div>
-                ))}
-            </div>
-          )}
-
-          {toonBewerken && (
-            <div className="bewerken-container">
-              <div className="toevoegen-container">
-                <input
-                  type="text"
-                  placeholder="Nieuwe bedrijfsnaam"
-                  value={nieuweNaam}
-                  onChange={(e) => setNieuweNaam(e.target.value)}
-                />
-                <button className="toevoegen-button" onClick={voegBedrijfToe}>Toevoegen</button>
-              </div>
-
-              <ul className="bedrijven-lijst">
-                {bedrijven.map((bedrijf) => (
-                  <li key={bedrijf.bedrijf_id} className="bedrijf-item">
-                    <input
-                      defaultValue={bedrijf.naam}
-                      onBlur={(e) => wijzigBedrijf(bedrijf.bedrijf_id, e.target.value)}
-                    />
+                    <p>{bedrijf.sector}</p>
+                    <p>{bedrijf.gemeente}</p>
+                    <button onClick={() => startBewerken(bedrijf)}>Bewerken</button>
                     <button className="verwijder-button" onClick={() => verwijderBedrijf(bedrijf.bedrijf_id)}>
                       Verwijderen
                     </button>
-                  </li>
+                  </div>
                 ))}
-              </ul>
             </div>
+          ) : (
+            <form onSubmit={handleFormulierVerzenden}>
+              {Object.keys(bewerkFormulier).map(key => {
+                if (key === 'bedrijf_id') return null;
+                
+                if (key === 'speeddates') {
+                  return (
+                    <div key={key} className="form-group">
+                      <label>{key}:</label>
+                      <input
+                        type="checkbox"
+                        checked={bewerkFormulier[key]}
+                        onChange={(e) => setBewerkFormulier({
+                          ...bewerkFormulier,
+                          [key]: e.target.checked
+                        })}
+                      />
+                    </div>
+                  );
+                }
+
+                return (
+                  <div key={key} className="form-group">
+                    <label>{key}:</label>
+                    <input
+                      type={key.includes('email') ? 'email' : 
+                            key.includes('website') || key.includes('logo') ? 'url' : 
+                            key.includes('telefoon') ? 'tel' :
+                            key === 'wachtwoord' ? 'password' : 'text'}
+                      value={bewerkFormulier[key] || ''}
+                      onChange={(e) => setBewerkFormulier({
+                        ...bewerkFormulier,
+                        [key]: e.target.value
+                      })}
+                      required={key === 'naam'}
+                    />
+                  </div>
+                );
+              })}
+
+              <div className="form-buttons">
+                <button type="submit">
+                  {bewerkFormulier.bedrijf_id ? 'Wijzigingen Opslaan' : 'Bedrijf Toevoegen'}
+                </button>
+                <button type="button" onClick={resetFormulier}>
+                  Annuleren
+                </button>
+              </div>
+            </form>
           )}
         </section>
       </main>
