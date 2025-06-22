@@ -34,6 +34,8 @@ router.get("/:email", async (req, res) => {
     
     console.log("Opgehaalde softskills (raw):", student.softskills);
     console.log("Opgehaalde hardskills (raw):", student.hardskills);
+    console.log("Opgehaalde programmeertalen (raw):", student.programmeertalen);
+    console.log("Opgehaalde talen (raw):", student.talen);
     
     // Zorg ervoor dat de skills correct worden geparsed
     try {
@@ -50,8 +52,24 @@ router.get("/:email", async (req, res) => {
       student.hardskills = [];
     }
     
+    try {
+      student.codeertaal = JSON.parse(student.programmeertalen || '[]');
+    } catch (e) {
+      console.error("Fout bij parsen programmeertalen:", e);
+      student.codeertaal = [];
+    }
+    
+    try {
+      student.talen = JSON.parse(student.talen || '[]');
+    } catch (e) {
+      console.error("Fout bij parsen talen:", e);
+      student.talen = [];
+    }
+    
     console.log("Geparsede softskills:", student.softskills);
     console.log("Geparsede hardskills:", student.hardskills);
+    console.log("Geparsede codeertaal:", student.codeertaal);
+    console.log("Geparsede talen:", student.talen);
 
     res.json(student);
   } catch (err) {
@@ -69,8 +87,13 @@ router.get("/id/:id", async (req, res) => {
     }
     const profiel = rows[0];
     delete profiel.wachtwoord;
+    
+    // Parse alle skills
     profiel.softskills = JSON.parse(profiel.softskills || '[]');
     profiel.hardskills = JSON.parse(profiel.hardskills || '[]');
+    profiel.codeertaal = JSON.parse(profiel.programmeertalen || '[]');
+    profiel.talen = JSON.parse(profiel.talen || '[]');
+    
     res.json(profiel);
   } catch (error) {
     console.error("Database error:", error);
@@ -93,64 +116,75 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
       github,
       linkedin,
       studie,
+      jobstudent,
+      werkzoekend,
+      stage_gewenst
     } = req.body;
 
     // Haal de skills uit de request body
-    let { softskills, hardskills } = req.body;
+    let { softskills, hardskills, codeertaal, talen } = req.body;
     
     console.log("Ontvangen softskills (raw):", typeof softskills, softskills);
     console.log("Ontvangen hardskills (raw):", typeof hardskills, hardskills);
+    console.log("Ontvangen codeertaal (raw):", typeof codeertaal, codeertaal);
+    console.log("Ontvangen talen (raw):", typeof talen, talen);
     
-    // Zorg ervoor dat de skills correct worden verwerkt
-    try {
-      // Als softskills een string is, probeer het te parsen als JSON
-      if (typeof softskills === 'string') {
-        try {
-          // Probeer te parsen als JSON
-          const parsedSoftskills = JSON.parse(softskills);
-          console.log("Geparsed softskills:", parsedSoftskills);
-          // Als het succesvol is geparsed, zet het terug naar een string voor opslag
-          softskills = JSON.stringify(parsedSoftskills);
-          console.log("Softskills geparsed van string naar JSON en terug:", softskills);
-        } catch (e) {
-          console.error("Fout bij parsen softskills:", e);
-          // Als het geen geldige JSON is, maak er een lege array van
-          softskills = "[]";
-        }
-      } else if (Array.isArray(softskills)) {
-        // Als het al een array is, zet het om naar een JSON string
-        console.log("Softskills is een array, wordt omgezet naar JSON string:", JSON.stringify(softskills));
-        softskills = JSON.stringify(softskills);
-      } else if (softskills === undefined || softskills === null) {
-        // Als het undefined of null is, maak er een lege array van
-        softskills = "[]";
+    // Zorg ervoor dat de skills als JSON strings worden opgeslagen
+    if (typeof softskills === 'string') {
+      try {
+        // Controleer of het al een JSON string is
+        JSON.parse(softskills);
+      } catch (e) {
+        // Als het geen geldige JSON is, maak er dan een JSON string van
+        softskills = JSON.stringify([]);
       }
-      
-      // Hetzelfde voor hardskills
-      if (typeof hardskills === 'string') {
-        try {
-          const parsedHardskills = JSON.parse(hardskills);
-          console.log("Geparsed hardskills:", parsedHardskills);
-          hardskills = JSON.stringify(parsedHardskills);
-          console.log("Hardskills geparsed van string naar JSON en terug:", hardskills);
-        } catch (e) {
-          console.error("Fout bij parsen hardskills:", e);
-          hardskills = "[]";
-        }
-      } else if (Array.isArray(hardskills)) {
-        console.log("Hardskills is een array, wordt omgezet naar JSON string:", JSON.stringify(hardskills));
-        hardskills = JSON.stringify(hardskills);
-      } else if (hardskills === undefined || hardskills === null) {
-        hardskills = "[]";
+    } else if (Array.isArray(softskills)) {
+      softskills = JSON.stringify(softskills);
+    } else {
+      softskills = JSON.stringify([]);
+    }
+    
+    if (typeof hardskills === 'string') {
+      try {
+        JSON.parse(hardskills);
+      } catch (e) {
+        hardskills = JSON.stringify([]);
       }
-    } catch (e) {
-      console.error("Fout bij verwerken skills:", e);
-      softskills = "[]";
-      hardskills = "[]";
+    } else if (Array.isArray(hardskills)) {
+      hardskills = JSON.stringify(hardskills);
+    } else {
+      hardskills = JSON.stringify([]);
+    }
+    
+    // Verwerk codeertaal en talen op dezelfde manier
+    if (typeof codeertaal === 'string') {
+      try {
+        JSON.parse(codeertaal);
+      } catch (e) {
+        codeertaal = JSON.stringify([]);
+      }
+    } else if (Array.isArray(codeertaal)) {
+      codeertaal = JSON.stringify(codeertaal);
+    } else {
+      codeertaal = JSON.stringify([]);
+    }
+    
+    if (typeof talen === 'string') {
+      try {
+        JSON.parse(talen);
+      } catch (e) {
+        talen = JSON.stringify([]);
+      }
+    } else if (Array.isArray(talen)) {
+      talen = JSON.stringify(talen);
+    } else {
+      talen = JSON.stringify([]);
     }
     
     console.log("Verwerkte softskills voor opslag:", softskills);
     console.log("Verwerkte hardskills voor opslag:", hardskills);
+    console.log("Verwerkte codeertaal voor opslag:", codeertaal);
+    console.log("Verwerkte talen voor opslag:", talen);
 
     const nieuweFotoUrl = req.file ? req.file.path : null;
 
@@ -171,8 +205,9 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
       // INSERT
       await pool.query(
         `INSERT INTO Studenten
-          (naam, email, telefoon, aboutMe, foto_url, github_url, linkedin_url, studie, wachtwoord, softskills, hardskills)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          (naam, email, telefoon, aboutMe, foto_url, github_url, linkedin_url, studie, wachtwoord, 
+           softskills, hardskills, programmeertalen, talen, jobstudent, werkzoekend, stage_gewenst)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           naam || null,
           email,
@@ -185,6 +220,11 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
           defaultPassword,
           softskills,
           hardskills,
+          codeertaal, // Opslaan als programmeertalen in de database
+          talen,
+          jobstudent === 'true' || jobstudent === true ? 1 : 0,
+          werkzoekend === 'true' || werkzoekend === true ? 1 : 0,
+          stage_gewenst === 'true' || stage_gewenst === true ? 1 : 0
         ]
       );
       console.log("Nieuwe student aangemaakt");
@@ -198,6 +238,13 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
       console.log("Huidige waarden in database:");
       console.log("- softskills:", rows[0].softskills);
       console.log("- hardskills:", rows[0].hardskills);
+      console.log("- programmeertalen:", rows[0].programmeertalen);
+      console.log("- talen:", rows[0].talen);
+      
+      // Converteer boolean waarden naar 0/1 voor MySQL
+      const jobstudentValue = jobstudent === 'true' || jobstudent === true ? 1 : 0;
+      const werkzoekendValue = werkzoekend === 'true' || werkzoekend === true ? 1 : 0;
+      const stageGewenstValue = stage_gewenst === 'true' || stage_gewenst === true ? 1 : 0;
       
       // Log de query parameters
       console.log("UPDATE parameters:", [
@@ -210,13 +257,20 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
         studie || rows[0].studie || null,
         softskills,
         hardskills,
+        codeertaal,
+        talen,
+        jobstudentValue,
+        werkzoekendValue,
+        stageGewenstValue,
         email,
       ]);
       
       // UPDATE
       const updateResult = await pool.query(
         `UPDATE Studenten
-         SET naam = ?, telefoon = ?, aboutMe = ?, foto_url = ?, github_url = ?, linkedin_url = ?, studie = ?, softskills = ?, hardskills = ?
+         SET naam = ?, telefoon = ?, aboutMe = ?, foto_url = ?, github_url = ?, linkedin_url = ?, 
+             studie = ?, softskills = ?, hardskills = ?, programmeertalen = ?, talen = ?,
+             jobstudent = ?, werkzoekend = ?, stage_gewenst = ?
          WHERE email = ?`,
         [
           naam || rows[0].naam || null,
@@ -228,16 +282,26 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
           studie || rows[0].studie || null,
           softskills,
           hardskills,
+          codeertaal,
+          talen,
+          jobstudentValue,
+          werkzoekendValue,
+          stageGewenstValue,
           email,
         ]
       );
       console.log("Student bijgewerkt, update result:", updateResult);
       
       // Controleer direct na de update wat er in de database staat
-      const [checkRows] = await pool.query("SELECT softskills, hardskills FROM Studenten WHERE email = ?", [email]);
+      const [checkRows] = await pool.query(
+        "SELECT softskills, hardskills, programmeertalen, talen FROM Studenten WHERE email = ?", 
+        [email]
+      );
       console.log("Direct na update, waarden in database:");
       console.log("- softskills:", checkRows[0].softskills);
       console.log("- hardskills:", checkRows[0].hardskills);
+      console.log("- programmeertalen:", checkRows[0].programmeertalen);
+      console.log("- talen:", checkRows[0].talen);
     }
 
     console.log("Ophalen bijgewerkte student gegevens");
@@ -247,19 +311,27 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
     
     console.log("Opgeslagen softskills:", updatedStudent.softskills);
     console.log("Opgeslagen hardskills:", updatedStudent.hardskills);
+    console.log("Opgeslagen programmeertalen:", updatedStudent.programmeertalen);
+    console.log("Opgeslagen talen:", updatedStudent.talen);
     
     // Parse de skills voor de response
     try {
       updatedStudent.softskills = JSON.parse(updatedStudent.softskills || '[]');
       updatedStudent.hardskills = JSON.parse(updatedStudent.hardskills || '[]');
+      updatedStudent.codeertaal = JSON.parse(updatedStudent.programmeertalen || '[]');
+      updatedStudent.talen = JSON.parse(updatedStudent.talen || '[]');
     } catch (e) {
       console.error("Fout bij parsen van opgeslagen skills:", e);
       updatedStudent.softskills = [];
       updatedStudent.hardskills = [];
+      updatedStudent.codeertaal = [];
+      updatedStudent.talen = [];
     }
     
     console.log("Geparsede softskills voor response:", updatedStudent.softskills);
     console.log("Geparsede hardskills voor response:", updatedStudent.hardskills);
+    console.log("Geparsede codeertaal voor response:", updatedStudent.codeertaal);
+    console.log("Geparsede talen voor response:", updatedStudent.talen);
 
     res.json({ success: true, student: updatedStudent });
   } catch (err) {
@@ -287,15 +359,21 @@ router.get("/debug/:email", async (req, res) => {
     // Log de ruwe waarden
     console.log("Ruwe softskills in database:", student.softskills);
     console.log("Ruwe hardskills in database:", student.hardskills);
+    console.log("Ruwe programmeertalen in database:", student.programmeertalen);
+    console.log("Ruwe talen in database:", student.talen);
     
     // Probeer de skills te parsen
     try {
       student.parsedSoftskills = JSON.parse(student.softskills || '[]');
       student.parsedHardskills = JSON.parse(student.hardskills || '[]');
+      student.parsedCodeertaal = JSON.parse(student.programmeertalen || '[]');
+      student.parsedTalen = JSON.parse(student.talen || '[]');
     } catch (e) {
       console.error("Fout bij parsen skills:", e);
       student.parsedSoftskills = [];
       student.parsedHardskills = [];
+      student.parsedCodeertaal = [];
+      student.parsedTalen = [];
     }
     
     // Stuur de ruwe en geparsede waarden terug
@@ -303,8 +381,12 @@ router.get("/debug/:email", async (req, res) => {
       student,
       rawSoftskills: student.softskills,
       rawHardskills: student.hardskills,
+      rawProgrammeertalen: student.programmeertalen,
+      rawTalen: student.talen,
       parsedSoftskills: student.parsedSoftskills,
-      parsedHardskills: student.parsedHardskills
+      parsedHardskills: student.parsedHardskills,
+      parsedCodeertaal: student.parsedCodeertaal,
+      parsedTalen: student.parsedTalen
     });
   } catch (err) {
     console.error("Fout bij debug route:", err);

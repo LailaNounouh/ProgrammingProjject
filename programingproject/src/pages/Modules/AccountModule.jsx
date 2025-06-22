@@ -6,6 +6,8 @@ import "./AccountModule.css";
 import { FaEdit, FaEye, FaSave, FaTimes } from "react-icons/fa";
 import SoftSkillsSelector from "../../components/dropdowns/SoftSkillsSelector";
 import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
+import CodeerTaalSelector from "../../components/dropdowns/CodeerTaalSelector";
+import TaalSelector from "../../components/dropdowns/TaalSelector";
 import axios from "axios";
 import { baseUrl as API_URL } from "../../config";
 
@@ -30,6 +32,8 @@ export default function AccountModule() {
   // Initialiseer met lege arrays om undefined errors te voorkomen
   const [softskills, setSoftskills] = useState([]);
   const [hardskills, setHardskills] = useState([]);
+  const [codeertalen, setCodeertalen] = useState([]);
+  const [talen, setTalen] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -122,6 +126,36 @@ export default function AccountModule() {
         console.warn("Hardskills is geen array of string:", profiel.hardskills);
         setHardskills([]);
       }
+      
+      // Laad codeertalen
+      if (Array.isArray(profiel.codeertaal)) {
+        setCodeertalen(profiel.codeertaal);
+      } else if (typeof profiel.codeertaal === 'string') {
+        try {
+          const parsedTalen = JSON.parse(profiel.codeertaal || '[]');
+          setCodeertalen(parsedTalen);
+        } catch (e) {
+          console.error("Error parsing codeertaal string:", e);
+          setCodeertalen([]);
+        }
+      } else {
+        setCodeertalen([]);
+      }
+      
+      // Laad talen
+      if (Array.isArray(profiel.talen)) {
+        setTalen(profiel.talen);
+      } else if (typeof profiel.talen === 'string') {
+        try {
+          const parsedTalen = JSON.parse(profiel.talen || '[]');
+          setTalen(parsedTalen);
+        } catch (e) {
+          console.error("Error parsing talen string:", e);
+          setTalen([]);
+        }
+      } else {
+        setTalen([]);
+      }
     } else if (gebruiker) {
       setUserData({
         email: gebruiker.email || "",
@@ -177,6 +211,8 @@ export default function AccountModule() {
       console.log("Begin opslaan wijzigingen");
       console.log("Huidige softskills:", softskills);
       console.log("Huidige hardskills:", hardskills);
+      console.log("Huidige codeertalen:", codeertalen);
+      console.log("Huidige talen:", talen);
       
       // Maak een kopie van userData om mee te werken
       let profielData = { ...userData };
@@ -184,6 +220,8 @@ export default function AccountModule() {
       // Voeg de skills toe aan de profielData
       profielData.softskills = Array.isArray(softskills) ? softskills : [];
       profielData.hardskills = Array.isArray(hardskills) ? hardskills : [];
+      profielData.codeertaal = Array.isArray(codeertalen) ? codeertalen : [];
+      profielData.talen = Array.isArray(talen) ? talen : [];
       
       if (userData.foto_url && typeof userData.foto_url !== "string") {
         console.log("Uploaden met foto");
@@ -203,6 +241,8 @@ export default function AccountModule() {
         // Voeg de skills toe als JSON strings
         formData.append("softskills", JSON.stringify(softskills));
         formData.append("hardskills", JSON.stringify(hardskills));
+        formData.append("codeertaal", JSON.stringify(codeertalen));
+        formData.append("talen", JSON.stringify(talen));
         
         // Debug log van alle formdata
         for (let [key, val] of formData.entries()) {
@@ -222,6 +262,8 @@ export default function AccountModule() {
         // Zorg ervoor dat de skills als arrays worden verzonden
         profielData.softskills = Array.isArray(softskills) ? softskills : [];
         profielData.hardskills = Array.isArray(hardskills) ? hardskills : [];
+        profielData.codeertaal = Array.isArray(codeertalen) ? codeertalen : [];
+        profielData.talen = Array.isArray(talen) ? talen : [];
         
         console.log("📤 JSON profielData wordt verzonden:", profielData);
         const result = await contextUpdateProfiel(profielData, false);
@@ -290,6 +332,12 @@ export default function AccountModule() {
                 onClick={() => setActiveTab('skills')}
               >
                 Vaardigheden
+              </button>
+              <button 
+                className={`tab-button ${activeTab === 'talen' ? 'active' : ''}`}
+                onClick={() => setActiveTab('talen')}
+              >
+                Talen
               </button>
               <button 
                 className={`tab-button ${activeTab === 'voorkeuren' ? 'active' : ''}`}
@@ -420,6 +468,17 @@ export default function AccountModule() {
                 </div>
               )}
               
+              {/* Talen tab */}
+              {activeTab === 'talen' && (
+                <div className="tab-content">
+                  <h3>Talen & Programmeren</h3>
+                  <div className="skills-container">
+                    <CodeerTaalSelector value={codeertalen} onChange={setCodeertalen} readOnly={false} />
+                    <TaalSelector value={talen} onChange={setTalen} readOnly={false} />
+                  </div>
+                </div>
+              )}
+              
               {/* Voorkeuren tab */}
               {activeTab === 'voorkeuren' && (
                 <div className="tab-content">
@@ -505,11 +564,27 @@ export default function AccountModule() {
               <div className="info-grid">
                 <div className="info-item">
                   <label>LinkedIn</label>
-                  <p>{userData.linkedin_url || "Niet ingevuld"}</p>
+                  <p>
+                    {userData.linkedin_url ? (
+                      <a href={userData.linkedin_url} target="_blank" rel="noopener noreferrer">
+                        {userData.linkedin_url}
+                      </a>
+                    ) : (
+                      "Niet ingevuld"
+                    )}
+                  </p>
                 </div>
                 <div className="info-item">
                   <label>GitHub</label>
-                  <p>{userData.github_url || "Niet ingevuld"}</p>
+                  <p>
+                    {userData.github_url ? (
+                      <a href={userData.github_url} target="_blank" rel="noopener noreferrer">
+                        {userData.github_url}
+                      </a>
+                    ) : (
+                      "Niet ingevuld"
+                    )}
+                  </p>
                 </div>
               </div>
             </section>
@@ -564,6 +639,37 @@ export default function AccountModule() {
                     </ul>
                   ) : (
                     <p>Geen hard skills toegevoegd</p>
+                  )}
+                </div>
+              </div>
+            </section>
+            
+            <section className="account-section">
+              <h3>Talen & Programmeren</h3>
+              <div className="skills-overview">
+                <div className="skills-container">
+                  <h4>Programmeertalen</h4>
+                  {Array.isArray(codeertalen) && codeertalen.length > 0 ? (
+                    <ul className="skills-list">
+                      {codeertalen.map((taal, index) => (
+                        <li key={`code-${index}`} className="skill-tag">{taal}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>Geen programmeertalen toegevoegd</p>
+                  )}
+                </div>
+                
+                <div className="skills-container">
+                  <h4>Talen</h4>
+                  {Array.isArray(talen) && talen.length > 0 ? (
+                    <ul className="skills-list">
+                      {talen.map((taal, index) => (
+                        <li key={`taal-${index}`} className="skill-tag">{taal}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>Geen talen toegevoegd</p>
                   )}
                 </div>
               </div>

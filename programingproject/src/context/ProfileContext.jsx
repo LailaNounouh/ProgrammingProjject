@@ -48,14 +48,17 @@ export const ProfileProvider = ({ children }) => {
           // Zorg ervoor dat softskills en hardskills altijd arrays zijn
           softskills: Array.isArray(databaseProfile.softskills) 
             ? databaseProfile.softskills 
-            : (typeof databaseProfile.softskills === 'string' 
-                ? JSON.parse(databaseProfile.softskills || '[]') 
-                : []),
+            : [],
           hardskills: Array.isArray(databaseProfile.hardskills) 
             ? databaseProfile.hardskills 
-            : (typeof databaseProfile.hardskills === 'string' 
-                ? JSON.parse(databaseProfile.hardskills || '[]') 
-                : []),
+            : [],
+          // Voeg codeertaal en talen toe
+          codeertaal: Array.isArray(databaseProfile.codeertaal) 
+            ? databaseProfile.codeertaal 
+            : [],
+          talen: Array.isArray(databaseProfile.talen) 
+            ? databaseProfile.talen 
+            : []
         };
 
         console.log("Gemapped profiel:", mappedProfile);
