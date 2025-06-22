@@ -7,6 +7,8 @@ function AdminGebruikers() {
   const navigate = useNavigate();
   const [gebruikers, setGebruikers] = useState([]);
   const [bewerken, setBewerken] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     fetch(`${baseUrl}/users`)
@@ -30,21 +32,42 @@ function AdminGebruikers() {
     );
   };
 
-  const opslaanGebruiker = (gebruiker) => {
-    fetch(`${baseUrl}/users/${gebruiker.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        naam: gebruiker.naam,
-        email: gebruiker.email,
-        rol: gebruiker.rol
-      })
-    })
-      .then(res => {
-        if (!res.ok) throw new Error('Fout bij opslaan gebruiker');
-        console.log('Gebruiker opgeslagen:', gebruiker.id);
-      })
-      .catch(err => console.error(err));
+  const opslaanGebruiker = async (gebruiker) => {
+    setLoading(true);
+    setMessage('');
+
+    try {
+      console.log('Saving user:', gebruiker);
+
+      const response = await fetch(`${baseUrl}/users/${gebruiker.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          naam: gebruiker.naam,
+          email: gebruiker.email,
+          rol: gebruiker.rol
+        })
+      });
+
+      const data = await response.json();
+      console.log('Response:', data);
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Fout bij opslaan gebruiker');
+      }
+
+      setMessage(`✅ Gebruiker ${gebruiker.naam} succesvol opgeslagen!`);
+      console.log('Gebruiker opgeslagen:', gebruiker.id);
+
+      // Clear message after 3 seconds
+      setTimeout(() => setMessage(''), 3000);
+
+    } catch (err) {
+      console.error('Error saving user:', err);
+      setMessage(`❌ Fout bij opslaan: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -58,7 +81,14 @@ function AdminGebruikers() {
       <main className="admin-main">
         <section className="gebruikers-section">
           <h2>Gebruikers beheren</h2>
-          <button className="bewerken-button" onClick={() => setBewerken(!bewerken)}>
+
+          {message && (
+            <div className={`message ${message.includes('✅') ? 'success' : 'error'}`}>
+              {message}
+            </div>
+          )}
+
+          <button className="bewerken-button" onClick={() => setBewerken(!bewerken)} disabled={loading}>
             {bewerken ? 'Sluiten' : 'Bewerken'}
           </button>
 
@@ -108,7 +138,13 @@ function AdminGebruikers() {
                   </td>
                   {bewerken && (
                     <td>
-                      <button onClick={() => opslaanGebruiker(user)}>Opslaan</button>
+                      <button
+                        onClick={() => opslaanGebruiker(user)}
+                        disabled={loading}
+                        className="save-button"
+                      >
+                        {loading ? 'Bezig...' : 'Opslaan'}
+                      </button>
                     </td>
                   )}
                 </tr>
