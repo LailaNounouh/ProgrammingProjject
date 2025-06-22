@@ -23,7 +23,11 @@ const Header = () => {
           <img src="/afbeelding/logo-ehb.png" alt="Logo" className="logo" />
         </Link>
 
-        <button className="hamburger" onClick={() => setShowMobileMenu(!showMobileMenu)}>
+        <button 
+          className="hamburger" 
+          onClick={() => setShowMobileMenu(!showMobileMenu)}
+          aria-label="Menu"
+        >
           ☰
         </button>
 
@@ -35,7 +39,10 @@ const Header = () => {
             <li><Link to="/bedrijf/standen">Standenbeheer</Link></li>
             <li><Link to="/bedrijf/Settingsbedrijf">Bedrijfsinstellingen</Link></li>
             <li>
-              <button onClick={() => setShowLogoutPopup(true)} className="logout-link">
+              <button 
+                onClick={() => setShowLogoutPopup(true)} 
+                className="logout-link"
+              >
                 Uitloggen
               </button>
             </li>
@@ -46,9 +53,22 @@ const Header = () => {
       {showLogoutPopup && (
         <div className="logout-popup-overlay">
           <div className="logout-popup">
+            <button 
+              onClick={() => setShowLogoutPopup(false)} 
+              className="close-button"
+              aria-label="Sluiten"
+            >
+              &times;
+            </button>
             <p>Weet je zeker dat je wilt uitloggen?</p>
-            <button onClick={uitloggen} className="confirm-button">Bevestig uitloggen</button>
-            <button onClick={() => setShowLogoutPopup(false)} className="cancel-button">Annuleer</button>
+            <div className="button-container">
+              <button 
+                onClick={uitloggen} 
+                className="confirm-button"
+              >
+                Bevestig uitloggen
+              </button>
+            </div>
           </div>
         </div>
       )}
