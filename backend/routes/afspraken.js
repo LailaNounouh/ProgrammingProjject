@@ -278,21 +278,39 @@ router.put('/:id/status', async (req, res) => {
   }
 
   try {
-    const [result] = await pool.execute(
-      'UPDATE Afspraken SET status = ? WHERE afspraak_id = ?',
-      [status, afspraakId]
-    );
+    // Als de status 'geweigerd' is, verwijder de afspraak
+    if (status === 'geweigerd') {
+      const [result] = await pool.execute(
+        'DELETE FROM Afspraken WHERE afspraak_id = ?',
+        [afspraakId]
+      );
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: 'Afspraak niet gevonden' });
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Afspraak niet gevonden' });
+      }
+
+      return res.json({
+        message: 'Afspraak geweigerd en verwijderd',
+        afspraak_id: afspraakId,
+        status: 'geweigerd'
+      });
+    } else {
+      // Anders update de status
+      const [result] = await pool.execute(
+        'UPDATE Afspraken SET status = ? WHERE afspraak_id = ?',
+        [status, afspraakId]
+      );
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Afspraak niet gevonden' });
+      }
+
+      res.json({
+        message: 'Afspraak status succesvol bijgewerkt',
+        afspraak_id: afspraakId,
+        status: status
+      });
     }
-
-    res.json({
-      message: 'Afspraak status succesvol bijgewerkt',
-      afspraak_id: afspraakId,
-      status: status
-    });
-
   } catch (error) {
     console.error('Fout bij bijwerken afspraak status:', error);
     res.status(500).json({ error: 'Interne serverfout' });

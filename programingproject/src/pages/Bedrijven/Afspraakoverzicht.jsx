@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiCalendar, FiClock, FiUser, FiMail, FiMapPin, FiCheck, FiX, FiGithub, FiLinkedin, FiRefreshCw, FiCode, FiGlobe, FiTool, FiHeart } from 'react-icons/fi';
+import { FiCalendar, FiClock, FiUser, FiMail, FiMapPin, FiCheck, FiX, FiGithub, FiLinkedin, FiRefreshCw, FiCode, FiGlobe, FiTool, FiHeart, FiTrash } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthProvider';
 import { baseUrl } from '../../config';
 import './Afspraakoverzicht.css';
@@ -97,6 +97,32 @@ const Afspraakoverzicht = () => {
     } catch (err) {
       console.error('Fout bij weigeren afspraak:', err);
       setError('Er is een fout opgetreden bij het weigeren van de afspraak.');
+    }
+  };
+
+  const handleDeleteAfspraak = async (afspraakId) => {
+    if (!confirm('Weet je zeker dat je deze afspraak wilt verwijderen?')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`${baseUrl}/afspraken/${afspraakId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+        },
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      fetchAfspraken(); // Refresh de lijst
+    } catch (err) {
+      console.error('Fout bij verwijderen afspraak:', err);
+      setError('Er is een fout opgetreden bij het verwijderen van de afspraak.');
     }
   };
 
@@ -438,22 +464,30 @@ const Afspraakoverzicht = () => {
                   </button>
                 </div>
 
-                {afspraak.status === 'in_afwachting' && (
-                  <div className="actions">
-                    <button
-                      onClick={() => handleAcceptAfspraak(afspraak.afspraak_id)}
-                      className="btn accept-btn"
-                    >
-                      <FiCheck /> Goedkeuren
-                    </button>
-                    <button
-                      onClick={() => handleRejectAfspraak(afspraak.afspraak_id)}
-                      className="btn reject-btn"
-                    >
-                      <FiX /> Weigeren
-                    </button>
-                  </div>
-                )}
+                <div className="actions">
+                  {afspraak.status === 'in_afwachting' && (
+                    <>
+                      <button
+                        onClick={() => handleAcceptAfspraak(afspraak.afspraak_id)}
+                        className="btn accept-btn"
+                      >
+                        <FiCheck /> Goedkeuren
+                      </button>
+                      <button
+                        onClick={() => handleRejectAfspraak(afspraak.afspraak_id)}
+                        className="btn reject-btn"
+                      >
+                        <FiX /> Weigeren
+                      </button>
+                    </>
+                  )}
+                  <button
+                    onClick={() => handleDeleteAfspraak(afspraak.afspraak_id)}
+                    className="btn delete-btn"
+                  >
+                    <FiTrash /> Verwijderen
+                  </button>
+                </div>
               </div>
             </div>
           ))}

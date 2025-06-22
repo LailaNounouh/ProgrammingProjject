@@ -102,7 +102,34 @@ function DashboardContent({
               </div>
               {card.description && <p className="card-description">{card.description}</p>}
               {card.showAfspraken && (
-                <p className="card-description">Bekijk geplande afspraken</p>
+                <>
+                  {card.afspraken && card.afspraken.length > 0 ? (
+                    <div className="mini-afspraken-lijst">
+                      {card.afspraken.slice(0, 3).map((afspraak, idx) => (
+                        <div key={`mini-afspraak-${afspraak.afspraak_id || idx}`} className="mini-afspraak">
+                          <div className="mini-afspraak-student">
+                            {afspraak.studentnaam || afspraak.student_naam || "Student"}
+                          </div>
+                          <div className="mini-afspraak-details">
+                            <span className="mini-afspraak-datum">
+                              <FaCalendarAlt /> {new Date(afspraak.datum).toLocaleDateString('nl-NL')}
+                            </span>
+                            <span className="mini-afspraak-tijd">
+                              <FaClock /> {afspraak.tijdslot}
+                            </span>
+                            <span className={`mini-afspraak-status ${afspraak.status}`}>
+                              {afspraak.status === 'goedgekeurd' && '✅'}
+                              {afspraak.status === 'geweigerd' && '❌'}
+                              {afspraak.status === 'in_afwachting' && '⏳'}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="card-description">Geen geplande afspraken</p>
+                  )}
+                </>
               )}
               <div className="card-footer">
                 <span>Direct naar {card.title.toLowerCase()}</span>
@@ -477,7 +504,8 @@ try {
       icon: <FaCalendarAlt className="icon-fix" />,
       onClick: () => navigate('/bedrijf/afspraken'),
       iconClass: "bg-green",
-      showAfspraken: true
+      showAfspraken: true,
+      afspraken: afspraken
     },
     {
       title: "Beschikbaarheid van standen",
