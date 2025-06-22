@@ -4,8 +4,8 @@
   padding: 20px 40px;
   font-family: "Segoe UI", sans-serif;
   width: 100%;
-  max-width: 1400px;
   margin: 0 auto;
+  max-width: none;
 }
 
 .admin-dashboard-header {
@@ -58,7 +58,7 @@
 
 .dashboard-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
 }
 
