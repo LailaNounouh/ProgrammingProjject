@@ -627,10 +627,15 @@
   font-size: 22px;
   margin-bottom: 20px;
   font-weight: 700;
+  text-align: center;
 }
 
 .form-group {
   margin-bottom: 18px;
+  width: 100%;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .form-group label {
@@ -639,6 +644,7 @@
   font-weight: 600;
   color: #4a5568;
   font-size: 14px;
+  text-align: left;
 }
 
 .form-group input, 
@@ -650,6 +656,7 @@
   font-family: inherit;
   font-size: 15px;
   transition: all 0.2s;
+  box-sizing: border-box;
 }
 
 .form-group input:focus, 
@@ -666,8 +673,8 @@
 
 .modal-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+  justify-content: center;
+  gap: 20px;
   margin-top: 25px;
 }
 
@@ -678,6 +685,7 @@
   font-weight: 600;
   font-size: 15px;
   transition: all 0.2s;
+  min-width: 120px;
 }
 
 .cancel-btn {
