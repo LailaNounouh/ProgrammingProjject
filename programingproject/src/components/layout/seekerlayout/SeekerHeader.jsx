@@ -8,8 +8,8 @@ const SeekerHeader = () => {
     <header className="header">
       <Link to="/" className="logo-link">
             <img
-              src={`${import.meta.env.BASE_URL}afbeelding/erasmuslogo.png`}
-              alt="Erasmus logo"
+              src="/afbeelding/logo-ehb.png"
+              alt="EHB Logo"
               className="logo"
             />
           </Link>

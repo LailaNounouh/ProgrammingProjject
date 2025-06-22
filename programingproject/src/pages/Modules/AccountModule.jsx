@@ -215,7 +215,6 @@ export default function AccountModule() {
       profielData.softskills = Array.isArray(softskills) ? softskills : [];
       profielData.hardskills = Array.isArray(hardskills) ? hardskills : [];
       profielData.codeertalen = Array.isArray(codeertalen) ? codeertalen : [];
-      profielData.programmeertalen = Array.isArray(codeertalen) ? codeertalen : [];
       profielData.talen = Array.isArray(talen) ? talen : [];
       
       if (userData.foto_url && typeof userData.foto_url !== "string") {
@@ -237,12 +236,13 @@ export default function AccountModule() {
         formData.append("softskills", JSON.stringify(softskills));
         formData.append("hardskills", JSON.stringify(hardskills));
         formData.append("codeertalen", JSON.stringify(codeertalen));
-        formData.append("programmeertalen", JSON.stringify(codeertalen));
         formData.append("talen", JSON.stringify(talen));
         
         // Debug log van codeertalen en talen
         console.log("AccountModule - Codeertalen voor verzending:", codeertalen);
+        console.log("AccountModule - Codeertalen JSON:", JSON.stringify(codeertalen));
         console.log("AccountModule - Talen voor verzending:", talen);
+        console.log("AccountModule - Talen JSON:", JSON.stringify(talen));
         
         const result = await contextUpdateProfiel(formData, true);
         if (!result.success) {
@@ -261,7 +261,6 @@ export default function AccountModule() {
         profielData.softskills = Array.isArray(softskills) ? softskills : [];
         profielData.hardskills = Array.isArray(hardskills) ? hardskills : [];
         profielData.codeertalen = Array.isArray(codeertalen) ? codeertalen : [];
-        profielData.programmeertalen = Array.isArray(codeertalen) ? codeertalen : [];
         profielData.talen = Array.isArray(talen) ? talen : [];
         
         // Zorg ervoor dat boolean waarden correct worden verzonden
