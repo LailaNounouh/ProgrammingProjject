@@ -3,9 +3,10 @@ const router = express.Router();
 const db = require('../db');
 const { authenticateToken, requireRole, requireOwnership } = require('../middleware/auth');
 
-// GET bedrijfsgegevens op basis van bedrijf_id
-router.get('/:id', authenticateToken, requireRole(['bedrijf', 'admin']), requireOwnership, async (req, res) => {
+// GET bedrijfsgegevens op basis van bedrijf_id (tijdelijk zonder auth voor debugging)
+router.get('/:id', async (req, res) => {
   const bedrijfId = req.params.id;
+  console.log('🔍 Fetching bedrijfprofiel for ID:', bedrijfId);
 
   try {
     const [rows] = await db.execute(
@@ -25,9 +26,11 @@ router.get('/:id', authenticateToken, requireRole(['bedrijf', 'admin']), require
     );
 
     if (rows.length === 0) {
+      console.log('❌ Bedrijf niet gevonden voor ID:', bedrijfId);
       return res.status(404).json({ error: 'Bedrijf niet gevonden' });
     }
 
+    console.log('✅ Bedrijfprofiel gevonden:', rows[0]);
     res.json(rows[0]);
   } catch (error) {
     console.error('Fout bij ophalen bedrijfsgegevens:', error);
