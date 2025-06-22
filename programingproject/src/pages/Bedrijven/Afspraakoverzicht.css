@@ -22,7 +22,7 @@
 
 /* Clean Header */
 .afspraken-header {
-   display: flex;
+  display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
@@ -35,6 +35,7 @@
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 0.5rem;
+
 }
 
 .subtitle {
@@ -45,21 +46,20 @@
 }
 
 .refresh-button {
-  color: #00aeb3;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--primary);
+  background:#00aeb3 ;
   color: var(--white);
   border: none;
-  padding: 0.85rem 1.5rem; 
+  padding: 0.85rem 1.5rem;
   border-radius: 6px;
-  font-size: 1rem; 
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-left: auto; 
-  order: 2; 
+  margin-left: auto;
+  order: 2;
 }
 
 .refresh-button:hover {
@@ -73,22 +73,23 @@
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
 }
-/* NIEUW - Modern en professioneel */
+
 .afspraak-card {
-  background: var(--white);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border: 1px solid var(--border);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
-  height: 100%;
-}
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background: white;
+  min-height: 320px; /* voeg wat hoogte toe als nodig */
+  overflow: hidden;}
+
 .afspraak-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
+
 .card-header {
   padding: 1.5rem;
   border-bottom: 1px solid var(--border);
@@ -97,6 +98,7 @@
   align-items: flex-start;
   background-color: #f8fafc;
 }
+
 .student-info h3 {
   font-size: 1.25rem;
   font-weight: 600;
@@ -106,9 +108,11 @@
   align-items: center;
   gap: 0.5rem;
 }
+
 .student-info h3 svg {
   color: #00aeb3;
 }
+
 .specialization {
   font-size: 0.85rem;
   color: var(--text-secondary);
@@ -118,10 +122,12 @@
   display: inline-block;
   margin-top: 0.5rem;
 }
+
 .card-body {
   padding: 1.5rem;
   flex-grow: 1;
 }
+
 .card-body p {
   display: flex;
   align-items: center;
@@ -130,10 +136,12 @@
   font-size: 0.95rem;
   color: var(--text-primary);
 }
+
 .card-body svg {
   color: #00aeb3;
   min-width: 20px;
 }
+
 .status-badge {
   font-size: 0.8rem;
   font-weight: 500;
@@ -143,11 +151,13 @@
   align-items: center;
   gap: 0.3rem;
 }
+
 .social-links {
   display: flex;
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
+
 .social-link {
   font-size: 0.9rem;
   color: var(--text-secondary);
@@ -159,52 +169,19 @@
   border-radius: 6px;
   transition: all 0.2s ease;
 }
+
 .social-link:hover {
   background: #f8fafc;
   color: var(--primary);
 }
+
 .social-link.github:hover {
   color: #333;
 }
+
 .social-link.linkedin:hover {
   color: #0a66c2;
 }
-.actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: auto;
-}
-.btn {
-  flex: 1;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-.accept-btn {
-  background: var(--success);
-  color: white;
-}
-.accept-btn:hover {
-  background: #047857;
-  transform: translateY(-1px);
-}
-.reject-btn {
-  background: var(--error);
-  color: white;
-}
-.reject-btn:hover {
-  background: #b91c1c;
-  transform: translateY(-1px);
-}
-
 
 .status-badge.in_afwachting {
   background: #fffbeb;
@@ -221,8 +198,6 @@
   color: #b91c1c;
 }
 
-
-
 .detail-row {
   display: flex;
   align-items: center;
@@ -237,35 +212,63 @@
   width: 16px;
 }
 
-/* Subtle Footer */
+
 .card-footer {
-  padding: 1rem 1.5rem;
-  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
   background: var(--background);
+    gap: 0.75rem;
+    margin-top: 1rem;
 }
 
-
-
-.social-link:hover {
-  color: var(--primary);
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
-
-
-
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 0.95rem;
+}
+.actions .btn {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+}
 
 .accept-btn {
-  background: var(--success);
+  background-color: #10b981;
   color: white;
+}
+
+.accept-btn:hover {
+  background-color: #059669;
 }
 
 .reject-btn {
-  background: var(--error);
+  background-color: #ef4444;
   color: white;
 }
 
-.btn:hover {
-  opacity: 0.9;
+.reject-btn:hover {
+  background-color: #dc2626;
 }
 
 /* Responsive */
@@ -273,22 +276,23 @@
   .afspraken-grid {
     grid-template-columns: 1fr;
   }
-  
-   .afspraken-header {
+
+  .afspraken-header {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .refresh-button {
     margin-left: 0;
     width: 100%;
     order: 3;
   }
-  
+
   .header-content {
     order: 1;
     width: 100%;
   }
+
   .actions {
     flex-direction: column;
   }
