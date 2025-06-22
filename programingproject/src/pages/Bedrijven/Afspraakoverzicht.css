@@ -42,31 +42,6 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--border);
 }
-.terug-button {
-  position: absolute;
-  top: -4rem;
-  left: 0;
-  background: var(--primary);
-  color: var(--white);
-  padding: 0.75rem 1.25rem;
-  border-radius: 8px;
-  border: none;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  z-index: 10;
-  outline: none;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
-}
-
-.terug-button:hover {
-  background: #1d4ed8;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
-}
 
 .header-content {
   flex: 1;
@@ -538,7 +513,6 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
-
 
 
 .filter-select,
