@@ -194,7 +194,6 @@ const AfspraakOverzicht = () => {
           ...afspraak,
           student_naam: student ? student.naam : `Student ${afspraak.student_id}`,
           student_email: student ? student.email : '',
-          // Add fallback demo links if no real links are available
           student_github: student?.github_link || `https://github.com/student${afspraak.student_id}`,
           student_linkedin: student?.linkedin_link || `https://linkedin.com/in/student${afspraak.student_id}`,
           student_studie: student ? student.studie : 'Informatica',
@@ -212,16 +211,35 @@ const AfspraakOverzicht = () => {
     }
   };
 
+  // Demo afspraak voor weergave
+  const demoAfspraak = {
+    afspraak_id: 999,
+    student_id: 123,
+    bedrijf_id: gebruiker?.id || 1,
+    datum: new Date(Date.now() + 86400000 * 3).toISOString(), // 3 dagen vanaf nu
+    tijdslot: "14:00 - 14:30",
+    context: "Front-end developer stage",
+    status: "in_afwachting",
+    student_naam: "Jan Jansen",
+    student_email: "jan.jansen@student.hu.nl",
+    student_github: "https://github.com/janjansen",
+    student_linkedin: "https://linkedin.com/in/janjansen",
+    student_studie: "Informatica"
+  };
+
+  // Combine demo appointment with real appointments
+  const afsprakenToShow = [demoAfspraak, ...afspraken];
+
   return (
     <div className="afspraken-container">
       <div className="afspraken-header">
         <div className="header-content">
           <h1>Afsprakenoverzicht</h1>
           <p className="subtitle">Beheer uw geplande sollicitatiegesprekken met studenten</p>
-          {afspraken.length > 0 && (
+          {afsprakenToShow.length > 0 && (
             <div className="stats-summary">
               <span className="stat-item">
-                📊 {afspraken.length} {afspraken.length === 1 ? 'afspraak' : 'afspraken'}
+                📊 {afsprakenToShow.length} {afsprakenToShow.length === 1 ? 'afspraak' : 'afspraken'}
               </span>
             </div>
           )}
@@ -240,7 +258,7 @@ const AfspraakOverzicht = () => {
           <div className="spinner" />
           <p>Afspraken worden geladen...</p>
         </div>
-      ) : afspraken.length === 0 ? (
+      ) : afsprakenToShow.length === 0 ? (
         <div className="empty-state">
           <h3>Geen afspraken gevonden</h3>
           <p>Er zijn momenteel geen geplande sollicitatiegesprekken. Studenten kunnen afspraken maken via het platform.</p>
@@ -253,7 +271,7 @@ const AfspraakOverzicht = () => {
         </div>
       ) : (
         <section className="afspraken-grid">
-          {afspraken.map((afspraak) => (
+          {afsprakenToShow.map((afspraak) => (
             <article key={afspraak.afspraak_id} className={`afspraak-card ${afspraak.status}`}>
               <header className="card-header">
                 <div className="student-info">
