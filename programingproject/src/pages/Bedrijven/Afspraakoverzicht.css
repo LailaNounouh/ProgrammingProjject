@@ -24,6 +24,8 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  background-color: var(--background);
+  min-height: 100vh;
 }
 
 .afspraken-header {
@@ -34,26 +36,36 @@ body {
   margin-bottom: 2rem;
   flex-wrap: wrap;
   gap: 1rem;
+  background: var(--white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border);
 }
 .terug-button {
- position: absolute;
-  top: -2rem;
-  left: 2rem;
- background: var(--primary);
+  position: absolute;
+  top: -4rem;
+  left: 0;
+  background: var(--primary);
   color: var(--white);
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  border: none; 
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  border: none;
   text-decoration: none;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   z-index: 10;
   outline: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
 }
 
 .terug-button:hover {
-  background: #bebebe;
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
 }
 
 .header-content {
@@ -71,6 +83,25 @@ body {
 .subtitle {
   color: var(--text-secondary);
   font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.stats-summary {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.stat-item {
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .refresh-button {
@@ -116,12 +147,21 @@ body {
 
 .empty-state {
   text-align: center;
-  padding: 3rem;
+  padding: 4rem 2rem;
   background: var(--white);
-  border-radius: 8px;
-  box-shadow: var(--shadow);
-  max-width: 500px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
   margin: 2rem auto;
+  border: 1px solid var(--border);
+}
+
+.empty-state::before {
+  content: '📅';
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 1rem;
+  opacity: 0.7;
 }
 
 .empty-icon {
@@ -166,25 +206,96 @@ body {
 
 .afspraak-card {
   background: var(--white);
-  border-radius: 8px;
-  box-shadow: var(--shadow);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   border: 1px solid var(--border);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .afspraak-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: var(--primary);
+}
+
+.afspraak-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary) 0%, #3b82f6 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.afspraak-card:hover::before {
+  opacity: 1;
+}
+
+/* Card status styling */
+.afspraak-card.goedgekeurd::before {
+  background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+  opacity: 1;
+}
+
+.afspraak-card.geweigerd::before {
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+  opacity: 1;
+}
+
+.afspraak-card.in_afwachting::before {
+  background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+  opacity: 0.7;
 }
 
 .card-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 1.25rem;
-  border-bottom: 1px solid var(--border);
-  background-color: var(--background); /* neutrale lichte achtergrond */
+}
+
+.student-info {
+  flex: 1;
+}
+
+.student-info h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.specialization {
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.card-header .context {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+  font-style: italic;
+}
+
+.status-badge-container {
+  flex-shrink: 0;
 }
 
 .student-info h3 {
@@ -210,9 +321,9 @@ body {
   border-radius: 12px;
 }
 
-.status-badge.in-afwachting {
-  background: var(--primary-light);
-  color: var(--primary);
+.status-badge.in_afwachting {
+  background: #fef3c7;
+  color: #d97706;
 }
 
 .status-badge.goedgekeurd {
@@ -226,7 +337,48 @@ body {
 }
 
 .card-body {
-  padding: 1.25rem;
+  padding: 1.5rem;
+}
+
+.card-footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--border);
+  background: #fafbfc;
+}
+
+.card-body p {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+  padding: 0.75rem;
+  background: var(--background);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary);
+}
+
+.card-body p:last-child {
+  margin-bottom: 0;
+}
+
+.card-body p svg {
+  color: var(--primary);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.email-link {
+  color: var(--primary);
+  text-decoration: none;
+  margin-left: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.email-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
 }
 
 .detail-row {
@@ -257,55 +409,88 @@ body {
 .actions {
   display: flex;
   gap: 0.75rem;
-  margin-bottom: 1rem;
 }
 
 .btn {
   flex: 1;
-  padding: 0.65rem;
+  padding: 0.75rem 1rem;
   border: none;
-  border-radius: 4px;
-  font-weight: 500;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
 }
 
 .accept-btn {
   background: var(--success);
   color: var(--white);
+  box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
 }
 
 .accept-btn:hover {
   background: #15803d;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(22, 163, 74, 0.3);
 }
 
 .reject-btn {
   background: var(--error);
   color: var(--white);
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
 }
 
 .reject-btn:hover {
   background: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
 }
 
 .social-links {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
-.social-links a {
+.social-link {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--primary);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
   text-decoration: none;
   font-size: 0.9rem;
-  transition: color 0.2s ease;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
 }
 
-.social-links a:hover {
-  color: #1d4ed8;
-  text-decoration: underline;
+.social-link.github {
+  color: #333;
+  background: #f6f8fa;
+  border-color: #d0d7de;
+}
+
+.social-link.github:hover {
+  background: #333;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.social-link.linkedin {
+  color: #0077b5;
+  background: #e7f3ff;
+  border-color: #0077b5;
+}
+
+.social-link.linkedin:hover {
+  background: #0077b5;
+  color: white;
+  transform: translateY(-1px);
 }
 
 .filter-form {
