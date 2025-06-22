@@ -1,62 +1,92 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import codeertaalData from './codeertalen.json';
 import './DropDowns.css';
 
 const animatedComponents = makeAnimated();
 
-// Lijst van programmeertalen
-const programmeertaalOpties = [
-  { value: 'JavaScript', label: 'JavaScript' },
-  { value: 'TypeScript', label: 'TypeScript' },
-  { value: 'Python', label: 'Python' },
-  { value: 'Java', label: 'Java' },
-  { value: 'C#', label: 'C#' },
-  { value: 'C++', label: 'C++' },
-  { value: 'C', label: 'C' },
-  { value: 'PHP', label: 'PHP' },
-  { value: 'Ruby', label: 'Ruby' },
-  { value: 'Swift', label: 'Swift' },
-  { value: 'Kotlin', label: 'Kotlin' },
-  { value: 'Go', label: 'Go' },
-  { value: 'Rust', label: 'Rust' },
-  { value: 'Scala', label: 'Scala' },
-  { value: 'Dart', label: 'Dart' },
-  { value: 'R', label: 'R' },
-  { value: 'SQL', label: 'SQL' },
-  { value: 'HTML', label: 'HTML' },
-  { value: 'CSS', label: 'CSS' },
-  { value: 'SASS/SCSS', label: 'SASS/SCSS' },
-  { value: 'Assembly', label: 'Assembly' },
-  { value: 'Bash/Shell', label: 'Bash/Shell' },
-  { value: 'COBOL', label: 'COBOL' },
-  { value: 'Fortran', label: 'Fortran' },
-  { value: 'Haskell', label: 'Haskell' },
-  { value: 'Lua', label: 'Lua' },
-  { value: 'MATLAB', label: 'MATLAB' },
-  { value: 'Objective-C', label: 'Objective-C' },
-  { value: 'Perl', label: 'Perl' },
-  { value: 'PowerShell', label: 'PowerShell' },
-  { value: 'Prolog', label: 'Prolog' },
-  { value: 'VBA', label: 'VBA' },
-  { value: 'Visual Basic', label: 'Visual Basic' },
-  { value: 'WebAssembly', label: 'WebAssembly' },
+// Opties voor ervaringsniveaus
+const ervaringsOpties = [
+  { value: 'expert', label: 'Expert' },
+  { value: 'gevorderd', label: 'Gevorderd' },
+  { value: 'gemiddeld', label: 'Gemiddeld' },
+  { value: 'beginner', label: 'Beginner' }
 ];
 
 const CodeerTaalSelector = ({ value = [], onChange, readOnly = false }) => {
-  // Converteer de waarden naar het juiste formaat voor react-select
-  const [selectedOptions, setSelectedOptions] = useState(() => {
-    if (Array.isArray(value)) {
-      return value.map(val => ({ value: val, label: val }));
-    }
-    return [];
-  });
+  const [codeertaalOpties, setCodeertaalOpties] = useState([]);
+  const [selectedTalen, setSelectedTalen] = useState([]);
+  
+  useEffect(() => {
+    // Converteer de codeertalen uit het JSON-bestand naar het juiste formaat voor react-select
+    const opties = codeertaalData.map(taal => ({
+      value: taal.name,
+      label: taal.name,
+      tag: taal.tag
+    }));
+    setCodeertaalOpties(opties);
+  }, []);
 
-  const handleChange = (selected) => {
-    setSelectedOptions(selected);
-    // Stuur alleen de waarden terug naar de parent component
+  // Initialiseer geselecteerde codeertalen
+  useEffect(() => {
+    if (Array.isArray(value)) {
+      const formattedTalen = value.map(item => {
+        if (typeof item === 'object' && item.taal && item.ervaring) {
+          return {
+            taal: item.taal,
+            ervaring: item.ervaring
+          };
+        } else if (typeof item === 'string') {
+          return {
+            taal: item,
+            ervaring: 'beginner' // Standaard niveau
+          };
+        }
+        return null;
+      }).filter(Boolean);
+      
+      setSelectedTalen(formattedTalen);
+    } else {
+      setSelectedTalen([]);
+    }
+  }, [value]);
+
+  const handleTaalChange = (selected, index) => {
+    const updatedTalen = [...selectedTalen];
+    updatedTalen[index] = {
+      ...updatedTalen[index],
+      taal: selected.value
+    };
+    setSelectedTalen(updatedTalen);
+    updateParent(updatedTalen);
+  };
+
+  const handleErvaringChange = (selected, index) => {
+    const updatedTalen = [...selectedTalen];
+    updatedTalen[index] = {
+      ...updatedTalen[index],
+      ervaring: selected.value
+    };
+    setSelectedTalen(updatedTalen);
+    updateParent(updatedTalen);
+  };
+
+  const addTaal = () => {
+    setSelectedTalen([...selectedTalen, { taal: '', ervaring: 'beginner' }]);
+  };
+
+  const removeTaal = (index) => {
+    const updatedTalen = selectedTalen.filter((_, i) => i !== index);
+    setSelectedTalen(updatedTalen);
+    updateParent(updatedTalen);
+  };
+
+  const updateParent = (talen) => {
     if (onChange) {
-      onChange(selected.map(option => option.value));
+      // Filter lege talen
+      const filteredTalen = talen.filter(item => item.taal);
+      onChange(filteredTalen);
     }
   };
 
@@ -64,26 +94,75 @@ const CodeerTaalSelector = ({ value = [], onChange, readOnly = false }) => {
     <div className="skill-selector-container">
       <h3>Programmeertalen</h3>
       <p className="skill-description">
-        Selecteer de programmeertalen die je beheerst
+        Selecteer de programmeertalen die je beheerst en je ervaringsniveau
       </p>
-      <Select
-        closeMenuOnSelect={false}
-        components={animatedComponents}
-        isMulti
-        options={programmeertaalOpties}
-        value={selectedOptions}
-        onChange={handleChange}
-        isDisabled={readOnly}
-        placeholder="Selecteer programmeertalen..."
-        className="skill-select"
-        classNamePrefix="skill-select"
-      />
-      {selectedOptions.length > 0 && (
+      
+      {selectedTalen.map((item, index) => (
+        <div key={index} className="taal-item">
+          <div className="taal-row">
+            <div className="taal-select">
+              <label>Programmeertaal</label>
+              <Select
+                options={codeertaalOpties}
+                value={codeertaalOpties.find(option => option.value === item.taal) || null}
+                onChange={(selected) => handleTaalChange(selected, index)}
+                isDisabled={readOnly}
+                placeholder="Selecteer een programmeertaal..."
+                className="select-container"
+                classNamePrefix="select"
+              />
+            </div>
+            
+            <div className="niveau-select">
+              <label>Ervaring</label>
+              <Select
+                options={ervaringsOpties}
+                value={ervaringsOpties.find(option => option.value === item.ervaring) || null}
+                onChange={(selected) => handleErvaringChange(selected, index)}
+                isDisabled={readOnly}
+                placeholder="Selecteer ervaringsniveau..."
+                className="select-container"
+                classNamePrefix="select"
+              />
+            </div>
+            
+            {!readOnly && (
+              <button 
+                type="button" 
+                className="remove-button"
+                onClick={() => removeTaal(index)}
+              >
+                ×
+              </button>
+            )}
+          </div>
+        </div>
+      ))}
+      
+      {!readOnly && (
+        <button 
+          type="button" 
+          className="add-button"
+          onClick={addTaal}
+        >
+          + Programmeertaal toevoegen
+        </button>
+      )}
+      
+      {selectedTalen.length > 0 && (
         <div className="selected-skills">
           <h4>Geselecteerde programmeertalen:</h4>
-          <ul>
-            {selectedOptions.map((option) => (
-              <li key={option.value}>{option.label}</li>
+          <ul className="skills-list">
+            {selectedTalen.filter(item => item.taal).map((item, index) => (
+              <li key={index} className="skill-tag">
+                {item.taal} 
+                <span 
+                  className="skill-level" 
+                  data-level={item.ervaring}
+                >
+                  {item.ervaring}
+                </span>
+              </li>
             ))}
           </ul>
         </div>

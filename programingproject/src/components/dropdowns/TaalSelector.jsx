@@ -1,58 +1,92 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import talenData from './talen.json';
 import './DropDowns.css';
 
 const animatedComponents = makeAnimated();
 
-// Lijst van talen
-const taalOpties = [
-  { value: 'Nederlands', label: 'Nederlands' },
-  { value: 'Engels', label: 'Engels' },
-  { value: 'Frans', label: 'Frans' },
-  { value: 'Duits', label: 'Duits' },
-  { value: 'Spaans', label: 'Spaans' },
-  { value: 'Italiaans', label: 'Italiaans' },
-  { value: 'Portugees', label: 'Portugees' },
-  { value: 'Russisch', label: 'Russisch' },
-  { value: 'Chinees', label: 'Chinees' },
-  { value: 'Japans', label: 'Japans' },
-  { value: 'Arabisch', label: 'Arabisch' },
-  { value: 'Hindi', label: 'Hindi' },
-  { value: 'Turks', label: 'Turks' },
-  { value: 'Pools', label: 'Pools' },
-  { value: 'Zweeds', label: 'Zweeds' },
-  { value: 'Noors', label: 'Noors' },
-  { value: 'Fins', label: 'Fins' },
-  { value: 'Deens', label: 'Deens' },
-  { value: 'Grieks', label: 'Grieks' },
-  { value: 'Hongaars', label: 'Hongaars' },
-  { value: 'Tsjechisch', label: 'Tsjechisch' },
-  { value: 'Roemeens', label: 'Roemeens' },
-  { value: 'Bulgaars', label: 'Bulgaars' },
-  { value: 'Kroatisch', label: 'Kroatisch' },
-  { value: 'Servisch', label: 'Servisch' },
-  { value: 'Oekraïens', label: 'Oekraïens' },
-  { value: 'Hebreeuws', label: 'Hebreeuws' },
-  { value: 'Koreaans', label: 'Koreaans' },
-  { value: 'Thai', label: 'Thai' },
-  { value: 'Vietnamees', label: 'Vietnamees' },
+// Opties voor taalniveaus
+const taalNiveauOpties = [
+  { value: 'moedertaal', label: 'Moedertaal' },
+  { value: 'vloeiend', label: 'Vloeiend' },
+  { value: 'goed', label: 'Goed' },
+  { value: 'basis', label: 'Basis' }
 ];
 
 const TaalSelector = ({ value = [], onChange, readOnly = false }) => {
-  // Converteer de waarden naar het juiste formaat voor react-select
-  const [selectedOptions, setSelectedOptions] = useState(() => {
-    if (Array.isArray(value)) {
-      return value.map(val => ({ value: val, label: val }));
-    }
-    return [];
-  });
+  const [taalOpties, setTaalOpties] = useState([]);
+  const [selectedTalen, setSelectedTalen] = useState([]);
+  
+  useEffect(() => {
+    // Converteer de talen uit het JSON-bestand naar het juiste formaat voor react-select
+    const opties = talenData.map(taal => ({
+      value: taal.name,
+      label: taal.name,
+      tag: taal.tag
+    }));
+    setTaalOpties(opties);
+  }, []);
 
-  const handleChange = (selected) => {
-    setSelectedOptions(selected);
-    // Stuur alleen de waarden terug naar de parent component
+  // Initialiseer geselecteerde talen
+  useEffect(() => {
+    if (Array.isArray(value)) {
+      const formattedTalen = value.map(item => {
+        if (typeof item === 'object' && item.taal && item.niveau) {
+          return {
+            taal: item.taal,
+            niveau: item.niveau
+          };
+        } else if (typeof item === 'string') {
+          return {
+            taal: item,
+            niveau: 'basis' // Standaard niveau
+          };
+        }
+        return null;
+      }).filter(Boolean);
+      
+      setSelectedTalen(formattedTalen);
+    } else {
+      setSelectedTalen([]);
+    }
+  }, [value]);
+
+  const handleTaalChange = (selected, index) => {
+    const updatedTalen = [...selectedTalen];
+    updatedTalen[index] = {
+      ...updatedTalen[index],
+      taal: selected.value
+    };
+    setSelectedTalen(updatedTalen);
+    updateParent(updatedTalen);
+  };
+
+  const handleNiveauChange = (selected, index) => {
+    const updatedTalen = [...selectedTalen];
+    updatedTalen[index] = {
+      ...updatedTalen[index],
+      niveau: selected.value
+    };
+    setSelectedTalen(updatedTalen);
+    updateParent(updatedTalen);
+  };
+
+  const addTaal = () => {
+    setSelectedTalen([...selectedTalen, { taal: '', niveau: 'basis' }]);
+  };
+
+  const removeTaal = (index) => {
+    const updatedTalen = selectedTalen.filter((_, i) => i !== index);
+    setSelectedTalen(updatedTalen);
+    updateParent(updatedTalen);
+  };
+
+  const updateParent = (talen) => {
     if (onChange) {
-      onChange(selected.map(option => option.value));
+      // Filter lege talen
+      const filteredTalen = talen.filter(item => item.taal);
+      onChange(filteredTalen);
     }
   };
 
@@ -60,26 +94,75 @@ const TaalSelector = ({ value = [], onChange, readOnly = false }) => {
     <div className="skill-selector-container">
       <h3>Talen</h3>
       <p className="skill-description">
-        Selecteer de talen die je beheerst
+        Selecteer de talen die je beheerst en je niveau
       </p>
-      <Select
-        closeMenuOnSelect={false}
-        components={animatedComponents}
-        isMulti
-        options={taalOpties}
-        value={selectedOptions}
-        onChange={handleChange}
-        isDisabled={readOnly}
-        placeholder="Selecteer talen..."
-        className="skill-select"
-        classNamePrefix="skill-select"
-      />
-      {selectedOptions.length > 0 && (
+      
+      {selectedTalen.map((item, index) => (
+        <div key={index} className="taal-item">
+          <div className="taal-row">
+            <div className="taal-select">
+              <label>Taal</label>
+              <Select
+                options={taalOpties}
+                value={taalOpties.find(option => option.value === item.taal) || null}
+                onChange={(selected) => handleTaalChange(selected, index)}
+                isDisabled={readOnly}
+                placeholder="Selecteer een taal..."
+                className="select-container"
+                classNamePrefix="select"
+              />
+            </div>
+            
+            <div className="niveau-select">
+              <label>Niveau</label>
+              <Select
+                options={taalNiveauOpties}
+                value={taalNiveauOpties.find(option => option.value === item.niveau) || null}
+                onChange={(selected) => handleNiveauChange(selected, index)}
+                isDisabled={readOnly}
+                placeholder="Selecteer niveau..."
+                className="select-container"
+                classNamePrefix="select"
+              />
+            </div>
+            
+            {!readOnly && (
+              <button 
+                type="button" 
+                className="remove-button"
+                onClick={() => removeTaal(index)}
+              >
+                ×
+              </button>
+            )}
+          </div>
+        </div>
+      ))}
+      
+      {!readOnly && (
+        <button 
+          type="button" 
+          className="add-button"
+          onClick={addTaal}
+        >
+          + Taal toevoegen
+        </button>
+      )}
+      
+      {selectedTalen.length > 0 && (
         <div className="selected-skills">
           <h4>Geselecteerde talen:</h4>
-          <ul>
-            {selectedOptions.map((option) => (
-              <li key={option.value}>{option.label}</li>
+          <ul className="skills-list">
+            {selectedTalen.filter(item => item.taal).map((item, index) => (
+              <li key={index} className="skill-tag">
+                {item.taal} 
+                <span 
+                  className="skill-level" 
+                  data-level={item.niveau}
+                >
+                  {item.niveau}
+                </span>
+              </li>
             ))}
           </ul>
         </div>

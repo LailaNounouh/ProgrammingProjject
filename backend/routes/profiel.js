@@ -54,6 +54,13 @@ router.get("/:email", async (req, res) => {
     
     try {
       student.codeertaal = JSON.parse(student.programmeertalen || '[]');
+      // Converteer oude string formaat naar nieuw formaat indien nodig
+      if (student.codeertaal.length > 0 && typeof student.codeertaal[0] === 'string') {
+        student.codeertaal = student.codeertaal.map(taal => ({
+          taal: taal,
+          ervaring: 'beginner'
+        }));
+      }
     } catch (e) {
       console.error("Fout bij parsen programmeertalen:", e);
       student.codeertaal = [];
@@ -61,6 +68,13 @@ router.get("/:email", async (req, res) => {
     
     try {
       student.talen = JSON.parse(student.talen || '[]');
+      // Converteer oude string formaat naar nieuw formaat indien nodig
+      if (student.talen.length > 0 && typeof student.talen[0] === 'string') {
+        student.talen = student.talen.map(taal => ({
+          taal: taal,
+          niveau: 'basis'
+        }));
+      }
     } catch (e) {
       console.error("Fout bij parsen talen:", e);
       student.talen = [];
@@ -129,62 +143,83 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
     console.log("Ontvangen codeertaal (raw):", typeof codeertaal, codeertaal);
     console.log("Ontvangen talen (raw):", typeof talen, talen);
     
-    // Zorg ervoor dat de skills als JSON strings worden opgeslagen
+    // Verwerk de skills voor opslag in de database
+    // Softskills verwerken
+    let softskillsJSON = '[]';
     if (typeof softskills === 'string') {
       try {
         // Controleer of het al een JSON string is
         JSON.parse(softskills);
+        softskillsJSON = softskills;
       } catch (e) {
         // Als het geen geldige JSON is, maak er dan een JSON string van
-        softskills = JSON.stringify([]);
+        softskillsJSON = JSON.stringify([]);
       }
     } else if (Array.isArray(softskills)) {
-      softskills = JSON.stringify(softskills);
-    } else {
-      softskills = JSON.stringify([]);
+      softskillsJSON = JSON.stringify(softskills);
     }
     
+    // Hardskills verwerken
+    let hardskillsJSON = '[]';
     if (typeof hardskills === 'string') {
       try {
         JSON.parse(hardskills);
+        hardskillsJSON = hardskills;
       } catch (e) {
-        hardskills = JSON.stringify([]);
+        hardskillsJSON = JSON.stringify([]);
       }
     } else if (Array.isArray(hardskills)) {
-      hardskills = JSON.stringify(hardskills);
-    } else {
-      hardskills = JSON.stringify([]);
+      hardskillsJSON = JSON.stringify(hardskills);
     }
     
-    // Verwerk codeertaal en talen op dezelfde manier
+    // Codeertaal verwerken
+    let codeertaalJSON = '[]';
     if (typeof codeertaal === 'string') {
       try {
         JSON.parse(codeertaal);
+        codeertaalJSON = codeertaal;
       } catch (e) {
-        codeertaal = JSON.stringify([]);
+        codeertaalJSON = JSON.stringify([]);
       }
     } else if (Array.isArray(codeertaal)) {
-      codeertaal = JSON.stringify(codeertaal);
-    } else {
-      codeertaal = JSON.stringify([]);
+      // Controleer of het nieuwe formaat wordt gebruikt (objecten met taal en ervaring)
+      if (codeertaal.length > 0 && typeof codeertaal[0] === 'object' && codeertaal[0].taal) {
+        codeertaalJSON = JSON.stringify(codeertaal);
+      } else {
+        // Converteer oude string formaat naar nieuw formaat
+        codeertaalJSON = JSON.stringify(codeertaal.map(taal => ({
+          taal: taal,
+          ervaring: 'beginner'
+        })));
+      }
     }
     
+    // Talen verwerken
+    let talenJSON = '[]';
     if (typeof talen === 'string') {
       try {
         JSON.parse(talen);
+        talenJSON = talen;
       } catch (e) {
-        talen = JSON.stringify([]);
+        talenJSON = JSON.stringify([]);
       }
     } else if (Array.isArray(talen)) {
-      talen = JSON.stringify(talen);
-    } else {
-      talen = JSON.stringify([]);
+      // Controleer of het nieuwe formaat wordt gebruikt (objecten met taal en niveau)
+      if (talen.length > 0 && typeof talen[0] === 'object' && talen[0].taal) {
+        talenJSON = JSON.stringify(talen);
+      } else {
+        // Converteer oude string formaat naar nieuw formaat
+        talenJSON = JSON.stringify(talen.map(taal => ({
+          taal: taal,
+          niveau: 'basis'
+        })));
+      }
     }
     
-    console.log("Verwerkte softskills voor opslag:", softskills);
-    console.log("Verwerkte hardskills voor opslag:", hardskills);
-    console.log("Verwerkte codeertaal voor opslag:", codeertaal);
-    console.log("Verwerkte talen voor opslag:", talen);
+    console.log("Verwerkte softskills voor opslag:", softskillsJSON);
+    console.log("Verwerkte hardskills voor opslag:", hardskillsJSON);
+    console.log("Verwerkte codeertaal voor opslag:", codeertaalJSON);
+    console.log("Verwerkte talen voor opslag:", talenJSON);
 
     const nieuweFotoUrl = req.file ? req.file.path : null;
 
@@ -218,10 +253,10 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
           linkedin || null,
           studie || null,
           defaultPassword,
-          softskills,
-          hardskills,
-          codeertaal, // Opslaan als programmeertalen in de database
-          talen,
+          softskillsJSON,
+          hardskillsJSON,
+          codeertaalJSON, // Opslaan als programmeertalen in de database
+          talenJSON,
           jobstudent === 'true' || jobstudent === true ? 1 : 0,
           werkzoekend === 'true' || werkzoekend === true ? 1 : 0,
           stage_gewenst === 'true' || stage_gewenst === true ? 1 : 0
@@ -255,10 +290,10 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
         github || rows[0].github_url || null,
         linkedin || rows[0].linkedin_url || null,
         studie || rows[0].studie || null,
-        softskills,
-        hardskills,
-        codeertaal,
-        talen,
+        softskillsJSON,
+        hardskillsJSON,
+        codeertaalJSON,
+        talenJSON,
         jobstudentValue,
         werkzoekendValue,
         stageGewenstValue,
@@ -280,10 +315,10 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
           github || rows[0].github_url || null,
           linkedin || rows[0].linkedin_url || null,
           studie || rows[0].studie || null,
-          softskills,
-          hardskills,
-          codeertaal,
-          talen,
+          softskillsJSON,
+          hardskillsJSON,
+          codeertaalJSON,
+          talenJSON,
           jobstudentValue,
           werkzoekendValue,
           stageGewenstValue,
@@ -455,6 +490,96 @@ router.post("/update-skills/:email", async (req, res) => {
   } catch (err) {
     console.error("Fout bij update skills:", err);
     res.status(500).json({ error: err.message || "Interne serverfout" });
+  }
+});
+
+// PUT profiel bijwerken
+router.put("/:email", async (req, res) => {
+  const { email } = req.params;
+  const { 
+    voornaam, achternaam, geboortedatum, telefoonnummer, 
+    adres, postcode, woonplaats, land, 
+    bio, softskills, hardskills, codeertaal, talen 
+  } = req.body;
+  
+  try {
+    // Verwerk softskills en hardskills
+    let parsedSoftskills, parsedHardskills, parsedCodeertaal, parsedTalen;
+    
+    if (typeof softskills === 'string') {
+      try {
+        parsedSoftskills = JSON.parse(softskills);
+      } catch (e) {
+        parsedSoftskills = [];
+      }
+    } else if (Array.isArray(softskills)) {
+      parsedSoftskills = softskills;
+    } else {
+      parsedSoftskills = [];
+    }
+    
+    if (typeof hardskills === 'string') {
+      try {
+        parsedHardskills = JSON.parse(hardskills);
+      } catch (e) {
+        parsedHardskills = [];
+      }
+    } else if (Array.isArray(hardskills)) {
+      parsedHardskills = hardskills;
+    } else {
+      parsedHardskills = [];
+    }
+    
+    // Verwerk codeertaal en talen op dezelfde manier
+    if (typeof codeertaal === 'string') {
+      try {
+        parsedCodeertaal = JSON.parse(codeertaal);
+      } catch (e) {
+        parsedCodeertaal = [];
+      }
+    } else if (Array.isArray(codeertaal)) {
+      parsedCodeertaal = codeertaal;
+    } else {
+      parsedCodeertaal = [];
+    }
+    
+    if (typeof talen === 'string') {
+      try {
+        parsedTalen = JSON.parse(talen);
+      } catch (e) {
+        parsedTalen = [];
+      }
+    } else if (Array.isArray(talen)) {
+      parsedTalen = talen;
+    } else {
+      parsedTalen = [];
+    }
+    
+    // Converteer arrays naar JSON strings voor opslag
+    const softskillsJSON = JSON.stringify(parsedSoftskills);
+    const hardskillsJSON = JSON.stringify(parsedHardskills);
+    const codeertaalJSON = JSON.stringify(parsedCodeertaal);
+    const talenJSON = JSON.stringify(parsedTalen);
+    
+    // Update de database
+    await pool.query(
+      `UPDATE Studenten SET 
+       voornaam = ?, achternaam = ?, geboortedatum = ?, telefoonnummer = ?,
+       adres = ?, postcode = ?, woonplaats = ?, land = ?,
+       bio = ?, softskills = ?, hardskills = ?, programmeertalen = ?, talen = ?
+       WHERE email = ?`,
+      [
+        voornaam, achternaam, geboortedatum, telefoonnummer,
+        adres, postcode, woonplaats, land,
+        bio, softskillsJSON, hardskillsJSON, codeertaalJSON, talenJSON,
+        email
+      ]
+    );
+    
+    res.json({ message: "Profiel bijgewerkt" });
+  } catch (err) {
+    console.error("Fout bij bijwerken profiel:", err);
+    res.status(500).json({ error: "Interne serverfout" });
   }
 });
 

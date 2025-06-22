@@ -30,9 +30,9 @@ export const ProfileProvider = ({ children }) => {
         console.log("Raw softskills uit database:", databaseProfile.softskills);
         console.log("Raw hardskills uit database:", databaseProfile.hardskills);
 
-        // Map database fields to our profile structure
+        // Zorg ervoor dat de mapping van het profiel correct is
         const mappedProfile = {
-          userId: databaseProfile.student_id || gebruiker.id, // Gebruik student_id of gebruiker.id
+          userId: databaseProfile.student_id || gebruiker.id,
           naam: databaseProfile.naam,
           voornaam: databaseProfile.voornaam,
           email: databaseProfile.email,
