@@ -94,26 +94,23 @@
 .afspraak-card {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 1rem;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background: white;
-  min-height: 320px; /* voeg wat hoogte toe als nodig */
-  overflow: hidden;}
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: white;
+  margin-bottom: 20px;
+}
 
 .afspraak-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .card-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  background-color: #f8fafc;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #eaeaea;
 }
 
 .student-info h3 {
@@ -141,7 +138,7 @@
 }
 
 .card-body {
-  padding: 1.5rem;
+  padding: 15px;
   flex-grow: 1;
 }
 
@@ -160,13 +157,26 @@
 }
 
 .status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
   font-size: 0.8rem;
   font-weight: 500;
-  padding: 0.35rem 0.85rem;
-  border-radius: 20px;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
+}
+
+.status-badge.goedgekeurd {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.geweigerd {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.status-badge.in_afwachting {
+  background-color: #fff8e1;
+  color: #ff8f00;
 }
 
 .social-links {
@@ -200,92 +210,321 @@
   color: #0a66c2;
 }
 
-.status-badge.in_afwachting {
-  background: #fffbeb;
-  color: #b45309;
+/* Styling voor student skills en talen */
+.student-skills-container {
+  margin-top: 15px;
+  border-top: 1px solid #eaeaea;
+  padding-top: 15px;
 }
 
-.status-badge.goedgekeurd {
-  background: #ecfdf5;
-  color: #047857;
+.student-skills {
+  margin-bottom: 12px;
 }
 
-.status-badge.geweigerd {
-  background: #fef2f2;
-  color: #b91c1c;
-}
-
-.detail-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+.student-skills h4 {
   font-size: 0.9rem;
-  color: var(--text-primary);
+  margin-bottom: 8px;
+  color: #555;
+  font-weight: 600;
 }
 
-.detail-row svg {
-  color: var(--primary);
-  width: 16px;
-}
-
-
-.card-footer {
+.skills-tags {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
-  background: var(--background);
-    gap: 0.75rem;
-    margin-top: 1rem;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skill-tag {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.skill-tag.programming-language {
+  background-color: #e1f5fe;
+  color: #0277bd;
+}
+
+.skill-tag.hardskill {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.skill-tag.softskill {
+  background-color: #fff8e1;
+  color: #ff8f00;
+}
+
+.skill-tag.language {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+/* Student bio styling */
+.student-bio {
+  margin-top: 12px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+}
+
+.student-bio h4 {
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  color: #555;
+  font-weight: 600;
+}
+
+.student-bio p {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #444;
+}
+
+/* Social links en actieknoppen */
+.card-footer {
+  padding: 15px;
+  border-top: 1px solid #eaeaea;
+  background-color: #f9f9f9;
 }
 
 .actions {
   display: flex;
-  gap: 0.5rem;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
 }
 
 .btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 8px;
+  gap: 0.5rem;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-size: 0.95rem;
-}
-.actions .btn {
-  flex: 1;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
   border: none;
+  transition: all 0.2s ease;
 }
 
 .accept-btn {
-  background-color: #10b981;
-  color: white;
+  background-color: #e8f5e9;
+  color: #2e7d32;
 }
 
 .accept-btn:hover {
-  background-color: #059669;
+  background-color: #c8e6c9;
 }
 
 .reject-btn {
-  background-color: #ef4444;
-  color: white;
+  background-color: #ffebee;
+  color: #c62828;
 }
 
 .reject-btn:hover {
-  background-color: #dc2626;
+  background-color: #ffcdd2;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-badge.goedgekeurd {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.geweigerd {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.status-badge.in_afwachting {
+  background-color: #fff8e1;
+  color: #ff8f00;
+}
+
+/* Student modal */
+.student-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.student-modal-content {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-modal-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.student-modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.student-modal-header h2 {
+  margin: 0 0 5px 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.student-studie {
+  color: #666;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.student-modal-body {
+  padding: 20px;
+}
+
+.student-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.student-section:last-child {
+  border-bottom: none;
+}
+
+.student-section h3 {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  color: #444;
+  font-weight: 600;
+}
+
+.student-social-links {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.student-social-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.student-social-links a:first-child {
+  background-color: #f5f5f5;
+  color: #24292e;
+}
+
+.student-social-links a:last-child {
+  background-color: #e8f1f8;
+  color: #0077b5;
+}
+
+.student-social-links a:hover {
+  opacity: 0.9;
+}
+
+/* Verbeterde styling voor skills in de modal */
+.student-section .skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.student-section .skill-tag {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.student-section .skill-tag.programming-language {
+  background-color: #e1f5fe;
+  color: #0277bd;
+}
+
+.student-section .skill-tag.hardskill {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.student-section .skill-tag.softskill {
+  background-color: #fff8e1;
+  color: #ff8f00;
+}
+
+.student-section .skill-tag.language {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+/* Styling voor de "Bekijk profiel" knop */
+.details-btn {
+  background-color: #e8eaf6;
+  color: #3f51b5;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+}
+
+.details-btn:hover {
+  background-color: #c5cae9;
+}
+
+/* Loading en error states */
+.loading, .error, .no-afspraken {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+  margin-top: 1rem;
+}
+
+.error {
+  color: var(--error);
 }
 
 /* Responsive */
@@ -318,4 +557,73 @@
   .actions {
     flex-direction: column;
   }
+}
+
+/* Styling voor vaardigheden */
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.skill-tag {
+  background-color: #f5f5f5;
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #e0e0e0;
+}
+
+.skill-level {
+  margin-left: 6px;
+  font-size: 0.8rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background-color: #e0e0e0;
+}
+
+.skill-level[data-level="gevorderd"],
+.skill-level[data-level="vloeiend"],
+.skill-level[data-level="expert"] {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.skill-level[data-level="gemiddeld"],
+.skill-level[data-level="basis"] {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.skill-level[data-level="beginner"] {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Student modal styling */
+.student-section {
+  margin-bottom: 20px;
+}
+
+.student-section h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: #333;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 8px;
+}
+
+.student-section p {
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
