@@ -80,8 +80,8 @@
 }
 
 .dashboard-card p {
-  font-size: 13px;
-  color: #666;
+  font-size: 14px;
+  color: #6b7280;
   margin-bottom: 12px;
 }
 
@@ -141,7 +141,7 @@
 .card-description {
   font-size: 14px;
   color: #6b7280;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .card-footer {
