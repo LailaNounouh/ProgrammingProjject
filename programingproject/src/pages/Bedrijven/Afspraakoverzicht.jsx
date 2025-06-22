@@ -5,13 +5,19 @@ import {
   FiCalendar,
   FiClock,
   FiRefreshCw,
+  FiGithub,
+  FiLinkedin,
+  FiCheck,
+  FiX,
+  FiMail,
+  FiUser
 } from 'react-icons/fi';
 import './Afspraakoverzicht.css';
 import { baseUrl } from '../../config';
 import { useAuth } from '../../context/AuthProvider';
 
 const AfspraakOverzicht = () => {
-  const { gebruiker } = useAuth(); 
+  const { gebruiker } = useAuth();
   const [afspraken, setAfspraken] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -27,6 +33,62 @@ const AfspraakOverzicht = () => {
       setIsLoading(false);
     }
   }, [ingelogdGebruikerNaam]);
+
+  // Handle appointment acceptance
+  const handleAcceptAfspraak = async (afspraakId) => {
+    try {
+      const response = await fetch(`${baseUrl}/afspraken/${afspraakId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'goedgekeurd' }),
+      });
+
+      if (response.ok) {
+        // Update local state
+        setAfspraken(prev => prev.map(afspraak =>
+          afspraak.afspraak_id === afspraakId
+            ? { ...afspraak, status: 'goedgekeurd' }
+            : afspraak
+        ));
+        alert('Afspraak succesvol goedgekeurd!');
+      } else {
+        throw new Error('Fout bij goedkeuren afspraak');
+      }
+    } catch (error) {
+      console.error('Fout bij goedkeuren afspraak:', error);
+      alert('Er is een fout opgetreden bij het goedkeuren van de afspraak.');
+    }
+  };
+
+  // Handle appointment rejection
+  const handleRejectAfspraak = async (afspraakId) => {
+    try {
+      const response = await fetch(`${baseUrl}/afspraken/${afspraakId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'geweigerd' }),
+      });
+
+      if (response.ok) {
+        // Update local state
+        setAfspraken(prev => prev.map(afspraak =>
+          afspraak.afspraak_id === afspraakId
+            ? { ...afspraak, status: 'geweigerd' }
+            : afspraak
+        ));
+        alert('Afspraak geweigerd.');
+      } else {
+        throw new Error('Fout bij weigeren afspraak');
+      }
+    } catch (error) {
+      console.error('Fout bij weigeren afspraak:', error);
+      alert('Er is een fout opgetreden bij het weigeren van de afspraak.');
+    }
+  };
 
   const fetchAfsprakenMetStudentNamen = async () => {
     setIsLoading(true);
@@ -90,7 +152,10 @@ const AfspraakOverzicht = () => {
               if (studentIds.includes(studentId) && !studentInfo[studentId]) {
                 studentInfo[studentId] = {
                   naam: student.naam,
-                  email: student.email
+                  email: student.email,
+                  github_link: student.github_link || '',
+                  linkedin_link: student.linkedin_link || '',
+                  studie: student.studie || ''
                 };
               }
             });
@@ -100,13 +165,17 @@ const AfspraakOverzicht = () => {
         }
       }
       
-      // Map the appointments with student names
+      // Map the appointments with student names and social links
       const afsprakenMetNamen = bedrijfsAfspraken.map(afspraak => {
         const student = studentInfo[afspraak.student_id];
         return {
           ...afspraak,
           student_naam: student ? student.naam : `Student ${afspraak.student_id}`,
-          student_email: student ? student.email : ''
+          student_email: student ? student.email : '',
+          student_github: student ? student.github_link : '',
+          student_linkedin: student ? student.linkedin_link : '',
+          student_studie: student ? student.studie : '',
+          status: afspraak.status || 'in_afwachting' // Default status
         };
       });
       
@@ -130,8 +199,15 @@ const AfspraakOverzicht = () => {
           <FiArrowLeft aria-hidden="true" /> Terug naar Dashboard
         </button>
         <div className="header-content">
-          <h1>Afsprakenbeheer</h1>
-          <p className="subtitle">Overzicht van sollicitatiegesprekken met studenten</p>
+          <h1>Afsprakenoverzicht</h1>
+          <p className="subtitle">Beheer uw geplande sollicitatiegesprekken met studenten</p>
+          {afspraken.length > 0 && (
+            <div className="stats-summary">
+              <span className="stat-item">
+                📊 {afspraken.length} {afspraken.length === 1 ? 'afspraak' : 'afspraken'}
+              </span>
+            </div>
+          )}
         </div>
         <button
           onClick={fetchAfsprakenMetStudentNamen}
@@ -149,32 +225,104 @@ const AfspraakOverzicht = () => {
         </div>
       ) : afspraken.length === 0 ? (
         <div className="empty-state">
-          <h3>U heeft momenteel nog geen afspraken.</h3>
-          <p>Vernieuw de pagina later opnieuw.</p>
+          <h3>Geen afspraken gevonden</h3>
+          <p>Er zijn momenteel geen geplande sollicitatiegesprekken. Studenten kunnen afspraken maken via het platform.</p>
+          <button
+            onClick={fetchAfsprakenMetStudentNamen}
+            className="refresh-btn"
+          >
+            <FiRefreshCw /> Vernieuwen
+          </button>
         </div>
       ) : (
         <section className="afspraken-grid">
           {afspraken.map((afspraak) => (
-            <article key={afspraak.afspraak_id} className="afspraak-card">
+            <article key={afspraak.afspraak_id} className={`afspraak-card ${afspraak.status}`}>
               <header className="card-header">
-                {afspraak.logo_url && (
-                  <img
-                    src={afspraak.logo_url}
-                    alt={`${afspraak.bedrijfsnaam} logo`}
-                    className="bedrijf-logo"
-                  />
-                )}
-                <h3>{afspraak.student_naam}</h3>
-                {afspraak.context && <p className="context">{afspraak.context}</p>}
+                <div className="student-info">
+                  <h3>
+                    <FiUser /> {afspraak.student_naam}
+                  </h3>
+                  {afspraak.student_studie && (
+                    <p className="specialization">{afspraak.student_studie}</p>
+                  )}
+                  {afspraak.context && <p className="context">{afspraak.context}</p>}
+                </div>
+                <div className="status-badge-container">
+                  <span className={`status-badge ${afspraak.status}`}>
+                    {afspraak.status === 'goedgekeurd' && '✅ Goedgekeurd'}
+                    {afspraak.status === 'geweigerd' && '❌ Geweigerd'}
+                    {afspraak.status === 'in_afwachting' && '⏳ In afwachting'}
+                  </span>
+                </div>
               </header>
 
               <div className="card-body">
                 <p>
-                  <FiCalendar /> Datum: {afspraak.datum}
+                  <FiCalendar />
+                  <strong>Datum:</strong> {new Date(afspraak.datum).toLocaleDateString('nl-BE', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
                 </p>
                 <p>
-                  <FiClock /> Tijd: {afspraak.tijdslot}
+                  <FiClock />
+                  <strong>Tijdslot:</strong> {afspraak.tijdslot}
                 </p>
+                {afspraak.student_email && (
+                  <p>
+                    <FiMail /> <strong>Email:</strong>
+                    <a href={`mailto:${afspraak.student_email}`} className="email-link">
+                      {afspraak.student_email}
+                    </a>
+                  </p>
+                )}
+              </div>
+
+              <div className="card-footer">
+                {/* Social Links */}
+                <div className="social-links">
+                  {afspraak.student_github && (
+                    <a
+                      href={afspraak.student_github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="social-link github"
+                    >
+                      <FiGithub /> GitHub
+                    </a>
+                  )}
+                  {afspraak.student_linkedin && (
+                    <a
+                      href={afspraak.student_linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="social-link linkedin"
+                    >
+                      <FiLinkedin /> LinkedIn
+                    </a>
+                  )}
+                </div>
+
+                {/* Action Buttons - Only show if status is pending */}
+                {afspraak.status === 'in_afwachting' && (
+                  <div className="actions">
+                    <button
+                      onClick={() => handleAcceptAfspraak(afspraak.afspraak_id)}
+                      className="btn accept-btn"
+                    >
+                      <FiCheck /> Goedkeuren
+                    </button>
+                    <button
+                      onClick={() => handleRejectAfspraak(afspraak.afspraak_id)}
+                      className="btn reject-btn"
+                    >
+                      <FiX /> Weigeren
+                    </button>
+                  </div>
+                )}
               </div>
             </article>
           ))}

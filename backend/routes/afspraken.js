@@ -58,7 +58,7 @@ router.get('/bedrijf/:bedrijfId', async (req, res) => {
   const { bedrijfId } = req.params;
   try {
     const [afspraken] = await pool.query(`
-      SELECT a.afspraak_id, a.tijdslot, a.datum, a.student_id,
+      SELECT a.afspraak_id, a.tijdslot, a.datum, a.student_id, a.status,
              s.naam AS studentnaam, s.email AS studentemail
       FROM Afspraken a
       JOIN Studenten s ON a.student_id = s.student_id
@@ -237,6 +237,44 @@ router.delete('/:afspraakId', async (req, res) => {
   } catch (err) {
     console.error('[Serverfout] Afspraak verwijderen mislukt:', err);
     res.status(500).json({ error: 'Fout bij verwijderen afspraak', message: err.message });
+  }
+});
+
+/**
+ * @route PUT /api/afspraken/:id/status
+ * @desc Update appointment status (accept/reject)
+ */
+router.put('/:id/status', async (req, res) => {
+  const afspraakId = req.params.id;
+  const { status } = req.body;
+
+  // Validate status
+  const validStatuses = ['in_afwachting', 'goedgekeurd', 'geweigerd'];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({
+      error: 'Ongeldige status. Toegestane waarden: in_afwachting, goedgekeurd, geweigerd'
+    });
+  }
+
+  try {
+    const [result] = await pool.execute(
+      'UPDATE Afspraken SET status = ? WHERE afspraak_id = ?',
+      [status, afspraakId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Afspraak niet gevonden' });
+    }
+
+    res.json({
+      message: 'Afspraak status succesvol bijgewerkt',
+      afspraak_id: afspraakId,
+      status: status
+    });
+
+  } catch (error) {
+    console.error('Fout bij bijwerken afspraak status:', error);
+    res.status(500).json({ error: 'Interne serverfout' });
   }
 });
 
