@@ -398,10 +398,10 @@ function StudentenDashboard() {
 
   const dashboardCards = [
     {
-      title: "Mijn Profiel",
+      title: "Account",
       icon: <FaUserGraduate className="icon-fix" />,
-      description: "Bekijk en beheer je studentenprofiel",
-      onClick: () => navigate('/student/profiel'),
+      description: "Beheer je accountinstellingen",
+      onClick: () => navigate('/student/account'),
       iconClass: "bg-blue"
     },
     {
@@ -414,14 +414,14 @@ function StudentenDashboard() {
     {
       title: "Bedrijven",
       icon: <FaUserTie className="icon-fix" />,
-      description: "Bekijk deelnemende bedrijven en hun stands",
+      description: "Bekijk deelnemende bedrijven",
       onClick: () => navigate('/student/bedrijven'),
       iconClass: "bg-orange"
     },
     {
-      title: "Mijn CV",
-      icon: <FaBook className="icon-fix" />,
-      description: "Upload en beheer je CV",
+      title: "Standen",
+      icon: <FaMapMarkerAlt className="icon-fix" />,
+      description: "Bekijk deelnemende bedrijven en hun stands",
       onClick: () => navigate('/student/cv'),
       iconClass: "bg-purple"
     }
