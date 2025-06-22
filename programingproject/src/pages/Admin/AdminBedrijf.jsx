@@ -7,6 +7,8 @@ function AdminBedrijf() {
   const [bedrijven, setBedrijven] = useState([]);
   const [filter, setFilter] = useState('');
   const [toonBewerken, setToonBewerken] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
   const [bewerkFormulier, setBewerkFormulier] = useState({
     bedrijf_id: '',
     naam: '',
@@ -54,34 +56,41 @@ function AdminBedrijf() {
 
   const handleFormulierVerzenden = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage('');
+
     const isNieuw = !bewerkFormulier.bedrijf_id;
 
-    const formData = new FormData();
-    
-    Object.keys(bewerkFormulier).forEach(key => {
-      if (key === 'speeddates') {
-        formData.append(key, bewerkFormulier[key] ? 1 : 0);
-      } else if (bewerkFormulier[key] !== null) {
-        formData.append(key, bewerkFormulier[key]);
-      }
-    });
-
     try {
+      console.log('Sending company data:', bewerkFormulier);
+
       const response = await fetch(`${baseUrl}/bedrijvenmodule${isNieuw ? '' : `/${bewerkFormulier.bedrijf_id}`}`, {
         method: isNieuw ? 'POST' : 'PUT',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bewerkFormulier)
       });
 
+      const responseData = await response.json();
+      console.log('Response:', responseData);
+
       if (!response.ok) {
-        const foutBericht = await response.text();
-        throw new Error(foutBericht);
+        throw new Error(responseData.error || responseData.details || 'Fout bij opslaan bedrijf');
       }
 
+      setMessage(`✅ Bedrijf ${isNieuw ? 'toegevoegd' : 'bijgewerkt'} succesvol!`);
       await haalBedrijvenOp();
       resetFormulier();
+
+      // Clear message after 3 seconds
+      setTimeout(() => setMessage(''), 3000);
+
     } catch (error) {
-      console.error('Fout:', error.message);
-      alert(error.message);
+      console.error('Fout bij opslaan bedrijf:', error);
+      setMessage(`❌ Fout bij opslaan: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -194,6 +203,12 @@ function AdminBedrijf() {
             </div>
           ) : (
             <form onSubmit={handleFormulierVerzenden}>
+              {message && (
+                <div className={`message ${message.includes('✅') ? 'success' : 'error'}`}>
+                  {message}
+                </div>
+              )}
+
               {Object.keys(bewerkFormulier).map(key => {
                 if (key === 'bedrijf_id') return null;
                 
@@ -233,10 +248,10 @@ function AdminBedrijf() {
               })}
 
               <div className="form-buttons">
-                <button type="submit">
-                  {bewerkFormulier.bedrijf_id ? 'Wijzigingen Opslaan' : 'Bedrijf Toevoegen'}
+                <button type="submit" disabled={loading}>
+                  {loading ? 'Bezig...' : (bewerkFormulier.bedrijf_id ? 'Wijzigingen Opslaan' : 'Bedrijf Toevoegen')}
                 </button>
-                <button type="button" onClick={resetFormulier}>
+                <button type="button" onClick={resetFormulier} disabled={loading}>
                   Annuleren
                 </button>
               </div>
