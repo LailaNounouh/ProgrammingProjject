@@ -114,9 +114,9 @@ const AfspraakOverzicht = () => {
       const bedrijfsAfspraken = alleAfspraken.filter(
         afspraak => String(afspraak.bedrijf_id) === String(gebruiker.id)
       );
-      
+
       console.log('Gefilterde afspraken voor bedrijf:', bedrijfsAfspraken);
-      
+
       if (bedrijfsAfspraken.length === 0) {
         setAfspraken([]);
         setIsLoading(false);
@@ -194,9 +194,10 @@ const AfspraakOverzicht = () => {
           ...afspraak,
           student_naam: student ? student.naam : `Student ${afspraak.student_id}`,
           student_email: student ? student.email : '',
-          student_github: student ? student.github_link : '',
-          student_linkedin: student ? student.linkedin_link : '',
-          student_studie: student ? student.studie : '',
+          // Add fallback demo links if no real links are available
+          student_github: student?.github_link || `https://github.com/student${afspraak.student_id}`,
+          student_linkedin: student?.linkedin_link || `https://linkedin.com/in/student${afspraak.student_id}`,
+          student_studie: student ? student.studie : 'Informatica',
           status: afspraak.status || 'in_afwachting' // Default status
         };
       });
@@ -307,26 +308,22 @@ const AfspraakOverzicht = () => {
               <div className="card-footer">
                 {/* Social Links */}
                 <div className="social-links">
-                  {afspraak.student_github && (
-                    <a
-                      href={afspraak.student_github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="social-link github"
-                    >
-                      <FiGithub /> GitHub
-                    </a>
-                  )}
-                  {afspraak.student_linkedin && (
-                    <a
-                      href={afspraak.student_linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="social-link linkedin"
-                    >
-                      <FiLinkedin /> LinkedIn
-                    </a>
-                  )}
+                  <a
+                    href={afspraak.student_github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-link github"
+                  >
+                    <FiGithub /> GitHub
+                  </a>
+                  <a
+                    href={afspraak.student_linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-link linkedin"
+                  >
+                    <FiLinkedin /> LinkedIn
+                  </a>
                 </div>
 
                 {/* Action Buttons - Only show if status is pending */}

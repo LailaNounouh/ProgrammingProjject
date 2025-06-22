@@ -454,43 +454,60 @@ body {
   display: flex;
   gap: 0.75rem;
   margin-bottom: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.social-links::before {
+  content: '🔗 Social Links:';
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  display: block;
 }
 
 .social-link {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
   text-decoration: none;
   font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  border: 1px solid transparent;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  flex: 1;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .social-link.github {
-  color: #333;
-  background: #f6f8fa;
+  color: #24292e;
+  background: linear-gradient(135deg, #f6f8fa 0%, #e1e4e8 100%);
   border-color: #d0d7de;
 }
 
 .social-link.github:hover {
-  background: #333;
+  background: linear-gradient(135deg, #24292e 0%, #1b1f23 100%);
   color: white;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(36, 41, 46, 0.3);
 }
 
 .social-link.linkedin {
   color: #0077b5;
-  background: #e7f3ff;
+  background: linear-gradient(135deg, #e7f3ff 0%, #cce7ff 100%);
   border-color: #0077b5;
 }
 
 .social-link.linkedin:hover {
-  background: #0077b5;
+  background: linear-gradient(135deg, #0077b5 0%, #005885 100%);
   color: white;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 119, 181, 0.3);
 }
 
 .filter-form {
