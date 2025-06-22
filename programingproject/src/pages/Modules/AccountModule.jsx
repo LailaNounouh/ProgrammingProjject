@@ -4,8 +4,6 @@ import { useAuth } from "../../context/AuthProvider";
 import { useProfile } from "../../context/ProfileContext";
 import "./AccountModule.css";
 import { FaEdit, FaEye, FaSave, FaTimes } from "react-icons/fa";
-
-// Selectors importeren
 import SoftSkillsSelector from "../../components/dropdowns/SoftSkillsSelector";
 import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
 
@@ -26,7 +24,7 @@ export default function AccountModule() {
     telefoon: "",
     aboutMe: "",
   });
-  
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -34,7 +32,7 @@ export default function AccountModule() {
   const [editMode, setEditMode] = useState(false);
   const [softskills, setSoftskills] = useState([]);
   const [hardskills, setHardskills] = useState([]);
-  
+
   const studieOpties = [
     "Informatica",
     "Toegepaste Informatica",
@@ -49,30 +47,23 @@ export default function AccountModule() {
     const haalGebruikerOp = async () => {
       try {
         setLoading(true);
-
-        // Check if user is logged in via AuthProvider
         if (!gebruiker) {
           navigate('/login');
           return;
         }
-
-        // Fetch profile data
         await fetchProfiel();
-
         setLoading(false);
       } catch (error) {
         setErrorMessage("Er is een probleem opgetreden bij het laden van je gegevens.");
         setLoading(false);
       }
     };
-
     if (gebruiker) {
       haalGebruikerOp();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate, gebruiker]);
 
-  // Update userData when profiel changes
   useEffect(() => {
     if (profiel) {
       setUserData({
@@ -87,7 +78,6 @@ export default function AccountModule() {
         stage_gewenst: profiel.stage_gewenst || false,
         telefoon: profiel.telefoon || "",
         aboutMe: profiel.beschrijving || "",
-        
       });
       setSoftskills(profiel.softskills || []);
       setHardskills(profiel.hardskills || []);
@@ -121,22 +111,18 @@ export default function AccountModule() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
     if (!file.type.startsWith('image/')) {
       setErrorMessage("Profielfoto moet een afbeelding zijn (JPEG, PNG, etc.).");
       return;
     }
-    
     if (file.size > 5 * 1024 * 1024) {
       setErrorMessage("Profielfoto mag niet groter zijn dan 5MB.");
       return;
     }
-    
     setUserData({
       ...userData,
       foto_url: file
     });
-    
     setErrorMessage("");
   };
 
@@ -152,9 +138,10 @@ export default function AccountModule() {
         hardskills,
       };
 
-      // Check of er een bestand is
+      // Sla profielData op in localStorage voor debug
+      localStorage.setItem("debugProfielData", JSON.stringify(profielData));
+
       if (userData.foto_url && typeof userData.foto_url !== "string") {
-        // Gebruik FormData voor file upload
         const formData = new FormData();
         formData.append("naam", userData.naam);
         formData.append("email", userData.email);
@@ -167,9 +154,8 @@ export default function AccountModule() {
         formData.append("hardskills", JSON.stringify(hardskills));
         formData.append("profilePicture", userData.foto_url);
 
-        await updateProfiel(formData, true); // true = multipart
+        await updateProfiel(formData, true);
       } else {
-        // Gewoon JSON
         await updateProfiel(profielData, false);
       }
 
@@ -372,7 +358,6 @@ export default function AccountModule() {
                 </button>
               </div>
             </form>
-            {/* Selectors tonen in edit mode */}
             <div className="skills-section">
               <SoftSkillsSelector value={softskills} onChange={setSoftskills} readOnly={!editMode} />
               <HardSkillsSelector value={hardskills} onChange={setHardskills} readOnly={!editMode} />
@@ -401,7 +386,6 @@ export default function AccountModule() {
                 </div>
               </div>
             </section>
-            
             <section className="account-section">
               <h3>Profielfoto</h3>
               <div className="profile-photo-container">
@@ -412,7 +396,6 @@ export default function AccountModule() {
                 )}
               </div>
             </section>
-
             <section className="account-section">
               <h3>Contact & Links</h3>
               <div className="info-grid">
@@ -442,14 +425,12 @@ export default function AccountModule() {
                 </div>
               </div>
             </section>
-
             <section className="account-section">
               <h3>Over Mij</h3>
               <div className="info-item beschrijving">
                 <p>{userData.aboutMe || "Geen beschrijving toegevoegd."}</p>
               </div>
             </section>
-
             <section className="account-section">
               <h3>Status</h3>
               <div className="status-indicators">
@@ -461,8 +442,6 @@ export default function AccountModule() {
                 }
               </div>
             </section>
-
-            {/* Selectors tonen in view mode */}
             <section className="account-section">
               <h3>Vaardigheden & Talen</h3>
               <div className="skills-section">
