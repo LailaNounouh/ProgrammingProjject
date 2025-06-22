@@ -14,7 +14,7 @@ const STANDAARD_TIJDEN = [
 router.get('/', async (req, res) => {
   try {
     const [afspraken] = await pool.query(`
-      SELECT a.afspraak_id, a.student_id, a.bedrijf_id, a.tijdslot, a.datum,
+      SELECT a.afspraak_id, a.student_id, a.bedrijf_id, a.tijdslot, a.datum, a.status,
              b.naam AS bedrijfsnaam
       FROM Afspraken a
       JOIN Bedrijven b ON a.bedrijf_id = b.bedrijf_id
