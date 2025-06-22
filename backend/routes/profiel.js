@@ -493,90 +493,108 @@ router.post("/update-skills/:email", async (req, res) => {
   }
 });
 
-// PUT profiel bijwerken
+// PUT route voor het bijwerken van een profiel
 router.put("/:email", async (req, res) => {
-  const { email } = req.params;
-  const { 
-    voornaam, achternaam, geboortedatum, telefoonnummer, 
-    adres, postcode, woonplaats, land, 
-    bio, softskills, hardskills, codeertaal, talen 
-  } = req.body;
-  
   try {
-    // Verwerk softskills en hardskills
-    let parsedSoftskills, parsedHardskills, parsedCodeertaal, parsedTalen;
+    const { email } = req.params;
+    const {
+      naam,
+      telefoon,
+      aboutMe,
+      github,
+      linkedin,
+      studie,
+      softskills,
+      hardskills,
+      codeertaal, // Gebruik codeertaal als veldnaam van de frontend
+      talen,
+      jobstudent,
+      werkzoekend,
+      stage_gewenst
+    } = req.body;
+
+    console.log("PUT request ontvangen voor email:", email);
+    console.log("Request body:", req.body);
     
-    if (typeof softskills === 'string') {
-      try {
-        parsedSoftskills = JSON.parse(softskills);
-      } catch (e) {
-        parsedSoftskills = [];
-      }
-    } else if (Array.isArray(softskills)) {
-      parsedSoftskills = softskills;
-    } else {
-      parsedSoftskills = [];
+    // Controleer of de student bestaat
+    const [rows] = await pool.query("SELECT * FROM Studenten WHERE email = ?", [email]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Student niet gevonden" });
+    }
+
+    // Verwerk de skills data
+    let processedSoftskills = softskills;
+    let processedHardskills = hardskills;
+    let processedCodeertaal = codeertaal;
+    let processedTalen = talen;
+    
+    // Zorg ervoor dat de skills als JSON strings worden opgeslagen
+    if (typeof processedSoftskills === 'object') {
+      processedSoftskills = JSON.stringify(processedSoftskills);
     }
     
-    if (typeof hardskills === 'string') {
-      try {
-        parsedHardskills = JSON.parse(hardskills);
-      } catch (e) {
-        parsedHardskills = [];
-      }
-    } else if (Array.isArray(hardskills)) {
-      parsedHardskills = hardskills;
-    } else {
-      parsedHardskills = [];
+    if (typeof processedHardskills === 'object') {
+      processedHardskills = JSON.stringify(processedHardskills);
     }
     
-    // Verwerk codeertaal en talen op dezelfde manier
-    if (typeof codeertaal === 'string') {
-      try {
-        parsedCodeertaal = JSON.parse(codeertaal);
-      } catch (e) {
-        parsedCodeertaal = [];
-      }
-    } else if (Array.isArray(codeertaal)) {
-      parsedCodeertaal = codeertaal;
-    } else {
-      parsedCodeertaal = [];
+    if (typeof processedCodeertaal === 'object') {
+      processedCodeertaal = JSON.stringify(processedCodeertaal);
     }
     
-    if (typeof talen === 'string') {
-      try {
-        parsedTalen = JSON.parse(talen);
-      } catch (e) {
-        parsedTalen = [];
-      }
-    } else if (Array.isArray(talen)) {
-      parsedTalen = talen;
-    } else {
-      parsedTalen = [];
+    if (typeof processedTalen === 'object') {
+      processedTalen = JSON.stringify(processedTalen);
     }
     
-    // Converteer arrays naar JSON strings voor opslag
-    const softskillsJSON = JSON.stringify(parsedSoftskills);
-    const hardskillsJSON = JSON.stringify(parsedHardskills);
-    const codeertaalJSON = JSON.stringify(parsedCodeertaal);
-    const talenJSON = JSON.stringify(parsedTalen);
+    // Converteer boolean waarden naar 0/1 voor MySQL
+    const jobstudentValue = jobstudent === true || jobstudent === 'true' ? 1 : 0;
+    const werkzoekendValue = werkzoekend === true || werkzoekend === 'true' ? 1 : 0;
+    const stageGewenstValue = stage_gewenst === true || stage_gewenst === 'true' ? 1 : 0;
     
-    // Update de database
+    // Update de student
     await pool.query(
-      `UPDATE Studenten SET 
-       voornaam = ?, achternaam = ?, geboortedatum = ?, telefoonnummer = ?,
-       adres = ?, postcode = ?, woonplaats = ?, land = ?,
-       bio = ?, softskills = ?, hardskills = ?, programmeertalen = ?, talen = ?
+      `UPDATE Studenten
+       SET naam = ?, telefoon = ?, aboutMe = ?, github_url = ?, linkedin_url = ?, 
+           studie = ?, softskills = ?, hardskills = ?, programmeertalen = ?, talen = ?,
+           jobstudent = ?, werkzoekend = ?, stage_gewenst = ?
        WHERE email = ?`,
       [
-        voornaam, achternaam, geboortedatum, telefoonnummer,
-        adres, postcode, woonplaats, land,
-        bio, softskillsJSON, hardskillsJSON, codeertaalJSON, talenJSON,
+        naam || rows[0].naam,
+        telefoon || rows[0].telefoon,
+        aboutMe || rows[0].aboutMe,
+        github || rows[0].github_url,
+        linkedin || rows[0].linkedin_url,
+        studie || rows[0].studie,
+        processedSoftskills,
+        processedHardskills,
+        processedCodeertaal, // Sla op als programmeertalen in de database
+        processedTalen,
+        jobstudentValue,
+        werkzoekendValue,
+        stageGewenstValue,
         email
       ]
     );
     
-    res.json({ message: "Profiel bijgewerkt" });
+    // Haal de bijgewerkte student op
+    const [updatedRows] = await pool.query("SELECT * FROM Studenten WHERE email = ?", [email]);
+    const updatedStudent = updatedRows[0];
+    delete updatedStudent.wachtwoord;
+    
+    // Parse de skills voor de response
+    try {
+      updatedStudent.softskills = JSON.parse(updatedStudent.softskills || '[]');
+      updatedStudent.hardskills = JSON.parse(updatedStudent.hardskills || '[]');
+      updatedStudent.codeertaal = JSON.parse(updatedStudent.programmeertalen || '[]'); // Geef terug als codeertaal
+      updatedStudent.talen = JSON.parse(updatedStudent.talen || '[]');
+    } catch (e) {
+      console.error("Fout bij parsen van skills:", e);
+      updatedStudent.softskills = [];
+      updatedStudent.hardskills = [];
+      updatedStudent.codeertaal = [];
+      updatedStudent.talen = [];
+    }
+    
+    res.json(updatedStudent);
   } catch (err) {
     console.error("Fout bij bijwerken profiel:", err);
     res.status(500).json({ error: "Interne serverfout" });
