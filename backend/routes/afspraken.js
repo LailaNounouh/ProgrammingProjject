@@ -7,6 +7,9 @@ const STANDAARD_TIJDEN = [
   '15:00', '15:15', '15:30', '15:45', '16:00', '16:15',
 ];
 
+// Constante voor de datum van de Career Launch Day
+const CAREER_LAUNCH_DAY = '2026-03-13';
+
 /**
  * @route GET /api/afspraken
  * @desc Haal alle afspraken op (voor admin)
@@ -74,12 +77,13 @@ router.get('/bedrijf/:bedrijfId', async (req, res) => {
 });
 
 /**
- * @route GET /api/afspraken/beschikbaar/:bedrijfId?datum=yyyy-mm-dd
- * @desc Haal beschikbare tijdsloten op voor een bedrijf op een bepaalde dag
+ * @route GET /api/afspraken/beschikbaar/:bedrijfId
+ * @desc Haal beschikbare tijdsloten op voor een bedrijf op de Career Launch Day
  */
 router.get('/beschikbaar/:bedrijfId', async (req, res) => {
   const { bedrijfId } = req.params;
-  const datum = req.query.datum || new Date().toISOString().split('T')[0];
+  // Gebruik altijd de vaste datum voor Career Launch Day
+  const datum = CAREER_LAUNCH_DAY;
 
   try {
     const [bedrijven] = await pool.query('SELECT * FROM Bedrijven WHERE bedrijf_id = ?', [bedrijfId]);
@@ -117,6 +121,7 @@ router.get('/beschikbaar/:bedrijfId', async (req, res) => {
       beschikbaar: beschikbareTijdsloten,
       bezet: bezetteTijdsloten,
       alle: alleTijdsloten,
+      datum: datum
     });
   } catch (err) {
     console.error('[Serverfout] Tijdsloten ophalen mislukt:', err);
