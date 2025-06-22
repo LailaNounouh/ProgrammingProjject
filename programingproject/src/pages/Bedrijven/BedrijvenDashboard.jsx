@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+ import React, { useState, useEffect, useRef } from 'react';
 import {
   FaEuroSign,
   FaCalendarAlt,
@@ -95,15 +95,12 @@ function DashboardContent({
           {filteredCards.map((card, index) => (
             <div key={index} className="dashboard-card" onClick={card.onClick}>
               <div className="card-header">
-                <div className={`card-icon ${card.iconClass}`}>
+                <div className={card-icon ${card.iconClass}}>
                   {card.icon}
                 </div>
                 <h3 className="card-title">{card.title}</h3>
               </div>
               {card.description && <p className="card-description">{card.description}</p>}
-              {card.showAfspraken && (
-                <p className="card-description">Bekijk geplande afspraken</p>
-              )}
               <div className="card-footer">
                 <span>Direct naar {card.title.toLowerCase()}</span>
                 <FaChevronRight className="chevron-icon" />
@@ -151,7 +148,7 @@ function DashboardContent({
               ) : (
                 <div className="events-list">
                   {upcomingEvents.map((event, index) => (
-                    <div key={`event-${index}`} className="calendar-event">
+                    <div key={event-${index}} className="calendar-event">
                       <div className="event-time">
                         <FaCalendarCheck /> {event.date.toLocaleDateString('nl-NL')} • {event.time || 'Hele dag'}
                       </div>
@@ -208,7 +205,7 @@ function DashboardContent({
               {upcomingEvents.filter(event => 
                 event.date.toDateString() === calendarDate.toDateString()
               ).map((event, index) => (
-                <div key={`event-${index}`} className={`calendar-event ${event.highlight ? 'highlight-event' : ''}`}>
+                <div key={event-${index}} className={calendar-event ${event.highlight ? 'highlight-event' : ''}}>
                   <div className="event-time">
                     <FaCalendarCheck /> {event.time || 'Hele dag'}
                   </div>
@@ -344,32 +341,29 @@ function BedrijvenDashboard() {
 
       try {
         setLoading(true);
-        const data = await apiClient.get(`/bedrijfprofiel/${gebruiker.id}`);
+        const data = await apiClient.get(/bedrijfprofiel/${gebruiker.id});
 
         setBedrijfData(data);
         setBedrijfNaam(data.naam || gebruiker.naam || 'Bedrijf');
-// Load saved reminders
-try {
-  const saved = localStorage.getItem(`reminders_${gebruiker.id}`);
-  if (saved) {
-    const parsed = JSON.parse(saved);
-    if (Array.isArray(parsed)) {
-      setReminders(parsed);
-    }
-  }
-} catch (error) {
-  console.error("Fout bij lezen van herinneringen:", error);
-}
-
-
+   try {
+        const saved = localStorage.getItem(reminders_${gebruiker.id});
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            setReminders(parsed);
+          }
+        }
       } catch (error) {
-        console.error('Fout bij ophalen bedrijfsgegevens:', error);
-        // Fallback to user data from auth context
-        setBedrijfNaam(gebruiker.naam || 'Bedrijf');
-      } finally {
-        setLoading(false);
+        console.error("Fout bij lezen van herinneringen:", error);
       }
-    };
+
+    } catch (error) {
+      console.error('Fout bij ophalen bedrijfsgegevens:', error);
+      setBedrijfNaam(gebruiker.naam || 'Bedrijf');
+    } finally {
+      setLoading(false);
+    }
+  };
 
     fetchBedrijfData();
   }, [gebruiker]);
@@ -405,7 +399,7 @@ try {
       }
 
       try {
-        const data = await apiClient.get(`/notifications/${gebruiker.id}`);
+        const data = await apiClient.get(/notifications/${gebruiker.id});
         setNotifications(data);
       } catch (error) {
         console.error('Fout bij ophalen meldingen:', error);
@@ -428,7 +422,7 @@ try {
     setReminders(newReminders);
 
     if (gebruiker?.id) {
-      localStorage.setItem(`reminders_${gebruiker.id}`, JSON.stringify(newReminders));
+      localStorage.setItem(reminders_${gebruiker.id}, JSON.stringify(newReminders));
     }
 
     setShowReminderModal(false);
@@ -443,7 +437,7 @@ try {
   setNewReminder({
     date: event.date.toISOString().split('T')[0],
     time: event.time?.split('-')[0].trim() || '09:00',
-    text: `Herinnering: ${event.title} - ${event.description}`
+    text: Herinnering: ${event.title} - ${event.description}
   });
   setShowReminderModal(true);
 };
@@ -455,7 +449,7 @@ try {
     setReminders(newReminders);
 
     if (gebruiker?.id) {
-      localStorage.setItem(`reminders_${gebruiker.id}`, JSON.stringify(newReminders));
+      localStorage.setItem(reminders_${gebruiker.id}, JSON.stringify(newReminders));
     }
   };
 
@@ -464,36 +458,37 @@ try {
     addReminder(newReminder);
   };
 
-  const dashboardCards = [
-    {
-      title: "Staat van betaling",
-      icon: <FaEuroSign className="icon-fix" />,
-      description: "Bekijk uw betalingsstatus en facturen",
-      onClick: () => navigate('/bedrijf/betaling'),
-      iconClass: "bg-blue"
-    },
-    {
-      title: "Afspraakoverzicht",
-      icon: <FaCalendarAlt className="icon-fix" />,
-      onClick: () => navigate('/bedrijf/afspraken'),
-      iconClass: "bg-green",
-      showAfspraken: true
-    },
-    {
-      title: "Beschikbaarheid van standen",
-      icon: <FaMapMarkerAlt className="icon-fix" />,
-      description: "Beheer uw standlocaties en reserveringen",
-      onClick: () => navigate('/bedrijf/standen'),
-      iconClass: "bg-orange"
-    },
-    {
-      title: "Bedrijfsinstellingen",
-      icon: <FaCog className="icon-fix" />,
-      description: "Beheer uw bedrijfsgegevens en voorkeuren",
-      onClick: () => navigate('/bedrijf/Settingsbedrijf'),
-      iconClass: "bg-purple"
-    }
-  ];
+const dashboardCards = [
+  {
+    title: "Staat van betaling",
+    icon: <FaEuroSign className="icon-fix" />,
+    description: "Bekijk uw huidige betaalstatus, openstaande bedragen\nen download eenvoudig uw facturen en betalingsbewijzen.",
+    onClick: () => navigate('/bedrijf/betaling'),
+    iconClass: "bg-blue"
+  },
+  {
+    title: "Afspraakoverzicht",
+    icon: <FaCalendarAlt className="icon-fix" />,
+    description: "Overzicht van al uw geplande afspraken met klanten of\npartners. Plan nieuwe afspraken of wijzig bestaande.",
+    onClick: () => navigate('/bedrijf/afspraken'),
+    iconClass: "bg-green",
+    showAfspraken: true
+  },
+  {
+    title: "Beschikbaarheid van standen",
+    icon: <FaMapMarkerAlt className="icon-fix" />,
+    description: "Controleer de beschikbaarheid van uw standplaatsen,\nreserveer locaties en beheer uw bestaande boekingen.",
+    onClick: () => navigate('/bedrijf/standen'),
+    iconClass: "bg-orange"
+  },
+  {
+    title: "Bedrijfsinstellingen",
+    icon: <FaCog className="icon-fix" />,
+    description: "Beheer uw bedrijfsinformatie, contactgegevens,\nvoorkeursinstellingen en toegangsrechten voor medewerkers.",
+    onClick: () => navigate('/bedrijf/Settingsbedrijf'),
+    iconClass: "bg-purple"
+  }
+];
 
   const filteredCards = dashboardCards.filter(card =>
     card.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -538,5 +533,3 @@ try {
     </div>
   );
 }
-
-export default BedrijvenDashboard;

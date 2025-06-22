@@ -627,3 +627,22 @@
   align-items: center;
   gap: 8px;
 }
+
+.delete-btn {
+  background-color: #ffebee;
+  color: #c62828;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+  margin-left: 5px;
+}
+
+.delete-btn:hover {
+  background-color: #ffcdd2;
+}
