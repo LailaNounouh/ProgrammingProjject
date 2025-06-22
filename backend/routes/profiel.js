@@ -180,8 +180,15 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
       studie,
       jobstudent,
       werkzoekend,
-      stage_gewenst
+      stage_gewenst,
+      bachelorproef_gewenst
     } = req.body;
+
+    // Log de social media links
+    console.log("Ontvangen social media links:", {
+      github,
+      linkedin
+    });
 
     // Haal de skills uit de request body
     let { softskills, hardskills, codeertalen, talen } = req.body;
@@ -190,6 +197,12 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
     console.log("Ontvangen hardskills (raw):", typeof hardskills, hardskills);
     console.log("Ontvangen codeertalen (raw):", typeof codeertalen, codeertalen);
     console.log("Ontvangen talen (raw):", typeof talen, talen);
+    console.log("Ontvangen voorkeuren:", {
+      jobstudent,
+      werkzoekend,
+      stage_gewenst,
+      bachelorproef_gewenst
+    });
     
     // Verwerk de skills voor opslag in de database
     // Softskills verwerken
@@ -230,30 +243,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
         codeertaalenJSON = JSON.stringify([]);
       }
     } else if (Array.isArray(codeertalen)) {
-      // Zorg ervoor dat alle codeertalen het juiste formaat hebben
-      const formattedCodeertalen = codeertalen.map(taal => {
-        if (taal.name && taal.tag && taal.ervaring) {
-          return taal;
-        } else if (taal.taal && taal.ervaring) {
-          return {
-            name: taal.taal,
-            tag: taal.taal.toLowerCase().replace(/\s+/g, '-'),
-            ervaring: taal.ervaring
-          };
-        } else if (typeof taal === 'string') {
-          return {
-            name: taal,
-            tag: taal.toLowerCase().replace(/\s+/g, '-'),
-            ervaring: 'beginner'
-          };
-        }
-        return {
-          name: taal.name || taal.taal || "Onbekend",
-          tag: (taal.tag || taal.name || taal.taal || "onbekend").toLowerCase().replace(/\s+/g, '-'),
-          ervaring: taal.ervaring || 'beginner'
-        };
-      });
-      codeertaalenJSON = JSON.stringify(formattedCodeertalen);
+      codeertaalenJSON = JSON.stringify(codeertalen);
     }
     
     // Talen verwerken
@@ -266,30 +256,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
         talenJSON = JSON.stringify([]);
       }
     } else if (Array.isArray(talen)) {
-      // Zorg ervoor dat alle talen het juiste formaat hebben
-      const formattedTalen = talen.map(taal => {
-        if (taal.name && taal.tag && taal.niveau) {
-          return taal;
-        } else if (taal.taal && taal.niveau) {
-          return {
-            name: taal.taal,
-            tag: taal.taal.toLowerCase().replace(/\s+/g, '-'),
-            niveau: taal.niveau
-          };
-        } else if (typeof taal === 'string') {
-          return {
-            name: taal,
-            tag: taal.toLowerCase().replace(/\s+/g, '-'),
-            niveau: 'basis'
-          };
-        }
-        return {
-          name: taal.name || taal.taal || "Onbekend",
-          tag: (taal.tag || taal.name || taal.taal || "onbekend").toLowerCase().replace(/\s+/g, '-'),
-          niveau: taal.niveau || 'basis'
-        };
-      });
-      talenJSON = JSON.stringify(formattedTalen);
+      talenJSON = JSON.stringify(talen);
     }
     
     console.log("Verwerkte softskills voor opslag:", softskillsJSON);
@@ -317,8 +284,8 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
       await pool.query(
         `INSERT INTO Studenten
           (naam, email, telefoon, aboutMe, foto_url, github_url, linkedin_url, studie, wachtwoord, 
-           softskills, hardskills, programmeertalen, talen, jobstudent, werkzoekend, stage_gewenst)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+           softskills, hardskills, programmeertalen, talen, jobstudent, werkzoekend, stage_gewenst, bachelorproef_gewenst)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           naam || null,
           email,
@@ -335,7 +302,8 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
           talenJSON,
           jobstudent === 'true' || jobstudent === true ? 1 : 0,
           werkzoekend === 'true' || werkzoekend === true ? 1 : 0,
-          stage_gewenst === 'true' || stage_gewenst === true ? 1 : 0
+          stage_gewenst === 'true' || stage_gewenst === true ? 1 : 0,
+          bachelorproef_gewenst === 'true' || bachelorproef_gewenst === true ? 1 : 0
         ]
       );
       console.log("Nieuwe student aangemaakt");
@@ -351,11 +319,14 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
       console.log("- hardskills:", rows[0].hardskills);
       console.log("- programmeertalen:", rows[0].programmeertalen);
       console.log("- talen:", rows[0].talen);
+      console.log("- github_url:", rows[0].github_url);
+      console.log("- linkedin_url:", rows[0].linkedin_url);
       
       // Converteer boolean waarden naar 0/1 voor MySQL
       const jobstudentValue = jobstudent === 'true' || jobstudent === true ? 1 : 0;
       const werkzoekendValue = werkzoekend === 'true' || werkzoekend === true ? 1 : 0;
       const stageGewenstValue = stage_gewenst === 'true' || stage_gewenst === true ? 1 : 0;
+      const bachelorproefGewenstValue = bachelorproef_gewenst === 'true' || bachelorproef_gewenst === true ? 1 : 0;
       
       // Log de query parameters
       console.log("UPDATE parameters:", [
@@ -373,6 +344,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
         jobstudentValue,
         werkzoekendValue,
         stageGewenstValue,
+        bachelorproefGewenstValue,
         email,
       ]);
       
@@ -381,7 +353,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
         `UPDATE Studenten
          SET naam = ?, telefoon = ?, aboutMe = ?, foto_url = ?, github_url = ?, linkedin_url = ?, 
              studie = ?, softskills = ?, hardskills = ?, programmeertalen = ?, talen = ?,
-             jobstudent = ?, werkzoekend = ?, stage_gewenst = ?
+             jobstudent = ?, werkzoekend = ?, stage_gewenst = ?, bachelorproef_gewenst = ?
          WHERE email = ?`,
         [
           naam || rows[0].naam || null,
@@ -398,6 +370,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
           jobstudentValue,
           werkzoekendValue,
           stageGewenstValue,
+          bachelorproefGewenstValue,
           email,
         ]
       );
@@ -566,8 +539,8 @@ router.put("/:email", async (req, res) => {
       naam,
       telefoon,
       aboutMe,
-      github,
-      linkedin,
+      github_url,
+      linkedin_url,
       studie,
       softskills,
       hardskills,
@@ -575,11 +548,16 @@ router.put("/:email", async (req, res) => {
       talen,
       jobstudent,
       werkzoekend,
-      stage_gewenst
+      stage_gewenst,
+      bachelorproef_gewenst
     } = req.body;
 
     console.log("PUT request ontvangen voor email:", email);
     console.log("Request body:", req.body);
+    console.log("Social media links:", {
+      github_url,
+      linkedin_url
+    });
     
     // Controleer of de student bestaat
     const [rows] = await pool.query("SELECT * FROM Studenten WHERE email = ?", [email]);
@@ -614,20 +592,21 @@ router.put("/:email", async (req, res) => {
     const jobstudentValue = jobstudent === true || jobstudent === 'true' ? 1 : 0;
     const werkzoekendValue = werkzoekend === true || werkzoekend === 'true' ? 1 : 0;
     const stageGewenstValue = stage_gewenst === true || stage_gewenst === 'true' ? 1 : 0;
+    const bachelorproefGewenstValue = bachelorproef_gewenst === true || bachelorproef_gewenst === 'true' ? 1 : 0;
     
     // Update de student
     await pool.query(
       `UPDATE Studenten
        SET naam = ?, telefoon = ?, aboutMe = ?, github_url = ?, linkedin_url = ?, 
            studie = ?, softskills = ?, hardskills = ?, programmeertalen = ?, talen = ?,
-           jobstudent = ?, werkzoekend = ?, stage_gewenst = ?
+           jobstudent = ?, werkzoekend = ?, stage_gewenst = ?, bachelorproef_gewenst = ?
        WHERE email = ?`,
       [
         naam || rows[0].naam,
         telefoon || rows[0].telefoon,
         aboutMe || rows[0].aboutMe,
-        github || rows[0].github_url,
-        linkedin || rows[0].linkedin_url,
+        github_url || rows[0].github_url,
+        linkedin_url || rows[0].linkedin_url,
         studie || rows[0].studie,
         processedSoftskills,
         processedHardskills,
@@ -636,6 +615,7 @@ router.put("/:email", async (req, res) => {
         jobstudentValue,
         werkzoekendValue,
         stageGewenstValue,
+        bachelorproefGewenstValue,
         email
       ]
     );

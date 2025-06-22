@@ -205,16 +205,19 @@
 }
 
 .studenten-dashboard-card {
-  background: white;
+  background: #fff;
   border-radius: 12px;
-  padding: 25px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  padding: 12px 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
   border: 1px solid #e0e6ed;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Gebruik gap voor nette ruimte */
+  /* Verwijder vaste hoogte/min-height! */
+  height: auto;
+  min-height: unset;
+  justify-content: flex-start;
   overflow: hidden;
-  max-width: 100%;
 }
 
 .studenten-dashboard-card:hover {
@@ -777,4 +780,67 @@
     width: 100%;
     justify-content: center;
   }
+}
+
+.studenten-mini-afspraak,
+.studenten-mini-bedrijf {
+  padding: 5px 8px;
+  background: #f8f9fa;
+  border-radius: 7px;
+  border-left: 3px solid #4a6cf7;
+  margin-bottom: 4px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 24px;
+  max-height: 38px;
+  overflow: hidden;
+}
+
+.studenten-mini-afspraak-bedrijf,
+.studenten-mini-bedrijf-naam {
+  font-weight: 600;
+  font-size: 12px;
+  margin-bottom: 1px;
+  color: #2d3748;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.studenten-mini-afspraak-details,
+.studenten-mini-bedrijf-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 11px;
+  color: #4a5568;
+  align-items: center;
+  margin-top: 0;
+  line-height: 1.1;
+}
+
+.delete-afspraak-btn {
+  background: none;
+  border: none;
+  color: #e53e3e;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-size: 13px;
+  margin-left: auto;
+}
+
+.delete-afspraak-btn:hover {
+  background-color: rgba(229, 62, 62, 0.08);
+}
+
+.studenten-mini-afspraak:last-child,
+.studenten-mini-bedrijf:last-child {
+  margin-bottom: 0;
 }

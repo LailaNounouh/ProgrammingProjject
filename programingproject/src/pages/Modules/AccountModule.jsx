@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
 import { useProfile } from "../../context/ProfileContext";
 import "./AccountModule.css";
-import { FaEdit, FaEye, FaSave, FaTimes } from "react-icons/fa";
+import { FaEdit, FaEye, FaSave, FaTimes, FaLinkedin, FaGithub } from "react-icons/fa";
 import SoftSkillsSelector from "../../components/dropdowns/SoftSkillsSelector";
 import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
 import CodeerTaalSelector from "../../components/dropdowns/CodeerTaalSelector";
@@ -41,15 +41,24 @@ export default function AccountModule() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("persoonlijk"); // Nieuwe state voor tabs
+  const [voorkeuren, setVoorkeuren] = useState({
+    stage: false,
+    job: false,
+    bachelorproef: false,
+    studentenjob: false
+  });
+  const [socialLinks, setSocialLinks] = useState({
+    linkedin: '',
+    github: ''
+  });
 
   const studieOpties = [
-    "Informatica",
-    "Toegepaste Informatica",
+    "Bachelor Toegepaste Informatica",
+    "Bachelor Multimedia & Creative Technologies",
     "Graduaat Programmeren",
-    "Toegepaste Informatica: AI",
-    "Toegepaste Informatica: Applicatieontwikkeling",
-    "Toegepaste Informatica: Systemen en Netwerken",
-    "Andere"
+    "Graduaat Systeem- & Netwerkbeheer",
+    "Graduaat Internet of Things",
+    "Graduaat Elektromechanische Systemen"
   ];
 
   useEffect(() => {
@@ -169,6 +178,15 @@ export default function AccountModule() {
     }
   }, [profiel]);
 
+  useEffect(() => {
+    if (profiel) {
+      setSocialLinks({
+        linkedin: profiel.linkedin_url || '',
+        github: profiel.github_url || ''
+      });
+    }
+  }, [profiel]);
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setUserData({
@@ -195,6 +213,22 @@ export default function AccountModule() {
     setErrorMessage("");
   };
 
+  const handleVoorkeurChange = (e) => {
+    const { name, checked } = e.target;
+    setVoorkeuren({
+      ...voorkeuren,
+      [name]: checked
+    });
+  };
+
+  const handleSocialLinkChange = (e) => {
+    const { name, value } = e.target;
+    setSocialLinks({
+      ...socialLinks,
+      [name]: value
+    });
+  };
+
   const opslaanWijzigingen = async (e) => {
     e.preventDefault();
     if (saving) return;
@@ -218,74 +252,71 @@ export default function AccountModule() {
       profielData.programmeertalen = Array.isArray(codeertalen) ? codeertalen : [];
       profielData.talen = Array.isArray(talen) ? talen : [];
       
-      if (userData.foto_url && typeof userData.foto_url !== "string") {
-        console.log("AccountModule - Uploaden met foto");
+      // Voeg de voorkeuren toe
+      profielData.stage_gewenst = voorkeuren.stage;
+      profielData.werkzoekend = voorkeuren.job;
+      profielData.bachelorproef_gewenst = voorkeuren.bachelorproef;
+      profielData.jobstudent = voorkeuren.studentenjob;
+      
+      // Voeg de social links toe
+      profielData.linkedin_url = socialLinks.linkedin;
+      profielData.github_url = socialLinks.github;
+      
+      console.log("Opslaan profiel met voorkeuren en social links:", profielData);
+      
+      // Bepaal of we een PUT of POST request moeten doen
+      let response;
+      
+      if (profielData.foto_url && typeof profielData.foto_url !== "string") {
+        console.log("Uploaden met foto");
         const formData = new FormData();
-        formData.append("naam", userData.naam || "");
-        formData.append("email", userData.email || "");
-        formData.append("telefoon", userData.telefoon || "");
-        formData.append("aboutMe", userData.aboutMe || "");
-        formData.append("github", userData.github_url || "");
-        formData.append("linkedin", userData.linkedin_url || "");
-        formData.append("studie", userData.studie || "");
-        formData.append("profilePicture", userData.foto_url);
-        formData.append("jobstudent", userData.jobstudent);
-        formData.append("werkzoekend", userData.werkzoekend);
-        formData.append("stage_gewenst", userData.stage_gewenst);
+        formData.append("naam", profielData.naam || "");
+        formData.append("email", profielData.email || "");
+        formData.append("telefoon", profielData.telefoon || "");
+        formData.append("aboutMe", profielData.aboutMe || "");
+        formData.append("github", profielData.github_url || "");
+        formData.append("linkedin", profielData.linkedin_url || "");
+        formData.append("studie", profielData.studie || "");
+        formData.append("profilePicture", profielData.foto_url);
         
-        // Voeg de skills toe als JSON strings
-        formData.append("softskills", JSON.stringify(softskills));
-        formData.append("hardskills", JSON.stringify(hardskills));
-        formData.append("codeertalen", JSON.stringify(codeertalen));
-        formData.append("programmeertalen", JSON.stringify(codeertalen));
-        formData.append("talen", JSON.stringify(talen));
+        // Voeg de voorkeuren toe aan de FormData
+        formData.append("jobstudent", profielData.jobstudent);
+        formData.append("werkzoekend", profielData.werkzoekend);
+        formData.append("stage_gewenst", profielData.stage_gewenst);
+        formData.append("bachelorproef_gewenst", profielData.bachelorproef_gewenst);
         
-        // Debug log van codeertalen en talen
-        console.log("AccountModule - Codeertalen voor verzending:", codeertalen);
-        console.log("AccountModule - Talen voor verzending:", talen);
+        // Voeg de skills toe
+        formData.append("softskills", JSON.stringify(profielData.softskills));
+        formData.append("hardskills", JSON.stringify(profielData.hardskills));
+        formData.append("codeertalen", JSON.stringify(profielData.codeertalen));
+        formData.append("talen", JSON.stringify(profielData.talen));
         
-        const result = await contextUpdateProfiel(formData, true);
-        if (!result.success) {
-          throw new Error(result.error || "Fout bij opslaan profiel");
-        }
-        
-        // Als we hier komen, is het profiel succesvol opgeslagen
-        setSuccessMessage("Profiel succesvol opgeslagen!");
-        setEditMode(false);
-        
-        // Direct het profiel opnieuw ophalen
-        await fetchProfiel();
+        response = await fetch(`${API_URL}/profiel`, {
+          method: "POST",
+          body: formData,
+        });
       } else {
-        console.log("AccountModule - Uploaden zonder foto");
-        // Zorg ervoor dat de skills als arrays worden verzonden
-        profielData.softskills = Array.isArray(softskills) ? softskills : [];
-        profielData.hardskills = Array.isArray(hardskills) ? hardskills : [];
-        profielData.codeertalen = Array.isArray(codeertalen) ? codeertalen : [];
-        profielData.programmeertalen = Array.isArray(codeertalen) ? codeertalen : [];
-        profielData.talen = Array.isArray(talen) ? talen : [];
-        
-        // Zorg ervoor dat boolean waarden correct worden verzonden
-        profielData.jobstudent = userData.jobstudent === true;
-        profielData.werkzoekend = userData.werkzoekend === true;
-        profielData.stage_gewenst = userData.stage_gewenst === true;
-        
-        console.log("AccountModule - Codeertalen voor verzending:", profielData.codeertalen);
-        console.log("AccountModule - Talen voor verzending:", profielData.talen);
-        
-        const result = await contextUpdateProfiel(profielData, false);
-        if (!result.success) {
-          throw new Error(result.error || "Fout bij opslaan profiel");
-        }
-        
-        // Als we hier komen, is het profiel succesvol opgeslagen
-        setSuccessMessage("Profiel succesvol opgeslagen!");
-        setEditMode(false);
-        
-        // Direct het profiel opnieuw ophalen
-        await fetchProfiel();
+        // PUT request zonder foto
+        response = await fetch(`${API_URL}/profiel/${profielData.email}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(profielData),
+        });
       }
 
-      console.log("AccountModule - Profiel succesvol opgeslagen");
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Fout bij opslaan profiel");
+      }
+
+      // Als we hier komen, is het profiel succesvol opgeslagen
+      setSuccessMessage("Profiel succesvol opgeslagen!");
+      setEditMode(false);
+      
+      // Direct het profiel opnieuw ophalen
+      await fetchProfiel();
     } catch (err) {
       console.error("AccountModule - Fout bij opslaan:", err);
       setErrorMessage("Fout bij opslaan profiel: " + (err.message || "Onbekende fout"));
@@ -352,6 +383,12 @@ export default function AccountModule() {
                 onClick={() => setActiveTab('voorkeuren')}
               >
                 Voorkeuren
+              </button>
+              <button 
+                className={`tab-button ${activeTab === 'social' ? 'active' : ''}`}
+                onClick={() => setActiveTab('social')}
+              >
+                Social Media
               </button>
             </div>
             
@@ -491,38 +528,92 @@ export default function AccountModule() {
               {activeTab === 'voorkeuren' && (
                 <div className="tab-content">
                   <h3>Voorkeuren</h3>
-                  <div className="checkboxen-groep">
-                    <div className="checkbox-item">
+                  <div className="voorkeuren-container">
+                    <div className="form-group">
+                      <label>Ik ben beschikbaar voor:</label>
+                      <div className="voorkeuren-opties">
+                        <div className="voorkeur-optie">
+                          <input
+                            type="checkbox"
+                            id="stage"
+                            name="stage"
+                            checked={voorkeuren.stage}
+                            onChange={handleVoorkeurChange}
+                          />
+                          <label htmlFor="stage">Stage</label>
+                        </div>
+                        
+                        <div className="voorkeur-optie">
+                          <input
+                            type="checkbox"
+                            id="job"
+                            name="job"
+                            checked={voorkeuren.job}
+                            onChange={handleVoorkeurChange}
+                          />
+                          <label htmlFor="job">Job</label>
+                        </div>
+                        
+                        <div className="voorkeur-optie">
+                          <input
+                            type="checkbox"
+                            id="bachelorproef"
+                            name="bachelorproef"
+                            checked={voorkeuren.bachelorproef}
+                            onChange={handleVoorkeurChange}
+                          />
+                          <label htmlFor="bachelorproef">Bachelorproef</label>
+                        </div>
+                        
+                        <div className="voorkeur-optie">
+                          <input
+                            type="checkbox"
+                            id="studentenjob"
+                            name="studentenjob"
+                            checked={voorkeuren.studentenjob}
+                            onChange={handleVoorkeurChange}
+                          />
+                          <label htmlFor="studentenjob">Studentenjob</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Social Media tab */}
+              {activeTab === 'social' && (
+                <div className="tab-content">
+                  <h3>Social Media</h3>
+                  <div className="social-links-container">
+                    <div className="form-group">
+                      <label htmlFor="linkedin">
+                        <FaLinkedin className="social-icon" /> LinkedIn URL
+                      </label>
                       <input
-                        type="checkbox"
-                        id="jobstudent"
-                        name="jobstudent"
-                        checked={userData.jobstudent}
-                        onChange={handleInputChange}
+                        type="url"
+                        id="linkedin"
+                        name="linkedin"
+                        value={socialLinks.linkedin}
+                        onChange={handleSocialLinkChange}
+                        placeholder="https://www.linkedin.com/in/jouwprofiel"
+                        className="form-control"
                       />
-                      <label htmlFor="jobstudent">Ik zoek een studentenjob</label>
                     </div>
                     
-                    <div className="checkbox-item">
+                    <div className="form-group">
+                      <label htmlFor="github">
+                        <FaGithub className="social-icon" /> GitHub URL
+                      </label>
                       <input
-                        type="checkbox"
-                        id="werkzoekend"
-                        name="werkzoekend"
-                        checked={userData.werkzoekend}
-                        onChange={handleInputChange}
+                        type="url"
+                        id="github"
+                        name="github"
+                        value={socialLinks.github}
+                        onChange={handleSocialLinkChange}
+                        placeholder="https://github.com/jouwgebruikersnaam"
+                        className="form-control"
                       />
-                      <label htmlFor="werkzoekend">Ik ben werkzoekend</label>
-                    </div>
-                    
-                    <div className="checkbox-item">
-                      <input
-                        type="checkbox"
-                        id="stage_gewenst"
-                        name="stage_gewenst"
-                        checked={userData.stage_gewenst}
-                        onChange={handleInputChange}
-                      />
-                      <label htmlFor="stage_gewenst">Ik zoek een stageplaats</label>
                     </div>
                   </div>
                 </div>
@@ -568,56 +659,46 @@ export default function AccountModule() {
             </section>
             
             <section className="account-section">
-              <h3>Sociale Media</h3>
-              <div className="info-grid">
-                <div className="info-item">
-                  <label>LinkedIn</label>
-                  <p>
-                    {userData.linkedin_url ? (
-                      <a href={userData.linkedin_url} target="_blank" rel="noopener noreferrer">
-                        {userData.linkedin_url}
-                      </a>
-                    ) : (
-                      "Niet ingevuld"
-                    )}
-                  </p>
-                </div>
-                <div className="info-item">
-                  <label>GitHub</label>
-                  <p>
-                    {userData.github_url ? (
-                      <a href={userData.github_url} target="_blank" rel="noopener noreferrer">
-                        {userData.github_url}
-                      </a>
-                    ) : (
-                      "Niet ingevuld"
-                    )}
-                  </p>
-                </div>
+              <h3>Social Media</h3>
+              <div className="social-links-view">
+                {socialLinks.linkedin && (
+                  <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="social-link">
+                    <FaLinkedin className="social-icon" />
+                    <span>LinkedIn Profiel</span>
+                  </a>
+                )}
+                
+                {socialLinks.github && (
+                  <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" className="social-link">
+                    <FaGithub className="social-icon" />
+                    <span>GitHub Profiel</span>
+                  </a>
+                )}
+                
+                {!socialLinks.linkedin && !socialLinks.github && (
+                  <p>Geen social media links toegevoegd</p>
+                )}
               </div>
             </section>
             
             <section className="account-section">
               <h3>Voorkeuren</h3>
               <div className="voorkeuren-lijst">
-                <div className="voorkeur-item">
-                  <span className="voorkeur-label">Studentenjob:</span>
-                  <span className={`voorkeur-status ${userData.jobstudent ? 'actief' : 'inactief'}`}>
-                    {userData.jobstudent ? 'Ja' : 'Nee'}
-                  </span>
-                </div>
-                <div className="voorkeur-item">
-                  <span className="voorkeur-label">Werkzoekend:</span>
-                  <span className={`voorkeur-status ${userData.werkzoekend ? 'actief' : 'inactief'}`}>
-                    {userData.werkzoekend ? 'Ja' : 'Nee'}
-                  </span>
-                </div>
-                <div className="voorkeur-item">
-                  <span className="voorkeur-label">Stageplaats:</span>
-                  <span className={`voorkeur-status ${userData.stage_gewenst ? 'actief' : 'inactief'}`}>
-                    {userData.stage_gewenst ? 'Ja' : 'Nee'}
-                  </span>
-                </div>
+                {voorkeuren.stage && (
+                  <div className="voorkeur-tag">Stage</div>
+                )}
+                {voorkeuren.job && (
+                  <div className="voorkeur-tag">Job</div>
+                )}
+                {voorkeuren.bachelorproef && (
+                  <div className="voorkeur-tag">Bachelorproef</div>
+                )}
+                {voorkeuren.studentenjob && (
+                  <div className="voorkeur-tag">Studentenjob</div>
+                )}
+                {!voorkeuren.stage && !voorkeuren.job && !voorkeuren.bachelorproef && !voorkeuren.studentenjob && (
+                  <p>Geen voorkeuren geselecteerd</p>
+                )}
               </div>
             </section>
             
