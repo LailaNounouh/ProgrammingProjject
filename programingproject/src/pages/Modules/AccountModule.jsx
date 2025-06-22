@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
 import { useProfile } from "../../context/ProfileContext";
 import "./AccountModule.css";
-import { FaEdit, FaEye, FaSave, FaTimes } from "react-icons/fa";
+import { FaEdit, FaEye, FaSave, FaTimes, FaLinkedin, FaGithub } from "react-icons/fa";
 import SoftSkillsSelector from "../../components/dropdowns/SoftSkillsSelector";
 import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
 import CodeerTaalSelector from "../../components/dropdowns/CodeerTaalSelector";
@@ -14,7 +14,7 @@ import { baseUrl as API_URL } from "../../config";
 export default function AccountModule() {
   const navigate = useNavigate();
   const { gebruiker } = useAuth();
-  const { updateProfiel: contextUpdateProfiel, profiel, fetchProfiel } = useProfile();
+  const { fetchProfiel, profiel } = useProfile();
   const [userData, setUserData] = useState({
     email: "",
     naam: "",
@@ -41,15 +41,26 @@ export default function AccountModule() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("persoonlijk"); // Nieuwe state voor tabs
+  const [voorkeuren, setVoorkeuren] = useState({
+    stage: false,
+    job: false,
+    bachelorproef: false,
+    studentenjob: false
+  });
+  const [socialLinks, setSocialLinks] = useState({
+    github: '',
+    linkedin: ''
+  });
+  // State voor nieuwe taal
+  const [nieuweTaal, setNieuweTaal] = useState({name: "", ervaring: ""});
 
   const studieOpties = [
-    "Informatica",
-    "Toegepaste Informatica",
+    "Bachelor Toegepaste Informatica",
+    "Bachelor Multimedia & Creative Technologies",
     "Graduaat Programmeren",
-    "Toegepaste Informatica: AI",
-    "Toegepaste Informatica: Applicatieontwikkeling",
-    "Toegepaste Informatica: Systemen en Netwerken",
-    "Andere"
+    "Graduaat Systeem- & Netwerkbeheer",
+    "Graduaat Internet of Things",
+    "Graduaat Elektromechanische Systemen"
   ];
 
   useEffect(() => {
@@ -120,33 +131,27 @@ export default function AccountModule() {
         setHardskills([]);
       }
       
-      // Verwerk codeertalen
-      console.log("AccountModule - Controleren van codeertalen in profiel:", profiel);
-      if (Array.isArray(profiel.codeertalen)) {
+      // Verwerk programmeertalen
+      console.log("AccountModule - Controleren van programmeertalen in profiel:", profiel);
+      
+      // Controleer alle mogelijke veldnamen voor programmeertalen
+      if (Array.isArray(profiel.codeertalen) && profiel.codeertalen.length > 0) {
         console.log("AccountModule - Codeertalen uit profiel (array):", profiel.codeertalen);
         setCodeertalen(profiel.codeertalen);
-      } else if (Array.isArray(profiel.programmeertalen)) {
+      } else if (Array.isArray(profiel.programmeertalen) && profiel.programmeertalen.length > 0) {
         console.log("AccountModule - Programmeertalen uit profiel (array):", profiel.programmeertalen);
         setCodeertalen(profiel.programmeertalen);
-      } else if (typeof profiel.programmeertalen === 'string') {
+      } else if (typeof profiel.programmeertalen === 'string' && profiel.programmeertalen) {
         try {
           const parsedTalen = JSON.parse(profiel.programmeertalen);
           console.log("AccountModule - Programmeertalen geparsed uit string:", parsedTalen);
-          setCodeertalen(parsedTalen);
+          setCodeertalen(Array.isArray(parsedTalen) ? parsedTalen : []);
         } catch (e) {
           console.error("AccountModule - Fout bij parsen programmeertalen:", e);
           setCodeertalen([]);
         }
-      } else if (typeof profiel.codeertalen === 'string') {
-        try {
-          const parsedTalen = JSON.parse(profiel.codeertalen);
-          console.log("AccountModule - Codeertalen geparsed uit string:", parsedTalen);
-          setCodeertalen(parsedTalen);
-        } catch (e) {
-          console.error("AccountModule - Fout bij parsen codeertalen:", e);
-          setCodeertalen([]);
-        }
       } else {
+        console.log("AccountModule - Geen programmeertalen gevonden in profiel");
         setCodeertalen([]);
       }
       
@@ -166,6 +171,48 @@ export default function AccountModule() {
       } else {
         setTalen([]);
       }
+    }
+  }, [profiel]);
+
+  useEffect(() => {
+    if (profiel) {
+      setSocialLinks({
+        linkedin: profiel.linkedin_url || '',
+        github: profiel.github_url || ''
+      });
+    }
+  }, [profiel]);
+
+  // Zorg ervoor dat de voorkeuren correct worden ingesteld vanuit het profiel
+  useEffect(() => {
+    if (profiel) {
+      console.log("AccountModule - Voorkeuren uit profiel:", {
+        stage: profiel.stage_gewenst,
+        job: profiel.werkzoekend,
+        bachelorproef: profiel.bachelorproef_gewenst,
+        studentenjob: profiel.jobstudent
+      });
+      
+      setVoorkeuren({
+        stage: profiel.stage_gewenst || false,
+        job: profiel.werkzoekend || false,
+        bachelorproef: profiel.bachelorproef_gewenst || false,
+        studentenjob: profiel.jobstudent || false
+      });
+    }
+  }, [profiel]);
+
+  // Zorg ervoor dat de social links correct worden ingesteld vanuit het profiel
+  useEffect(() => {
+    if (profiel) {
+      console.log("AccountModule - Social links uit profiel:", {
+        github: profiel.github_url || profiel.github || '',
+      });
+      
+      setSocialLinks({
+        ...socialLinks,
+        github: profiel.github_url || profiel.github || ''
+      });
     }
   }, [profiel]);
 
@@ -195,18 +242,35 @@ export default function AccountModule() {
     setErrorMessage("");
   };
 
+  const handleVoorkeurChange = (e) => {
+    const { name, checked } = e.target;
+    setVoorkeuren({
+      ...voorkeuren,
+      [name]: checked
+    });
+  };
+
+  const handleSocialLinkChange = (e) => {
+    const { name, value } = e.target;
+    console.log(`Social link changed: ${name} = ${value}`);
+    setSocialLinks({
+      ...socialLinks,
+      [name]: value
+    });
+  };
+
+  // Zorg ervoor dat de data correct wordt opgeslagen
   const opslaanWijzigingen = async (e) => {
     e.preventDefault();
-    if (saving) return;
-    
     setSaving(true);
     setErrorMessage("");
     setSuccessMessage("");
 
     try {
       console.log("AccountModule - Formulier verzonden");
-      console.log("AccountModule - Codeertalen:", codeertalen);
-      console.log("AccountModule - Talen:", talen);
+      
+      // Log de huidige staat van codeertalen
+      console.log("AccountModule - Huidige codeertalen:", codeertalen);
       
       // Maak een kopie van userData om mee te werken
       let profielData = { ...userData };
@@ -253,7 +317,7 @@ export default function AccountModule() {
         setSuccessMessage("Profiel succesvol opgeslagen!");
         setEditMode(false);
         
-        // Direct het profiel opnieuw ophalen
+        // Werk het profiel bij in de context
         await fetchProfiel();
       } else {
         console.log("AccountModule - Uploaden zonder foto");
@@ -282,12 +346,13 @@ export default function AccountModule() {
         
         // Direct het profiel opnieuw ophalen
         await fetchProfiel();
+      } else {
+        console.error("AccountModule - Fout bij bijwerken programmeertalen:", response.data);
+        setErrorMessage("Fout bij bijwerken programmeertalen: " + (response.data.error || "Onbekende fout"));
       }
-
-      console.log("AccountModule - Profiel succesvol opgeslagen");
-    } catch (err) {
-      console.error("AccountModule - Fout bij opslaan:", err);
-      setErrorMessage("Fout bij opslaan profiel: " + (err.message || "Onbekende fout"));
+    } catch (error) {
+      console.error("AccountModule - Fout bij verzenden programmeertalen:", error);
+      setErrorMessage("Fout bij verzenden programmeertalen: " + (error.response?.data?.error || error.message || "Onbekende fout"));
     } finally {
       setSaving(false);
     }
@@ -351,6 +416,12 @@ export default function AccountModule() {
                 onClick={() => setActiveTab('voorkeuren')}
               >
                 Voorkeuren
+              </button>
+              <button 
+                className={`tab-button ${activeTab === 'social' ? 'active' : ''}`}
+                onClick={() => setActiveTab('social')}
+              >
+                Social Media
               </button>
             </div>
             
@@ -490,39 +561,89 @@ export default function AccountModule() {
               {activeTab === 'voorkeuren' && (
                 <div className="tab-content">
                   <h3>Voorkeuren</h3>
-                  <div className="checkboxen-groep">
-                    <div className="checkbox-item">
-                      <input
-                        type="checkbox"
-                        id="jobstudent"
-                        name="jobstudent"
-                        checked={userData.jobstudent}
-                        onChange={handleInputChange}
-                      />
-                      <label htmlFor="jobstudent">Ik zoek een studentenjob</label>
+                  <div className="voorkeuren-container">
+                    <div className="form-group">
+                      <label>Ik ben beschikbaar voor:</label>
+                      <div className="voorkeuren-opties">
+                        <div className="voorkeur-optie">
+                          <input
+                            type="checkbox"
+                            id="stage"
+                            name="stage"
+                            checked={voorkeuren.stage}
+                            onChange={handleVoorkeurChange}
+                          />
+                          <label htmlFor="stage">Stage</label>
+                        </div>
+                        
+                        <div className="voorkeur-optie">
+                          <input
+                            type="checkbox"
+                            id="job"
+                            name="job"
+                            checked={voorkeuren.job}
+                            onChange={handleVoorkeurChange}
+                          />
+                          <label htmlFor="job">Job</label>
+                        </div>
+                        
+                        <div className="voorkeur-optie">
+                          <input
+                            type="checkbox"
+                            id="bachelorproef"
+                            name="bachelorproef"
+                            checked={voorkeuren.bachelorproef}
+                            onChange={handleVoorkeurChange}
+                          />
+                          <label htmlFor="bachelorproef">Bachelorproef</label>
+                        </div>
+                        
+                        <div className="voorkeur-optie">
+                          <input
+                            type="checkbox"
+                            id="studentenjob"
+                            name="studentenjob"
+                            checked={voorkeuren.studentenjob}
+                            onChange={handleVoorkeurChange}
+                          />
+                          <label htmlFor="studentenjob">Studentenjob</label>
+                        </div>
+                      </div>
                     </div>
-                    
-                    <div className="checkbox-item">
-                      <input
-                        type="checkbox"
-                        id="werkzoekend"
-                        name="werkzoekend"
-                        checked={userData.werkzoekend}
-                        onChange={handleInputChange}
-                      />
-                      <label htmlFor="werkzoekend">Ik ben werkzoekend</label>
-                    </div>
-                    
-                    <div className="checkbox-item">
-                      <input
-                        type="checkbox"
-                        id="stage_gewenst"
-                        name="stage_gewenst"
-                        checked={userData.stage_gewenst}
-                        onChange={handleInputChange}
-                      />
-                      <label htmlFor="stage_gewenst">Ik zoek een stageplaats</label>
-                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Social Media tab */}
+              {activeTab === 'social' && (
+                <div className="tab-content">
+                  <h3>Social Media</h3>
+                  <div className="form-group">
+                    <label htmlFor="github">GitHub URL</label>
+                    <input
+                      type="url"
+                      id="github"
+                      name="github"
+                      value={socialLinks.github}
+                      onChange={handleSocialLinkChange}
+                      placeholder="https://github.com/jouw-gebruikersnaam"
+                    />
+                  </div>
+                </div>
+              )}
+              
+              {/* Programmeertalen tab */}
+              {activeTab === 'codeertalen' && (
+                <div className="tab-content">
+                  <h3>Programmeertalen</h3>
+                  <div className="skills-container">
+                    <CodeerTaalSelector value={codeertalen} onChange={setCodeertalen} readOnly={false} />
+                  </div>
+                  
+                  <div className="form-actions">
+                    <button type="button" className="opslaan-btn" onClick={updateProgrammeertalen} disabled={saving}>
+                      {saving ? "Opslaan..." : <><FaSave /> Programmeertalen opslaan</>}
+                    </button>
                   </div>
                 </div>
               )}
@@ -567,56 +688,39 @@ export default function AccountModule() {
             </section>
             
             <section className="account-section">
-              <h3>Sociale Media</h3>
-              <div className="info-grid">
-                <div className="info-item">
-                  <label>LinkedIn</label>
-                  <p>
-                    {userData.linkedin_url ? (
-                      <a href={userData.linkedin_url} target="_blank" rel="noopener noreferrer">
-                        {userData.linkedin_url}
-                      </a>
-                    ) : (
-                      "Niet ingevuld"
-                    )}
-                  </p>
-                </div>
-                <div className="info-item">
-                  <label>GitHub</label>
-                  <p>
-                    {userData.github_url ? (
-                      <a href={userData.github_url} target="_blank" rel="noopener noreferrer">
-                        {userData.github_url}
-                      </a>
-                    ) : (
-                      "Niet ingevuld"
-                    )}
-                  </p>
-                </div>
+              <h3>Social Media</h3>
+              <div className="social-links-view">
+                {socialLinks.github && (
+                  <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" className="social-link">
+                    <FaGithub className="social-icon" />
+                    <span>GitHub Profiel</span>
+                  </a>
+                )}
+                
+                {!socialLinks.github && (
+                  <p>Geen GitHub profiel toegevoegd</p>
+                )}
               </div>
             </section>
             
             <section className="account-section">
               <h3>Voorkeuren</h3>
               <div className="voorkeuren-lijst">
-                <div className="voorkeur-item">
-                  <span className="voorkeur-label">Studentenjob:</span>
-                  <span className={`voorkeur-status ${userData.jobstudent ? 'actief' : 'inactief'}`}>
-                    {userData.jobstudent ? 'Ja' : 'Nee'}
-                  </span>
-                </div>
-                <div className="voorkeur-item">
-                  <span className="voorkeur-label">Werkzoekend:</span>
-                  <span className={`voorkeur-status ${userData.werkzoekend ? 'actief' : 'inactief'}`}>
-                    {userData.werkzoekend ? 'Ja' : 'Nee'}
-                  </span>
-                </div>
-                <div className="voorkeur-item">
-                  <span className="voorkeur-label">Stageplaats:</span>
-                  <span className={`voorkeur-status ${userData.stage_gewenst ? 'actief' : 'inactief'}`}>
-                    {userData.stage_gewenst ? 'Ja' : 'Nee'}
-                  </span>
-                </div>
+                {voorkeuren.stage && (
+                  <div className="voorkeur-tag">Stage</div>
+                )}
+                {voorkeuren.job && (
+                  <div className="voorkeur-tag">Job</div>
+                )}
+                {voorkeuren.bachelorproef && (
+                  <div className="voorkeur-tag">Bachelorproef</div>
+                )}
+                {voorkeuren.studentenjob && (
+                  <div className="voorkeur-tag">Studentenjob</div>
+                )}
+                {!voorkeuren.stage && !voorkeuren.job && !voorkeuren.bachelorproef && !voorkeuren.studentenjob && (
+                  <p>Geen voorkeuren geselecteerd</p>
+                )}
               </div>
             </section>
             

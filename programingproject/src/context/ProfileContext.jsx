@@ -56,12 +56,15 @@ export const ProfileProvider = ({ children }) => {
           aboutMe: databaseProfile.aboutMe,
           beschrijving: databaseProfile.aboutMe,
           linkedin: databaseProfile.linkedin_url,
+          linkedin_url: databaseProfile.linkedin_url,
           github: databaseProfile.github_url,
+          github_url: databaseProfile.github_url,
           foto_url: databaseProfile.foto_url,
           studie: databaseProfile.studie,
           jobstudent: databaseProfile.jobstudent === 1 || databaseProfile.jobstudent === true,
           werkzoekend: databaseProfile.werkzoekend === 1 || databaseProfile.werkzoekend === true,
           stage_gewenst: databaseProfile.stage_gewenst === 1 || databaseProfile.stage_gewenst === true,
+          bachelorproef_gewenst: databaseProfile.bachelorproef_gewenst === 1 || databaseProfile.bachelorproef_gewenst === true,
           
           // Verwerk softskills
           softskills: procesSkills(databaseProfile.softskills),

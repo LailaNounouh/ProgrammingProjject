@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
 import codeertaalData from './codeertalen.json';
 import './DropDowns.css';
+
+const animatedComponents = makeAnimated();
 
 // Opties voor ervaringsniveaus
 const ervaringsOpties = [
@@ -15,8 +18,8 @@ const CodeerTaalSelector = ({ value = [], onChange, readOnly = false }) => {
   const [codeertaalOpties, setCodeertaalOpties] = useState([]);
   const [selectedTalen, setSelectedTalen] = useState([]);
   
-  // Laad codeertaalopties bij initialisatie
   useEffect(() => {
+    // Converteer de codeertalen uit het JSON-bestand naar het juiste formaat voor react-select
     const opties = codeertaalData.map(taal => ({
       value: taal.name,
       label: taal.name,
@@ -25,36 +28,31 @@ const CodeerTaalSelector = ({ value = [], onChange, readOnly = false }) => {
     setCodeertaalOpties(opties);
   }, []);
 
-  // Verwerk de ontvangen waarden
+  // Initialiseer geselecteerde codeertalen
   useEffect(() => {
-    console.log("CodeerTaalSelector - ontvangen value:", value);
-    
     if (Array.isArray(value)) {
       const formattedTalen = value.map(item => {
-        if (typeof item === 'object') {
+        if (typeof item === 'object' && item.taal && item.ervaring) {
           return {
-            taal: item.name || item.taal || '',
-            ervaring: item.ervaring || 'beginner'
+            taal: item.taal,
+            ervaring: item.ervaring
           };
         } else if (typeof item === 'string') {
           return {
             taal: item,
-            ervaring: 'beginner'
+            ervaring: 'beginner' // Standaard niveau
           };
         }
         return null;
       }).filter(Boolean);
       
-      console.log("CodeerTaalSelector - geformatteerde talen:", formattedTalen);
       setSelectedTalen(formattedTalen);
     } else {
-      console.log("CodeerTaalSelector - geen array ontvangen, leeg array gebruikt");
       setSelectedTalen([]);
     }
   }, [value]);
 
   const handleTaalChange = (selected, index) => {
-    console.log("CodeerTaalSelector - taal gewijzigd:", selected, "op index:", index);
     const updatedTalen = [...selectedTalen];
     updatedTalen[index] = {
       ...updatedTalen[index],
@@ -65,7 +63,6 @@ const CodeerTaalSelector = ({ value = [], onChange, readOnly = false }) => {
   };
 
   const handleErvaringChange = (selected, index) => {
-    console.log("CodeerTaalSelector - ervaring gewijzigd:", selected, "op index:", index);
     const updatedTalen = [...selectedTalen];
     updatedTalen[index] = {
       ...updatedTalen[index],
@@ -76,14 +73,10 @@ const CodeerTaalSelector = ({ value = [], onChange, readOnly = false }) => {
   };
 
   const addTaal = () => {
-    console.log("CodeerTaalSelector - taal toegevoegd");
-    const updatedTalen = [...selectedTalen, { taal: '', ervaring: 'beginner' }];
-    setSelectedTalen(updatedTalen);
-    // Niet direct updateParent aanroepen omdat de nieuwe taal nog leeg is
+    setSelectedTalen([...selectedTalen, { taal: '', ervaring: 'beginner' }]);
   };
 
   const removeTaal = (index) => {
-    console.log("CodeerTaalSelector - taal verwijderd op index:", index);
     const updatedTalen = selectedTalen.filter((_, i) => i !== index);
     setSelectedTalen(updatedTalen);
     updateParent(updatedTalen);
@@ -93,16 +86,7 @@ const CodeerTaalSelector = ({ value = [], onChange, readOnly = false }) => {
     if (onChange) {
       // Filter lege talen
       const filteredTalen = talen.filter(item => item.taal);
-      
-      // Converteer naar het formaat dat de backend verwacht
-      const formattedTalen = filteredTalen.map(item => ({
-        name: item.taal,
-        tag: item.taal.toLowerCase().replace(/\s+/g, '-'),
-        ervaring: item.ervaring || 'beginner'
-      }));
-      
-      console.log("CodeerTaalSelector - update naar parent:", formattedTalen);
-      onChange(formattedTalen);
+      onChange(filteredTalen);
     }
   };
 
