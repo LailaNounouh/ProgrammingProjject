@@ -374,8 +374,8 @@ export default function AccountModule() {
             </form>
             {/* Selectors tonen in edit mode */}
             <div className="skills-section">
-              <SoftSkillsSelector value={softskills} onChange={setSoftskills} />
-              <HardSkillsSelector value={hardskills} onChange={setHardskills} />
+              <SoftSkillsSelector value={softskills} onChange={setSoftskills} readOnly={!editMode} />
+              <HardSkillsSelector value={hardskills} onChange={setHardskills} readOnly={!editMode} />
             </div>
           </div>
         ) : (
@@ -466,8 +466,8 @@ export default function AccountModule() {
             <section className="account-section">
               <h3>Vaardigheden & Talen</h3>
               <div className="skills-section">
-                <SoftSkillsSelector value={softskills} onChange={() => {}} />
-                <HardSkillsSelector value={hardskills} onChange={() => {}} />
+                <SoftSkillsSelector value={softskills} onChange={setSoftskills} readOnly={!editMode} />
+                <HardSkillsSelector value={hardskills} onChange={setHardskills} readOnly={!editMode} />
               </div>
             </section>
           </div>
