@@ -36,6 +36,8 @@ export const ProfileProvider = ({ children }) => {
           github: databaseProfile.github_url,
           foto_url: databaseProfile.foto_url,
           studie: databaseProfile.studie,
+          softskills: databaseProfile.softskills ? JSON.parse(databaseProfile.softskills) : [],
+          hardskills: databaseProfile.hardskills ? JSON.parse(databaseProfile.hardskills) : [],
           // Add other fields as needed
         };
 
@@ -67,49 +69,33 @@ export const ProfileProvider = ({ children }) => {
     }
   };
 
-  const updateProfiel = async (updatedData) => {
+  const updateProfiel = async (data, isMultipart = false) => {
     try {
-      const currentProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
-      const newProfile = {
-        ...currentProfile,
-        ...updatedData,
-        userId: gebruiker.id
-      };
+      let options;
+      if (isMultipart) {
+        options = {
+          method: "POST",
+          body: data, // FormData
+        };
+      } else {
+        options = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        };
+      }
 
-      // Save to localStorage first (for immediate UI update)
-      localStorage.setItem('userProfile', JSON.stringify(newProfile));
-      setProfiel(newProfile);
-
-      // Now save to database
-      const response = await fetch(`${baseUrl}/profiel`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          naam: newProfile.naam,
-          email: newProfile.email || gebruiker.email,
-          telefoon: newProfile.telefoon,
-          aboutMe: newProfile.beschrijving,
-          github: newProfile.github,
-          linkedin: newProfile.linkedin,
-          studie: newProfile.studie,
-        }),
-      });
+      const response = await fetch(`${baseUrl}/profiel`, options);
 
       if (!response.ok) {
-        throw new Error('Database update failed');
+        throw new Error("Database update failed");
       }
 
       const result = await response.json();
-      console.log('Profile saved to database:', result);
-
+      console.log("Profile saved to database:", result);
       return { success: true };
     } catch (error) {
-      console.error('Fout bij updaten profiel:', error);
-
-      // If database save failed, you might want to revert localStorage
-      // or show a warning to the user
+      console.error("Fout bij updaten profiel:", error);
       return { success: false, error: error.message };
     }
   };

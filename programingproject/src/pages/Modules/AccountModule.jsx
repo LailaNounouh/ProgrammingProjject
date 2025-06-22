@@ -87,6 +87,7 @@ export default function AccountModule() {
         stage_gewenst: profiel.stage_gewenst || false,
         telefoon: profiel.telefoon || "",
         aboutMe: profiel.beschrijving || "",
+        
       });
       setSoftskills(profiel.softskills || []);
       setHardskills(profiel.hardskills || []);
@@ -145,11 +146,33 @@ export default function AccountModule() {
     setErrorMessage("");
     setSuccessMessage("");
     try {
-      await updateProfiel({
+      let profielData = {
         ...userData,
         softskills,
         hardskills,
-      });
+      };
+
+      // Check of er een bestand is
+      if (userData.foto_url && typeof userData.foto_url !== "string") {
+        // Gebruik FormData voor file upload
+        const formData = new FormData();
+        formData.append("naam", userData.naam);
+        formData.append("email", userData.email);
+        formData.append("telefoon", userData.telefoon);
+        formData.append("aboutMe", userData.aboutMe);
+        formData.append("github", userData.github_url);
+        formData.append("linkedin", userData.linkedin_url);
+        formData.append("studie", userData.studie);
+        formData.append("softskills", JSON.stringify(softskills));
+        formData.append("hardskills", JSON.stringify(hardskills));
+        formData.append("profilePicture", userData.foto_url);
+
+        await updateProfiel(formData, true); // true = multipart
+      } else {
+        // Gewoon JSON
+        await updateProfiel(profielData, false);
+      }
+
       setSuccessMessage("Profiel succesvol opgeslagen!");
       setEditMode(false);
       fetchProfiel();
