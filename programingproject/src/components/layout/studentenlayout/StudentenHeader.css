@@ -135,3 +135,53 @@
   color: white;
   cursor: pointer;
 }
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .student-header .hamburger {
+    display: block;
+  }
+
+  .student-header nav {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background-color: #00aeb3;
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem 2rem;
+    z-index: 200;
+  }
+
+  .student-header nav.show {
+    display: flex;
+  }
+
+  .student-header nav ul {
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+  }
+
+  .student-header nav ul li {
+    width: 100%;
+  }
+
+  .student-header nav ul li a,
+  .student-header .logout-link {
+    width: 100%;
+    text-align: left;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 0.6rem 0.5rem;
+    border-radius: 5px;
+  }
+
+  .student-header nav ul li a:hover,
+  .student-header .logout-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+}

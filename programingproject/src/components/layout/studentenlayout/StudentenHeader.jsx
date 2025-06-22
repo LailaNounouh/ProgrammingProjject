@@ -8,6 +8,7 @@ const StudentenHeader = () => {
   const { uitloggen } = useAuth();
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const closeMobileMenu = () => setShowMobileMenu(false);
 
  return (
    <>
@@ -29,11 +30,11 @@ const StudentenHeader = () => {
 
      <nav className={showMobileMenu ? 'show' : ''}>
        <ul>
-         <li><Link to="/student">Dashboard</Link></li>
-         <li><Link to="/student/bedrijven">Deelnemende Bedrijven</Link></li>
-         <li><Link to="/student/standen">Standen</Link></li>
-         <li><Link to="/student/afspraken">Afspraak maken</Link></li>
-         <li><Link to="/student/account">Account</Link></li>
+         <li><Link to="/student" onClick={closeMobileMenu}>Dashboard</Link></li>
+         <li><Link to="/student/bedrijven" onClick={closeMobileMenu}>Deelnemende Bedrijven</Link></li>
+         <li><Link to="/student/standen" onClick={closeMobileMenu}>Standen</Link></li>
+         <li><Link to="/student/afspraken" onClick={closeMobileMenu}>Afspraak maken</Link></li>
+         <li><Link to="/student/account" onClick={closeMobileMenu}>Account</Link></li>
          <li>
             <button
                 onClick={() => setShowLogoutPopup(true)}
