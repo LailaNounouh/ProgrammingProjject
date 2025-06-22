@@ -13,10 +13,14 @@ import {
   FaClock,
   FaExclamationCircle,
   FaBook,
-  FaUserTie
+  FaUserTie,
+  FaBuilding,
+  FaTimes,
+  FaGraduationCap,
+  FaBolt
 } from 'react-icons/fa';
 import './StudentenDashboard.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useAuth } from '../../context/AuthProvider';
@@ -41,8 +45,14 @@ function DashboardContent({
   newReminder,
   setNewReminder,
   handleReminderSubmit,
-  addEventReminder
+  addEventReminder,
+  studentAfspraken,
+  verwijderAfspraak,
+  isDeleting,
+  interessanteBedrijven
 }) {
+  const navigate = useNavigate();
+  
   return (
     <div className="studenten-dashboard-container">
       <div className="studenten-welcome-banner">
@@ -93,18 +103,110 @@ function DashboardContent({
 
       <div className="studenten-dashboard-content">
         <div className="studenten-card-grid">
+          {/* Afspraken kaart */}
+          <div className="studenten-dashboard-card studenten-afspraken-card">
+            <div className="studenten-card-header">
+              <div className="studenten-card-icon studenten-bg-purple">
+                <FaCalendarCheck className="icon-fix" />
+              </div>
+              <h3 className="studenten-card-title">Mijn Afspraken</h3>
+            </div>
+            
+            {studentAfspraken.length === 0 ? (
+              <p className="card-description">Je hebt nog geen afspraken gepland</p>
+            ) : (
+              <div className="studenten-mini-afspraken-lijst">
+                {studentAfspraken.map((afspraak, index) => (
+                  <div key={`mini-afspraak-${afspraak.afspraak_id || index}`} className="studenten-mini-afspraak">
+                    <div className="studenten-mini-afspraak-bedrijf">
+                      {afspraak.bedrijfsnaam}
+                    </div>
+                    <div className="studenten-mini-afspraak-details">
+                      <span className="studenten-mini-afspraak-datum">
+                        <FaCalendarAlt /> {new Date(afspraak.datum || '2026-03-13').toLocaleDateString('nl-NL')}
+                      </span>
+                      <span className="studenten-mini-afspraak-tijd">
+                        <FaClock /> {afspraak.tijdslot || '10:00 - 10:30'}
+                      </span>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          verwijderAfspraak(afspraak.afspraak_id);
+                        }} 
+                        className="delete-afspraak-btn"
+                        disabled={isDeleting}
+                        aria-label="Verwijder afspraak"
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <div className="card-footer" onClick={() => navigate('/student/afspraken')}>
+              <span>Bekijk alle afspraken</span>
+              <FaChevronRight className="chevron-icon" />
+            </div>
+          </div>
+          
+          {/* Interessante Bedrijven kaart */}
+          <div className="studenten-dashboard-card studenten-interessante-bedrijven-card">
+            <div className="studenten-card-header">
+              <div className="studenten-card-icon studenten-bg-green">
+                <FaBuilding className="icon-fix" />
+              </div>
+              <h3 className="studenten-card-title">Interessante Bedrijven</h3>
+            </div>
+            
+            {interessanteBedrijven.length === 0 ? (
+              <p className="card-description">
+                Geen bedrijven gevonden die matchen met jouw studierichting.
+              </p>
+            ) : (
+              <div className="studenten-mini-bedrijven-lijst">
+                {interessanteBedrijven.map((bedrijf, index) => (
+                  <div 
+                    key={`mini-bedrijf-${bedrijf.bedrijf_id || index}`} 
+                    className="studenten-mini-bedrijf"
+                    onClick={() => navigate(`/student/bedrijven/${bedrijf.bedrijf_id}`)}
+                  >
+                    <div className="studenten-mini-bedrijf-naam">
+                      {bedrijf.naam}
+                    </div>
+                    <div className="studenten-mini-bedrijf-details">
+                      {bedrijf.sector_naam && (
+                        <span className="studenten-mini-bedrijf-sector">
+                          {bedrijf.sector_naam}
+                        </span>
+                      )}
+                      {bedrijf.speeddates === 1 && (
+                        <span className="studenten-mini-bedrijf-speeddate">
+                          <FaBolt /> Speeddate beschikbaar
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <div className="card-footer" onClick={() => navigate('/student/bedrijven')}>
+              <span>Bekijk alle bedrijven</span>
+              <FaChevronRight className="chevron-icon" />
+            </div>
+          </div>
+          
           {filteredCards.map((card, index) => (
             <div key={index} className="studenten-dashboard-card" onClick={card.onClick}>
               <div className="studenten-card-header">
-                <div className={`studenten-card-icon studenten- ${card.iconClass}`}>
+                <div className={`studenten-card-icon studenten-${card.iconClass}`}>
                   {card.icon}
                 </div>
                 <h3 className="studenten-card-title">{card.title}</h3>
               </div>
               {card.description && <p className="card-description">{card.description}</p>}
-              {card.showAfspraken && (
-                <p className="card-description">Bekijk geplande afspraken</p>
-              )}
               <div className="card-footer">
                 <span>Direct naar {card.title.toLowerCase()}</span>
                 <FaChevronRight className="chevron-icon" />
@@ -305,42 +407,186 @@ function StudentenDashboard() {
     time: '12:00',
     text: ''
   });
+  const [studentAfspraken, setStudentAfspraken] = useState([]);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteStatus, setDeleteStatus] = useState('');
+  const [error, setError] = useState('');
+  const [interessanteBedrijven, setInteressanteBedrijven] = useState([]);
   const notificationRef = useRef(null);
-
-  const upcomingEvents = [
-    {
-      date: new Date(2026, 2, 7), 
-      title: "Deadline voor inschrijven Career Launch Day",
-      description: "Laatste kans om je in te schrijven voor de Career Launch Day",
-      time: "23:59",
-      deadline: true,
-      highlight: true
-    },
-    {
-      date: new Date(2026, 2, 11),
-      title: "Voorbereidingssessie voor studenten",
-      description: "Informatiesessie over hoe je je het beste kan voorbereiden op de Career Launch Day",
-      time: "14:00",
-      highlight: true
-    },
-    {
-      date: new Date(2026, 2, 13),
-      title: "Career Launch Day",
-      description: "Het belangrijkste recruitment event van het jaar",
-      time: "09:00 - 17:00",
-      highlight: true
-    }
-  ];
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  
+  // Base URL voor API calls
+  const baseUrl = 'http://10.2.160.211:3000/api';
 
   useEffect(() => {
-    if (gebruiker?.naam) {
+    if (gebruiker?.id) {
       setStudentNaam(gebruiker.naam);
       const savedReminders = localStorage.getItem(`reminders_${gebruiker.id}`);
       if (savedReminders) {
         setReminders(JSON.parse(savedReminders));
       }
+      
+      // Haal afspraken op voor deze student
+      fetchStudentAfspraken(gebruiker.id);
+      
+      // Haal interessante bedrijven op voor deze student
+      fetchInteressanteBedrijven(gebruiker.id);
     }
   }, [gebruiker]);
+
+  // Functie om afspraken op te halen
+  const fetchStudentAfspraken = async (studentId) => {
+    try {
+      const response = await fetch(`${baseUrl}/afspraken/student/${studentId}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log("Opgehaalde afspraken:", data);
+      
+      // Sorteer afspraken op datum (nieuwste eerst)
+      const gesorteerdeAfspraken = data.sort((a, b) => {
+        return new Date(b.datum) - new Date(a.datum);
+      });
+      
+      // Beperk tot maximaal 5 afspraken voor het dashboard
+      setStudentAfspraken(gesorteerdeAfspraken.slice(0, 5));
+      
+      // Converteer afspraken naar events voor de kalender
+      const events = gesorteerdeAfspraken.map(afspraak => ({
+        id: afspraak.afspraak_id,
+        title: `Afspraak met ${afspraak.bedrijf_naam}`,
+        description: afspraak.notities || 'Geen beschrijving',
+        date: new Date(afspraak.datum),
+        time: afspraak.tijd,
+        type: 'afspraak'
+      }));
+      
+      // Als setUpcomingEvents bestaat, gebruik het dan
+      if (typeof setUpcomingEvents === 'function') {
+        setUpcomingEvents(events);
+      }
+      
+    } catch (error) {
+      console.error("Fout bij ophalen afspraken:", error);
+      setStudentAfspraken([]);
+    }
+  };
+
+  // Functie om interessante bedrijven op te halen
+  const fetchInteressanteBedrijven = async (studentId) => {
+    try {
+      // Probeer eerst de studierichting uit de gebruiker te halen
+      let studierichting = gebruiker?.studie || '';
+      
+      // Als de studierichting niet in de gebruiker zit, probeer dan de API
+      if (!studierichting) {
+        try {
+          const studentResponse = await fetch(`${baseUrl}/users/${studentId}`);
+          if (studentResponse.ok) {
+            const studentData = await studentResponse.json();
+            studierichting = studentData.studie || '';
+          } else {
+            // Probeer alternatieve endpoint
+            const altResponse = await fetch(`${baseUrl}/studenten/profiel/${studentId}`);
+            if (altResponse.ok) {
+              const altData = await altResponse.json();
+              studierichting = altData.studie || '';
+            }
+          }
+        } catch (error) {
+          console.error("Kon studentgegevens niet ophalen:", error);
+        }
+      }
+      
+      // Als we nog steeds geen studierichting hebben, gebruik een fallback
+      if (!studierichting) {
+        console.log("Geen studierichting gevonden, gebruik fallback");
+        studierichting = "Informatica"; // Fallback studierichting
+      }
+      
+      console.log("Studierichting van student:", studierichting);
+      
+      // Haal alle bedrijven op
+      const bedrijvenResponse = await fetch(`${baseUrl}/bedrijvenmodule`);
+      if (!bedrijvenResponse.ok) {
+        throw new Error(`HTTP error! status: ${bedrijvenResponse.status}`);
+      }
+      
+      const bedrijvenData = await bedrijvenResponse.json();
+      console.log("Aantal opgehaalde bedrijven:", bedrijvenData.length);
+      
+      // Filter bedrijven die de studierichting van de student zoeken
+      const matchendeBedrijven = bedrijvenData.filter(bedrijf => {
+        if (!bedrijf.doelgroep_opleiding) return false;
+        
+        const doelgroepen = bedrijf.doelgroep_opleiding
+          .split(',')
+          .map(d => d.trim().toLowerCase())
+          .filter(d => d.length > 0);
+        
+        const studentRichting = studierichting.toLowerCase();
+        
+        // Check of een van de doelgroepen overeenkomt met de studierichting
+        const match = doelgroepen.some(doelgroep => 
+          studentRichting.includes(doelgroep) || 
+          doelgroep.includes(studentRichting)
+        );
+        
+        if (match) {
+          console.log(`Match gevonden: ${bedrijf.naam} zoekt ${bedrijf.doelgroep_opleiding}`);
+        }
+        
+        return match;
+      });
+      
+      console.log("Aantal matchende bedrijven:", matchendeBedrijven.length);
+      
+      // Beperk tot maximaal 5 bedrijven
+      setInteressanteBedrijven(matchendeBedrijven.slice(0, 5));
+      
+    } catch (error) {
+      console.error('Fout bij ophalen interessante bedrijven:', error);
+      setInteressanteBedrijven([]);
+    }
+  };
+
+  const verwijderAfspraak = async (afspraakId) => {
+    if (!window.confirm('Weet je zeker dat je deze afspraak wilt verwijderen?')) {
+      return;
+    }
+    
+    setIsDeleting(true);
+    setDeleteStatus('');
+    
+    try {
+      const response = await fetch(`${baseUrl}/afspraken/${afspraakId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        setStudentAfspraken(studentAfspraken.filter(afspraak => afspraak.afspraak_id !== afspraakId));
+        setDeleteStatus('Afspraak succesvol verwijderd');
+        
+        setTimeout(() => {
+          setDeleteStatus('');
+        }, 3000);
+      } else {
+        const errorData = await response.json();
+        setDeleteStatus(`Fout bij verwijderen: ${errorData.message || 'Onbekende fout'}`);
+      }
+    } catch (error) {
+      console.error('Fout bij verwijderen afspraak:', error);
+      setDeleteStatus('Fout bij verbinding met de server');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -398,33 +644,19 @@ function StudentenDashboard() {
 
   const dashboardCards = [
     {
+      title: "Standen",
+      icon: <FaMapMarkerAlt className="icon-fix" />,
+      description: "Bekijk deelnemende bedrijven en hun stands",
+      onClick: () => navigate('/student/cv'),
+      iconClass: "bg-purple"
+    },
+    {
       title: "Account",
       icon: <FaUserGraduate className="icon-fix" />,
       description: "Beheer je accountinstellingen",
       onClick: () => navigate('/student/account'),
       iconClass: "bg-blue"
     },
-    {
-      title: "Afspraken",
-      icon: <FaCalendarAlt className="icon-fix" />,
-      onClick: () => navigate('/student/afspraken'),
-      iconClass: "bg-green",
-      showAfspraken: true
-    },
-    {
-      title: "Bedrijven",
-      icon: <FaUserTie className="icon-fix" />,
-      description: "Bekijk deelnemende bedrijven",
-      onClick: () => navigate('/student/bedrijven'),
-      iconClass: "bg-orange"
-    },
-    {
-      title: "Standen",
-      icon: <FaMapMarkerAlt className="icon-fix" />,
-      description: "Bekijk deelnemende bedrijven en hun stands",
-      onClick: () => navigate('/student/cv'),
-      iconClass: "bg-purple"
-    }
   ];
 
   const filteredCards = dashboardCards.filter(card =>
@@ -433,6 +665,8 @@ function StudentenDashboard() {
 
   return (
     <div className="studenten-dashboard">
+      {deleteStatus && <div className="status-message">{deleteStatus}</div>}
+      
       <DashboardContent
         studentNaam={studentNaam}
         searchTerm={searchTerm}
@@ -454,6 +688,10 @@ function StudentenDashboard() {
         setNewReminder={setNewReminder}
         handleReminderSubmit={handleReminderSubmit}
         addEventReminder={addEventReminder}
+        studentAfspraken={studentAfspraken}
+        verwijderAfspraak={verwijderAfspraak}
+        isDeleting={isDeleting}
+        interessanteBedrijven={interessanteBedrijven}
       />
     </div>
   );

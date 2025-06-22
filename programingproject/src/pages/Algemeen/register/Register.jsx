@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import StudentForm from '../../../components/forms/StudentForm';
 import WerkzoekendeForm from '../../../components/forms/Seekersform';
 import BedrijfForm from './../../../components/forms/Bedrijvenform';
-import AdminForm from './../../../components/forms/Adminform';
 import './Register.css';
 
 export default function RegistratiePagina() {
@@ -16,7 +15,6 @@ export default function RegistratiePagina() {
         <button onClick={() => setSelectedType('student')}>Student</button>
         <button onClick={() => setSelectedType('werkzoekende')}>Werkzoekende</button>
         <button onClick={() => setSelectedType('bedrijf')}>Bedrijf</button>
-        <button onClick={() => setSelectedType ('Admin')}>Admin</button>
 
       </div>
 
@@ -24,7 +22,6 @@ export default function RegistratiePagina() {
         {selectedType === 'student' && <StudentForm />}
         {selectedType === 'werkzoekende' && <WerkzoekendeForm />}
         {selectedType === 'bedrijf' && <BedrijfForm />}
-        {selectedType === 'Admin' && <AdminForm />}
       </div>
     </div>
   );

@@ -324,4 +324,79 @@ router.get('/bezet', async (req, res) => {
   }
 });
 
+/**
+ * @route GET /api/afspraken/student-details/:studentId
+ * @desc Haal gedetailleerde informatie op over een student voor een afspraak
+ */
+router.get('/student-details/:studentId', async (req, res) => {
+  const { studentId } = req.params;
+  
+  try {
+    // Haal basisinformatie op over de student
+    const [studentRows] = await pool.query(`
+      SELECT s.student_id, s.naam, s.email, s.telefoon, s.studie, 
+             s.github_url, s.linkedin_url, s.aboutMe, 
+             s.softskills, s.hardskills, s.programmeertalen, s.talen
+      FROM Studenten s
+      WHERE s.student_id = ?
+    `, [studentId]);
+    
+    if (studentRows.length === 0) {
+      return res.status(404).json({ error: 'Student niet gevonden' });
+    }
+    
+    const student = studentRows[0];
+    
+    // Verwerk de skills en talen
+    let studentDetails = {
+      ...student,
+      softskills: [],
+      hardskills: [],
+      programmeertalen: [],
+      talen: []
+    };
+    
+    // Parse softskills
+    if (student.softskills) {
+      try {
+        studentDetails.softskills = JSON.parse(student.softskills);
+      } catch (e) {
+        console.error('Fout bij parsen softskills:', e);
+      }
+    }
+    
+    // Parse hardskills
+    if (student.hardskills) {
+      try {
+        studentDetails.hardskills = JSON.parse(student.hardskills);
+      } catch (e) {
+        console.error('Fout bij parsen hardskills:', e);
+      }
+    }
+    
+    // Parse programmeertalen
+    if (student.programmeertalen) {
+      try {
+        studentDetails.programmeertalen = JSON.parse(student.programmeertalen);
+      } catch (e) {
+        console.error('Fout bij parsen programmeertalen:', e);
+      }
+    }
+    
+    // Parse talen
+    if (student.talen) {
+      try {
+        studentDetails.talen = JSON.parse(student.talen);
+      } catch (e) {
+        console.error('Fout bij parsen talen:', e);
+      }
+    }
+    
+    res.json(studentDetails);
+  } catch (err) {
+    console.error('[Serverfout] Student details ophalen mislukt:', err);
+    res.status(500).json({ error: 'Fout bij ophalen student details', message: err.message });
+  }
+});
+
 module.exports = router;

@@ -25,6 +25,7 @@ const wachtwoordVergetenRouter = require('./routes/wachtwoordVergeten');
 const bedrijvenModuleRouter = require('./routes/bedrijvenmodule');
 const sectorenRouter = require('./routes/sectoren');
 const profielRouter = require('./routes/profiel');
+const bedrijfprofielRouter = require('./routes/bedrijfprofiel');
 const adminRouter = require('./routes/admin');
 const afsprakenRouter = require('./routes/afspraken');
 //const codeertaalRouter = require('./routes/codeertalen');
@@ -122,6 +123,7 @@ apiRouter.use('/wachtwoord-vergeten', wachtwoordVergetenRouter);
 apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
 apiRouter.use('/sectoren', sectorenRouter);
 apiRouter.use('/profiel', profielRouter); // <-- Hier wordt je profiel-router gebruikt!
+apiRouter.use('/bedrijfprofiel', bedrijfprofielRouter);
 apiRouter.use('/admin', adminRouter);
 apiRouter.use('/afspraken', afsprakenRouter);
 //apiRouter.use('/codeertaal', codeertaalRouter);
