@@ -23,19 +23,26 @@ const Header = () => {
           <img src="/afbeelding/logo-ehb.png" alt="Logo" className="logo" />
         </Link>
 
-        <button className="hamburger" onClick={() => setShowMobileMenu(!showMobileMenu)}>
+        <button 
+          className="hamburger" 
+          onClick={() => setShowMobileMenu(!showMobileMenu)}
+          aria-label="Menu"
+        >
           ☰
         </button>
 
         <nav className={showMobileMenu ? 'show' : ''}>
           <ul>
             <li><Link to="/bedrijf">Dashboard</Link></li>
-            <li><Link to="/bedrijf/betaling">Staat van betaling</Link></li>
-            <li><Link to="/bedrijf/afspraken">Afspraakoverzicht</Link></li>
-            <li><Link to="/bedrijf/standen">Standenbeheer</Link></li>
-            <li><Link to="/bedrijf/Settingsbedrijf">Bedrijfsinstellingen</Link></li>
+            <li><Link to="/bedrijf/betaling">Betalingstatus</Link></li>
+            <li><Link to="/bedrijf/afspraken">Afspraakbeheer</Link></li>
+            <li><Link to="/bedrijf/standen">Standbeheer</Link></li>
+            <li><Link to="/bedrijf/Settingsbedrijf">Instellingen</Link></li>
             <li>
-              <button onClick={() => setShowLogoutPopup(true)} className="logout-link">
+              <button 
+                onClick={() => setShowLogoutPopup(true)} 
+                className="logout-link"
+              >
                 Uitloggen
               </button>
             </li>
@@ -46,9 +53,22 @@ const Header = () => {
       {showLogoutPopup && (
         <div className="logout-popup-overlay">
           <div className="logout-popup">
-            <p>Weet je zeker dat je wilt uitloggen?</p>
-            <button onClick={uitloggen} className="confirm-button">Bevestig uitloggen</button>
-            <button onClick={() => setShowLogoutPopup(false)} className="cancel-button">Annuleer</button>
+            <button 
+              onClick={() => setShowLogoutPopup(false)} 
+              className="close-button"
+              aria-label="Sluiten"
+            >
+              &times;
+            </button>
+            <p>Weet u zeker dat u wilt uitloggen?</p>
+            <div className="button-container">
+              <button 
+                onClick={uitloggen} 
+                className="confirm-button"
+              >
+                Bevestig uitloggen
+              </button>
+            </div>
           </div>
         </div>
       )}

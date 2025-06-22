@@ -4,6 +4,8 @@ import { useAuth } from "../../context/AuthProvider";
 import { useProfile } from "../../context/ProfileContext";
 import "./AccountModule.css";
 import { FaEdit, FaEye, FaSave, FaTimes } from "react-icons/fa";
+import SoftSkillsSelector from "../../components/dropdowns/SoftSkillsSelector";
+import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
 
 export default function AccountModule() {
   const navigate = useNavigate();
@@ -22,13 +24,15 @@ export default function AccountModule() {
     telefoon: "",
     aboutMe: "",
   });
-  
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [editMode, setEditMode] = useState(false);
-  
+  const [softskills, setSoftskills] = useState([]);
+  const [hardskills, setHardskills] = useState([]);
+
   const studieOpties = [
     "Informatica",
     "Toegepaste Informatica",
@@ -43,30 +47,23 @@ export default function AccountModule() {
     const haalGebruikerOp = async () => {
       try {
         setLoading(true);
-
-        // Check if user is logged in via AuthProvider
         if (!gebruiker) {
           navigate('/login');
           return;
         }
-
-        // Fetch profile data
         await fetchProfiel();
-
         setLoading(false);
       } catch (error) {
         setErrorMessage("Er is een probleem opgetreden bij het laden van je gegevens.");
         setLoading(false);
       }
     };
-
     if (gebruiker) {
       haalGebruikerOp();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate, gebruiker]);
 
-  // Update userData when profiel changes
   useEffect(() => {
     if (profiel) {
       setUserData({
@@ -82,8 +79,9 @@ export default function AccountModule() {
         telefoon: profiel.telefoon || "",
         aboutMe: profiel.beschrijving || "",
       });
+      setSoftskills(profiel.softskills || []);
+      setHardskills(profiel.hardskills || []);
     } else if (gebruiker) {
-      // Fallback to gebruiker data if no profile
       setUserData({
         email: gebruiker.email || "",
         naam: gebruiker.naam || "",
@@ -97,6 +95,8 @@ export default function AccountModule() {
         telefoon: gebruiker.telefoon || "",
         aboutMe: gebruiker.aboutMe || "",
       });
+      setSoftskills([]);
+      setHardskills([]);
     }
   }, [profiel, gebruiker]);
 
@@ -111,66 +111,75 @@ export default function AccountModule() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
     if (!file.type.startsWith('image/')) {
       setErrorMessage("Profielfoto moet een afbeelding zijn (JPEG, PNG, etc.).");
       return;
     }
-    
     if (file.size > 5 * 1024 * 1024) {
       setErrorMessage("Profielfoto mag niet groter zijn dan 5MB.");
       return;
     }
-    
     setUserData({
       ...userData,
       foto_url: file
     });
-    
     setErrorMessage("");
   };
 
   const opslaanWijzigingen = async (e) => {
     e.preventDefault();
+    setSaving(true);
+    setErrorMessage("");
+    setSuccessMessage("");
 
     try {
-      setSaving(true);
-      setErrorMessage("");
-      setSuccessMessage("");
+      let profielData = {
+        ...userData,
+        softskills,
+        hardskills,
+      };
 
-      // Actually save the data using ProfileContext
-      const result = await updateProfiel({
-        naam: userData.naam,
-        email: userData.email,
-        telefoon: userData.telefoon,
-        beschrijving: userData.aboutMe,
-        linkedin: userData.linkedin_url,
-        github: userData.github_url,
-        jobstudent: userData.jobstudent,
-        werkzoekend: userData.werkzoekend,
-        stage_gewenst: userData.stage_gewenst,
-        studie: userData.studie,
-        foto_url: userData.foto_url
-      });
+      localStorage.setItem("debugProfielData", JSON.stringify(profielData));
 
-      if (result.success) {
-        setSuccessMessage("Je gegevens zijn succesvol opgeslagen!");
-        setEditMode(false);
+      if (userData.foto_url && typeof userData.foto_url !== "string") {
+        const formData = new FormData();
+        formData.append("naam", userData.naam);
+        formData.append("email", userData.email);
+        formData.append("telefoon", userData.telefoon);
+        formData.append("aboutMe", userData.aboutMe);
+        formData.append("github", userData.github_url);
+        formData.append("linkedin", userData.linkedin_url);
+        formData.append("studie", userData.studie);
+        formData.append("softskills", JSON.stringify(softskills));
+        formData.append("hardskills", JSON.stringify(hardskills));
+        formData.append("profilePicture", userData.foto_url);
 
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          setSuccessMessage("");
-        }, 3000);
+        // ✅ Debug log van alle formdata
+        console.log("📦 FormData wordt verzonden:");
+        for (let [key, val] of formData.entries()) {
+          // Voor bestanden toon je alleen de naam
+          if (val instanceof File) {
+            console.log(`${key}: [file] ${val.name}`);
+          } else {
+            console.log(`${key}:`, val);
+          }
+        }
+
+        await updateProfiel(formData, true);
       } else {
-        throw new Error(result.error || "Kon gegevens niet opslaan");
+        // ✅ Debug log van JSON-profieldata
+        console.log("📤 JSON profielData wordt verzonden:", profielData);
+        await updateProfiel(profielData, false);
       }
 
-    } catch (error) {
-      console.error("Fout bij opslaan:", error);
-      setErrorMessage("Er is een probleem opgetreden bij het opslaan van je gegevens.");
-    } finally {
-      setSaving(false);
+      setSuccessMessage("Profiel succesvol opgeslagen!");
+      setEditMode(false);
+      fetchProfiel();
+    } catch (err) {
+      setErrorMessage("Fout bij opslaan profiel.");
     }
+
+    setSaving(false);
   };
 
   const cancelEdit = () => {
@@ -363,6 +372,10 @@ export default function AccountModule() {
                 </button>
               </div>
             </form>
+            <div className="skills-section">
+              <SoftSkillsSelector value={softskills} onChange={setSoftskills} readOnly={!editMode} />
+              <HardSkillsSelector value={hardskills} onChange={setHardskills} readOnly={!editMode} />
+            </div>
           </div>
         ) : (
           <div className="account-details">
@@ -387,7 +400,6 @@ export default function AccountModule() {
                 </div>
               </div>
             </section>
-            
             <section className="account-section">
               <h3>Profielfoto</h3>
               <div className="profile-photo-container">
@@ -398,7 +410,6 @@ export default function AccountModule() {
                 )}
               </div>
             </section>
-
             <section className="account-section">
               <h3>Contact & Links</h3>
               <div className="info-grid">
@@ -428,14 +439,12 @@ export default function AccountModule() {
                 </div>
               </div>
             </section>
-
             <section className="account-section">
               <h3>Over Mij</h3>
               <div className="info-item beschrijving">
                 <p>{userData.aboutMe || "Geen beschrijving toegevoegd."}</p>
               </div>
             </section>
-
             <section className="account-section">
               <h3>Status</h3>
               <div className="status-indicators">
@@ -445,6 +454,13 @@ export default function AccountModule() {
                 {!userData.jobstudent && !userData.werkzoekend && !userData.stage_gewenst && 
                   <p>Geen status geselecteerd</p>
                 }
+              </div>
+            </section>
+            <section className="account-section">
+              <h3>Vaardigheden & Talen</h3>
+              <div className="skills-section">
+                <SoftSkillsSelector value={softskills} onChange={setSoftskills} readOnly={!editMode} />
+                <HardSkillsSelector value={hardskills} onChange={setHardskills} readOnly={!editMode} />
               </div>
             </section>
           </div>
