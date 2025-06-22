@@ -5,6 +5,10 @@ import { useProfile } from "../../context/ProfileContext";
 import "./AccountModule.css";
 import { FaEdit, FaEye, FaSave, FaTimes } from "react-icons/fa";
 
+// Selectors importeren
+import SoftSkillsSelector from "../../components/dropdowns/SoftSkillsSelector";
+import HardSkillsSelector from "../../components/dropdowns/HardSkillsSelector";
+
 export default function AccountModule() {
   const navigate = useNavigate();
   const { gebruiker } = useAuth();
@@ -28,6 +32,8 @@ export default function AccountModule() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [editMode, setEditMode] = useState(false);
+  const [softskills, setSoftskills] = useState([]);
+  const [hardskills, setHardskills] = useState([]);
   
   const studieOpties = [
     "Informatica",
@@ -82,8 +88,9 @@ export default function AccountModule() {
         telefoon: profiel.telefoon || "",
         aboutMe: profiel.beschrijving || "",
       });
+      setSoftskills(profiel.softskills || []);
+      setHardskills(profiel.hardskills || []);
     } else if (gebruiker) {
-      // Fallback to gebruiker data if no profile
       setUserData({
         email: gebruiker.email || "",
         naam: gebruiker.naam || "",
@@ -97,6 +104,8 @@ export default function AccountModule() {
         telefoon: gebruiker.telefoon || "",
         aboutMe: gebruiker.aboutMe || "",
       });
+      setSoftskills([]);
+      setHardskills([]);
     }
   }, [profiel, gebruiker]);
 
@@ -132,45 +141,22 @@ export default function AccountModule() {
 
   const opslaanWijzigingen = async (e) => {
     e.preventDefault();
-
+    setSaving(true);
+    setErrorMessage("");
+    setSuccessMessage("");
     try {
-      setSaving(true);
-      setErrorMessage("");
-      setSuccessMessage("");
-
-      // Actually save the data using ProfileContext
-      const result = await updateProfiel({
-        naam: userData.naam,
-        email: userData.email,
-        telefoon: userData.telefoon,
-        beschrijving: userData.aboutMe,
-        linkedin: userData.linkedin_url,
-        github: userData.github_url,
-        jobstudent: userData.jobstudent,
-        werkzoekend: userData.werkzoekend,
-        stage_gewenst: userData.stage_gewenst,
-        studie: userData.studie,
-        foto_url: userData.foto_url
+      await updateProfiel({
+        ...userData,
+        softskills,
+        hardskills,
       });
-
-      if (result.success) {
-        setSuccessMessage("Je gegevens zijn succesvol opgeslagen!");
-        setEditMode(false);
-
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          setSuccessMessage("");
-        }, 3000);
-      } else {
-        throw new Error(result.error || "Kon gegevens niet opslaan");
-      }
-
-    } catch (error) {
-      console.error("Fout bij opslaan:", error);
-      setErrorMessage("Er is een probleem opgetreden bij het opslaan van je gegevens.");
-    } finally {
-      setSaving(false);
+      setSuccessMessage("Profiel succesvol opgeslagen!");
+      setEditMode(false);
+      fetchProfiel();
+    } catch (err) {
+      setErrorMessage("Fout bij opslaan profiel.");
     }
+    setSaving(false);
   };
 
   const cancelEdit = () => {
@@ -363,6 +349,11 @@ export default function AccountModule() {
                 </button>
               </div>
             </form>
+            {/* Selectors tonen in edit mode */}
+            <div className="skills-section">
+              <SoftSkillsSelector value={softskills} onChange={setSoftskills} />
+              <HardSkillsSelector value={hardskills} onChange={setHardskills} />
+            </div>
           </div>
         ) : (
           <div className="account-details">
@@ -445,6 +436,15 @@ export default function AccountModule() {
                 {!userData.jobstudent && !userData.werkzoekend && !userData.stage_gewenst && 
                   <p>Geen status geselecteerd</p>
                 }
+              </div>
+            </section>
+
+            {/* Selectors tonen in view mode */}
+            <section className="account-section">
+              <h3>Vaardigheden & Talen</h3>
+              <div className="skills-section">
+                <SoftSkillsSelector value={softskills} onChange={() => {}} />
+                <HardSkillsSelector value={hardskills} onChange={() => {}} />
               </div>
             </section>
           </div>
