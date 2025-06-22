@@ -81,51 +81,9 @@ app.use(sanitizeInputs);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // --- Multer configuratie voor profielfoto upload ---
-const uploadFolder = path.join(__dirname, 'uploads');
+// (deze is niet meer nodig in server.js zelf, want upload gebeurt in routes/profiel.js)
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadFolder);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const fileFilter = (req, file, cb) => {
-  // Alleen afbeeldingen toestaan
-  if (file.mimetype.startsWith('image/')) {
-    cb(null, true);
-  } else {
-    cb(new Error('Alleen afbeeldingen zijn toegestaan!'), false);
-  }
-};
-
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // max 5MB
-});
-
-
-app.post('/api/studentenaccount', upload.single('profilePicture'), async (req, res) => {
-  try {
-    // Uit formData:
-    const { naam, email, telefoon, aboutMe, github, linkedin, type } = req.body;
-    let profilePictureUrl = null;
-
-    // URL van de geüploade afbeelding
-    if (req.file) {
-      profilePictureUrl = `/uploads/${req.file.filename}`;
-    }
-
-    res.status(200).json({ message: 'Profiel succesvol opgeslagen!' });
-  } catch (error) {
-    console.error('Fout bij opslaan profiel:', error);
-    res.status(500).json({ error: 'Er ging iets mis bij het opslaan van het profiel.' });
-  }
-});
+// Verwijderde POST /api/studentenaccount route!
 
 // Socket.IO connection setup
 io.on('connection', (socket) => {
@@ -162,7 +120,7 @@ apiRouter.use('/logout', logoutRouter);
 apiRouter.use('/wachtwoord-vergeten', wachtwoordVergetenRouter);
 apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
 apiRouter.use('/sectoren', sectorenRouter);
-apiRouter.use('/profiel', profielRouter);
+apiRouter.use('/profiel', profielRouter); // <-- Hier wordt je profiel-router gebruikt!
 apiRouter.use('/admin', adminRouter);
 apiRouter.use('/afspraken', afsprakenRouter);
 apiRouter.use('/codeertaal', codeertaalRouter);

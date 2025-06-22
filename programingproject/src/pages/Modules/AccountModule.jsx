@@ -131,6 +131,7 @@ export default function AccountModule() {
     setSaving(true);
     setErrorMessage("");
     setSuccessMessage("");
+
     try {
       let profielData = {
         ...userData,
@@ -138,7 +139,6 @@ export default function AccountModule() {
         hardskills,
       };
 
-      // Sla profielData op in localStorage voor debug
       localStorage.setItem("debugProfielData", JSON.stringify(profielData));
 
       if (userData.foto_url && typeof userData.foto_url !== "string") {
@@ -154,8 +154,21 @@ export default function AccountModule() {
         formData.append("hardskills", JSON.stringify(hardskills));
         formData.append("profilePicture", userData.foto_url);
 
+        // ✅ Debug log van alle formdata
+        console.log("📦 FormData wordt verzonden:");
+        for (let [key, val] of formData.entries()) {
+          // Voor bestanden toon je alleen de naam
+          if (val instanceof File) {
+            console.log(`${key}: [file] ${val.name}`);
+          } else {
+            console.log(`${key}:`, val);
+          }
+        }
+
         await updateProfiel(formData, true);
       } else {
+        // ✅ Debug log van JSON-profieldata
+        console.log("📤 JSON profielData wordt verzonden:", profielData);
         await updateProfiel(profielData, false);
       }
 
@@ -165,6 +178,7 @@ export default function AccountModule() {
     } catch (err) {
       setErrorMessage("Fout bij opslaan profiel.");
     }
+
     setSaving(false);
   };
 
