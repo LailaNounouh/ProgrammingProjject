@@ -170,7 +170,7 @@ apiRouter.use('/users', usersRouter);
 apiRouter.use('/statistieken', statistiekenRouter);
 apiRouter.use('/attendance', attendanceRouter);
 apiRouter.use('/betaling', betalingRouter);
-apiRouter.use('/bedrijvenmodule', bedrijvenModuleRouter);
+
 
 app.use('/api', apiRouter);
 
