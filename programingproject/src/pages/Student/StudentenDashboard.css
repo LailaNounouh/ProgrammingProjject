@@ -19,7 +19,7 @@
   overflow: hidden;
 }
 
-.welcome-banner::before {
+.studenten-welcome-banner::before {
   content: '';
   position: absolute;
   top: -10px;
@@ -30,7 +30,7 @@
   border-radius: 50%;
 }
 
-.welcome-banner::after {
+.studenten-welcome-banner::after {
   content: '';
   position: absolute;
   bottom: -30px;
@@ -41,7 +41,7 @@
   border-radius: 50%;
 }
 
-.welcome-banner h1 {
+.studenten-welcome-banner h1 {
   margin: 0;
   font-size: 32px;
   font-weight: 700;
@@ -50,7 +50,7 @@
   z-index: 1;
 }
 
-.welcome-banner p {
+.studenten-welcome-banner p {
   margin: 10px 0 0;
   opacity: 0.9;
   font-size: 16px;
@@ -59,7 +59,7 @@
 }
 
 /* Dashboard toolbar */
-.dashboard-toolbar {
+.studenten-dashboard-toolbar {
   display: flex;
   justify-content: space-between;
   margin-bottom: 25px;
@@ -68,13 +68,13 @@
   align-items: center;
 }
 
-.search-box {
+.studenten-search-box {
   position: relative;
   flex: 1;
   max-width: 1040px;
 }
 
-.search-box input {
+.studenten-search-box input {
   width: 100%;
   padding: 12px 15px 12px 45px;
   border: 1px solid #ddd;
@@ -84,14 +84,14 @@
   background-color: #f8f9fa;
 }
 
-.search-box input:focus {
+.studenten-search-box input:focus {
   outline: none;
   border-color: #4a6cf7;
   box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
   background-color: white;
 }
 
-.search-icon {
+.studenten-search-icon {
   position: absolute;
   left: 18px;
   top: 50%;
@@ -101,12 +101,12 @@
 }
 
 /* Notificaties */
-.notification-wrapper {
+.studenten-notification-wrapper {
   position: relative;
   flex-shrink: 0;
 }
 
-.notification-bell {
+.studenten-notification-bell {
   position: relative;
   cursor: pointer;
   font-size: 22px;
@@ -122,12 +122,12 @@
   justify-content: center;
 }
 
-.notification-bell:hover {
+.studenten-notification-bell:hover {
   color: #4a6cf7;
   background: #e6f0ff;
 }
 
-.notification-badge {
+.studenten-notification-badge {
   position: absolute;
   top: 2px;
   right: 2px;
@@ -144,7 +144,7 @@
   border: 2px solid white;
 }
 
-.notification-dropdown {
+.studenten-notification-dropdown {
   position: absolute;
   right: 0;
   top: 55px;
@@ -159,36 +159,36 @@
   overflow-y: auto;
 }
 
-.notification-dropdown ul {
+.studenten-notification-dropdown ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.notification-dropdown li {
+.studenten-notification-dropdown li {
   padding: 12px 20px;
   border-bottom: 1px solid #eee;
   transition: background 0.2s;
 }
 
-.notification-dropdown li:hover {
+.studenten-notification-dropdown li:hover {
   background: #f8f9fa;
 }
 
-.notification-dropdown li p {
+.studenten-notification-dropdown li p {
   margin: 0 0 5px;
   font-size: 14px;
   line-height: 1.4;
 }
 
-.notification-dropdown li small {
+.studenten-notification-dropdown li small {
   color: #777;
   font-size: 12px;
   display: block;
 }
 
 /* Dashboard layout */
-.dashboard-content {
+.studenten-dashboard-content {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 30px;
@@ -198,13 +198,13 @@
 }
 
 /* Card grid */
-.card-grid {
+.studenten-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
 }
 
-.dashboard-card {
+.studenten-dashboard-card {
   background: white;
   border-radius: 12px;
   padding: 25px;
@@ -217,13 +217,13 @@
   max-width: 100%;
 }
 
-.dashboard-card:hover {
+.studenten-dashboard-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
   border-color: #4a6cf7;
 }
 
-.dashboard-card::after {
+.studenten-dashboard-card::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -235,17 +235,17 @@
   transition: opacity 0.3s;
 }
 
-.dashboard-card:hover::after {
+.studenten-dashboard-card:hover::after {
   opacity: 1;
 }
 
-.card-header {
+.studenten-card-header {
   display: flex;
   align-items: center;
   margin-bottom: 18px;
 }
 
-.card-icon {
+.studenten-card-icon {
   width: 54px;
   height: 54px;
   border-radius: 14px;
@@ -258,41 +258,41 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.icon-fix {
+.studenten-icon-fix {
   transform: translateY(1px);
 }
 
-.bg-blue {
+.studenten-bg-blue {
   background-color: #4a6cf7;
 }
 
-.bg-green {
+.studenten-bg-green {
   background-color: #28a745;
 }
 
-.bg-orange {
+.studenten-bg-orange {
   background-color: #fd7e14;
 }
 
-.bg-purple {
+.studenten-bg-purple {
   background-color: #6f42c1;
 }
 
-.card-title {
+.studenten-card-title {
   margin: 0;
   font-size: 19px;
   font-weight: 700;
   color: #2d3748;
 }
 
-.card-description {
+.studenten-card-description {
   margin: 0 0 18px;
   color: #666;
   font-size: 15px;
   line-height: 1.5;
 }
 
-.card-footer {
+.studenten-card-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -302,17 +302,17 @@
   margin-top: 15px;
 }
 
-.chevron-icon {
+.studenten-chevron-icon {
   font-size: 13px;
   transition: transform 0.2s;
 }
 
-.dashboard-card:hover .chevron-icon {
+.studenten-dashboard-card:hover .chevron-icon {
   transform: translateX(3px);
 }
 
 /* Calendar section */
-.calendar-section {
+.studenten-calendar-section {
   background: white;
   border-radius: 12px;
   padding: 25px;
@@ -321,27 +321,27 @@
   border: 1px solid #e0e6ed;
 }
 
-.calendar-container {
+.studenten-calendar-container {
   display: flex;
   flex-direction: column;
   gap: 25px;
 }
 
-.calendar-header {
+.studenten-calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
 
-.calendar-header h2 {
+.studenten-calendar-header h2 {
   margin: 0;
   font-size: 22px;
   color: #2d3748;
   font-weight: 700;
 }
 
-.add-reminder-btn {
+.studenten-add-reminder-btn {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -357,25 +357,25 @@
   box-shadow: 0 2px 5px rgba(74, 108, 247, 0.3);
 }
 
-.add-reminder-btn:hover {
+.studenten-add-reminder-btn:hover {
   background: #3a5bd9;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(74, 108, 247, 0.3);
 }
 
 /* React Calendar overrides */
-.react-calendar {
+.studenten-react-calendar {
   width: 100%;
   border: none;
   font-family: inherit;
   background: transparent;
 }
 
-.react-calendar__navigation {
+.studenten-react-calendar__navigation {
   margin-bottom: 10px;
 }
 
-.react-calendar__navigation button {
+.studenten-react-calendar__navigation button {
   background: none;
   border: none;
   font-size: 16px;
@@ -385,13 +385,13 @@
   padding: 8px;
 }
 
-.react-calendar__navigation button:enabled:hover,
-.react-calendar__navigation button:enabled:focus {
+.studenten-react-calendar__navigation button:enabled:hover,
+.studenten-react-calendar__navigation button:enabled:focus {
   background: #f8f9fa;
   border-radius: 8px;
 }
 
-.react-calendar__month-view__weekdays {
+.studenten-react-calendar__month-view__weekdays {
   text-transform: uppercase;
   font-size: 12px;
   font-weight: 600;
@@ -399,40 +399,40 @@
   margin-bottom: 5px;
 }
 
-.react-calendar__month-view__days__day {
+.studenten-react-calendar__month-view__days__day {
   padding: 8px;
   font-size: 14px;
   font-weight: 500;
 }
 
-.react-calendar__tile {
+.studenten-react-calendar__tile {
   border-radius: 8px;
   padding: 10px 6px;
   position: relative;
 }
 
-.react-calendar__tile--now {
+.studenten-react-calendar__tile--now {
   background: #e6f7ff;
   color: #2d3748;
 }
 
-.react-calendar__tile--active {
+.studenten-react-calendar__tile--active {
   background: #4a6cf7;
   color: white;
 }
 
-.react-calendar__tile--active:enabled:hover {
+.studenten-react-calendar__tile--active:enabled:hover {
   background: #3a5bd9;
 }
 
-.calendar-marker-container {
+.studenten-calendar-marker-container {
   display: flex;
   justify-content: center;
   gap: 3px;
   margin-top: 2px;
 }
 
-.reminder-dot {
+.studenten-reminder-dot {
   height: 8px;
   width: 8px;
   background-color: #ff4757;
@@ -440,7 +440,7 @@
   display: inline-block;
 }
 
-.event-dot {
+.studenten-event-dot {
   height: 8px;
   width: 8px;
   background-color: #4a6cf7;
@@ -449,14 +449,14 @@
 }
 
 /* Upcoming events */
-.upcoming-events-container {
+.studenten-upcoming-events-container {
   background: #f8f9fa;
   border-radius: 12px;
   padding: 20px;
   margin-top: 15px;
 }
 
-.upcoming-events-container h3 {
+.studenten-upcoming-events-container h3 {
   font-size: 18px;
   color: #2d3748;
   margin: 0 0 15px;
@@ -465,25 +465,25 @@
   font-weight: 600;
 }
 
-.no-events {
+.studenten-no-events {
   color: #718096;
   font-size: 14px;
   text-align: center;
   padding: 10px 0;
 }
 
-.events-list {
+.studenten-events-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
 /* Day events */
-.day-events {
+.studenten-day-events {
   margin-top: 25px;
 }
 
-.day-events h3 {
+.studenten-day-events h3 {
   font-size: 18px;
   color: #2d3748;
   margin-bottom: 18px;
@@ -492,7 +492,7 @@
   font-weight: 600;
 }
 
-.reminder-item, .calendar-event {
+.studenten-reminder-item, .calendar-event {
   background: #f8f9fa;
   padding: 14px;
   border-radius: 8px;
@@ -502,12 +502,12 @@
   transition: all 0.2s;
 }
 
-.reminder-item:hover, .calendar-event:hover {
+.studenten-reminder-item:hover, .calendar-event:hover {
   transform: translateY(-2px);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 }
 
-.reminder-time, .event-time {
+.studenten-reminder-time, .event-time {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -516,7 +516,7 @@
   margin-bottom: 6px;
 }
 
-.reminder-text {
+.studenten-reminder-text {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -524,7 +524,7 @@
   line-height: 1.4;
 }
 
-.delete-reminder {
+.studenten-delete-reminder {
   background: none;
   border: none;
   color: #ff4757;
@@ -534,35 +534,35 @@
   transition: opacity 0.2s;
 }
 
-.delete-reminder:hover {
+.studenten-delete-reminder:hover {
   opacity: 1;
 }
 
-.event-text {
+.studenten-event-text {
   font-size: 15px;
 }
 
-.event-text strong {
+.studenten-event-text strong {
   color: #2d3748;
   font-weight: 600;
 }
 
-.event-text p {
+.studenten-event-text p {
   margin: 5px 0 0;
   color: #666;
   font-size: 14px;
 }
 
-.highlight-event {
+.studenten-highlight-event {
   border-left: 4px solid #4a6cf7;
   background: linear-gradient(to right, #f0f5ff, #ffffff);
 }
 
-.highlight-event .event-text strong {
+.studenten-highlight-event .event-text strong {
   color: #4a6cf7;
 }
 
-.deadline-badge {
+.studenten-deadline-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -575,7 +575,7 @@
   font-weight: bold;
 }
 
-.add-reminder-event-btn {
+.studenten-add-reminder-event-btn {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -592,12 +592,12 @@
   align-self: flex-start;
 }
 
-.add-reminder-event-btn:hover {
+.studenten-add-reminder-event-btn:hover {
   background: #d0e1ff;
 }
 
 /* Modal */
-.modal-overlay {
+.studenten-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -611,7 +611,7 @@
   backdrop-filter: blur(3px);
 }
 
-.reminder-modal {
+.studenten-reminder-modal {
   background: white;
   padding: 30px;
   border-radius: 12px;
@@ -621,7 +621,7 @@
   position: relative;
 }
 
-.reminder-modal h3 {
+.studenten-reminder-modal h3 {
   margin-top: 0;
   color: #2d3748;
   font-size: 22px;
@@ -629,11 +629,11 @@
   font-weight: 700;
 }
 
-.form-group {
+.studenten-form-group {
   margin-bottom: 18px;
 }
 
-.form-group label {
+.studenten-form-group label {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
@@ -641,8 +641,8 @@
   font-size: 14px;
 }
 
-.form-group input, 
-.form-group textarea {
+.studenten-form-group input, 
+.studenten-form-group textarea {
   width: 100%;
   padding: 12px 15px;
   border: 1px solid #ddd;
@@ -652,26 +652,26 @@
   transition: all 0.2s;
 }
 
-.form-group input:focus, 
-.form-group textarea:focus {
+.studenten-form-group input:focus, 
+.studenten-form-group textarea:focus {
   outline: none;
   border-color: #4a6cf7;
   box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
 }
 
-.form-group textarea {
+.studenten-form-group textarea {
   min-height: 100px;
   resize: vertical;
 }
 
-.modal-actions {
+.studenten-modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   margin-top: 25px;
 }
 
-.cancel-btn, .save-btn {
+.studenten-cancel-btn, .studenten-save-btn {
   padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
@@ -680,24 +680,24 @@
   transition: all 0.2s;
 }
 
-.cancel-btn {
+.studenten-cancel-btn {
   background: #f1f1f1;
   color: #4a5568;
   border: none;
 }
 
-.cancel-btn:hover {
+.studenten-cancel-btn:hover {
   background: #e2e2e2;
 }
 
-.save-btn {
+.studenten-save-btn {
   background: #4a6cf7;
   color: white;
   border: none;
   box-shadow: 0 2px 5px rgba(74, 108, 247, 0.3);
 }
 
-.save-btn:hover {
+.studenten-save-btn:hover {
   background: #3a5bd9;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(74, 108, 247, 0.3);
@@ -705,75 +705,75 @@
 
 /* Responsive aanpassingen */
 @media (max-width: 1024px) {
-  .dashboard-content {
+  .studenten-dashboard-content {
     grid-template-columns: 1fr;
   }
   
-  .calendar-section {
+  .studenten-calendar-section {
     order: -1;
     margin-bottom: 30px;
   }
 }
 
 @media (max-width: 768px) {
-  .card-grid {
+  .studenten-card-grid {
     grid-template-columns: 1fr;
   }
   
-  .welcome-banner h1 {
+  .studenten-welcome-banner h1 {
     font-size: 24px;
   }
   
-  .welcome-banner p {
+  .studenten-welcome-banner p {
     font-size: 14px;
   }
   
-  .dashboard-toolbar {
+  .studenten-dashboard-toolbar {
     flex-direction: column;
     align-items: stretch;
   }
   
-  .search-box {
+  .studenten-search-box {
     max-width: 100%;
     margin-bottom: 10px;
   }
   
-  .notification-wrapper {
+  .studenten-notification-wrapper {
     align-self: flex-end;
   }
 }
 
 @media (max-width: 480px) {
-  .welcome-banner {
+  .studenten-welcome-banner {
     padding: 20px 15px;
   }
   
-  .dashboard-card {
+  .studenten-dashboard-card {
     padding: 15px;
   }
   
-  .card-icon {
+  .studenten-card-icon {
     width: 40px;
     height: 40px;
     font-size: 18px;
     margin-right: 12px;
   }
   
-  .card-title {
+  .studenten-card-title {
     font-size: 16px;
   }
   
-  .card-description {
+  .studenten-card-description {
     font-size: 13px;
   }
   
-  .calendar-header {
+  .studenten-calendar-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
   
-  .add-reminder-btn {
+  .studenten-add-reminder-btn {
     width: 100%;
     justify-content: center;
   }
