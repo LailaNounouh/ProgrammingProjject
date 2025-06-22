@@ -33,41 +33,92 @@ router.put('/:id', async (req, res) => {
   try {
     console.log(`🔄 Updating user ${id} with data:`, { naam, email, rol });
 
-    let result;
+    // First, find out what the current role is
+    const [studentCheck] = await db.execute(
+      'SELECT student_id, naam, email FROM Studenten WHERE student_id = ?',
+      [id]
+    );
 
-    // Determine which table to update based on role
-    if (rol === 'student') {
-      console.log('📚 Updating student in Studenten table...');
-      [result] = await db.execute(
-        'UPDATE Studenten SET naam = ?, email = ? WHERE student_id = ?',
-        [naam, email, id]
-      );
+    const [werkzoekendeCheck] = await db.execute(
+      'SELECT werkzoekende_id, naam, email FROM Werkzoekenden WHERE werkzoekende_id = ?',
+      [id]
+    );
 
-      console.log('📊 Student update result:', result);
+    let currentRole = null;
+    let currentData = null;
 
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ error: 'Student niet gevonden' });
-      }
+    if (studentCheck.length > 0) {
+      currentRole = 'student';
+      currentData = studentCheck[0];
+    } else if (werkzoekendeCheck.length > 0) {
+      currentRole = 'werkzoekende';
+      currentData = werkzoekendeCheck[0];
+    } else {
+      return res.status(404).json({ error: 'Gebruiker niet gevonden' });
+    }
 
-    } else if (rol === 'werkzoekende') {
-      console.log('💼 Updating werkzoekende in Werkzoekenden table...');
-      [result] = await db.execute(
-        'UPDATE Werkzoekenden SET naam = ?, email = ? WHERE werkzoekende_id = ?',
-        [naam, email, id]
-      );
+    console.log(`👤 Current role: ${currentRole}, Target role: ${rol}`);
 
-      console.log('📊 Werkzoekende update result:', result);
+    // If role is changing, we need to move the user between tables
+    if (currentRole !== rol) {
+      console.log(`🔄 Role change detected: ${currentRole} → ${rol}`);
 
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ error: 'Werkzoekende niet gevonden' });
+      // Start transaction
+      await db.execute('START TRANSACTION');
+
+      try {
+        // Insert into new table
+        if (rol === 'student') {
+          console.log('📚 Moving to Studenten table...');
+          await db.execute(
+            'INSERT INTO Studenten (student_id, naam, email) VALUES (?, ?, ?)',
+            [id, naam, email]
+          );
+        } else if (rol === 'werkzoekende') {
+          console.log('💼 Moving to Werkzoekenden table...');
+          await db.execute(
+            'INSERT INTO Werkzoekenden (werkzoekende_id, naam, email) VALUES (?, ?, ?)',
+            [id, naam, email]
+          );
+        }
+
+        // Delete from old table
+        if (currentRole === 'student') {
+          console.log('🗑️ Removing from Studenten table...');
+          await db.execute('DELETE FROM Studenten WHERE student_id = ?', [id]);
+        } else if (currentRole === 'werkzoekende') {
+          console.log('🗑️ Removing from Werkzoekenden table...');
+          await db.execute('DELETE FROM Werkzoekenden WHERE werkzoekende_id = ?', [id]);
+        }
+
+        // Commit transaction
+        await db.execute('COMMIT');
+        console.log('✅ Role change completed successfully');
+
+      } catch (error) {
+        // Rollback on error
+        await db.execute('ROLLBACK');
+        throw error;
       }
 
     } else {
-      return res.status(400).json({
-        error: 'Ongeldige rol',
-        allowedRoles: ['student', 'werkzoekende'],
-        received: rol
-      });
+      // Same role, just update the existing record
+      console.log(`📝 Updating existing ${rol} record...`);
+
+      let result;
+      if (rol === 'student') {
+        [result] = await db.execute(
+          'UPDATE Studenten SET naam = ?, email = ? WHERE student_id = ?',
+          [naam, email, id]
+        );
+      } else if (rol === 'werkzoekende') {
+        [result] = await db.execute(
+          'UPDATE Werkzoekenden SET naam = ?, email = ? WHERE werkzoekende_id = ?',
+          [naam, email, id]
+        );
+      }
+
+      console.log('📊 Update result:', result);
     }
 
     console.log(`✅ User ${id} successfully updated`);
@@ -76,7 +127,8 @@ router.put('/:id', async (req, res) => {
       success: true,
       message: 'Gebruiker succesvol bijgewerkt',
       user: { id, naam, email, rol },
-      affectedRows: result.affectedRows
+      roleChanged: currentRole !== rol,
+      previousRole: currentRole
     });
 
   } catch (err) {
