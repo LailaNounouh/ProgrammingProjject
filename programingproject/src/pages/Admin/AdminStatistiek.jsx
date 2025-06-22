@@ -12,16 +12,13 @@ function AdminStatistiek() {
   useEffect(() => {
     fetch(`${baseUrl}/statistieken`)
       .then((res) => {
-        console.log("Statistieken response status:", res.status);
         if (!res.ok) throw new Error(`HTTP ${res.status}: Statistieken ophalen mislukt`);
         return res.json();
       })
       .then((data) => {
-        console.log("Statistieken data received:", data);
         setStats(data);
       })
       .catch((err) => {
-        console.error("Statistieken error:", err);
         setError(`Kon statistieken niet ophalen: ${err.message}`);
       });
   }, []);
@@ -43,22 +40,35 @@ function AdminStatistiek() {
           {!stats ? (
             <p>Statistieken worden geladen...</p>
           ) : (
-            <>
+            <div className="stat-grid">
               <div className="stat-card">
                 <h3>Gebruikers</h3>
-                <ul>
-                  <li>Studenten: {stats.studenten}</li>
-                  <li>Bedrijven: {stats.bedrijven}</li>
-                  <li>Werkzoekenden: {stats.werkzoekenden}</li>
-                </ul>
-                <p>Totaal aantal gebruikers: {stats.studenten + stats.bedrijven + stats.werkzoekenden}</p>
+                <div className="stat-item">
+                  <span>Studenten</span>
+                  <strong>{stats.studenten}</strong>
+                </div>
+                <div className="stat-item">
+                  <span>Bedrijven</span>
+                  <strong>{stats.bedrijven}</strong>
+                </div>
+                <div className="stat-item">
+                  <span>Werkzoekenden</span>
+                  <strong>{stats.werkzoekenden}</strong>
+                </div>
+                <div className="stat-total">
+                  Totaal aantal gebruikers:{" "}
+                  <strong>{stats.studenten + stats.bedrijven + stats.werkzoekenden}</strong>
+                </div>
               </div>
 
               <div className="stat-card">
                 <h3>Afspraken</h3>
-                <p>Er zijn momenteel {stats.afspraken} afspraken geregistreerd.</p>
+                <div className="stat-item">
+                  <span>Geregistreerd</span>
+                  <strong>{stats.afspraken}</strong>
+                </div>
               </div>
-            </>
+            </div>
           )}
         </section>
       </main>
