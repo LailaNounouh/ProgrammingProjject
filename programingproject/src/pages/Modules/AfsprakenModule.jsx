@@ -12,6 +12,7 @@ export default function Afspraken() {
   const [bezetteTijdsloten, setBezetteTijdsloten] = useState([]);
   const [alleTijdsloten, setAlleTijdsloten] = useState([]);
   const [afspraakIngediend, setAfspraakIngediend] = useState(false);
+  const [afspraakDetails, setAfspraakDetails] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -185,8 +186,25 @@ export default function Afspraken() {
       setBeschikbareTijdsloten(prev => prev.filter(t => t !== tijdslot));
       setRefreshTrigger(prev => prev + 1);
 
+      // Sla afspraak details op voor bevestiging
+      const selectedBedrijf = bedrijven.find(b => b.bedrijf_id === parseInt(bedrijfId));
+      setAfspraakDetails({
+        bedrijfNaam: selectedBedrijf?.naam || 'Onbekend bedrijf',
+        tijdslot: tijdslot,
+        datum: datum,
+        bedrijfId: bedrijfId
+      });
+
       setAfspraakIngediend(true);
       setError("");
+
+      console.log('🎯 Afspraak ingediend met tijdslot:', tijdslot);
+      console.log('🎯 Afspraak details opgeslagen:', {
+        bedrijfNaam: selectedBedrijf?.naam,
+        tijdslot,
+        datum,
+        bedrijfId
+      });
     } catch (err) {
       console.error("Fout bij maken afspraak:", err);
       setError(err.message || "Er is een probleem opgetreden bij het maken van de afspraak.");
@@ -281,15 +299,50 @@ export default function Afspraken() {
         </div>
       ) : (
         <div className="overzicht-blok">
-          <p className="bevestiging"><strong>✅ Je afspraak is ingediend!</strong></p>
-          <p><strong>Bedrijf:</strong> {bedrijven.find(b => b.bedrijf_id === parseInt(bedrijfId))?.naam}</p>
-          <p><strong>Tijdslot:</strong> {tijdslot}</p>
-          <button 
-            className="btn-submit" 
+          <div className="bevestiging-header">
+            <h3>✅ Afspraak succesvol ingediend!</h3>
+            <p className="bevestiging-subtext">Je afspraak wacht op goedkeuring van het bedrijf.</p>
+          </div>
+
+          {/* Debug info */}
+          <div style={{ background: '#f0f0f0', padding: '10px', margin: '10px 0', fontSize: '12px' }}>
+            <strong>Debug:</strong><br/>
+            tijdslot state = "{tijdslot}"<br/>
+            afspraakDetails = {JSON.stringify(afspraakDetails, null, 2)}
+          </div>
+
+          {afspraakDetails && (
+            <div className="afspraak-details">
+              <div className="detail-item">
+                <span className="detail-label">🏢 Bedrijf:</span>
+                <span className="detail-value">{afspraakDetails.bedrijfNaam}</span>
+              </div>
+
+              <div className="detail-item">
+                <span className="detail-label">📅 Datum:</span>
+                <span className="detail-value">{new Date(afspraakDetails.datum).toLocaleDateString('nl-BE', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}</span>
+              </div>
+
+              <div className="detail-item">
+                <span className="detail-label">🕐 Tijdslot:</span>
+                <span className="detail-value">{afspraakDetails.tijdslot}</span>
+              </div>
+            </div>
+          )}
+          <button
+            className="btn-submit"
             style={{ marginTop: '1rem' }}
             onClick={() => {
               setAfspraakIngediend(false);
+              setAfspraakDetails(null);
               setTijdslot("");
+              setBedrijfId("");
+              setError("");
             }}
           >
             Nieuwe afspraak maken
