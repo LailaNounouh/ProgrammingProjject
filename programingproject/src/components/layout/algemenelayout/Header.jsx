@@ -23,7 +23,7 @@ const Header = () => {
 
 
   return (
-    <header className="header">
+    <header className="main-header">
       <Link to="/">
         <img
           src="/afbeelding/logo-ehb.png"
