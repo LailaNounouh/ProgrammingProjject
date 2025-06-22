@@ -56,6 +56,60 @@ table input:focus, table select:focus {
   background-color: white;
 }
 
+/* Button styling */
+.save-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+
+.save-button:hover {
+  background-color: #218838;
+}
+
+.save-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+  margin-left: 0.5rem;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+.delete-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Table cell spacing */
+table td {
+  padding: 0.75rem;
+  vertical-align: middle;
+}
+
+table th {
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
 .gebruikers-section {
   background: white;
   border-radius: 12px;

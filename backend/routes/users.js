@@ -67,19 +67,22 @@ router.put('/:id', async (req, res) => {
       await db.execute('START TRANSACTION');
 
       try {
-        // Insert into new table
+        // Insert into new table (let database generate new ID)
+        let newId;
         if (rol === 'student') {
           console.log('📚 Moving to Studenten table...');
-          await db.execute(
-            'INSERT INTO Studenten (student_id, naam, email) VALUES (?, ?, ?)',
-            [id, naam, email]
+          const [insertResult] = await db.execute(
+            'INSERT INTO Studenten (naam, email) VALUES (?, ?)',
+            [naam, email]
           );
+          newId = insertResult.insertId;
         } else if (rol === 'werkzoekende') {
           console.log('💼 Moving to Werkzoekenden table...');
-          await db.execute(
-            'INSERT INTO Werkzoekenden (werkzoekende_id, naam, email) VALUES (?, ?, ?)',
-            [id, naam, email]
+          const [insertResult] = await db.execute(
+            'INSERT INTO Werkzoekenden (naam, email) VALUES (?, ?)',
+            [naam, email]
           );
+          newId = insertResult.insertId;
         }
 
         // Delete from old table
@@ -126,15 +129,88 @@ router.put('/:id', async (req, res) => {
     res.json({
       success: true,
       message: 'Gebruiker succesvol bijgewerkt',
-      user: { id, naam, email, rol },
+      user: {
+        id: currentRole !== rol ? newId : id, // Use new ID if role changed
+        naam,
+        email,
+        rol
+      },
       roleChanged: currentRole !== rol,
-      previousRole: currentRole
+      previousRole: currentRole,
+      newId: currentRole !== rol ? newId : id
     });
 
   } catch (err) {
     console.error('❌ Fout bij bijwerken gebruiker:', err);
     res.status(500).json({
       error: 'Kon gebruiker niet bijwerken',
+      details: err.message,
+      sqlState: err.sqlState,
+      code: err.code
+    });
+  }
+});
+
+// DELETE route to remove user
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ error: 'Gebruiker ID is verplicht' });
+  }
+
+  try {
+    console.log(`🗑️ Deleting user ${id}...`);
+
+    // Find out which table the user is in
+    const [studentCheck] = await db.execute(
+      'SELECT student_id FROM Studenten WHERE student_id = ?',
+      [id]
+    );
+
+    const [werkzoekendeCheck] = await db.execute(
+      'SELECT werkzoekende_id FROM Werkzoekenden WHERE werkzoekende_id = ?',
+      [id]
+    );
+
+    let result;
+    let userType;
+
+    if (studentCheck.length > 0) {
+      console.log('📚 Deleting from Studenten table...');
+      [result] = await db.execute(
+        'DELETE FROM Studenten WHERE student_id = ?',
+        [id]
+      );
+      userType = 'student';
+    } else if (werkzoekendeCheck.length > 0) {
+      console.log('💼 Deleting from Werkzoekenden table...');
+      [result] = await db.execute(
+        'DELETE FROM Werkzoekenden WHERE werkzoekende_id = ?',
+        [id]
+      );
+      userType = 'werkzoekende';
+    } else {
+      return res.status(404).json({ error: 'Gebruiker niet gevonden' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Gebruiker niet gevonden' });
+    }
+
+    console.log(`✅ User ${id} (${userType}) successfully deleted`);
+
+    res.json({
+      success: true,
+      message: 'Gebruiker succesvol verwijderd',
+      deletedUser: { id, type: userType },
+      affectedRows: result.affectedRows
+    });
+
+  } catch (err) {
+    console.error('❌ Fout bij verwijderen gebruiker:', err);
+    res.status(500).json({
+      error: 'Kon gebruiker niet verwijderen',
       details: err.message,
       sqlState: err.sqlState,
       code: err.code

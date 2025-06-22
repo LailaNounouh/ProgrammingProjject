@@ -78,6 +78,46 @@ function AdminGebruikers() {
     }
   };
 
+  const verwijderGebruiker = async (gebruiker) => {
+    if (!window.confirm(`Weet je zeker dat je ${gebruiker.naam} wilt verwijderen?`)) {
+      return;
+    }
+
+    setLoading(true);
+    setMessage('');
+
+    try {
+      console.log('Deleting user:', gebruiker);
+
+      const response = await fetch(`${baseUrl}/users/${gebruiker.id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      const data = await response.json();
+      console.log('Delete response:', data);
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Fout bij verwijderen gebruiker');
+      }
+
+      setMessage(`✅ Gebruiker ${gebruiker.naam} succesvol verwijderd!`);
+      console.log('Gebruiker verwijderd:', gebruiker.id);
+
+      // Refresh the user list
+      await haalGebruikersOp();
+
+      // Clear message after 3 seconds
+      setTimeout(() => setMessage(''), 3000);
+
+    } catch (err) {
+      console.error('Error deleting user:', err);
+      setMessage(`❌ Fout bij verwijderen: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="admin-dashboard">
       <div className="terug-knop-container">
@@ -108,6 +148,7 @@ function AdminGebruikers() {
                 <th>Email</th>
                 <th>Rol</th>
                 {bewerken && <th>Opslaan</th>}
+                {bewerken && <th>Verwijderen</th>}
               </tr>
             </thead>
             <tbody>
@@ -156,6 +197,17 @@ function AdminGebruikers() {
                         className="save-button"
                       >
                         {loading ? 'Bezig...' : 'Opslaan'}
+                      </button>
+                    </td>
+                  )}
+                  {bewerken && (
+                    <td>
+                      <button
+                        onClick={() => verwijderGebruiker(user)}
+                        disabled={loading}
+                        className="delete-button"
+                      >
+                        🗑️ Verwijderen
                       </button>
                     </td>
                   )}
