@@ -101,9 +101,6 @@ function DashboardContent({
                 <h3 className="card-title">{card.title}</h3>
               </div>
               {card.description && <p className="card-description">{card.description}</p>}
-              {card.showAfspraken && (
-                <p className="card-description">dit moet verwijdert</p>
-              )}
               <div className="card-footer">
                 <span>Direct naar {card.title.toLowerCase()}</span>
                 <FaChevronRight className="chevron-icon" />
