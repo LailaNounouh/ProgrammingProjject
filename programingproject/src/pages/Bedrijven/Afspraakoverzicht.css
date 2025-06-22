@@ -1,283 +1,74 @@
 :root {
   --primary: #2563eb;
   --primary-light: #dbeafe;
-  --success: #16a34a;
+  --success: #059669;
   --error: #dc2626;
   --warning: #d97706;
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --background: #f8fafc;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --background: #f9fafb;
   --white: #ffffff;
-  --border: #e2e8f0;
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --border: #e5e7eb;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background-color: var(--background);
-  color: var(--text-primary);
-  margin: 0;
-  padding: 0;
-}
-
+/* Base Reset */
 .afspraken-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  background-color: var(--background);
-  min-height: 100vh;
+  background: var(--background);
 }
 
+/* Clean Header */
 .afspraken-header {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-  background: var(--white);
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border);
-}
-
-.header-content {
-  flex: 1;
-  min-width: 300px;
+  margin-bottom: 3rem;
+  text-align: center;
 }
 
 .header-content h1 {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
   color: var(--text-primary);
+  margin-bottom: 0.5rem;
 }
 
 .subtitle {
   color: var(--text-secondary);
-  font-size: 1rem;
-  margin-bottom: 1rem;
-}
-
-.stats-summary {
-  display: flex;
-  gap: 1rem;
-  margin-top: 0.75rem;
-}
-
-.stat-item {
-  background: var(--primary-light);
-  color: var(--primary);
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.refresh-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: var(--white);
-  color: var(--primary);
-  border: 1px solid var(--primary);
-  padding: 0.75rem 1.25rem;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.refresh-button:hover {
-  background: var(--primary-light);
-}
-
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-  gap: 1rem;
-}
-
-.spinner {
-  border: 3px solid var(--primary-light);
-  border-top: 3px solid var(--primary);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.empty-state {
-  text-align: center;
-  padding: 4rem 2rem;
-  background: var(--white);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-size: 1.05rem;
   max-width: 600px;
-  margin: 2rem auto;
-  border: 1px solid var(--border);
+  margin: 0 auto 2rem;
 }
 
-.empty-state::before {
-  content: '📅';
-  font-size: 4rem;
-  display: block;
-  margin-bottom: 1rem;
-  opacity: 0.7;
-}
-
-.empty-icon {
-  color: var(--primary);
-  margin-bottom: 1rem;
-}
-
-.empty-state h3 {
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
-  color: var(--text-primary);
-}
-
-.empty-state p {
-  color: var(--text-secondary);
-  margin-bottom: 1.5rem;
-}
-
-.refresh-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: var(--primary);
-  color: var(--white);
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.refresh-btn:hover {
-  background: #1d4ed8;
-}
-
+/* Minimal Card Grid */
 .afspraken-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
 }
 
+/* Professional Card */
 .afspraak-card {
   background: var(--white);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
   overflow: hidden;
+  box-shadow: var(--card-shadow);
   border: 1px solid var(--border);
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.afspraak-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  border-color: var(--primary);
-}
-
-.afspraak-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary) 0%, #3b82f6 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.afspraak-card:hover::before {
-  opacity: 1;
-}
-
-/* Card status styling */
-.afspraak-card.goedgekeurd::before {
-  background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
-  opacity: 1;
-}
-
-.afspraak-card.geweigerd::before {
-  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
-  opacity: 1;
-}
-
-.afspraak-card.in_afwachting::before {
-  background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
-  opacity: 0.7;
 }
 
 .card-header {
   padding: 1.5rem;
   border-bottom: 1px solid var(--border);
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  position: relative;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-}
-
-.student-info {
-  flex: 1;
-}
-
-.student-info h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0 0 0.5rem 0;
-  display: flex;
   align-items: center;
-  gap: 0.5rem;
-}
-
-.specialization {
-  background: var(--primary-light);
-  color: var(--primary);
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  display: inline-block;
-  margin-bottom: 0.5rem;
-}
-
-.card-header .context {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  margin: 0;
-  font-style: italic;
-}
-
-.status-badge-container {
-  flex-shrink: 0;
 }
 
 .student-info h3 {
   font-size: 1.1rem;
-  margin-bottom: 0.25rem;
-  color: var(--text-primary); /* minder fel dan primary */
   font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
 }
 
 .specialization {
@@ -291,96 +82,72 @@ body {
 
 .status-badge {
   font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.35rem 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
   border-radius: 12px;
 }
 
 .status-badge.in_afwachting {
-  background: #fef3c7;
-  color: #d97706;
+  background: #fffbeb;
+  color: #b45309;
 }
 
 .status-badge.goedgekeurd {
-  background: #dcfce7;
-  color: var(--success);
+  background: #ecfdf5;
+  color: #047857;
 }
 
 .status-badge.geweigerd {
-  background: #fee2e2;
-  color: var(--error);
+  background: #fef2f2;
+  color: #b91c1c;
 }
 
+/* Clean Card Body */
 .card-body {
   padding: 1.5rem;
-}
-
-.card-footer {
-  padding: 1.5rem;
-  border-top: 1px solid var(--border);
-  background: #fafbfc;
-}
-
-.card-body p {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 0 0 1rem 0;
-  font-size: 1rem;
-  color: var(--text-primary);
-  padding: 0.75rem;
-  background: var(--background);
-  border-radius: 8px;
-  border-left: 4px solid var(--primary);
-}
-
-.card-body p:last-child {
-  margin-bottom: 0;
-}
-
-.card-body p svg {
-  color: var(--primary);
-  font-size: 1.1rem;
-  flex-shrink: 0;
-}
-
-.email-link {
-  color: var(--primary);
-  text-decoration: none;
-  margin-left: 0.5rem;
-  transition: color 0.2s ease;
-}
-
-.email-link:hover {
-  color: #1d4ed8;
-  text-decoration: underline;
 }
 
 .detail-row {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 0.75rem;
-  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
   color: var(--text-primary);
 }
 
-.comment-section {
-  margin-top: 1rem;
-  padding-top: 1rem;
+.detail-row svg {
+  color: var(--primary);
+  width: 16px;
+}
+
+/* Subtle Footer */
+.card-footer {
+  padding: 1rem 1.5rem;
   border-top: 1px solid var(--border);
+  background: var(--background);
+}
+
+.social-links {
   display: flex;
   gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.social-link {
+  font-size: 0.85rem;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.card-footer {
-  padding: 1rem 1.25rem;
-  background: var(--background);
-  border-top: 1px solid var(--border);
+.social-link:hover {
+  color: var(--primary);
 }
 
+/* Professional Buttons */
 .actions {
   display: flex;
   gap: 0.75rem;
@@ -388,198 +155,36 @@ body {
 
 .btn {
   flex: 1;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem;
   border: none;
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
+  transition: background 0.2s;
 }
 
 .accept-btn {
   background: var(--success);
-  color: var(--white);
-  box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
-}
-
-.accept-btn:hover {
-  background: #15803d;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(22, 163, 74, 0.3);
+  color: white;
 }
 
 .reject-btn {
   background: var(--error);
-  color: var(--white);
-  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
-}
-
-.reject-btn:hover {
-  background: #b91c1c;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
-}
-
-.social-links {
-  display: flex;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--border);
-}
-
-.social-links::before {
-  content: '🔗 Social Links:';
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  font-weight: 600;
-  width: 100%;
-  margin-bottom: 0.5rem;
-  display: block;
-}
-
-.social-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-  flex: 1;
-  justify-content: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.social-link.github {
-  color: #24292e;
-  background: linear-gradient(135deg, #f6f8fa 0%, #e1e4e8 100%);
-  border-color: #d0d7de;
-}
-
-.social-link.github:hover {
-  background: linear-gradient(135deg, #24292e 0%, #1b1f23 100%);
   color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(36, 41, 46, 0.3);
 }
 
-.social-link.linkedin {
-  color: #0077b5;
-  background: linear-gradient(135deg, #e7f3ff 0%, #cce7ff 100%);
-  border-color: #0077b5;
+.btn:hover {
+  opacity: 0.9;
 }
 
-.social-link.linkedin:hover {
-  background: linear-gradient(135deg, #0077b5 0%, #005885 100%);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 119, 181, 0.3);
-}
-
-.filter-form {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 2rem;
-}
-
-.filter-form input,
-.filter-form select {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-size: 1rem;
-  flex: 1;
-  min-width: 200px;
-}
-
-.filters {
-  display: flex;
-  gap: 1rem; /* ruimte tussen de velden */
-  margin-bottom: 2rem;
-  flex-wrap: wrap; /* netjes op kleinere schermen */
-  justify-content: flex-start; /* uitlijnen aan linkerzijde */
-  padding: 0.5rem 1rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-
-.filter-select,
-.filter-input {
-  flex: 1; /* gelijkmatig verdelen */
-  min-width: 180px; /* niet te smal */
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  transition: border-color 0.3s ease;
-}
-
-.filter-select:focus,
-.filter-input:focus {
-  outline: none;
-  border-color: #4a90e2; /* blauwe accentkleur bij focus */
-  box-shadow: 0 0 6px #4a90e2aa;
-}
-
-.filters select option {
-  color: #111827;
-}
-
-.filters input::placeholder {
-  color: #9ca3af;
-  font-style: italic;
-}
-
-.afspraak-card .card-header h3 {
-  color: var(--text-primary); /* #1e293b, een donkere tint */
-  font-weight: 600;
-  margin: 0;
-}
-
-@media (max-width: 600px) {
-  .filters {
-    flex-direction: column;
-  }
-  .filter-select,
-  .filter-input {
-    width: 100%;
-    min-width: auto;
-  }
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-  .afspraken-container {
-    padding: 1.5rem;
-  }
-  
   .afspraken-grid {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .afspraken-header {
-    flex-direction: column;
-    align-items: flex-start;
   }
   
   .actions {
     flex-direction: column;
-  }
-  
-  .btn {
-    width: 100%;
   }
 }
