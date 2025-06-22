@@ -171,7 +171,14 @@ export default function Afspraken() {
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.message || "Kon afspraak niet maken");
+
+        // Handle specific error cases with user-friendly messages
+        if (res.status === 409) {
+          // Conflict errors (duplicate appointments)
+          throw new Error(errorData.error || "Er is een conflict met je afspraak");
+        } else {
+          throw new Error(errorData.error || errorData.message || "Kon afspraak niet maken");
+        }
       }
 
       setBezetteTijdsloten(prev => [...prev, tijdslot]);

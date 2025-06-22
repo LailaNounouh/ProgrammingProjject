@@ -14,7 +14,7 @@ const STANDAARD_TIJDEN = [
 router.get('/', async (req, res) => {
   try {
     const [afspraken] = await pool.query(`
-      SELECT a.afspraak_id, a.student_id, a.bedrijf_id, a.tijdslot, a.datum,
+      SELECT a.afspraak_id, a.student_id, a.bedrijf_id, a.tijdslot, a.datum, a.status,
              b.naam AS bedrijfsnaam
       FROM Afspraken a
       JOIN Bedrijven b ON a.bedrijf_id = b.bedrijf_id
@@ -58,7 +58,7 @@ router.get('/bedrijf/:bedrijfId', async (req, res) => {
   const { bedrijfId } = req.params;
   try {
     const [afspraken] = await pool.query(`
-      SELECT a.afspraak_id, a.tijdslot, a.datum, a.student_id,
+      SELECT a.afspraak_id, a.tijdslot, a.datum, a.student_id, a.status,
              s.naam AS studentnaam, s.email AS studentemail
       FROM Afspraken a
       JOIN Studenten s ON a.student_id = s.student_id
@@ -138,36 +138,57 @@ router.post('/nieuw', async (req, res) => {
   }
 
   try {
-
-    const [bestaande] = await pool.query(
+    // Check 1: Tijdslot already taken by this company
+    const [bestaandeTijdslot] = await pool.query(
       'SELECT * FROM Afspraken WHERE bedrijf_id = ? AND datum = ? AND tijdslot = ?',
       [bedrijf_id, datum, tijdslot]
     );
 
-    if (bestaande.length > 0) {
-      return res.status(409).json({ error: 'Tijdslot is al bezet' });
+    if (bestaandeTijdslot.length > 0) {
+      return res.status(409).json({ error: 'Dit tijdslot is al bezet bij dit bedrijf' });
     }
 
+    // Check 2: Student already has appointment at same time (different company)
+    const [studentTijdslot] = await pool.query(
+      'SELECT * FROM Afspraken WHERE student_id = ? AND datum = ? AND tijdslot = ?',
+      [student_id, datum, tijdslot]
+    );
 
+    if (studentTijdslot.length > 0) {
+      return res.status(409).json({ error: 'Je hebt al een afspraak op dit tijdslot' });
+    }
+
+    // Check 3: Student already has appointment with this company (any time)
+    const [studentBedrijf] = await pool.query(
+      'SELECT * FROM Afspraken WHERE student_id = ? AND bedrijf_id = ?',
+      [student_id, bedrijf_id]
+    );
+
+    if (studentBedrijf.length > 0) {
+      return res.status(409).json({ error: 'Je hebt al een afspraak met dit bedrijf' });
+    }
+
+    // All checks passed, create the appointment
     const [result] = await pool.query(
-      `INSERT INTO Afspraken (student_id, bedrijf_id, tijdslot, datum)
-       VALUES (?, ?, ?, ?)`,
+      `INSERT INTO Afspraken (student_id, bedrijf_id, tijdslot, datum, status)
+       VALUES (?, ?, ?, ?, 'in_afwachting')`,
       [student_id, bedrijf_id, tijdslot, datum]
     );
 
     const afspraak_id = result.insertId;
 
-
+    // Create notification for company
     await pool.query(`
       INSERT INTO Bedrijf_Notifications
         (bedrijf_id, type, message, is_read, created_at)
-       VALUES (?, 'appointment', ?, 0, NOW())`, 
-      [bedrijf_id, `Nieuwe afspraak op ${datum} om ${tijdslot} met student ID ${student_id}`]
+       VALUES (?, 'appointment', ?, 0, NOW())`,
+      [bedrijf_id, `Nieuwe afspraak aanvraag op ${datum} om ${tijdslot} van student ID ${student_id}`]
     );
 
     return res.status(201).json({
-      message: 'Afspraak en melding succesvol gemaakt',
+      message: 'Afspraak succesvol aangemaakt en wacht op goedkeuring',
       afspraak_id,
+      status: 'in_afwachting'
     });
   } catch (err) {
     console.error('[Serverfout] Afspraak maken mislukt:', err);
@@ -237,6 +258,44 @@ router.delete('/:afspraakId', async (req, res) => {
   } catch (err) {
     console.error('[Serverfout] Afspraak verwijderen mislukt:', err);
     res.status(500).json({ error: 'Fout bij verwijderen afspraak', message: err.message });
+  }
+});
+
+/**
+ * @route PUT /api/afspraken/:id/status
+ * @desc Update appointment status (accept/reject)
+ */
+router.put('/:id/status', async (req, res) => {
+  const afspraakId = req.params.id;
+  const { status } = req.body;
+
+  // Validate status
+  const validStatuses = ['in_afwachting', 'goedgekeurd', 'geweigerd'];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({
+      error: 'Ongeldige status. Toegestane waarden: in_afwachting, goedgekeurd, geweigerd'
+    });
+  }
+
+  try {
+    const [result] = await pool.execute(
+      'UPDATE Afspraken SET status = ? WHERE afspraak_id = ?',
+      [status, afspraakId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Afspraak niet gevonden' });
+    }
+
+    res.json({
+      message: 'Afspraak status succesvol bijgewerkt',
+      afspraak_id: afspraakId,
+      status: status
+    });
+
+  } catch (error) {
+    console.error('Fout bij bijwerken afspraak status:', error);
+    res.status(500).json({ error: 'Interne serverfout' });
   }
 });
 

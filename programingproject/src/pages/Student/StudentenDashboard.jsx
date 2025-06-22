@@ -44,13 +44,13 @@ function DashboardContent({
   addEventReminder
 }) {
   return (
-    <div className="dashboard-container">
-      <div className="welcome-banner">
+    <div className="studenten-dashboard-container">
+      <div className="studenten-welcome-banner">
         <h1>Welkom terug, {studentNaam}!</h1>
         <p>Hier vind je een overzicht van je activiteiten en status</p>
       </div>
 
-      <div className="dashboard-toolbar">
+      <div className="studenten-dashboard-toolbar">
         <div className="search-box">
           <FaSearch className="search-icon" />
           <input
@@ -91,15 +91,15 @@ function DashboardContent({
         </div>
       </div>
 
-      <div className="dashboard-content">
-        <div className="card-grid">
+      <div className="studenten-dashboard-content">
+        <div className="studenten-card-grid">
           {filteredCards.map((card, index) => (
-            <div key={index} className="dashboard-card" onClick={card.onClick}>
-              <div className="card-header">
-                <div className={`card-icon ${card.iconClass}`}>
+            <div key={index} className="studenten-dashboard-card" onClick={card.onClick}>
+              <div className="studenten-card-header">
+                <div className={`studenten-card-icon studenten- ${card.iconClass}`}>
                   {card.icon}
                 </div>
-                <h3 className="card-title">{card.title}</h3>
+                <h3 className="studenten-card-title">{card.title}</h3>
               </div>
               {card.description && <p className="card-description">{card.description}</p>}
               {card.showAfspraken && (
@@ -113,9 +113,9 @@ function DashboardContent({
           ))}
         </div>
 
-        <div className="calendar-section">
-          <div className="calendar-container">
-            <div className="calendar-header">
+        <div className="studenten-calendar-section">
+          <div className="studenten-calendar-container">
+            <div className="studenten-calendar-header">
               <h2>Kalender</h2>
               <button 
                 className="add-reminder-btn"
@@ -190,8 +190,8 @@ function DashboardContent({
               {reminders.filter(r => 
                 new Date(r.date).toDateString() === calendarDate.toDateString()
               ).map((reminder, index) => (
-                <div key={index} className="reminder-item">
-                  <div className="reminder-time">
+                <div key={index} className="studenten-reminder-item">
+                  <div className="studenten-reminder-time">
                     <FaClock /> {reminder.time}
                   </div>
                   <div className="reminder-text">
@@ -210,7 +210,7 @@ function DashboardContent({
                 event.date.toDateString() === calendarDate.toDateString()
               ).map((event, index) => (
                 <div key={`event-${index}`} className={`calendar-event ${event.highlight ? 'highlight-event' : ''}`}>
-                  <div className="event-time">
+                  <div className="studenten-event-time">
                     <FaCalendarCheck /> {event.time || 'Hele dag'}
                   </div>
                   <div className="event-text">
@@ -230,11 +230,11 @@ function DashboardContent({
       </div>
 
       {showReminderModal && (
-        <div className="modal-overlay">
-          <div className="reminder-modal">
+        <div className="studenten-modal-overlay">
+          <div className="studenten-reminder-modal">
             <h3>Nieuwe herinnering</h3>
             <form onSubmit={handleReminderSubmit}>
-              <div className="form-group">
+              <div className="studenten-form-group">
                 <label>Datum</label>
                 <input 
                   type="date" 
@@ -246,7 +246,7 @@ function DashboardContent({
                   required
                 />
               </div>
-              <div className="form-group">
+              <div className="studenten-form-group">
                 <label>Tijd</label>
                 <input 
                   type="time" 
@@ -258,7 +258,7 @@ function DashboardContent({
                   required
                 />
               </div>
-              <div className="form-group">
+              <div className="studenten-form-group">
                 <label>Herinnering</label>
                 <textarea
                   value={newReminder.text}
@@ -269,7 +269,7 @@ function DashboardContent({
                   required
                 />
               </div>
-              <div className="modal-actions">
+              <div className="studenten-modal-actions">
                 <button 
                   type="button" 
                   className="cancel-btn"
