@@ -16,7 +16,8 @@ import {
   FaUserTie,
   FaBuilding,
   FaTimes,
-  FaGraduationCap
+  FaGraduationCap,
+  FaBolt
 } from 'react-icons/fa';
 import './StudentenDashboard.css';
 import { useNavigate, Link } from 'react-router-dom';
@@ -154,27 +155,35 @@ function DashboardContent({
           <div className="studenten-dashboard-card studenten-interessante-bedrijven-card">
             <div className="studenten-card-header">
               <div className="studenten-card-icon studenten-bg-green">
-                <FaGraduationCap className="icon-fix" />
+                <FaBuilding className="icon-fix" />
               </div>
               <h3 className="studenten-card-title">Interessante Bedrijven</h3>
             </div>
             
             {interessanteBedrijven.length === 0 ? (
-              <p className="card-description">Geen bedrijven gevonden voor jouw studierichting</p>
+              <p className="card-description">
+                Geen bedrijven gevonden die matchen met jouw studierichting.
+              </p>
             ) : (
               <div className="studenten-mini-bedrijven-lijst">
                 {interessanteBedrijven.map((bedrijf, index) => (
-                  <div key={`mini-bedrijf-${bedrijf.bedrijf_id || index}`} className="studenten-mini-bedrijf">
+                  <div 
+                    key={`mini-bedrijf-${bedrijf.bedrijf_id || index}`} 
+                    className="studenten-mini-bedrijf"
+                    onClick={() => navigate(`/student/bedrijven/${bedrijf.bedrijf_id}`)}
+                  >
                     <div className="studenten-mini-bedrijf-naam">
                       {bedrijf.naam}
                     </div>
                     <div className="studenten-mini-bedrijf-details">
-                      <span className="studenten-mini-bedrijf-sector">
-                        {bedrijf.sector_naam || 'Geen sector'}
-                      </span>
+                      {bedrijf.sector_naam && (
+                        <span className="studenten-mini-bedrijf-sector">
+                          {bedrijf.sector_naam}
+                        </span>
+                      )}
                       {bedrijf.speeddates === 1 && (
                         <span className="studenten-mini-bedrijf-speeddate">
-                          Speeddate beschikbaar
+                          <FaBolt /> Speeddate beschikbaar
                         </span>
                       )}
                     </div>
@@ -404,30 +413,7 @@ function StudentenDashboard() {
   const [error, setError] = useState('');
   const [interessanteBedrijven, setInteressanteBedrijven] = useState([]);
   const notificationRef = useRef(null);
-  const [upcomingEvents, setUpcomingEvents] = useState([
-    {
-      date: new Date(2026, 2, 7), 
-      title: "Deadline voor inschrijven Career Launch Day",
-      description: "Laatste kans om je in te schrijven voor de Career Launch Day",
-      time: "23:59",
-      deadline: true,
-      highlight: true
-    },
-    {
-      date: new Date(2026, 2, 11),
-      title: "Voorbereidingssessie voor studenten",
-      description: "Informatiesessie over hoe je je het beste kan voorbereiden op de Career Launch Day",
-      time: "14:00",
-      highlight: true
-    },
-    {
-      date: new Date(2026, 2, 13),
-      title: "Career Launch Day",
-      description: "Het belangrijkste recruitment event van het jaar",
-      time: "09:00 - 17:00",
-      highlight: true
-    }
-  ]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
   
   // Base URL voor API calls
   const baseUrl = 'http://10.2.160.211:3000/api';
@@ -452,35 +438,39 @@ function StudentenDashboard() {
   const fetchStudentAfspraken = async (studentId) => {
     try {
       const response = await fetch(`${baseUrl}/afspraken/student/${studentId}`);
+      
       if (!response.ok) {
-        // Geen foutmelding meer tonen, gewoon lege array gebruiken
-        setStudentAfspraken([]);
-        return;
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      
       const data = await response.json();
+      console.log("Opgehaalde afspraken:", data);
       
       // Sorteer afspraken op datum (nieuwste eerst)
-      const sortedAfspraken = data.sort((a, b) => 
-        new Date(a.datum) - new Date(b.datum)
-      );
+      const gesorteerdeAfspraken = data.sort((a, b) => {
+        return new Date(b.datum) - new Date(a.datum);
+      });
       
-      setStudentAfspraken(sortedAfspraken);
+      // Beperk tot maximaal 5 afspraken voor het dashboard
+      setStudentAfspraken(gesorteerdeAfspraken.slice(0, 5));
       
-      // Voeg afspraken toe aan upcomingEvents voor de kalender
-      const afspraakEvents = sortedAfspraken.map(afspraak => ({
-        date: new Date('2026-03-13'), // Vaste datum voor Career Launch Day
-        title: `Afspraak met ${afspraak.bedrijfsnaam}`,
-        description: `Sollicitatiegesprek`,
-        time: afspraak.tijdslot || '10:00 - 10:30',
-        highlight: true
+      // Converteer afspraken naar events voor de kalender
+      const events = gesorteerdeAfspraken.map(afspraak => ({
+        id: afspraak.afspraak_id,
+        title: `Afspraak met ${afspraak.bedrijf_naam}`,
+        description: afspraak.notities || 'Geen beschrijving',
+        date: new Date(afspraak.datum),
+        time: afspraak.tijd,
+        type: 'afspraak'
       }));
       
-      // Voeg afspraak events toe aan upcomingEvents
-      setUpcomingEvents(prev => [...prev, ...afspraakEvents]);
+      // Als setUpcomingEvents bestaat, gebruik het dan
+      if (typeof setUpcomingEvents === 'function') {
+        setUpcomingEvents(events);
+      }
       
     } catch (error) {
-      console.error('Fout bij ophalen afspraken:', error);
-      // Geen foutmelding meer tonen, gewoon lege array gebruiken
+      console.error("Fout bij ophalen afspraken:", error);
       setStudentAfspraken([]);
     }
   };
@@ -489,7 +479,7 @@ function StudentenDashboard() {
   const fetchInteressanteBedrijven = async (studentId) => {
     try {
       // Haal eerst de studierichting van de student op
-      let studierichting = "Bachelor Toegepaste Informatica"; // Standaard waarde
+      let studierichting = "";
       
       try {
         const studentResponse = await fetch(`${baseUrl}/studenten/${studentId}`);
@@ -500,15 +490,19 @@ function StudentenDashboard() {
           }
         }
       } catch (error) {
-        console.log("Kon studentgegevens niet ophalen, gebruik standaard studierichting");
+        console.error("Kon studentgegevens niet ophalen:", error);
+      }
+      
+      // Als we geen studierichting hebben, kunnen we niet filteren
+      if (!studierichting) {
+        setInteressanteBedrijven([]);
+        return;
       }
       
       // Haal alle bedrijven op
       const bedrijvenResponse = await fetch(`${baseUrl}/bedrijvenmodule`);
       if (!bedrijvenResponse.ok) {
-        // Als API call faalt, gebruik lege array
-        setInteressanteBedrijven([]);
-        return;
+        throw new Error(`HTTP error! status: ${bedrijvenResponse.status}`);
       }
       
       const bedrijvenData = await bedrijvenResponse.json();
@@ -517,15 +511,11 @@ function StudentenDashboard() {
       const gefilterdeBedrijven = bedrijvenData.filter(bedrijf => {
         if (!bedrijf.doelgroep_opleiding) return false;
         
-        // Controleer of doelgroep_opleiding een string is en converteer naar array indien nodig
-        let doelgroepen = [];
-        if (typeof bedrijf.doelgroep_opleiding === 'string') {
-          // Split de doelgroep_opleiding string op komma's of andere scheidingstekens
-          doelgroepen = bedrijf.doelgroep_opleiding.split(/,|;/).map(d => d.trim().toLowerCase());
-        } else if (Array.isArray(bedrijf.doelgroep_opleiding)) {
-          // Als het al een array is, gebruik deze direct
-          doelgroepen = bedrijf.doelgroep_opleiding.map(d => d.toLowerCase());
-        }
+        // Split de doelgroep_opleiding string op komma's en verwijder witruimte
+        const doelgroepen = bedrijf.doelgroep_opleiding
+          .split(',')
+          .map(d => d.trim())
+          .filter(d => d.length > 0);
         
         // Check of de studierichting van de student voorkomt in de doelgroepen
         return doelgroepen.some(doelgroep => 
