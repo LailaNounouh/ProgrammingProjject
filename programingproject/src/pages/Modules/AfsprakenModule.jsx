@@ -16,6 +16,7 @@ export default function Afspraken() {
   const [loading, setLoading] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [socket, setSocket] = useState(null);
+  const [bevestigdeAfspraak, setBevestigdeAfspraak] = useState(null);
 
   function formatDate(date) {
     const d = new Date(date);
@@ -186,6 +187,10 @@ export default function Afspraken() {
       setRefreshTrigger(prev => prev + 1);
 
       setAfspraakIngediend(true);
+      setBevestigdeAfspraak({
+        tijdslot,
+        bedrijf: bedrijven.find(b => b.bedrijf_id === parseInt(bedrijfId))
+      });
       setError("");
     } catch (err) {
       console.error("Fout bij maken afspraak:", err);
@@ -282,14 +287,15 @@ export default function Afspraken() {
       ) : (
         <div className="overzicht-blok">
           <p className="bevestiging"><strong>✅ Je afspraak is ingediend!</strong></p>
-          <p><strong>Bedrijf:</strong> {bedrijven.find(b => b.bedrijf_id === parseInt(bedrijfId))?.naam}</p>
-          <p><strong>Tijdslot:</strong> {tijdslot}</p>
+          <p><strong>Bedrijf:</strong> {bevestigdeAfspraak?.bedrijf?.naam}</p>
+          <p><strong>Tijdslot:</strong> {bevestigdeAfspraak?.tijdslot || "Niet beschikbaar"}</p>
           <button 
             className="btn-submit" 
             style={{ marginTop: '1rem' }}
             onClick={() => {
               setAfspraakIngediend(false);
               setTijdslot("");
+              setBevestigdeAfspraak(null);
             }}
           >
             Nieuwe afspraak maken

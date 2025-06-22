@@ -823,7 +823,26 @@
   }
 }
 
-.studenten-mini-afspraak,
+/* Nieuwe stijl voor studenten-mini-afspraak */
+.studenten-mini-afspraak {
+  padding: 10px 14px;
+  background: #ffffff;
+  border-radius: 10px;
+  border-left: 4px solid #4a6cf7;
+  margin-bottom: 8px;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.studenten-mini-afspraak:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
 .studenten-mini-bedrijf {
   padding: 5px 8px;
   background: #f8f9fa;
@@ -848,6 +867,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 13px;
 }
 
 .studenten-mini-afspraak-details,
@@ -860,6 +880,14 @@
   align-items: center;
   margin-top: 0;
   line-height: 1.1;
+  font-size: 13px;
+}
+
+.studenten-mini-afspraak-details span {
+  background-color: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 6px;
+  color: #4a5568;
 }
 
 .delete-afspraak-btn {
@@ -875,6 +903,7 @@
   transition: all 0.2s;
   font-size: 13px;
   margin-left: auto;
+  margin-top: 6px;
 }
 
 .delete-afspraak-btn:hover {
