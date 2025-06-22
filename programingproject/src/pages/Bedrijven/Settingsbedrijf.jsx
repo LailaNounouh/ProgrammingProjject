@@ -8,7 +8,7 @@ import { baseUrl } from "../../config";
 import "./Settingsbedrijf.css";
 
 const Settingsbedrijf = () => {
-  const { user } = useAuth();
+  const { gebruiker } = useAuth();
   const navigate = useNavigate();
 
   const [bedrijfsgegevens, setBedrijfsgegevens] = useState({
@@ -56,7 +56,7 @@ const Settingsbedrijf = () => {
   // Fetch company data when component mounts
   useEffect(() => {
     const fetchBedrijfsgegevens = async () => {
-      if (!user?.id) {
+      if (!gebruiker?.id) {
         setError("Geen bedrijf ingelogd");
         setLoading(false);
         return;
@@ -64,7 +64,8 @@ const Settingsbedrijf = () => {
 
       try {
         setLoading(true);
-        const data = await apiClient.get(`/bedrijfprofiel/${user.id}`);
+        console.log('Fetching bedrijfsgegevens for user:', gebruiker);
+        const data = await apiClient.get(`/bedrijfprofiel/${gebruiker.id}`);
 
         // Map database fields to form fields
         setBedrijfsgegevens({
@@ -88,14 +89,20 @@ const Settingsbedrijf = () => {
         setError("");
       } catch (err) {
         console.error("Fout bij ophalen bedrijfsgegevens:", err);
-        setError("Kon bedrijfsgegevens niet laden");
+        console.error("Error details:", {
+          message: err.message,
+          response: err.response,
+          status: err.response?.status,
+          data: err.response?.data
+        });
+        setError(`Kon bedrijfsgegevens niet laden: ${err.message}`);
       } finally {
         setLoading(false);
       }
     };
 
     fetchBedrijfsgegevens();
-  }, [user?.id]);
+  }, [gebruiker?.id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -108,7 +115,7 @@ const Settingsbedrijf = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!user?.id) {
+    if (!gebruiker?.id) {
       setError("Geen bedrijf ingelogd");
       return;
     }
@@ -117,7 +124,7 @@ const Settingsbedrijf = () => {
       setSaving(true);
       setError("");
 
-      await apiClient.put(`/bedrijfprofiel/${user.id}`, {
+      await apiClient.put(`/bedrijfprofiel/${gebruiker.id}`, {
         naam: bedrijfsgegevens.bedrijfsnaam,
         sector_id: bedrijfsgegevens.sector,
         straat: bedrijfsgegevens.straat,
@@ -361,7 +368,7 @@ const Settingsbedrijf = () => {
 
           <div className="form-sectie">
             <h2 className="sectie-titel">Logo uploaden</h2>
-            <LogoUploadForm bedrijfId={user?.id} />
+            <LogoUploadForm bedrijfId={gebruiker?.id} />
           </div>
           <button
             type="submit"
