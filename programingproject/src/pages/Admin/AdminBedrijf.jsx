@@ -5,6 +5,7 @@ import { baseUrl } from '../../config';
 
 function AdminBedrijf() {
   const [bedrijven, setBedrijven] = useState([]);
+  const [sectoren, setSectoren] = useState([]);
   const [filter, setFilter] = useState('');
   const [toonBewerken, setToonBewerken] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -50,8 +51,39 @@ function AdminBedrijf() {
     }
   };
 
+  const haalSectorenOp = async () => {
+    try {
+      console.log('Fetching sectoren from:', `${baseUrl}/sectoren`);
+      const response = await fetch(`${baseUrl}/sectoren`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Sectoren opgehaald:', data);
+      setSectoren(data);
+
+    } catch (error) {
+      console.error('Fout bij ophalen sectoren:', error.message);
+      // Set fallback sectoren if API fails
+      const fallbackSectoren = [
+        { sector_id: 1, naam: 'IT & Software' },
+        { sector_id: 2, naam: 'Engineering' },
+        { sector_id: 3, naam: 'Finance' },
+        { sector_id: 4, naam: 'Healthcare' },
+        { sector_id: 5, naam: 'Education' },
+        { sector_id: 6, naam: 'Marketing' },
+        { sector_id: 7, naam: 'Sales' }
+      ];
+      console.log('Using fallback sectoren:', fallbackSectoren);
+      setSectoren(fallbackSectoren);
+    }
+  };
+
   useEffect(() => {
     haalBedrijvenOp();
+    haalSectorenOp();
   }, []);
 
   const handleFormulierVerzenden = async (e) => {
@@ -122,6 +154,42 @@ function AdminBedrijf() {
     setToonBewerken(true);
   };
 
+  const opslaanBedrijf = async (bedrijf) => {
+    setLoading(true);
+    setMessage('');
+
+    try {
+      console.log('Saving company:', bedrijf);
+
+      const response = await fetch(`${baseUrl}/bedrijvenmodule/${bedrijf.bedrijf_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bedrijf)
+      });
+
+      const responseData = await response.json();
+      console.log('Response:', responseData);
+
+      if (!response.ok) {
+        throw new Error(responseData.error || responseData.details || 'Fout bij opslaan bedrijf');
+      }
+
+      setMessage(`✅ Bedrijf ${bedrijf.naam} succesvol opgeslagen!`);
+      await haalBedrijvenOp(); // Refresh the list
+
+      // Clear message after 3 seconds
+      setTimeout(() => setMessage(''), 3000);
+
+    } catch (error) {
+      console.error('Fout bij opslaan bedrijf:', error);
+      setMessage(`❌ Fout bij opslaan: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const resetFormulier = () => {
     setBewerkFormulier({
       bedrijf_id: '',
@@ -165,6 +233,12 @@ function AdminBedrijf() {
         <section className="bedrijven-section">
           <h2>Deelnemende bedrijven</h2>
 
+          {message && (
+            <div className={`message ${message.includes('✅') ? 'success' : 'error'}`}>
+              {message}
+            </div>
+          )}
+
           <div className="bedrijven-header">
             <input
               type="text"
@@ -173,90 +247,101 @@ function AdminBedrijf() {
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             />
-            <button className="bewerken-button" onClick={() => setToonBewerken(!toonBewerken)}>
-              {toonBewerken ? 'Opslaan' : 'Bewerken'}
+            <button
+              className="bewerken-button"
+              onClick={() => setToonBewerken(!toonBewerken)}
+              disabled={loading}
+            >
+              {toonBewerken ? 'Stoppen met bewerken' : 'Bewerken'}
             </button>
           </div>
 
-          {!toonBewerken ? (
-            <div className="bedrijven-grid">
-              {bedrijven
-                .filter((bedrijf) => bedrijf.naam?.toLowerCase().includes(filter.toLowerCase()))
-                .map((bedrijf) => (
-                  <div key={bedrijf.bedrijf_id} className="bedrijf-card">
-                    <div className="bedrijf-image">
-                      {bedrijf.logo_url ? (
-                        <img src={bedrijf.logo_url} alt={`${bedrijf.naam} logo`} />
-                      ) : (
-                        <div className="bedrijf-logo-placeholder"></div>
-                      )}
-                    </div>
-                    <strong>{bedrijf.naam}</strong>
-                    <p>{bedrijf.sector}</p>
-                    <p>{bedrijf.gemeente}</p>
-                    <button onClick={() => startBewerken(bedrijf)}>Bewerken</button>
-                    <button className="verwijder-button" onClick={() => verwijderBedrijf(bedrijf.bedrijf_id)}>
-                      Verwijderen
-                    </button>
+          <div className="bedrijven-grid">
+            {bedrijven
+              .filter((bedrijf) => bedrijf.naam?.toLowerCase().includes(filter.toLowerCase()))
+              .map((bedrijf) => (
+                <div key={bedrijf.bedrijf_id} className={`bedrijf-card ${toonBewerken ? 'editable' : ''}`}>
+                  <div className="bedrijf-image">
+                    {bedrijf.logo_url ? (
+                      <img src={bedrijf.logo_url} alt={`${bedrijf.naam} logo`} />
+                    ) : (
+                      <div className="bedrijf-logo-placeholder"></div>
+                    )}
                   </div>
-                ))}
-            </div>
-          ) : (
-            <form onSubmit={handleFormulierVerzenden}>
-              {message && (
-                <div className={`message ${message.includes('✅') ? 'success' : 'error'}`}>
-                  {message}
-                </div>
-              )}
 
-              {Object.keys(bewerkFormulier).map(key => {
-                if (key === 'bedrijf_id') return null;
-                
-                if (key === 'speeddates') {
-                  return (
-                    <div key={key} className="form-group">
-                      <label>{key}:</label>
+                  {toonBewerken ? (
+                    <div className="editable-fields">
                       <input
-                        type="checkbox"
-                        checked={bewerkFormulier[key]}
-                        onChange={(e) => setBewerkFormulier({
-                          ...bewerkFormulier,
-                          [key]: e.target.checked
-                        })}
+                        type="text"
+                        value={bedrijf.naam || ''}
+                        onChange={(e) => {
+                          const updatedBedrijven = bedrijven.map(b =>
+                            b.bedrijf_id === bedrijf.bedrijf_id
+                              ? { ...b, naam: e.target.value }
+                              : b
+                          );
+                          setBedrijven(updatedBedrijven);
+                        }}
+                        placeholder="Bedrijfsnaam"
+                        className="edit-input"
                       />
+                      <select
+                        value={bedrijf.sector || ''}
+                        onChange={(e) => {
+                          const updatedBedrijven = bedrijven.map(b =>
+                            b.bedrijf_id === bedrijf.bedrijf_id
+                              ? { ...b, sector: e.target.value }
+                              : b
+                          );
+                          setBedrijven(updatedBedrijven);
+                        }}
+                        className="edit-input"
+                      >
+                        <option value="">Selecteer sector...</option>
+                        {sectoren.map(sector => (
+                          <option key={sector.sector_id} value={sector.naam}>
+                            {sector.naam}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        type="text"
+                        value={bedrijf.gemeente || ''}
+                        onChange={(e) => {
+                          const updatedBedrijven = bedrijven.map(b =>
+                            b.bedrijf_id === bedrijf.bedrijf_id
+                              ? { ...b, gemeente: e.target.value }
+                              : b
+                          );
+                          setBedrijven(updatedBedrijven);
+                        }}
+                        placeholder="Gemeente"
+                        className="edit-input"
+                      />
+                      <button
+                        className="save-individual-button"
+                        onClick={() => opslaanBedrijf(bedrijf)}
+                        disabled={loading}
+                      >
+                        {loading ? 'Bezig...' : 'Opslaan'}
+                      </button>
                     </div>
-                  );
-                }
+                  ) : (
+                    <div className="bedrijf-info">
+                      <strong>{bedrijf.naam}</strong>
+                      <p>{bedrijf.sector}</p>
+                      <p>{bedrijf.gemeente}</p>
+                    </div>
+                  )}
 
-                return (
-                  <div key={key} className="form-group">
-                    <label>{key}:</label>
-                    <input
-                      type={key.includes('email') ? 'email' : 
-                            key.includes('website') || key.includes('logo') ? 'url' : 
-                            key.includes('telefoon') ? 'tel' :
-                            key === 'wachtwoord' ? 'password' : 'text'}
-                      value={bewerkFormulier[key] || ''}
-                      onChange={(e) => setBewerkFormulier({
-                        ...bewerkFormulier,
-                        [key]: e.target.value
-                      })}
-                      required={key === 'naam'}
-                    />
-                  </div>
-                );
-              })}
+                  <button className="verwijder-button" onClick={() => verwijderBedrijf(bedrijf.bedrijf_id)}>
+                    Verwijderen
+                  </button>
+                </div>
+              ))}
+          </div>
 
-              <div className="form-buttons">
-                <button type="submit" disabled={loading}>
-                  {loading ? 'Bezig...' : (bewerkFormulier.bedrijf_id ? 'Wijzigingen Opslaan' : 'Bedrijf Toevoegen')}
-                </button>
-                <button type="button" onClick={resetFormulier} disabled={loading}>
-                  Annuleren
-                </button>
-              </div>
-            </form>
-          )}
+
         </section>
       </main>
     </div>

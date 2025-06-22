@@ -36,6 +36,26 @@
   cursor: not-allowed;
 }
 
+/* Table input styling */
+table input, table select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+table input:focus, table select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+.rol-select {
+  cursor: pointer;
+  background-color: white;
+}
+
 .gebruikers-section {
   background: white;
   border-radius: 12px;

@@ -10,18 +10,23 @@ function AdminGebruikers() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
+  const haalGebruikersOp = async () => {
+    try {
+      const response = await fetch(`${baseUrl}/users`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const data = await response.json();
+      console.log('Gebruikers opgehaald:', data);
+      setGebruikers(data);
+    } catch (err) {
+      console.error('Fout bij ophalen gebruikers:', err);
+      setMessage(`❌ Fout bij ophalen gebruikers: ${err.message}`);
+    }
+  };
+
   useEffect(() => {
-    fetch(`${baseUrl}/users`)
-      .then(res => {
-        if (!res.ok) throw new Error('Fout bij ophalen gebruikers');
-        return res.json();
-      })
-      .then(data => {
-        setGebruikers(data);
-      })
-      .catch(err => {
-        console.error('Fout bij ophalen gebruikers:', err);
-      });
+    haalGebruikersOp();
   }, []);
 
   const wijzigGebruiker = (id, veld, waarde) => {
@@ -58,6 +63,9 @@ function AdminGebruikers() {
 
       setMessage(`✅ Gebruiker ${gebruiker.naam} succesvol opgeslagen!`);
       console.log('Gebruiker opgeslagen:', gebruiker.id);
+
+      // Refresh the user list to show updated data
+      await haalGebruikersOp();
 
       // Clear message after 3 seconds
       setTimeout(() => setMessage(''), 3000);
@@ -128,10 +136,14 @@ function AdminGebruikers() {
                   </td>
                   <td>
                     {bewerken ? (
-                      <input
+                      <select
                         value={user.rol}
                         onChange={(e) => wijzigGebruiker(user.id, 'rol', e.target.value)}
-                      />
+                        className="rol-select"
+                      >
+                        <option value="student">Student</option>
+                        <option value="werkzoekende">Werkzoekende</option>
+                      </select>
                     ) : (
                       user.rol
                     )}
