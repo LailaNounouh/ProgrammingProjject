@@ -101,8 +101,8 @@
 
 .login-container .register-link a {
   color:  #00a9b5;
-  text-decoration: none;
-  font-weight: 500;
+  text-decoration: underline;
+  font-weight: 600;
   margin-left: 0.3rem;
 }
 
