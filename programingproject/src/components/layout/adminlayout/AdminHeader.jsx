@@ -29,6 +29,7 @@ const AdminHeader = () => {
 
         <nav className={showMobileMenu ? 'show' : ''}>
           <ul>
+            <li><Link to="/Admin">Dashboard</Link></li>
             <li><Link to="/Admin/Bedrijf">Deelnemende bedrijven</Link></li>
             <li><Link to="/Admin/standen">Beheer van standen</Link></li>
             <li><Link to="/Admin/gebruikers">Beheer van gebruikers</Link></li>

@@ -1,25 +1,326 @@
-.talen-container {
-   margin-top: 2rem;
- }
-  .talen-form {
-   display: flex;
-   gap: 1rem;
-   margin-bottom: 1rem;
- }
-  .talen-form select,
- .talen-form button {
-   padding: 0.5rem;
-   border-radius: 5px;
- }
-  .talen-lijst {
-   list-style: none;
-   padding-left: 0;
- }
-  .talen-lijst li {
-   display: flex;
-   justify-content: space-between;
-   padding: 0.5rem 1rem;
-   background-color: #f2f2f2;
-   margin-bottom: 0.5rem;
-   border-radius: 5px;
- }
+/* DropDowns.css - Verbeterde styling voor de skills selectors */
+
+.skills-selector {
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  padding: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.skills-selector h3 {
+  color: #333;
+  font-size: 1.2rem;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+/* Input container styling */
+.skills-input-container {
+  display: flex;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+
+.skills-input-container input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.skills-input-container input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.skills-input-container button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.skills-input-container button:hover {
+  opacity: 0.9;
+}
+
+/* Suggestions styling */
+.skills-suggestions {
+  margin-bottom: 20px;
+}
+
+.skills-suggestions p {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+
+.skill-category {
+  margin-bottom: 15px;
+}
+
+.skill-category h4 {
+  color: #333;
+  font-size: 0.95rem;
+  margin: 10px 0;
+  font-weight: 500;
+}
+
+.suggestions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.suggestion-button {
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.suggestion-button:hover {
+  background-color: #e0e0e0;
+}
+
+.suggestion-button:disabled {
+  background-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Selected skills styling */
+.selected-skills {
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  padding: 15px;
+  border: 1px solid #e9ecef;
+}
+
+.selected-skills ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.skill-item {
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.remove-skill {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.remove-skill:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.no-skills {
+  color: #6c757d;
+  font-style: italic;
+  text-align: center;
+  padding: 10px;
+}
+
+/* Responsive aanpassingen */
+@media (max-width: 768px) {
+  .skills-selector {
+    padding: 15px;
+  }
+  
+  .skills-input-container {
+    flex-direction: column;
+  }
+  
+  .skills-input-container input {
+    margin-bottom: 10px;
+  }
+  
+  .skills-input-container button {
+    width: 100%;
+  }
+}
+
+/* Animaties */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.skill-item {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Read-only modus */
+.skills-selector.read-only .selected-skills {
+  background-color: transparent;
+  padding: 0;
+}
+
+.skills-selector.read-only .skill-item {
+  background-color: #e0f0f2;
+  color: #2c3e50;
+  border: 1px solid #5ba6b0;
+}
+
+.skill-selector-container {
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.skill-description {
+  margin-bottom: 15px;
+  color: #666;
+  font-size: 14px;
+}
+
+.skill-select {
+  margin-bottom: 15px;
+}
+
+.selected-skills {
+  margin-top: 20px;
+}
+
+.selected-skills h4 {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+.skills-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: #e1f5fe;
+  color: #0277bd;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+}
+
+.skill-level {
+  display: inline-block;
+  background-color: #0277bd;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 8px;
+}
+
+.taal-item {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.taal-row {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+}
+
+.taal-select {
+  flex: 2;
+}
+
+.niveau-select {
+  flex: 1;
+}
+
+.taal-select label, .niveau-select label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #555;
+}
+
+.select-container {
+  width: 100%;
+}
+
+.remove-button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.add-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.add-button:hover {
+  background-color: #45a049;
+}
+
+.remove-button:hover {
+  background-color: #d32f2f;
+}
