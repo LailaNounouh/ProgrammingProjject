@@ -17,11 +17,12 @@
   margin: 0;
 }
 
-.toggle-mode-btn {
+.edit-btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: #f0f0f0;
+  background-color: #007bff;
+  color: white;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -30,17 +31,7 @@
   transition: all 0.3s;
 }
 
-.toggle-mode-btn.editing {
-  background-color: #007bff;
-  color: white;
-}
-
-.toggle-mode-btn.viewing {
-  background-color: #6c757d;
-  color: white;
-}
-
-.toggle-mode-btn:hover {
+.edit-btn:hover {
   opacity: 0.9;
 }
 
@@ -74,6 +65,44 @@
   border: 1px solid #a5d6a7;
 }
 
+/* Tabs styling */
+.account-tabs {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-weight: 500;
+  color: #555;
+  transition: all 0.3s;
+}
+
+.tab-button.active {
+  color: #007bff;
+  border-bottom-color: #007bff;
+}
+
+.tab-button:hover:not(.active) {
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+.tab-content {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Form styling */
 .form-group {
   margin-bottom: 1.5rem;
 }
@@ -132,6 +161,7 @@
   object-fit: cover;
 }
 
+/* Checkboxes */
 .checkboxen-groep {
   margin-bottom: 1.5rem;
 }
@@ -147,6 +177,7 @@
   width: auto;
 }
 
+/* Form actions */
 .form-actions {
   display: flex;
   gap: 1rem;
@@ -189,6 +220,7 @@
   cursor: not-allowed;
 }
 
+/* View mode styling */
 .account-section {
   background-color: #fff;
   border-radius: 8px;
@@ -231,111 +263,46 @@
   color: #333;
 }
 
-.info-item a {
-  color: #007bff;
-  text-decoration: none;
+/* Skills styling in view mode */
+.skills-overview {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
 }
 
-.info-item a:hover {
-  text-decoration: underline;
+@media (min-width: 768px) {
+  .skills-overview {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
-.info-item.beschrijving {
-  grid-column: span 2;
+.skills-container h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 1.1rem;
 }
 
-.profile-photo-container {
-  display: flex;
-  justify-content: center;
-  margin: 1rem 0;
-}
-
-.profile-photo {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #f0f0f0;
-}
-
-.no-photo {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  background-color: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #6c757d;
-  text-align: center;
-  padding: 1rem;
-  font-size: 0.875rem;
-}
-
-.status-indicators {
+.skills-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.status-tag {
-  display: inline-block;
-  padding: 0.5rem 0.75rem;
+.skill-tag {
+  background-color: #007bff;
+  color: white;
   border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
+  padding: 6px 12px;
+  font-size: 0.9rem;
 }
 
-.status-tag.jobstudent {
-  background-color: #e3f2fd;
-  color: #0d47a1;
-}
-
-.status-tag.werkzoekend {
-  background-color: #fce4ec;
-  color: #880e4f;
-}
-
-.status-tag.stage {
-  background-color: #e8f5e9;
-  color: #1b5e20;
-}
-
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-}
-
-.loading-spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #007bff;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 2s linear infinite;
-  margin-bottom: 1rem;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.persoonlijke-info {
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.persoonlijke-info h3 {
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  color: #333;
-  font-size: 1.25rem;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 0.75rem;
+/* Voorkeuren styling */
+.voorkeuren-lijst {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
 }
