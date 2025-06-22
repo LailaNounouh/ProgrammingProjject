@@ -138,36 +138,57 @@ router.post('/nieuw', async (req, res) => {
   }
 
   try {
-
-    const [bestaande] = await pool.query(
+    // Check 1: Tijdslot already taken by this company
+    const [bestaandeTijdslot] = await pool.query(
       'SELECT * FROM Afspraken WHERE bedrijf_id = ? AND datum = ? AND tijdslot = ?',
       [bedrijf_id, datum, tijdslot]
     );
 
-    if (bestaande.length > 0) {
-      return res.status(409).json({ error: 'Tijdslot is al bezet' });
+    if (bestaandeTijdslot.length > 0) {
+      return res.status(409).json({ error: 'Dit tijdslot is al bezet bij dit bedrijf' });
     }
 
+    // Check 2: Student already has appointment at same time (different company)
+    const [studentTijdslot] = await pool.query(
+      'SELECT * FROM Afspraken WHERE student_id = ? AND datum = ? AND tijdslot = ?',
+      [student_id, datum, tijdslot]
+    );
 
+    if (studentTijdslot.length > 0) {
+      return res.status(409).json({ error: 'Je hebt al een afspraak op dit tijdslot' });
+    }
+
+    // Check 3: Student already has appointment with this company (any time)
+    const [studentBedrijf] = await pool.query(
+      'SELECT * FROM Afspraken WHERE student_id = ? AND bedrijf_id = ?',
+      [student_id, bedrijf_id]
+    );
+
+    if (studentBedrijf.length > 0) {
+      return res.status(409).json({ error: 'Je hebt al een afspraak met dit bedrijf' });
+    }
+
+    // All checks passed, create the appointment
     const [result] = await pool.query(
-      `INSERT INTO Afspraken (student_id, bedrijf_id, tijdslot, datum)
-       VALUES (?, ?, ?, ?)`,
+      `INSERT INTO Afspraken (student_id, bedrijf_id, tijdslot, datum, status)
+       VALUES (?, ?, ?, ?, 'in_afwachting')`,
       [student_id, bedrijf_id, tijdslot, datum]
     );
 
     const afspraak_id = result.insertId;
 
-
+    // Create notification for company
     await pool.query(`
       INSERT INTO Bedrijf_Notifications
         (bedrijf_id, type, message, is_read, created_at)
-       VALUES (?, 'appointment', ?, 0, NOW())`, 
-      [bedrijf_id, `Nieuwe afspraak op ${datum} om ${tijdslot} met student ID ${student_id}`]
+       VALUES (?, 'appointment', ?, 0, NOW())`,
+      [bedrijf_id, `Nieuwe afspraak aanvraag op ${datum} om ${tijdslot} van student ID ${student_id}`]
     );
 
     return res.status(201).json({
-      message: 'Afspraak en melding succesvol gemaakt',
+      message: 'Afspraak succesvol aangemaakt en wacht op goedkeuring',
       afspraak_id,
+      status: 'in_afwachting'
     });
   } catch (err) {
     console.error('[Serverfout] Afspraak maken mislukt:', err);
