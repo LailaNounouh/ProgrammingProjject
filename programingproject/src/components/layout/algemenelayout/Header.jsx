@@ -43,17 +43,8 @@ const Header = () => {
           <li><Link to="/" onClick={closeMobileMenu}>Home</Link></li>
           <li><Link to="/about" onClick={closeMobileMenu}>About</Link></li>
           <li><Link to="/contact" onClick={closeMobileMenu}>Contact</Link></li>
-
-
-          {user ? (
-            <>
-              <li><Link to={`/${user.role}`}>Dashboard</Link></li>
-              <li><Link to={`/${user.role}/profiel`}>Account</Link></li>
-              <li><LogoutButton /></li>
-            </>
-          ) : (
-            <li><Link to="/login" onClick={closeMobileMenu}>Login / Registreren</Link></li>
-          )}
+          <li><Link to="/login" onClick={closeMobileMenu}>Login / Registreren</Link></li>
+        
         </ul>
       </nav>
     </header>
