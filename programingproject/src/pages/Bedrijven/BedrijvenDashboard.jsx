@@ -95,7 +95,7 @@ function DashboardContent({
           {filteredCards.map((card, index) => (
             <div key={index} className="dashboard-card" onClick={card.onClick}>
               <div className="card-header">
-                <div className={card-icon ${card.iconClass}}>
+                <div className={`card-icon ${card.iconClass}`}>
                   {card.icon}
                 </div>
                 <h3 className="card-title">{card.title}</h3>
@@ -148,7 +148,7 @@ function DashboardContent({
               ) : (
                 <div className="events-list">
                   {upcomingEvents.map((event, index) => (
-                    <div key={event-${index}} className="calendar-event">
+                    <div key={`event-${index}`} className="calendar-event">
                       <div className="event-time">
                         <FaCalendarCheck /> {event.date.toLocaleDateString('nl-NL')} • {event.time || 'Hele dag'}
                       </div>
@@ -202,10 +202,14 @@ function DashboardContent({
                 </div>
               ))}
               
-              {upcomingEvents.filter(event => 
-                event.date.toDateString() === calendarDate.toDateString()
-              ).map((event, index) => (
-                <div key={event-${index}} className={calendar-event ${event.highlight ? 'highlight-event' : ''}}>
+            {upcomingEvents.filter(event => 
+  event.date.toDateString() === calendarDate.toDateString()
+).map((event, index) => (
+  <div 
+    key={`event-${index}`} 
+    className={`calendar-event ${event.highlight ? 'highlight-event' : ''}`}
+  >
+
                   <div className="event-time">
                     <FaCalendarCheck /> {event.time || 'Hele dag'}
                   </div>
@@ -341,12 +345,13 @@ function BedrijvenDashboard() {
 
       try {
         setLoading(true);
-        const data = await apiClient.get(/bedrijfprofiel/${gebruiker.id});
+        const data = await apiClient.get(`/bedrijfprofiel/${gebruiker.id}`);
+
 
         setBedrijfData(data);
         setBedrijfNaam(data.naam || gebruiker.naam || 'Bedrijf');
    try {
-        const saved = localStorage.getItem(reminders_${gebruiker.id});
+        const saved = localStorage.getItem(`reminders_${gebruiker.id}`);
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed)) {
@@ -399,7 +404,7 @@ function BedrijvenDashboard() {
       }
 
       try {
-        const data = await apiClient.get(/notifications/${gebruiker.id});
+        const data = await apiClient.get(`/notifications/${gebruiker.id}`);
         setNotifications(data);
       } catch (error) {
         console.error('Fout bij ophalen meldingen:', error);
@@ -422,7 +427,8 @@ function BedrijvenDashboard() {
     setReminders(newReminders);
 
     if (gebruiker?.id) {
-      localStorage.setItem(reminders_${gebruiker.id}, JSON.stringify(newReminders));
+      localStorage.setItem(`reminders_${gebruiker.id}`, JSON.stringify(newReminders));
+
     }
 
     setShowReminderModal(false);
@@ -435,10 +441,11 @@ function BedrijvenDashboard() {
 
   const addEventReminder = (event) => {
   setNewReminder({
-    date: event.date.toISOString().split('T')[0],
-    time: event.time?.split('-')[0].trim() || '09:00',
-    text: Herinnering: ${event.title} - ${event.description}
-  });
+   date: event.date.toISOString().split('T')[0],
+time: event.time?.split('-')[0].trim() || '09:00',
+text: `Herinnering: ${event.title} - ${event.description}`,
+});
+
   setShowReminderModal(true);
 };
 
@@ -449,7 +456,8 @@ function BedrijvenDashboard() {
     setReminders(newReminders);
 
     if (gebruiker?.id) {
-      localStorage.setItem(reminders_${gebruiker.id}, JSON.stringify(newReminders));
+      localStorage.setItem(`reminders_${gebruiker.id}`, JSON.stringify(newReminders));
+
     }
   };
 
@@ -533,3 +541,4 @@ const dashboardCards = [
     </div>
   );
 }
+export default BedrijvenDashboard;
