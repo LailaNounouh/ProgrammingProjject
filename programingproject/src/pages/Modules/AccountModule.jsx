@@ -18,6 +18,7 @@ export default function AccountModule() {
   const [userData, setUserData] = useState({
     email: "",
     naam: "",
+    voornaam: "",
     studie: "",
     foto_url: null,
     linkedin_url: "",
@@ -74,104 +75,99 @@ export default function AccountModule() {
 
   useEffect(() => {
     if (profiel) {
-      console.log("Profiel geladen in AccountModule:", profiel);
-      console.log("Softskills in profiel:", profiel.softskills);
-      console.log("Hardskills in profiel:", profiel.hardskills);
+      console.log("AccountModule - Profiel data ontvangen:", profiel);
       
+      // Zet de profiel data in de state
       setUserData({
-        email: profiel.email || gebruiker?.email || "",
-        naam: profiel.naam || gebruiker?.naam || "",
+        userId: profiel.userId,
+        naam: profiel.naam || "",
+        voornaam: profiel.voornaam || "",
+        email: profiel.email || "",
+        telefoon: profiel.telefoon || "",
+        aboutMe: profiel.aboutMe || profiel.beschrijving || "",
+        github_url: profiel.github || "",
+        linkedin_url: profiel.linkedin || "",
         studie: profiel.studie || "",
         foto_url: profiel.foto_url || null,
-        linkedin_url: profiel.linkedin || "",
-        github_url: profiel.github || "",
         jobstudent: profiel.jobstudent || false,
         werkzoekend: profiel.werkzoekend || false,
         stage_gewenst: profiel.stage_gewenst || false,
-        telefoon: profiel.telefoon || "",
-        aboutMe: profiel.beschrijving || "",
       });
       
-      // Controleer of de skills arrays zijn en gebruik lege arrays als fallback
+      // Verwerk softskills
       if (Array.isArray(profiel.softskills)) {
-        console.log("Setting softskills from profile:", profiel.softskills);
         setSoftskills(profiel.softskills);
       } else if (typeof profiel.softskills === 'string') {
         try {
-          const parsedSkills = JSON.parse(profiel.softskills || '[]');
-          console.log("Parsed softskills from string:", parsedSkills);
-          setSoftskills(parsedSkills);
+          setSoftskills(JSON.parse(profiel.softskills));
         } catch (e) {
-          console.error("Error parsing softskills string:", e);
           setSoftskills([]);
         }
       } else {
-        console.warn("Softskills is geen array of string:", profiel.softskills);
         setSoftskills([]);
       }
       
+      // Verwerk hardskills
       if (Array.isArray(profiel.hardskills)) {
-        console.log("Setting hardskills from profile:", profiel.hardskills);
         setHardskills(profiel.hardskills);
       } else if (typeof profiel.hardskills === 'string') {
         try {
-          const parsedSkills = JSON.parse(profiel.hardskills || '[]');
-          console.log("Parsed hardskills from string:", parsedSkills);
-          setHardskills(parsedSkills);
+          setHardskills(JSON.parse(profiel.hardskills));
         } catch (e) {
-          console.error("Error parsing hardskills string:", e);
           setHardskills([]);
         }
       } else {
-        console.warn("Hardskills is geen array of string:", profiel.hardskills);
         setHardskills([]);
       }
       
-      // Laad codeertalen
-      if (Array.isArray(profiel.codeertaal)) {
-        setCodeertalen(profiel.codeertaal);
-      } else if (typeof profiel.codeertaal === 'string') {
+      // Verwerk codeertalen
+      console.log("AccountModule - Controleren van codeertalen in profiel:", profiel);
+      if (Array.isArray(profiel.codeertalen)) {
+        console.log("AccountModule - Codeertalen uit profiel (array):", profiel.codeertalen);
+        setCodeertalen(profiel.codeertalen);
+      } else if (Array.isArray(profiel.programmeertalen)) {
+        console.log("AccountModule - Programmeertalen uit profiel (array):", profiel.programmeertalen);
+        setCodeertalen(profiel.programmeertalen);
+      } else if (typeof profiel.programmeertalen === 'string') {
         try {
-          const parsedTalen = JSON.parse(profiel.codeertaal || '[]');
+          const parsedTalen = JSON.parse(profiel.programmeertalen);
+          console.log("AccountModule - Programmeertalen geparsed uit string:", parsedTalen);
           setCodeertalen(parsedTalen);
         } catch (e) {
-          console.error("Error parsing codeertaal string:", e);
+          console.error("AccountModule - Fout bij parsen programmeertalen:", e);
+          setCodeertalen([]);
+        }
+      } else if (typeof profiel.codeertalen === 'string') {
+        try {
+          const parsedTalen = JSON.parse(profiel.codeertalen);
+          console.log("AccountModule - Codeertalen geparsed uit string:", parsedTalen);
+          setCodeertalen(parsedTalen);
+        } catch (e) {
+          console.error("AccountModule - Fout bij parsen codeertalen:", e);
           setCodeertalen([]);
         }
       } else {
         setCodeertalen([]);
       }
       
-      // Laad talen
+      // Verwerk talen
       if (Array.isArray(profiel.talen)) {
+        console.log("AccountModule - Talen uit profiel (array):", profiel.talen);
         setTalen(profiel.talen);
       } else if (typeof profiel.talen === 'string') {
         try {
-          const parsedTalen = JSON.parse(profiel.talen || '[]');
+          const parsedTalen = JSON.parse(profiel.talen);
+          console.log("AccountModule - Talen geparsed uit string:", parsedTalen);
           setTalen(parsedTalen);
         } catch (e) {
-          console.error("Error parsing talen string:", e);
+          console.error("AccountModule - Fout bij parsen talen:", e);
           setTalen([]);
         }
       } else {
         setTalen([]);
       }
-    } else if (gebruiker) {
-      setUserData({
-        email: gebruiker.email || "",
-        naam: gebruiker.naam || "",
-        studie: gebruiker.studie || "",
-        foto_url: gebruiker.foto_url || null,
-        linkedin_url: gebruiker.linkedin_url || "",
-        github_url: gebruiker.github_url || "",
-        jobstudent: gebruiker.jobstudent || false,
-        werkzoekend: gebruiker.werkzoekend || false,
-        stage_gewenst: gebruiker.stage_gewenst || false,
-        telefoon: gebruiker.telefoon || "",
-        aboutMe: gebruiker.aboutMe || "",
-      });
     }
-  }, [profiel, gebruiker]);
+  }, [profiel]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -208,11 +204,9 @@ export default function AccountModule() {
     setSuccessMessage("");
 
     try {
-      console.log("Begin opslaan wijzigingen");
-      console.log("Huidige softskills:", softskills);
-      console.log("Huidige hardskills:", hardskills);
-      console.log("Huidige codeertalen:", codeertalen);
-      console.log("Huidige talen:", talen);
+      console.log("AccountModule - Formulier verzonden");
+      console.log("AccountModule - Codeertalen:", codeertalen);
+      console.log("AccountModule - Talen:", talen);
       
       // Maak een kopie van userData om mee te werken
       let profielData = { ...userData };
@@ -220,11 +214,12 @@ export default function AccountModule() {
       // Voeg de skills toe aan de profielData
       profielData.softskills = Array.isArray(softskills) ? softskills : [];
       profielData.hardskills = Array.isArray(hardskills) ? hardskills : [];
-      profielData.codeertaal = Array.isArray(codeertalen) ? codeertalen : [];
+      profielData.codeertalen = Array.isArray(codeertalen) ? codeertalen : [];
+      profielData.programmeertalen = Array.isArray(codeertalen) ? codeertalen : [];
       profielData.talen = Array.isArray(talen) ? talen : [];
       
       if (userData.foto_url && typeof userData.foto_url !== "string") {
-        console.log("Uploaden met foto");
+        console.log("AccountModule - Uploaden met foto");
         const formData = new FormData();
         formData.append("naam", userData.naam || "");
         formData.append("email", userData.email || "");
@@ -241,49 +236,62 @@ export default function AccountModule() {
         // Voeg de skills toe als JSON strings
         formData.append("softskills", JSON.stringify(softskills));
         formData.append("hardskills", JSON.stringify(hardskills));
-        formData.append("codeertaal", JSON.stringify(codeertalen));
+        formData.append("codeertalen", JSON.stringify(codeertalen));
+        formData.append("programmeertalen", JSON.stringify(codeertalen));
         formData.append("talen", JSON.stringify(talen));
         
-        // Debug log van alle formdata
-        for (let [key, val] of formData.entries()) {
-          if (val instanceof File) {
-            console.log(`FormData: ${key}: [file] ${val.name}`);
-          } else {
-            console.log(`FormData: ${key}:`, val);
-          }
-        }
+        // Debug log van codeertalen en talen
+        console.log("AccountModule - Codeertalen voor verzending:", codeertalen);
+        console.log("AccountModule - Talen voor verzending:", talen);
         
         const result = await contextUpdateProfiel(formData, true);
         if (!result.success) {
           throw new Error(result.error || "Fout bij opslaan profiel");
         }
+        
+        // Als we hier komen, is het profiel succesvol opgeslagen
+        setSuccessMessage("Profiel succesvol opgeslagen!");
+        setEditMode(false);
+        
+        // Direct het profiel opnieuw ophalen
+        await fetchProfiel();
       } else {
-        console.log("Uploaden zonder foto");
+        console.log("AccountModule - Uploaden zonder foto");
         // Zorg ervoor dat de skills als arrays worden verzonden
         profielData.softskills = Array.isArray(softskills) ? softskills : [];
         profielData.hardskills = Array.isArray(hardskills) ? hardskills : [];
-        profielData.codeertaal = Array.isArray(codeertalen) ? codeertalen : [];
+        profielData.codeertalen = Array.isArray(codeertalen) ? codeertalen : [];
+        profielData.programmeertalen = Array.isArray(codeertalen) ? codeertalen : [];
         profielData.talen = Array.isArray(talen) ? talen : [];
         
-        console.log("📤 JSON profielData wordt verzonden:", profielData);
+        // Zorg ervoor dat boolean waarden correct worden verzonden
+        profielData.jobstudent = userData.jobstudent === true;
+        profielData.werkzoekend = userData.werkzoekend === true;
+        profielData.stage_gewenst = userData.stage_gewenst === true;
+        
+        console.log("AccountModule - Codeertalen voor verzending:", profielData.codeertalen);
+        console.log("AccountModule - Talen voor verzending:", profielData.talen);
+        
         const result = await contextUpdateProfiel(profielData, false);
         if (!result.success) {
           throw new Error(result.error || "Fout bij opslaan profiel");
         }
+        
+        // Als we hier komen, is het profiel succesvol opgeslagen
+        setSuccessMessage("Profiel succesvol opgeslagen!");
+        setEditMode(false);
+        
+        // Direct het profiel opnieuw ophalen
+        await fetchProfiel();
       }
 
-      console.log("Profiel succesvol opgeslagen");
-      setSuccessMessage("Profiel succesvol opgeslagen!");
-      setEditMode(false);
-      
-      // Direct het profiel opnieuw ophalen
-      await fetchProfiel();
+      console.log("AccountModule - Profiel succesvol opgeslagen");
     } catch (err) {
-      console.error("Fout bij opslaan:", err);
+      console.error("AccountModule - Fout bij opslaan:", err);
       setErrorMessage("Fout bij opslaan profiel: " + (err.message || "Onbekende fout"));
+    } finally {
+      setSaving(false);
     }
-
-    setSaving(false);
   };
 
   const cancelEdit = () => {
@@ -651,8 +659,10 @@ export default function AccountModule() {
                   <h4>Programmeertalen</h4>
                   {Array.isArray(codeertalen) && codeertalen.length > 0 ? (
                     <ul className="skills-list">
-                      {codeertalen.map((taal, index) => (
-                        <li key={`code-${index}`} className="skill-tag">{taal}</li>
+                      {codeertalen.map((item, index) => (
+                        <li key={`code-${index}`} className="skill-tag">
+                          {item.name || item.taal || "Onbekend"} ({item.ervaring || "beginner"})
+                        </li>
                       ))}
                     </ul>
                   ) : (
@@ -664,8 +674,10 @@ export default function AccountModule() {
                   <h4>Talen</h4>
                   {Array.isArray(talen) && talen.length > 0 ? (
                     <ul className="skills-list">
-                      {talen.map((taal, index) => (
-                        <li key={`taal-${index}`} className="skill-tag">{taal}</li>
+                      {talen.map((item, index) => (
+                        <li key={`taal-${index}`} className="skill-tag">
+                          {item.name || item.taal || "Onbekend"} ({item.niveau || "basis"})
+                        </li>
                       ))}
                     </ul>
                   ) : (
