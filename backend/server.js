@@ -27,7 +27,6 @@ const sectorenRouter = require('./routes/sectoren');
 const profielRouter = require('./routes/profiel');
 const adminRouter = require('./routes/admin');
 const afsprakenRouter = require('./routes/afspraken');
-const codeertaalRouter = require('./routes/codeertalen');
 const usersRouter = require('./routes/users');
 const statistiekenRouter = require('./routes/Statistieken');
 const attendanceRouter = require('./routes/attendance');
@@ -123,7 +122,6 @@ apiRouter.use('/sectoren', sectorenRouter);
 apiRouter.use('/profiel', profielRouter); // <-- Hier wordt je profiel-router gebruikt!
 apiRouter.use('/admin', adminRouter);
 apiRouter.use('/afspraken', afsprakenRouter);
-apiRouter.use('/codeertaal', codeertaalRouter);
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/statistieken', statistiekenRouter);
 apiRouter.use('/attendance', attendanceRouter);
