@@ -1,3 +1,4 @@
+/* Algemene header */
 .student-header {
   display: flex;
   align-items: center;
@@ -11,6 +12,7 @@
   z-index: 100;
 }
 
+/* Logo */
 .student-header .logo {
   height: 45px;
   object-fit: contain;
@@ -18,9 +20,12 @@
   display: block;
   border: none;
 }
+
+/* Navigatie - desktop */
 .student-header nav {
   flex: 2;
 }
+
 .student-header nav ul {
   display: flex;
   align-items: center;
@@ -49,6 +54,7 @@
   background-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Logout knop */
 .student-header .logout-link {
   background: none;
   border: none;
@@ -62,6 +68,7 @@
   transition: background-color 0.2s ease-in-out;
 }
 
+/* Logout popup */
 .student-header .logout-popup-overlay {
   position: fixed;
   top: 0;
