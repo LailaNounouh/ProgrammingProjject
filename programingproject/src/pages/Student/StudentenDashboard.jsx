@@ -15,7 +15,7 @@ import {
   FaBolt
 } from 'react-icons/fa';
 import './StudentenDashboard.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useAuth } from '../../context/AuthProvider';
@@ -150,19 +150,19 @@ function DashboardContent({
               </div>
               <h3 className="studenten-card-title">Interessante Bedrijven</h3>
             </div>
+
             {interessanteBedrijven.length === 0 ? (
               <p className="card-description">
                 Geen bedrijven gevonden die matchen met jouw studierichting.
               </p>
             ) : (
-              <>
-                <div className="studenten-mini-bedrijven-lijst">
-                  {interessanteBedrijven.map((bedrijf, index) => (
-                    <div
-                      key={`mini-bedrijf-${bedrijf.bedrijf_id || index}`}
-                      className="studenten-mini-bedrijf"
-                      onClick={() => navigate(`/student/bedrijven/${bedrijf.bedrijf_id}`)}
-                    >
+              <div className="studenten-mini-bedrijven-lijst">
+                {interessanteBedrijven.map((bedrijf, index) => (
+                  <div
+                    key={`mini-bedrijf-${bedrijf.bedrijf_id || index}`}
+                    className="studenten-mini-bedrijf"
+                  >
+                    <Link to={`/student/bedrijven/${bedrijf.bedrijf_id}`} className="studenten-mini-bedrijf-link">
                       <div className="studenten-mini-bedrijf-naam">
                         {bedrijf.naam}
                       </div>
@@ -178,30 +178,10 @@ function DashboardContent({
                           </span>
                         )}
                       </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="studenten-mini-bedrijven-lijst">
-                  {interessanteBedrijven
-                    .filter(bedrijf => bedrijf.speeddates === 1)
-                    .map((bedrijf, index) => (
-                      <div
-                        key={`speeddate-bedrijf-${bedrijf.bedrijf_id || index}`}
-                        className="studenten-mini-bedrijf"
-                        onClick={() => navigate(`/student/bedrijven/${bedrijf.bedrijf_id}`)}
-                      >
-                        <div className="studenten-mini-bedrijf-naam">
-                          {bedrijf.naam}
-                        </div>
-                        <div className="studenten-mini-bedrijf-details">
-                          <span className="studenten-mini-bedrijf-speeddate">
-                            <FaBolt /> Speeddate beschikbaar
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </>
+                    </Link>
+                  </div>
+                ))}
+              </div>
             )}
             <div className="card-footer" onClick={() => navigate('/student/bedrijven')}>
               <span>Bekijk alle bedrijven</span>
