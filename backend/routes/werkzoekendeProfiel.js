@@ -4,6 +4,16 @@ const pool = require("../db");
 const multer = require("multer");
 const path = require("path");
 
+// Test route to check if API is working
+router.get("/test", (req, res) => {
+  console.log("=== WERKZOEKENDE TEST ROUTE AANGEROEPEN ===");
+  res.json({
+    success: true,
+    message: "Werkzoekende API is working!",
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Opslaginstellingen profielfoto
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -23,20 +33,38 @@ router.get("/:email", async (req, res) => {
   console.log("Ophalen profiel voor email:", email);
   
   try {
+    console.log("Executing query: SELECT * FROM Werkzoekenden WHERE email = ?", [email]);
     const [rows] = await pool.query("SELECT * FROM Werkzoekenden WHERE email = ?", [email]);
+    console.log(`Query result: Found ${rows.length} rows`);
+
     if (rows.length === 0) {
+      console.log("No werkzoekende found for email:", email);
       return res.status(404).json({ error: "Profiel niet gevonden" });
     }
 
     const profiel = rows[0];
-    delete profiel.wachtwoord; // Verwijder wachtwoord voor veiligheid
-    
-    // De werkzoekende tabel heeft geen programmeertalen, softskills, hardskills, talen, etc.
+    console.log("Found werkzoekende profile:", {
+      id: profiel.werkzoekende_id,
+      naam: profiel.naam,
+      email: profiel.email
+    });
 
+    delete profiel.wachtwoord; // Verwijder wachtwoord voor veiligheid
+
+    console.log("Sending profile data to frontend");
     res.json(profiel);
   } catch (err) {
-    console.error("Fout bij ophalen profiel:", err);
-    res.status(500).json({ error: err.message || "Interne serverfout" });
+    console.error("Database error bij ophalen profiel:", err);
+    console.error("Error details:", {
+      message: err.message,
+      code: err.code,
+      sqlState: err.sqlState,
+      sqlMessage: err.sqlMessage
+    });
+    res.status(500).json({
+      error: err.message || "Interne serverfout",
+      details: err.code || "Unknown error"
+    });
   }
 });
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthProvider';
 import { useWerkzoekende } from '../../context/werkzoekendeContext';
@@ -20,6 +20,7 @@ export default function WerkzoekendeModule() {
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const fetchedRef = useRef(false);
 
   useEffect(() => {
     const haalGebruikerOp = async () => {
@@ -48,10 +49,11 @@ export default function WerkzoekendeModule() {
       }
     };
 
-    if (gebruiker) {
+    if (gebruiker?.email && !werkzoekende && !fetchedRef.current) {
+      fetchedRef.current = true;
       haalGebruikerOp();
     }
-  }, [navigate, gebruiker, fetchWerkzoekende]);
+  }, [gebruiker?.email, werkzoekende]);
 
   useEffect(() => {
     if (werkzoekende) {
