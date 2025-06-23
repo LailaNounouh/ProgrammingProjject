@@ -100,9 +100,5 @@ via LinkedIn Learning.
    - ChatGPT-links:
      - https://chatgpt.com/c/684c1334-ae3c-8008-a4fd-952c53ec4ee7
    - Screenshots:
-     - ![](programingproject/public/afbeelding/README/AI_screenshot13.jpg)
-     - ![](programingproject/public/afbeelding/README/AI_screenshot11.jpg)
-     - ![](programingproject/public/afbeelding/README/AI_screenshot33.jpg)
-     - ![](programingproject/public/afbeelding/README/AI_screenshot7.jpg)
-     - ![](programingproject/public/afbeelding/README/AI_screenshot28.jpg)
-   - **Meer screenshots zijn te vinden in de map** [`public/afbeelding/README`]
+     - Alle screenshots van de applicatie zijn te vinden in de map 
+     [`programingproject/public/afbeelding/README`]
