@@ -90,8 +90,8 @@ via LinkedIn Learning.
 - **AI-ondersteuning**
    - ChatGPT-links:
      - https://chatgpt.com/share/68590a38-0ca0-800d-8422-585686c27d76
-     - https://chatgpt.com/share/68590a57-1aa0-800d-9ea2-7e70fe4fdccbhttps://chatgpt.com/share/68590a6a-bc5c-800d-bf0f-884835b13a94https://github.com/copilot/share/400b010e-0b84-88b0-b011-28064058091d 
      - https://github.com/copilot/share/c24b519e-0aa0-88b6-a142-b80f6412091d
+     - https://chatgpt.com/c/684c1334-ae3c-8008-a4fd-952c53ec4ee7 
    - Screenshots:
      - Alle screenshots van de gebruikte AI zijn te vinden in de map 
      [`programingproject/public/afbeelding/README`]
