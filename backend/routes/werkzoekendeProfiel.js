@@ -4,6 +4,16 @@ const pool = require("../db");
 const multer = require("multer");
 const path = require("path");
 
+// Test route to check if API is working
+router.get("/test", (req, res) => {
+  console.log("=== WERKZOEKENDE TEST ROUTE AANGEROEPEN ===");
+  res.json({
+    success: true,
+    message: "Werkzoekende API is working!",
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Opslaginstellingen profielfoto
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -23,27 +33,45 @@ router.get("/:email", async (req, res) => {
   console.log("Ophalen profiel voor email:", email);
   
   try {
-    const [rows] = await pool.query("SELECT * FROM werkzoekende WHERE email = ?", [email]);
+    console.log("Executing query: SELECT * FROM Werkzoekenden WHERE email = ?", [email]);
+    const [rows] = await pool.query("SELECT * FROM Werkzoekenden WHERE email = ?", [email]);
+    console.log(`Query result: Found ${rows.length} rows`);
+
     if (rows.length === 0) {
+      console.log("No werkzoekende found for email:", email);
       return res.status(404).json({ error: "Profiel niet gevonden" });
     }
 
     const profiel = rows[0];
-    delete profiel.wachtwoord; // Verwijder wachtwoord voor veiligheid
-    
-    // De werkzoekende tabel heeft geen programmeertalen, softskills, hardskills, talen, etc.
+    console.log("Found werkzoekende profile:", {
+      id: profiel.werkzoekende_id,
+      naam: profiel.naam,
+      email: profiel.email
+    });
 
+    delete profiel.wachtwoord; // Verwijder wachtwoord voor veiligheid
+
+    console.log("Sending profile data to frontend");
     res.json(profiel);
   } catch (err) {
-    console.error("Fout bij ophalen profiel:", err);
-    res.status(500).json({ error: err.message || "Interne serverfout" });
+    console.error("Database error bij ophalen profiel:", err);
+    console.error("Error details:", {
+      message: err.message,
+      code: err.code,
+      sqlState: err.sqlState,
+      sqlMessage: err.sqlMessage
+    });
+    res.status(500).json({
+      error: err.message || "Interne serverfout",
+      details: err.code || "Unknown error"
+    });
   }
 });
 
 // GET profiel ophalen via ID
 router.get("/id/:id", async (req, res) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM werkzoekende WHERE werkzoekende_id = ?", [req.params.id]);
+    const [rows] = await pool.query("SELECT * FROM Werkzoekenden WHERE werkzoekende_id = ?", [req.params.id]);
     if (rows.length === 0) {
       return res.status(404).json({ error: "Profiel niet gevonden" });
     }
@@ -87,7 +115,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
     }
 
     console.log("Zoeken naar bestaande werkzoekende met email:", email);
-    const [rows] = await pool.query("SELECT * FROM werkzoekende WHERE email = ?", [email]);
+    const [rows] = await pool.query("SELECT * FROM Werkzoekenden WHERE email = ?", [email]);
     console.log("Gevonden rijen:", rows.length);
     
     let finalFotoUrl = nieuweFotoUrl;
@@ -97,7 +125,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
       const defaultPassword = "geheim123"; // Of genereer een veilig wachtwoord
       // INSERT
       await pool.query(
-        `INSERT INTO werkzoekende
+        `INSERT INTO Werkzoekenden
           (naam, email, wachtwoord, foto_url, linkedin_url, resetToken, resetTokenExpires)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
@@ -126,7 +154,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
       
       // UPDATE
       const updateResult = await pool.query(
-        `UPDATE werkzoekende
+        `UPDATE Werkzoekenden
          SET naam = ?, foto_url = ?, linkedin_url = ?, resetToken = ?, resetTokenExpires = ?
          WHERE email = ?`,
         [
@@ -142,7 +170,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
     }
 
     console.log("Ophalen bijgewerkte werkzoekende gegevens");
-    const [updatedRows] = await pool.query("SELECT * FROM werkzoekende WHERE email = ?", [email]);
+    const [updatedRows] = await pool.query("SELECT * FROM Werkzoekenden WHERE email = ?", [email]);
     const updatedWerkzoekende = updatedRows[0];
     delete updatedWerkzoekende.wachtwoord;
     
@@ -160,7 +188,7 @@ router.get("/debug/:email", async (req, res) => {
     console.log("Debug route aangeroepen voor email:", email);
     
     // Haal de huidige waarden op uit de database
-    const [rows] = await pool.query("SELECT * FROM werkzoekende WHERE email = ?", [email]);
+    const [rows] = await pool.query("SELECT * FROM Werkzoekenden WHERE email = ?", [email]);
     
     if (rows.length === 0) {
       return res.status(404).json({ error: "Werkzoekende niet gevonden" });
