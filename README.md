@@ -96,3 +96,12 @@ via LinkedIn Learning.
 - LinkedIn Learning – Agile Foundations
 - LinkedIn Learning – Design Thinking
 - React documentatie (https://react.dev)
+- **AI-ondersteuning**
+   - ChatGPT-links:
+     - https://chatgpt.com/c/684c1334-ae3c-8008-a4fd-952c53ec4ee7
+   - Screenshots:
+     - ![](public/afbeelding/AI_screenshot1)
+     - ![](public/afbeelding/AI_screenshot30)
+     - ![](public/afbeelding/AI_screenshot24)
+     - ![](public/afbeelding/AI_screenshot3)
+     - ![](public/afbeelding/AI_screenshot10)
