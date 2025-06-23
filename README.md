@@ -43,8 +43,8 @@ Zo combineren we een fysiek netwerkevent met de kracht van IT en innovatie.
 3. Voeg een .env bestand toe met de volgende variabelen:
    ```bash
    DB_HOST=10.2.160.211
-   DB_USER=groep13
-   DB_PASS=aijQ8ZSp
+   DB_USER=
+   DB_PASS=
    DB_NAME=careerlaunch
    DB_PORT=3306
 
