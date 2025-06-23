@@ -42,7 +42,7 @@ Zo combineren we een fysiek netwerkevent met de kracht van IT en innovatie.
 
 3. Start de server:
    ```bash
-   node start
+   npm start
 
 
 ## Frontend
