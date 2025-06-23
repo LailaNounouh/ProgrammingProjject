@@ -46,6 +46,9 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
+  max-width: 1200px;
+  align-items: center;
+  margin: 0 auto 25px;
 }
 
 .welcome-banner::before {
@@ -95,6 +98,8 @@
   flex-wrap: wrap;
   gap: 15px;
   align-items: center;
+  max-width: 1200px;
+  margin: 0 auto 25px auto;
 }
 
 .search-box {

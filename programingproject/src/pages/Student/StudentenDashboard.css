@@ -62,10 +62,17 @@
   text-align: center;
   padding: 30px;
   border-radius: 12px;
-  margin-bottom: 30px;
+  margin: 30px auto 30px auto;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
+  width: 100%;
+  max-width:  1200px;
+  height: 130px; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
 }
 
 .studenten-welcome-banner::before {
@@ -115,6 +122,9 @@
   flex-wrap: wrap;
   gap: 15px;
   align-items: center;
+  max-width: 1200px;   
+  margin: 0 auto 25px auto; 
+  width: 100%;
 }
 
 .studenten-search-box {
