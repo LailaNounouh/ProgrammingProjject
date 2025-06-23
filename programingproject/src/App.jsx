@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthProvider";
 import { ProfileProvider } from "./context/ProfileContext";
+import { WerkzoekendeProvider } from "./context/werkzoekendeContext";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
  
 import Layout from "./components/layout/algemenelayout/Layout";
@@ -38,10 +39,11 @@ import AfsprakenModule from "./pages/Modules/AfsprakenModule";
 import BedrijvenModule from "./pages/Modules/BedrijvenModule";
 import StandenModule from "./pages/Modules/StandenModule";
 import AccountModule from "./pages/Modules/AccountModule";
-
+import WerkzoekendeModule from "./pages/Modules/werkzoekendeModule";
 import Attendance from "./pages/Admin/Aanwezigheid";
 
 import CheckIn from "./pages/Algemeen/CheckIn";
+import WerkzoekendeAccountModule from "./pages/Modules/werkzoekendeModule";
  
  
 export default function App() {
@@ -75,7 +77,7 @@ export default function App() {
           } />
           <Route path="/werkzoekende/account" element={
             <ProtectedRoute allowedRoles={['werkzoekende']}>
-              <SeekerLayout><ProfileProvider><AccountModule /></ProfileProvider></SeekerLayout>
+              <SeekerLayout><WerkzoekendeProvider><WerkzoekendeModule /></WerkzoekendeProvider></SeekerLayout>
             </ProtectedRoute>
           } />
 

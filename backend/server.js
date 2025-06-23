@@ -34,7 +34,7 @@ const statistiekenRouter = require('./routes/Statistieken');
 const attendanceRouter = require('./routes/attendance');
 const betalingRouter = require('./routes/betaling');
 const notificationsRouter = require('./routes/notifications');
-
+const werkzoekendeProfielRouter = require('./routes/werkzoekendeProfiel');
 
 console.log('server.js: Alle routers geïmporteerd.');
 
@@ -132,7 +132,7 @@ apiRouter.use('/statistieken', statistiekenRouter);
 apiRouter.use('/attendance', attendanceRouter);
 apiRouter.use('/betaling', betalingRouter);
 apiRouter.use('/notifications', notificationsRouter);
-
+apiRouter.use('/werkzoekendeProfiel',werkzoekendeProfielRouter);
 
 app.use('/api', apiRouter);
 
@@ -141,6 +141,7 @@ const viteProxyRouter = express.Router();
 
 viteProxyRouter.use('/admin', adminRouter);
 viteProxyRouter.use('/attendance', attendanceRouter);
+viteProxyRouter.use('/werkzoekendeProfiel',werkzoekendeProfielRouter)
 
 app.use('/', viteProxyRouter);
 
