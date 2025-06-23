@@ -202,6 +202,12 @@
   font-weight: bold;
   border: 2px solid white;
 }
+.subtitle-bedrijf {
+  font-weight: normal;
+  font-size: 0.8em;
+  margin-left: 0.5em;
+  color: #666;
+}
 
 .studenten-notification-dropdown {
   position: absolute;
