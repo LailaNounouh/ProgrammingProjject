@@ -55,13 +55,10 @@ Zo combineren we een fysiek netwerkevent met de kracht van IT en innovatie.
    ```bash
    npm install
 
-3. Maak een .env bestand aan in de programingproject/-map met volgende inhoud:
-   ```bash
-   VITE_API_BASE_URL=http://10.2.160.211:3000/api
-
-4. Start de applicatie: 
+3. Start de applicatie: 
    ```bash
    npm run dev
+
 
 ## Aanpak & Methodologie
 
