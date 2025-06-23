@@ -40,15 +40,7 @@ Zo combineren we een fysiek netwerkevent met de kracht van IT en innovatie.
    ```bash
    npm install
 
-3. Voeg een .env bestand toe met de volgende variabelen:
-   ```bash
-   DB_HOST=10.2.160.211
-   DB_USER=
-   DB_PASS=
-   DB_NAME=careerlaunch
-   DB_PORT=3306
-
-4. Start de server:
+3. Start de server:
    ```bash
    node server.j
 
