@@ -8,7 +8,7 @@ import { FaEdit, FaSave, FaTimes } from 'react-icons/fa';
 export default function WerkzoekendeModule() {
   const navigate = useNavigate();
   const { gebruiker } = useAuth();
-  const { werkzoekende, fetchWerkzoekende, updateWerkzoekende } = useWerkzoekende();
+  const { werkzoekende, fetchWerkzoekende, updateWerkzoekende, loading: contextLoading, error: contextError } = useWerkzoekende();
   const [userData, setUserData] = useState({
     email: '',
     naam: '',
@@ -25,18 +25,29 @@ export default function WerkzoekendeModule() {
     const haalGebruikerOp = async () => {
       try {
         setLoading(true);
+        setErrorMessage('');
+
         if (!gebruiker) {
+          console.log('Geen gebruiker gevonden, redirect naar login');
           navigate('/login');
           return;
         }
-        await fetchWerkzoekende(gebruiker.email);
+
+        console.log('Ophalen werkzoekende profiel voor:', gebruiker.email);
+        const result = await fetchWerkzoekende(gebruiker.email);
+
+        if (!result.success) {
+          setErrorMessage(`Fout bij laden profiel: ${result.error}`);
+        }
+
         setLoading(false);
       } catch (error) {
-        setErrorMessage('Er is een probleem opgetreden bij het laden van je gegevens.');
+        console.error('Error in haalGebruikerOp:', error);
+        setErrorMessage(`Er is een probleem opgetreden bij het laden van je gegevens: ${error.message}`);
         setLoading(false);
       }
     };
-    
+
     if (gebruiker) {
       haalGebruikerOp();
     }
@@ -107,7 +118,7 @@ export default function WerkzoekendeModule() {
       
       setSuccessMessage('Profiel succesvol opgeslagen!');
       setEditMode(false);
-      await fetchWerkzoekende();
+      await fetchWerkzoekende(gebruiker.email);
     } catch (err) {
       setErrorMessage(`Fout bij opslaan profiel: ${err.message || 'Onbekende fout'}`);
     } finally {
@@ -120,7 +131,7 @@ export default function WerkzoekendeModule() {
     setErrorMessage('');
   };
 
-  if (loading) {
+  if (loading || contextLoading) {
     return (
       <div className="page-container account-module">
         <div className="loading-container">
@@ -130,6 +141,9 @@ export default function WerkzoekendeModule() {
       </div>
     );
   }
+
+  // Show context error if available
+  const displayError = errorMessage || contextError;
 
   return (
     <div className="page-container account-module">
@@ -142,7 +156,7 @@ export default function WerkzoekendeModule() {
         )}
       </div>
 
-      {errorMessage && <div className="error-message">{errorMessage}</div>}
+      {displayError && <div className="error-message">{displayError}</div>}
       {successMessage && <div className="success-message">{successMessage}</div>}
       
       <div className="account-sections">
