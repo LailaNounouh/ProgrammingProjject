@@ -3,7 +3,6 @@ import {
   FaUserGraduate,
   FaCalendarAlt,
   FaMapMarkerAlt,
-  FaCog,
   FaChevronRight,
   FaSearch,
   FaBell,
@@ -12,15 +11,11 @@ import {
   FaTrash,
   FaClock,
   FaExclamationCircle,
-  FaBook,
-  FaUserTie,
   FaBuilding,
-  FaTimes,
-  FaGraduationCap,
   FaBolt
 } from 'react-icons/fa';
 import './StudentenDashboard.css';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useAuth } from '../../context/AuthProvider';
@@ -52,7 +47,7 @@ function DashboardContent({
   interessanteBedrijven
 }) {
   const navigate = useNavigate();
-  
+
   return (
     <div className="studenten-dashboard-container">
       <div className="studenten-welcome-banner">
@@ -103,36 +98,34 @@ function DashboardContent({
 
       <div className="studenten-dashboard-content">
         <div className="studenten-card-grid">
-          {/* Afspraken kaart */}
           <div className="studenten-dashboard-card studenten-afspraken-card">
             <div className="studenten-card-header">
               <div className="studenten-card-icon studenten-bg-purple">
                 <FaCalendarCheck className="icon-fix" />
               </div>
-              <h3 className="studenten-card-title">Mijn Afspraken</h3>
+              <h3>Mijn Afspraken</h3>
             </div>
-            
             {studentAfspraken.length === 0 ? (
               <p className="card-description">Je hebt nog geen afspraken gepland</p>
             ) : (
               <div className="studenten-mini-afspraken-lijst">
                 {studentAfspraken.map((afspraak, index) => (
                   <div key={`mini-afspraak-${afspraak.afspraak_id || index}`} className="studenten-mini-afspraak">
-                    <div className="studenten-mini-afspraak-bedrijf">
-                      {afspraak.bedrijfsnaam}
-                    </div>
                     <div className="studenten-mini-afspraak-details">
+                      <span className="studenten-mini-afspraak-bedrijfsnaam">
+                        <FaBuilding /> {afspraak.bedrijfsnaam || 'Onbekend Bedrijf'}
+                      </span>
                       <span className="studenten-mini-afspraak-datum">
                         <FaCalendarAlt /> {new Date(afspraak.datum || '2026-03-13').toLocaleDateString('nl-NL')}
                       </span>
                       <span className="studenten-mini-afspraak-tijd">
                         <FaClock /> {afspraak.tijdslot || '10:00 - 10:30'}
                       </span>
-                      <button 
+                      <button
                         onClick={(e) => {
                           e.stopPropagation();
                           verwijderAfspraak(afspraak.afspraak_id);
-                        }} 
+                        }}
                         className="delete-afspraak-btn"
                         disabled={isDeleting}
                         aria-label="Verwijder afspraak"
@@ -144,14 +137,12 @@ function DashboardContent({
                 ))}
               </div>
             )}
-            
             <div className="card-footer" onClick={() => navigate('/student/afspraken')}>
               <span>Bekijk alle afspraken</span>
               <FaChevronRight className="chevron-icon" />
             </div>
           </div>
-          
-          {/* Interessante Bedrijven kaart */}
+
           <div className="studenten-dashboard-card studenten-interessante-bedrijven-card">
             <div className="studenten-card-header">
               <div className="studenten-card-icon studenten-bg-green">
@@ -159,45 +150,65 @@ function DashboardContent({
               </div>
               <h3 className="studenten-card-title">Interessante Bedrijven</h3>
             </div>
-            
             {interessanteBedrijven.length === 0 ? (
               <p className="card-description">
                 Geen bedrijven gevonden die matchen met jouw studierichting.
               </p>
             ) : (
-              <div className="studenten-mini-bedrijven-lijst">
-                {interessanteBedrijven.map((bedrijf, index) => (
-                  <div 
-                    key={`mini-bedrijf-${bedrijf.bedrijf_id || index}`} 
-                    className="studenten-mini-bedrijf"
-                    onClick={() => navigate(`/student/bedrijven/${bedrijf_id}`)}
-                  >
-                    <div className="studenten-mini-bedrijf-naam">
-                      {bedrijf.naam}
+              <>
+                <div className="studenten-mini-bedrijven-lijst">
+                  {interessanteBedrijven.map((bedrijf, index) => (
+                    <div
+                      key={`mini-bedrijf-${bedrijf.bedrijf_id || index}`}
+                      className="studenten-mini-bedrijf"
+                      onClick={() => navigate(`/student/bedrijven/${bedrijf.bedrijf_id}`)}
+                    >
+                      <div className="studenten-mini-bedrijf-naam">
+                        {bedrijf.naam}
+                      </div>
+                      <div className="studenten-mini-bedrijf-details">
+                        {bedrijf.sector_naam && (
+                          <span className="studenten-mini-bedrijf-sector">
+                            {bedrijf.sector_naam}
+                          </span>
+                        )}
+                        {bedrijf.speeddates === 1 && (
+                          <span className="studenten-mini-bedrijf-speeddate">
+                            <FaBolt /> Speeddate beschikbaar
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div className="studenten-mini-bedrijf-details">
-                      {bedrijf.sector_naam && (
-                        <span className="studenten-mini-bedrijf-sector">
-                          {bedrijf.sector_naam}
-                        </span>
-                      )}
-                      {bedrijf.speeddates === 1 && (
-                        <span className="studenten-mini-bedrijf-speeddate">
-                          <FaBolt /> Speeddate beschikbaar
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+                <div className="studenten-mini-bedrijven-lijst">
+                  {interessanteBedrijven
+                    .filter(bedrijf => bedrijf.speeddates === 1)
+                    .map((bedrijf, index) => (
+                      <div
+                        key={`speeddate-bedrijf-${bedrijf.bedrijf_id || index}`}
+                        className="studenten-mini-bedrijf"
+                        onClick={() => navigate(`/student/bedrijven/${bedrijf.bedrijf_id}`)}
+                      >
+                        <div className="studenten-mini-bedrijf-naam">
+                          {bedrijf.naam}
+                        </div>
+                        <div className="studenten-mini-bedrijf-details">
+                          <span className="studenten-mini-bedrijf-speeddate">
+                            <FaBolt /> Speeddate beschikbaar
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </>
             )}
-            
             <div className="card-footer" onClick={() => navigate('/student/bedrijven')}>
               <span>Bekijk alle bedrijven</span>
               <FaChevronRight className="chevron-icon" />
             </div>
           </div>
-          
+
           {filteredCards.map((card, index) => (
             <div key={index} className="studenten-dashboard-card" onClick={card.onClick}>
               <div className="studenten-card-header">
@@ -219,7 +230,7 @@ function DashboardContent({
           <div className="studenten-calendar-container">
             <div className="studenten-calendar-header">
               <h2>Kalender</h2>
-              <button 
+              <button
                 className="add-reminder-btn"
                 onClick={() => setShowReminderModal(true)}
               >
@@ -231,13 +242,13 @@ function DashboardContent({
               value={calendarDate}
               locale="nl-NL"
               tileContent={({ date, view }) => {
-                const dayReminders = reminders.filter(r => 
+                const dayReminders = reminders.filter(r =>
                   new Date(r.date).toDateString() === date.toDateString()
                 );
-                const dayEvents = upcomingEvents.filter(event => 
+                const dayEvents = upcomingEvents.filter(event =>
                   event.date.toDateString() === date.toDateString()
                 );
-                
+
                 return view === 'month' && (dayReminders.length > 0 || dayEvents.length > 0) ? (
                   <div className="calendar-marker-container">
                     {dayReminders.length > 0 && <div className="reminder-dot"></div>}
@@ -246,7 +257,7 @@ function DashboardContent({
                 ) : null;
               }}
             />
-            
+
             <div className="upcoming-events-container">
               <h3>Aankomende evenementen</h3>
               {upcomingEvents.length === 0 ? (
@@ -267,7 +278,7 @@ function DashboardContent({
                           </span>
                         )}
                       </div>
-                      <button 
+                      <button
                         className="add-reminder-event-btn"
                         onClick={() => addEventReminder(event)}
                       >
@@ -281,15 +292,15 @@ function DashboardContent({
 
             <div className="day-events">
               <h3>
-                {calendarDate.toLocaleDateString('nl-NL', { 
-                  weekday: 'long', 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
+                {calendarDate.toLocaleDateString('nl-NL', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
                 })}
               </h3>
-              
-              {reminders.filter(r => 
+
+              {reminders.filter(r =>
                 new Date(r.date).toDateString() === calendarDate.toDateString()
               ).map((reminder, index) => (
                 <div key={index} className="studenten-reminder-item">
@@ -298,7 +309,7 @@ function DashboardContent({
                   </div>
                   <div className="reminder-text">
                     {reminder.text}
-                    <button 
+                    <button
                       onClick={() => deleteReminder(index)}
                       className="delete-reminder"
                     >
@@ -307,8 +318,8 @@ function DashboardContent({
                   </div>
                 </div>
               ))}
-              
-              {upcomingEvents.filter(event => 
+
+              {upcomingEvents.filter(event =>
                 event.date.toDateString() === calendarDate.toDateString()
               ).map((event, index) => (
                 <div key={`event-${index}`} className={`calendar-event ${event.highlight ? 'highlight-event' : ''}`}>
@@ -338,8 +349,8 @@ function DashboardContent({
             <form onSubmit={handleReminderSubmit}>
               <div className="studenten-form-group">
                 <label>Datum</label>
-                <input 
-                  type="date" 
+                <input
+                  type="date"
                   value={newReminder.date}
                   onChange={(e) => setNewReminder({
                     ...newReminder,
@@ -350,8 +361,8 @@ function DashboardContent({
               </div>
               <div className="studenten-form-group">
                 <label>Tijd</label>
-                <input 
-                  type="time" 
+                <input
+                  type="time"
                   value={newReminder.time}
                   onChange={(e) => setNewReminder({
                     ...newReminder,
@@ -372,8 +383,8 @@ function DashboardContent({
                 />
               </div>
               <div className="studenten-modal-actions">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="cancel-btn"
                   onClick={() => setShowReminderModal(false)}
                 >
@@ -394,7 +405,6 @@ function DashboardContent({
 function StudentenDashboard() {
   const { gebruiker } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [studentNaam, setStudentNaam] = useState('');
@@ -410,12 +420,10 @@ function StudentenDashboard() {
   const [studentAfspraken, setStudentAfspraken] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState('');
-  const [error, setError] = useState('');
   const [interessanteBedrijven, setInteressanteBedrijven] = useState([]);
   const notificationRef = useRef(null);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
-  
-  // Base URL voor API calls
+
   const baseUrl = 'http://10.2.160.211:3000/api';
 
   useEffect(() => {
@@ -425,63 +433,43 @@ function StudentenDashboard() {
       if (savedReminders) {
         setReminders(JSON.parse(savedReminders));
       }
-      
-      // Haal afspraken op voor deze student
       fetchStudentAfspraken(gebruiker.id);
-      
-      // Haal interessante bedrijven op voor deze student
       fetchInteressanteBedrijven(gebruiker.id);
     }
   }, [gebruiker]);
 
-  // Functie om afspraken op te halen
   const fetchStudentAfspraken = async (studentId) => {
     try {
       const response = await fetch(`${baseUrl}/afspraken/student/${studentId}`);
-      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
       const data = await response.json();
-      console.log("Opgehaalde afspraken:", data);
-      
-      // Sorteer afspraken op datum (nieuwste eerst)
       const gesorteerdeAfspraken = data.sort((a, b) => {
         return new Date(b.datum) - new Date(a.datum);
       });
-      
-      // Beperk tot maximaal 5 afspraken voor het dashboard
-      setStudentAfspraken(gesorteerdeAfspraken.slice(0, 5));
-      
-      // Converteer afspraken naar events voor de kalender
-      const events = gesorteerdeAfspraken.map(afspraak => ({
+      const enrichedAfspraken = gesorteerdeAfspraken.map(afspraak => ({
+        ...afspraak,
+        bedrijfsnaam: afspraak.bedrijfsnaam || afspraak.bedrijf_naam || 'Onbekend',
+      }));
+      setStudentAfspraken(enrichedAfspraken.slice(0, 5));
+      const events = enrichedAfspraken.map(afspraak => ({
         id: afspraak.afspraak_id,
-        title: `Afspraak met ${afspraak.bedrijf_naam}`,
+        title: `Afspraak met ${afspraak.bedrijfsnaam}`,
         description: afspraak.notities || 'Geen beschrijving',
         date: new Date(afspraak.datum),
         time: afspraak.tijd,
-        type: 'afspraak'
+        type: 'afspraak',
       }));
-      
-      // Als setUpcomingEvents bestaat, gebruik het dan
-      if (typeof setUpcomingEvents === 'function') {
-        setUpcomingEvents(events);
-      }
-      
+      setUpcomingEvents(events);
     } catch (error) {
-      console.error("Fout bij ophalen afspraken:", error);
       setStudentAfspraken([]);
     }
   };
 
-  // Functie om interessante bedrijven op te halen
   const fetchInteressanteBedrijven = async (studentId) => {
     try {
-      // Probeer eerst de studierichting uit de gebruiker te halen
       let studierichting = gebruiker?.studie || '';
-      
-      // Als de studierichting niet in de gebruiker zit, probeer dan de API
       if (!studierichting) {
         try {
           const studentResponse = await fetch(`${baseUrl}/users/${studentId}`);
@@ -489,66 +477,37 @@ function StudentenDashboard() {
             const studentData = await studentResponse.json();
             studierichting = studentData.studie || '';
           } else {
-            // Probeer alternatieve endpoint
             const altResponse = await fetch(`${baseUrl}/studenten/profiel/${studentId}`);
             if (altResponse.ok) {
               const altData = await altResponse.json();
               studierichting = altData.studie || '';
             }
           }
-        } catch (error) {
-          console.error("Kon studentgegevens niet ophalen:", error);
-        }
+        } catch (error) {}
       }
-      
-      // Als we nog steeds geen studierichting hebben, gebruik een fallback
       if (!studierichting) {
-        console.log("Geen studierichting gevonden, gebruik fallback");
-        studierichting = "Informatica"; // Fallback studierichting
+        studierichting = "Informatica";
       }
-      
-      console.log("Studierichting van student:", studierichting);
-      
-      // Haal alle bedrijven op
       const bedrijvenResponse = await fetch(`${baseUrl}/bedrijvenmodule`);
       if (!bedrijvenResponse.ok) {
         throw new Error(`HTTP error! status: ${bedrijvenResponse.status}`);
       }
-      
       const bedrijvenData = await bedrijvenResponse.json();
-      console.log("Aantal opgehaalde bedrijven:", bedrijvenData.length);
-      
-      // Filter bedrijven die de studierichting van de student zoeken
       const matchendeBedrijven = bedrijvenData.filter(bedrijf => {
         if (!bedrijf.doelgroep_opleiding) return false;
-        
         const doelgroepen = bedrijf.doelgroep_opleiding
           .split(',')
           .map(d => d.trim().toLowerCase())
           .filter(d => d.length > 0);
-        
         const studentRichting = studierichting.toLowerCase();
-        
-        // Check of een van de doelgroepen overeenkomt met de studierichting
-        const match = doelgroepen.some(doelgroep => 
-          studentRichting.includes(doelgroep) || 
+        const match = doelgroepen.some(doelgroep =>
+          studentRichting.includes(doelgroep) ||
           doelgroep.includes(studentRichting)
         );
-        
-        if (match) {
-          console.log(`Match gevonden: ${bedrijf.naam} zoekt ${bedrijf.doelgroep_opleiding}`);
-        }
-        
         return match;
       });
-      
-      console.log("Aantal matchende bedrijven:", matchendeBedrijven.length);
-      
-      // Beperk tot maximaal 5 bedrijven
       setInteressanteBedrijven(matchendeBedrijven.slice(0, 5));
-      
     } catch (error) {
-      console.error('Fout bij ophalen interessante bedrijven:', error);
       setInteressanteBedrijven([]);
     }
   };
@@ -557,10 +516,8 @@ function StudentenDashboard() {
     if (!window.confirm('Weet je zeker dat je deze afspraak wilt verwijderen?')) {
       return;
     }
-    
     setIsDeleting(true);
     setDeleteStatus('');
-    
     try {
       const response = await fetch(`${baseUrl}/afspraken/${afspraakId}`, {
         method: 'DELETE',
@@ -568,11 +525,9 @@ function StudentenDashboard() {
           'Content-Type': 'application/json',
         },
       });
-      
       if (response.ok) {
         setStudentAfspraken(studentAfspraken.filter(afspraak => afspraak.afspraak_id !== afspraakId));
         setDeleteStatus('Afspraak succesvol verwijderd');
-        
         setTimeout(() => {
           setDeleteStatus('');
         }, 3000);
@@ -581,7 +536,6 @@ function StudentenDashboard() {
         setDeleteStatus(`Fout bij verwijderen: ${errorData.message || 'Onbekende fout'}`);
       }
     } catch (error) {
-      console.error('Fout bij verwijderen afspraak:', error);
       setDeleteStatus('Fout bij verbinding met de server');
     } finally {
       setIsDeleting(false);
@@ -594,7 +548,6 @@ function StudentenDashboard() {
         setShowNotifications(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -604,11 +557,9 @@ function StudentenDashboard() {
   const addReminder = (reminder) => {
     const newReminders = [...reminders, reminder];
     setReminders(newReminders);
-    
     if (gebruiker?.id) {
       localStorage.setItem(`reminders_${gebruiker.id}`, JSON.stringify(newReminders));
     }
-    
     setShowReminderModal(false);
     setNewReminder({
       date: new Date().toISOString().split('T')[0],
@@ -623,7 +574,6 @@ function StudentenDashboard() {
       time: event.time?.split('-')[0].trim() || '09:00',
       text: `Herinnering: ${event.title} - ${event.description}`
     };
-    
     addReminder(reminder);
   };
 
@@ -631,7 +581,6 @@ function StudentenDashboard() {
     const newReminders = [...reminders];
     newReminders.splice(index, 1);
     setReminders(newReminders);
-    
     if (gebruiker?.id) {
       localStorage.setItem(`reminders_${gebruiker.id}`, JSON.stringify(newReminders));
     }
@@ -666,7 +615,6 @@ function StudentenDashboard() {
   return (
     <div className="studenten-dashboard">
       {deleteStatus && <div className="status-message">{deleteStatus}</div>}
-      
       <DashboardContent
         studentNaam={studentNaam}
         searchTerm={searchTerm}
