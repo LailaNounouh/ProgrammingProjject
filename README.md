@@ -86,6 +86,8 @@ via LinkedIn Learning.
 - LinkedIn Learning – Design Thinking
 - React documentatie (https://react.dev)
 - MediaMarkt (https://www.mediamarkt.nl) – voor inspiratie op het gebied van stijl en layout
+- QR.io (https://qr.io/) - voor het maken van een QR-code voor de check-in
+
 - https://www.w3schools.com/
 - **AI-ondersteuning**
    - ChatGPT-links:
