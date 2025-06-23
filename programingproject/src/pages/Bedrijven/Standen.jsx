@@ -27,7 +27,7 @@ const Standen = () => {
 
   return (
     <div className="standen-page">
-      <h2>Overzicht van Standen</h2>
+    <h2 style={{ textAlign: "center" }}>Overzicht van Standen</h2>
       <div className="plattegrond-visual">
         <Plattegrond plattegrondData={plattegrondData} />
       </div>

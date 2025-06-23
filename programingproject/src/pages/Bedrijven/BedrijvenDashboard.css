@@ -46,6 +46,9 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   position: relative;
   overflow: hidden;
+  max-width: 1200px;
+  align-items: center;
+  margin: 0 auto 25px;
 }
 
 .welcome-banner::before {
@@ -95,6 +98,8 @@
   flex-wrap: wrap;
   gap: 15px;
   align-items: center;
+  max-width: 1200px;
+  margin: 0 auto 25px auto;
 }
 
 .search-box {
@@ -960,4 +965,61 @@
     padding: 7px 10px;
     font-size: 12px;
   }
+}
+
+/* Mini afspraken lijst styling */
+.mini-afspraken-lijst {
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+.mini-afspraak {
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  margin-bottom: 8px;
+  border-left: 3px solid #4a6cf7;
+  transition: all 0.2s ease;
+}
+
+.mini-afspraak:hover {
+  background-color: #f0f2f5;
+  transform: translateX(3px);
+}
+
+.mini-afspraak-student {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.mini-afspraak-details {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.mini-afspraak-datum, .mini-afspraak-tijd {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mini-afspraak-status {
+  font-size: 1rem;
+}
+
+.mini-afspraak-status.goedgekeurd {
+  color: #2e7d32;
+}
+
+.mini-afspraak-status.geweigerd {
+  color: #c62828;
+}
+
+.mini-afspraak-status.in_afwachting {
+  color: #ff8f00;
 }

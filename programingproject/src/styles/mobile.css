@@ -1,0 +1,114 @@
+/* ===== GLOBAL MOBILE STYLES ===== */
+
+/* Ensure all touch targets are at least 44px */
+button, 
+input[type="submit"], 
+input[type="button"], 
+.btn, 
+.button {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Mobile form improvements */
+@media (max-width: 767px) {
+  /* Form elements */
+  input, 
+  select, 
+  textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 0.8rem;
+    min-height: 44px;
+  }
+  
+  /* Buttons */
+  button, 
+  .btn, 
+  .button {
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    min-height: 44px;
+    touch-action: manipulation; /* Prevents double-tap zoom */
+  }
+  
+  /* Tables */
+  table {
+    font-size: 0.9rem;
+  }
+  
+  table td, 
+  table th {
+    padding: 0.5rem;
+  }
+  
+  /* Modal and popup improvements */
+  .modal, 
+  .popup {
+    max-width: 95vw;
+    margin: 1rem;
+  }
+  
+  /* Text improvements */
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.3rem; }
+  h3 { font-size: 1.1rem; }
+  
+  /* Spacing improvements */
+  .container {
+    padding: 1rem;
+  }
+}
+
+/* Small mobile specific */
+@media (max-width: 480px) {
+  /* Larger touch targets for small screens */
+  button, 
+  .btn, 
+  .button {
+    min-height: 48px;
+    padding: 1rem;
+  }
+  
+  input, 
+  select, 
+  textarea {
+    min-height: 48px;
+    padding: 1rem;
+  }
+  
+  /* Full width buttons on small screens */
+  .btn-submit,
+  .submit-button,
+  .primary-button {
+    width: 100%;
+  }
+  
+  /* Reduce margins and padding */
+  .container {
+    padding: 0.5rem;
+  }
+  
+  /* Smaller text for very small screens */
+  body {
+    font-size: 14px;
+  }
+}
+
+/* Landscape orientation fixes */
+@media (max-height: 500px) and (orientation: landscape) {
+  .modal,
+  .popup {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* High DPI screen improvements */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Ensure crisp borders and shadows */
+  button,
+  input,
+  select {
+    border-width: 0.5px;
+  }
+}

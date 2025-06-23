@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+ import React, { useState, useEffect, useRef } from 'react';
 import {
   FaEuroSign,
   FaCalendarAlt,
@@ -101,9 +101,6 @@ function DashboardContent({
                 <h3 className="card-title">{card.title}</h3>
               </div>
               {card.description && <p className="card-description">{card.description}</p>}
-              {card.showAfspraken && (
-                <p className="card-description">Bekijk geplande afspraken</p>
-              )}
               <div className="card-footer">
                 <span>Direct naar {card.title.toLowerCase()}</span>
                 <FaChevronRight className="chevron-icon" />
@@ -205,10 +202,14 @@ function DashboardContent({
                 </div>
               ))}
               
-              {upcomingEvents.filter(event => 
-                event.date.toDateString() === calendarDate.toDateString()
-              ).map((event, index) => (
-                <div key={`event-${index}`} className={`calendar-event ${event.highlight ? 'highlight-event' : ''}`}>
+            {upcomingEvents.filter(event => 
+  event.date.toDateString() === calendarDate.toDateString()
+).map((event, index) => (
+  <div 
+    key={`event-${index}`} 
+    className={`calendar-event ${event.highlight ? 'highlight-event' : ''}`}
+  >
+
                   <div className="event-time">
                     <FaCalendarCheck /> {event.time || 'Hele dag'}
                   </div>
@@ -346,30 +347,28 @@ function BedrijvenDashboard() {
         setLoading(true);
         const data = await apiClient.get(`/bedrijfprofiel/${gebruiker.id}`);
 
+
         setBedrijfData(data);
         setBedrijfNaam(data.naam || gebruiker.naam || 'Bedrijf');
-// Load saved reminders
-try {
-  const saved = localStorage.getItem(`reminders_${gebruiker.id}`);
-  if (saved) {
-    const parsed = JSON.parse(saved);
-    if (Array.isArray(parsed)) {
-      setReminders(parsed);
-    }
-  }
-} catch (error) {
-  console.error("Fout bij lezen van herinneringen:", error);
-}
-
-
+   try {
+        const saved = localStorage.getItem(`reminders_${gebruiker.id}`);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            setReminders(parsed);
+          }
+        }
       } catch (error) {
-        console.error('Fout bij ophalen bedrijfsgegevens:', error);
-        // Fallback to user data from auth context
-        setBedrijfNaam(gebruiker.naam || 'Bedrijf');
-      } finally {
-        setLoading(false);
+        console.error("Fout bij lezen van herinneringen:", error);
       }
-    };
+
+    } catch (error) {
+      console.error('Fout bij ophalen bedrijfsgegevens:', error);
+      setBedrijfNaam(gebruiker.naam || 'Bedrijf');
+    } finally {
+      setLoading(false);
+    }
+  };
 
     fetchBedrijfData();
   }, [gebruiker]);
@@ -429,6 +428,7 @@ try {
 
     if (gebruiker?.id) {
       localStorage.setItem(`reminders_${gebruiker.id}`, JSON.stringify(newReminders));
+
     }
 
     setShowReminderModal(false);
@@ -441,10 +441,11 @@ try {
 
   const addEventReminder = (event) => {
   setNewReminder({
-    date: event.date.toISOString().split('T')[0],
-    time: event.time?.split('-')[0].trim() || '09:00',
-    text: `Herinnering: ${event.title} - ${event.description}`
-  });
+   date: event.date.toISOString().split('T')[0],
+time: event.time?.split('-')[0].trim() || '09:00',
+text: `Herinnering: ${event.title} - ${event.description}`,
+});
+
   setShowReminderModal(true);
 };
 
@@ -456,6 +457,7 @@ try {
 
     if (gebruiker?.id) {
       localStorage.setItem(`reminders_${gebruiker.id}`, JSON.stringify(newReminders));
+
     }
   };
 
@@ -464,36 +466,37 @@ try {
     addReminder(newReminder);
   };
 
-  const dashboardCards = [
-    {
-      title: "Staat van betaling",
-      icon: <FaEuroSign className="icon-fix" />,
-      description: "Bekijk uw betalingsstatus en facturen",
-      onClick: () => navigate('/bedrijf/betaling'),
-      iconClass: "bg-blue"
-    },
-    {
-      title: "Afspraakoverzicht",
-      icon: <FaCalendarAlt className="icon-fix" />,
-      onClick: () => navigate('/bedrijf/afspraken'),
-      iconClass: "bg-green",
-      showAfspraken: true
-    },
-    {
-      title: "Beschikbaarheid van standen",
-      icon: <FaMapMarkerAlt className="icon-fix" />,
-      description: "Beheer uw standlocaties en reserveringen",
-      onClick: () => navigate('/bedrijf/standen'),
-      iconClass: "bg-orange"
-    },
-    {
-      title: "Bedrijfsinstellingen",
-      icon: <FaCog className="icon-fix" />,
-      description: "Beheer uw bedrijfsgegevens en voorkeuren",
-      onClick: () => navigate('/bedrijf/Settingsbedrijf'),
-      iconClass: "bg-purple"
-    }
-  ];
+const dashboardCards = [
+  {
+    title: "Staat van betaling",
+    icon: <FaEuroSign className="icon-fix" />,
+    description: "Bekijk uw huidige betaalstatus, openstaande bedragen\nen download eenvoudig uw facturen en betalingsbewijzen.",
+    onClick: () => navigate('/bedrijf/betaling'),
+    iconClass: "bg-blue"
+  },
+  {
+    title: "Afspraakoverzicht",
+    icon: <FaCalendarAlt className="icon-fix" />,
+    description: "Overzicht van al uw geplande afspraken met klanten of\npartners. Plan nieuwe afspraken of wijzig bestaande.",
+    onClick: () => navigate('/bedrijf/afspraken'),
+    iconClass: "bg-green",
+    showAfspraken: true
+  },
+  {
+    title: "Beschikbaarheid van standen",
+    icon: <FaMapMarkerAlt className="icon-fix" />,
+    description: "Controleer de beschikbaarheid van uw standplaatsen,\nreserveer locaties en beheer uw bestaande boekingen.",
+    onClick: () => navigate('/bedrijf/standen'),
+    iconClass: "bg-orange"
+  },
+  {
+    title: "Bedrijfsinstellingen",
+    icon: <FaCog className="icon-fix" />,
+    description: "Beheer uw bedrijfsinformatie, contactgegevens,\nvoorkeursinstellingen en toegangsrechten voor medewerkers.",
+    onClick: () => navigate('/bedrijf/Settingsbedrijf'),
+    iconClass: "bg-purple"
+  }
+];
 
   const filteredCards = dashboardCards.filter(card =>
     card.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -538,5 +541,4 @@ try {
     </div>
   );
 }
-
 export default BedrijvenDashboard;

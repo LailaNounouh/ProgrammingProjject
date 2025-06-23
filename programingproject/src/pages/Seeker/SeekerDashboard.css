@@ -1,198 +1,324 @@
-/* Algemene layout */
-body, html, .app {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-  background-color: #f5f5f5;
+/* Hoofdcontainer - identieke structuur als studenten */
+.seeker-dashboard {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  background-color: #f5f7fa;
+  min-height: 100vh;
 }
 
-header {
-  background-color: #00a9b5;
+/* Volledige breedte secties */
+.seeker-full-width-section {
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* Welkomstbanner -zelfde layout als studenten maar paars */
+.seeker-welcome-banner {
+  background: linear-gradient(135deg, #5bb4b7 0%, #3a8a8d 100%);
   color: white;
+  text-align: center;
+  padding: 30px;
+  border-radius: 12px;
+  margin: 30px auto 30px auto;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  max-width: 1200px;
 }
 
-.top-bar {
+.seeker-welcome-banner::before,
+.seeker-welcome-banner::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.seeker-welcome-banner::before {
+  top: -10px;
+  right: -10px;
+  width: 100px;
+  height: 100px;
+}
+
+.seeker-welcome-banner::after {
+  bottom: -30px;
+  left: -30px;
+  width: 80px;
+  height: 80px;
+}
+
+.seeker-welcome-banner h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+}
+
+.seeker-welcome-banner p {
+  margin: 10px 0 0;
+  opacity: 0.9;
+  font-size: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Toolbar - identieke layout */
+.seeker-dashboard-toolbar {
   display: flex;
   justify-content: space-between;
+  margin: 0 auto 25px;
+  padding: 0 20px;
+  flex-wrap: wrap;
+  gap: 15px;
   align-items: center;
-  padding: 10px;
+  max-width: 1200px;
 }
 
-.menu-icon {
-  font-size: 24px;
+/* Zoekbalk -zelfde stijl */
+.search-box {
+  position: relative;
+  flex: 1;
+  max-width: 1040px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 15px 12px 45px;
+  border: 1px solid #ddd;
+  border-radius: 30px;
+  font-size: 15px;
+  transition: all 0.3s;
+  background-color: #f8f9fa;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #6c5ce7;
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+  background-color: white;
+}
+
+.search-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #777;
+  font-size: 16px;
+}
+
+/* Notificaties -zelfde UI */
+.notification-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.notification-bell {
+  position: relative;
   cursor: pointer;
-}
-
-nav ul {
-  display: flex;
-  justify-content: center;
-  list-style: none;
-  margin: 0;
-  padding: 10px 0;
-
-  gap: 30px;
-}
-
-nav li {
-  padding: 0 10px;
-}
-
-nav li a {
-  text-decoration: none;
-  
-  color: black;
-  font-weight: bold;
-  padding: 8px 12px;
-  transition: color 0.3s ease;
-  margin: 0 10px;
-}
-
-nav li a:hover {
-  color: #00a9b5;
-}
-
-.logo {
-  height: 40px;
-}
-
-main {
-  padding: 15px;
-}
-
-/* Bedrijven layout */
-.bedrijven-section h2 {
-  margin-top: 0;
-}
-
-.filter-button {
-  margin-bottom: 10px;
-  padding: 6px 12px;
-}
-
-/* Lijsten met bedrijven of plattegrond */
-.bedrijven-lijst,
-.plattegrond-container {
-  background-color: #aaa;
+  font-size: 22px;
+  color: #555;
   padding: 10px;
-  max-width: 1000px;
-  margin: 0 auto;
-  border-radius: 8px;
-}
-
-/* Kaarten */
-.bedrijf-kaart {
-  background: white;
-  padding: 15px;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  width: 45%;
-  text-align: center;
-}
-
-.bedrijf-kaart a {
-  display: inline-block;
-  margin-top: 10px;
-  font-weight: bold;
-  color: #00a9b5;
-  text-decoration: none;
-}
-
-.bedrijf-kaart a:hover {
-  text-decoration: underline;
-}
-
-/* Plattegrond */
-.plattegrond-section {
-  margin-top: 30px;
-}
-
-.plattegrond-container {
+  transition: all 0.2s;
+  background: #f8f9fa;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  justify-content: center;
 }
 
-/* Dashboard layout */
-.dashboard-container {
-  padding: 2rem;
+.notification-bell:hover {
+  color: #6c5ce7;
+  background: #f0ebff;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: #ff4757;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  border: 2px solid white;
+}
+
+/* Dashboard content -zelfde grid */
+.seeker-dashboard-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 20px;
 }
 
-.welcome-section {
-  margin-bottom: 2rem;
+/* Card grid - space-between layout */
+.seeker-card-grid {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
-.welcome-section h1 {
-  font-size: 1.8rem;
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-}
-
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-/* Kaarten */
-.dashboard-card {
+.seeker-dashboard-card {
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
+  border-radius: 12px;
+  padding: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e6ed;
+  width: calc(33.333% - 14px);
+  min-width: 280px;
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
 }
 
-.card-header {
+.seeker-dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+  border-color: #6c5ce7;
+}
+
+.seeker-dashboard-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #6c5ce7 0%, #4a3fba 100%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.seeker-dashboard-card:hover::after {
+  opacity: 1;
+}
+
+/* Card inhoud - identiek */
+.seeker-card-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 18px;
 }
 
-.card-header h2 {
-  font-size: 1.2rem;
-  color: #2c3e50;
-}
-
-.view-all {
-  color: #3498db;
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-
-.view-all:hover {
-  text-decoration: underline;
-}
-
-/* Bedrijvenlijst */
-.bedrijven-list {
+.seeker-card-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
   display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
-
-.bedrijf-item {
-  padding: 0.8rem;
-  border-radius: 4px;
-  background: #f8f9fa;
-  display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: center;
+  margin-right: 18px;
+  color: white;
+  font-size: 22px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.bedrijf-sector {
+.icon-fix {
+  transform: translateY(1px);
+}
+
+.bg-blue { background-color: #0984e3; }
+.bg-orange { background-color: #e17055; }
+.bg-purple { background-color: #6c5ce7; }
+
+.seeker-card-title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.card-description {
+  margin: 0 0 18px;
   color: #666;
-  font-size: 0.9rem;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .dashboard-grid {
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #6c5ce7;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 15px;
+}
+
+.chevron-icon {
+  font-size: 13px;
+  transition: transform 0.2s;
+}
+
+.seeker-dashboard-card:hover .chevron-icon {
+  transform: translateX(3px);
+}
+
+/* Kalender sectie -zelfde layout */
+.seeker-calendar-section {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e6ed;
+  height: fit-content;
+}
+
+/* Responsive aanpassingen - identiek */
+@media (max-width: 1024px) {
+  .seeker-dashboard-content {
     grid-template-columns: 1fr;
+  }
+  
+  .seeker-calendar-section {
+    order: -1;
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .seeker-card-grid {
+    flex-direction: column;
+  }
+  
+  .seeker-dashboard-card {
+    width: 100%;
+  }
+  
+  .seeker-welcome-banner h1 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .seeker-welcome-banner {
+    padding: 20px 15px;
+  }
+  
+  .seeker-dashboard-card {
+    padding: 15px;
+  }
+  
+  .seeker-card-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    margin-right: 12px;
   }
 }

@@ -40,15 +40,7 @@ Zo combineren we een fysiek netwerkevent met de kracht van IT en innovatie.
    ```bash
    npm install
 
-3. Voeg een .env bestand toe met de volgende variabelen:
-   ```bash
-   DB_HOST=10.2.160.211
-   DB_USER=groep13
-   DB_PASS=aijQ8ZSp
-   DB_NAME=careerlaunch
-   DB_PORT=3306
-
-4. Start de server:
+3. Start de server:
    ```bash
    node server.j
 
@@ -63,13 +55,10 @@ Zo combineren we een fysiek netwerkevent met de kracht van IT en innovatie.
    ```bash
    npm install
 
-3. Maak een .env bestand aan in de programingproject/-map met volgende inhoud:
-   ```bash
-   VITE_API_BASE_URL=http://10.2.160.211:3000/api
-
-4. Start de applicatie: 
+3. Start de applicatie: 
    ```bash
    npm run dev
+
 
 ## Aanpak & Methodologie
 
@@ -92,7 +81,17 @@ via LinkedIn Learning.
 
 ## Gebruikte bronnen
 
-- **Career Launch Dag** (ter inspiratie)
+- **Career Launch Dag** (ter inspiratie) – https://www.erasmushogeschool.be/nl/career-launch-2025-voorinschrijving
 - LinkedIn Learning – Agile Foundations
 - LinkedIn Learning – Design Thinking
 - React documentatie (https://react.dev)
+- MediaMarkt (https://www.mediamarkt.nl) – voor inspiratie op het gebied van stijl en layout
+- https://www.w3schools.com/
+- **AI-ondersteuning**
+   - ChatGPT-links:
+     - https://chatgpt.com/share/68590a38-0ca0-800d-8422-585686c27d76
+     - https://chatgpt.com/share/68590a57-1aa0-800d-9ea2-7e70fe4fdccbhttps://chatgpt.com/share/68590a6a-bc5c-800d-bf0f-884835b13a94https://github.com/copilot/share/400b010e-0b84-88b0-b011-28064058091d 
+     - https://github.com/copilot/share/c24b519e-0aa0-88b6-a142-b80f6412091d
+   - Screenshots:
+     - Alle screenshots van de gebruikte AI zijn te vinden in de map 
+     [`programingproject/public/afbeelding/README`]

@@ -53,13 +53,72 @@
 }
 
 .overzicht-blok {
-  background: #e6f7f9;
+  background: linear-gradient(135deg, #e6f7f9 0%, #f0fbfc 100%);
+  border: 1px solid #b3e5ea;
   border-left: 5px solid #00a9b5;
-  padding: 1.5rem;
-  border-radius: 8px;
+  padding: 2rem;
+  border-radius: 12px;
   margin-top: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 169, 181, 0.1);
 }
 
+.bevestiging-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #b3e5ea;
+}
+
+.bevestiging-header h3 {
+  font-size: 1.5rem;
+  color: #00a9b5;
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+}
+
+.bevestiging-subtext {
+  color: #666;
+  font-size: 1rem;
+  margin: 0;
+  font-style: italic;
+}
+
+.afspraak-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e0f2f4;
+  transition: all 0.2s ease;
+}
+
+.detail-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 169, 181, 0.15);
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+}
+
+.detail-value {
+  font-weight: 500;
+  color: #00a9b5;
+  font-size: 1rem;
+  text-align: right;
+}
+
+/* Legacy support */
 .bevestiging {
   font-size: 1.2rem;
   color: #00a9b5;
@@ -99,4 +158,287 @@
 .tijdslot-btn.gekozen {
   background-color: #005f66;
   border: 2px solid #000;
+}
+
+/* ===== MOBILE RESPONSIVE CSS ===== */
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  .afspraken-module {
+    max-width: 90%;
+    padding: 1.5rem;
+    margin: 1rem auto;
+  }
+
+  .tijdslot-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 12px;
+  }
+
+  .tijdslot-btn {
+    padding: 0.7rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Mobile (481px - 767px) */
+@media (max-width: 767px) {
+  .afspraken-module {
+    max-width: 95%;
+    padding: 1rem;
+    margin: 0.5rem auto;
+  }
+
+  .module-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .module-subtext {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .tijdslot-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+  }
+
+  .tijdslot-btn {
+    padding: 0.8rem;
+    font-size: 1rem;
+    min-height: 44px; /* Touch target size */
+  }
+
+  .detail-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .detail-label {
+    font-size: 0.9rem;
+  }
+
+  .detail-value {
+    font-size: 1rem;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  .btn-submit {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1.1rem;
+    min-height: 44px;
+  }
+
+  .form-select {
+    padding: 0.8rem;
+    font-size: 1rem;
+    min-height: 44px;
+  }
+}
+
+/* Small Mobile (max 480px) */
+@media (max-width: 480px) {
+  .afspraken-module {
+    max-width: 100%;
+    padding: 0.8rem;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .module-title {
+    font-size: 1.3rem;
+  }
+
+  .tijdslot-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 12px;
+  }
+
+  .tijdslot-btn {
+    padding: 1rem;
+    font-size: 1rem;
+    min-height: 48px; /* Larger touch target */
+  }
+
+  .overzicht-blok {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .bevestiging-header h3 {
+    font-size: 1.2rem;
+  }
+
+  .bevestiging-subtext {
+    font-size: 0.85rem;
+  }
+
+  .detail-item {
+    padding: 0.8rem;
+  }
+
+  .detail-label,
+  .detail-value {
+    font-size: 0.9rem;
+  }
+}
+
+/* ===== MOBILE RESPONSIVE CSS ===== */
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  .afspraken-module {
+    max-width: 90%;
+    padding: 1.5rem;
+    margin: 1rem auto;
+  }
+
+  .tijdslot-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 12px;
+  }
+
+  .tijdslot-btn {
+    padding: 0.7rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Mobile (481px - 767px) */
+@media (max-width: 767px) {
+  .afspraken-module {
+    max-width: 95%;
+    padding: 1rem;
+    margin: 0.5rem auto;
+  }
+
+  .module-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .module-subtext {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .tijdslot-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+  }
+
+  .tijdslot-btn {
+    padding: 0.8rem;
+    font-size: 1rem;
+    min-height: 44px; /* Touch target size */
+  }
+
+  .detail-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .detail-label {
+    font-size: 0.9rem;
+  }
+
+  .detail-value {
+    font-size: 1rem;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  .btn-submit {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1.1rem;
+    min-height: 44px;
+  }
+
+  .form-select {
+    padding: 0.8rem;
+    font-size: 1rem;
+    min-height: 44px;
+  }
+}
+
+/* Small Mobile (max 480px) */
+@media (max-width: 480px) {
+  .afspraken-module {
+    max-width: 100%;
+    padding: 0.8rem;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .module-title {
+    font-size: 1.3rem;
+  }
+
+  .tijdslot-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 12px;
+  }
+
+  .tijdslot-btn {
+    padding: 1rem;
+    font-size: 1rem;
+    min-height: 48px; /* Larger touch target */
+  }
+
+  .overzicht-blok {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .bevestiging-header h3 {
+    font-size: 1.2rem;
+  }
+
+  .bevestiging-subtext {
+    font-size: 0.85rem;
+  }
+
+  .detail-item {
+    padding: 0.8rem;
+  }
+
+  .detail-label,
+  .detail-value {
+    font-size: 0.9rem;
+  }
+}
+
+.event-date {
+  font-size: 1.1rem;
+  color: #4a6cf7;
+  margin-bottom: 20px;
+  font-weight: 600;
+  background-color: #f0f4ff;
+  padding: 8px 15px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.fixed-date {
+  font-weight: 600;
+  padding: 10px;
+  background-color: #f0f4ff;
+  border-radius: 5px;
+  color: #4a6cf7;
+  border: 1px solid #d0d9ff;
+}
+
+.date-info {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 5px;
+  font-style: italic;
 }
