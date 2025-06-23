@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 import axios from 'axios';
+import { baseUrl } from '../config';
 
 
 const WerkzoekendeContext = createContext();
@@ -14,7 +15,8 @@ export function WerkzoekendeProvider({ children }) {
       setLoading(true);
       setError(null);
       
-      const response = await axios.get(`/api/werkzoekendeProfiel/${encodeURIComponent(email)}`);
+      console.log('Fetching werkzoekende profiel voor:', email);
+      const response = await axios.get(`${baseUrl}/werkzoekendeProfiel/${encodeURIComponent(email)}`);
       
       // Verwijder gevoelige data voor frontend
       const { wachtwoord, resetToken, resetTokenExpires, ...safeData } = response.data;
@@ -35,8 +37,9 @@ export function WerkzoekendeProvider({ children }) {
       setLoading(true);
       setError(null);
       
+      console.log('Updating werkzoekende profiel...');
       const response = await axios.post(
-        `/api/werkzoekendeProfiel`,
+        `${baseUrl}/werkzoekendeProfiel`,
         formData,
         {
           headers: {

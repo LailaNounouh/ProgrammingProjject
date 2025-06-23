@@ -23,7 +23,7 @@ router.get("/:email", async (req, res) => {
   console.log("Ophalen profiel voor email:", email);
   
   try {
-    const [rows] = await pool.query("SELECT * FROM werkzoekende WHERE email = ?", [email]);
+    const [rows] = await pool.query("SELECT * FROM Werkzoekenden WHERE email = ?", [email]);
     if (rows.length === 0) {
       return res.status(404).json({ error: "Profiel niet gevonden" });
     }
@@ -43,7 +43,7 @@ router.get("/:email", async (req, res) => {
 // GET profiel ophalen via ID
 router.get("/id/:id", async (req, res) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM werkzoekende WHERE werkzoekende_id = ?", [req.params.id]);
+    const [rows] = await pool.query("SELECT * FROM Werkzoekenden WHERE werkzoekende_id = ?", [req.params.id]);
     if (rows.length === 0) {
       return res.status(404).json({ error: "Profiel niet gevonden" });
     }
@@ -87,7 +87,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
     }
 
     console.log("Zoeken naar bestaande werkzoekende met email:", email);
-    const [rows] = await pool.query("SELECT * FROM werkzoekende WHERE email = ?", [email]);
+    const [rows] = await pool.query("SELECT * FROM Werkzoekenden WHERE email = ?", [email]);
     console.log("Gevonden rijen:", rows.length);
     
     let finalFotoUrl = nieuweFotoUrl;
@@ -97,7 +97,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
       const defaultPassword = "geheim123"; // Of genereer een veilig wachtwoord
       // INSERT
       await pool.query(
-        `INSERT INTO werkzoekende
+        `INSERT INTO Werkzoekenden
           (naam, email, wachtwoord, foto_url, linkedin_url, resetToken, resetTokenExpires)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
@@ -126,7 +126,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
       
       // UPDATE
       const updateResult = await pool.query(
-        `UPDATE werkzoekende
+        `UPDATE Werkzoekenden
          SET naam = ?, foto_url = ?, linkedin_url = ?, resetToken = ?, resetTokenExpires = ?
          WHERE email = ?`,
         [
@@ -142,7 +142,7 @@ router.post("/", upload.single("profilePicture"), async (req, res) => {
     }
 
     console.log("Ophalen bijgewerkte werkzoekende gegevens");
-    const [updatedRows] = await pool.query("SELECT * FROM werkzoekende WHERE email = ?", [email]);
+    const [updatedRows] = await pool.query("SELECT * FROM Werkzoekenden WHERE email = ?", [email]);
     const updatedWerkzoekende = updatedRows[0];
     delete updatedWerkzoekende.wachtwoord;
     
@@ -160,7 +160,7 @@ router.get("/debug/:email", async (req, res) => {
     console.log("Debug route aangeroepen voor email:", email);
     
     // Haal de huidige waarden op uit de database
-    const [rows] = await pool.query("SELECT * FROM werkzoekende WHERE email = ?", [email]);
+    const [rows] = await pool.query("SELECT * FROM Werkzoekenden WHERE email = ?", [email]);
     
     if (rows.length === 0) {
       return res.status(404).json({ error: "Werkzoekende niet gevonden" });
