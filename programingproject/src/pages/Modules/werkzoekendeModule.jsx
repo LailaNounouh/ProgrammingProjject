@@ -144,7 +144,7 @@ export default function WerkzoekendeModule() {
     );
   }
 
-  // Show context error if available
+  // toon context error 
   const displayError = errorMessage || contextError;
 
   return (
