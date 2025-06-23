@@ -170,7 +170,7 @@ function DashboardContent({
                   <div 
                     key={`mini-bedrijf-${bedrijf.bedrijf_id || index}`} 
                     className="studenten-mini-bedrijf"
-                    onClick={() => navigate(`/student/bedrijven/${bedrijf.bedrijf_id}`)}
+                    onClick={() => navigate(`/student/bedrijven/${bedrijf_id}`)}
                   >
                     <div className="studenten-mini-bedrijf-naam">
                       {bedrijf.naam}
@@ -647,7 +647,7 @@ function StudentenDashboard() {
       title: "Standen",
       icon: <FaMapMarkerAlt className="icon-fix" />,
       description: "Bekijk deelnemende bedrijven en hun stands",
-      onClick: () => navigate('/student/cv'),
+      onClick: () => navigate('/student/standen'),
       iconClass: "bg-purple"
     },
     {
