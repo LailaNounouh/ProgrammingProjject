@@ -144,7 +144,7 @@ export default function WerkzoekendeModule() {
     );
   }
 
-  // Show context error if available
+  // toon context error 
   const displayError = errorMessage || contextError;
 
   return (
@@ -164,13 +164,117 @@ export default function WerkzoekendeModule() {
       <div className="account-sections">
         {editMode ? (
           <div className="persoonlijke-info">
+            <h3>Profiel Bewerken</h3>
             <form onSubmit={opslaanWijzigingen}>
-              {/* Formuliervelden */}
+              <div className="form-group">
+                <label htmlFor="naam">Naam:</label>
+                <input
+                  type="text"
+                  id="naam"
+                  name="naam"
+                  value={userData.naam}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="email">Email:</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={userData.email}
+                  onChange={handleInputChange}
+                  disabled
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="linkedin_url">LinkedIn URL:</label>
+                <input
+                  type="url"
+                  id="linkedin_url"
+                  name="linkedin_url"
+                  value={userData.linkedin_url}
+                  onChange={handleInputChange}
+                  placeholder="https://linkedin.com/in/jouw-profiel"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="profilePicture">Profielfoto:</label>
+                <input
+                  type="file"
+                  id="profilePicture"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+                {userData.foto_url && typeof userData.foto_url === 'string' && (
+                  <div className="current-photo">
+                    <img
+                      src={userData.foto_url}
+                      alt="Huidige profielfoto"
+                      style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '50%' }}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="form-actions">
+                <button type="submit" disabled={saving} className="save-btn">
+                  <FaSave /> {saving ? 'Opslaan...' : 'Opslaan'}
+                </button>
+                <button type="button" onClick={cancelEdit} className="cancel-btn">
+                  <FaTimes /> Annuleren
+                </button>
+              </div>
             </form>
           </div>
         ) : (
           <div className="account-details">
-            {/* Profielweergave */}
+            <h3>Profiel Informatie</h3>
+
+            <div className="profile-section">
+              <div className="profile-photo">
+                {userData.foto_url ? (
+                  <img
+                    src={userData.foto_url}
+                    alt="Profielfoto"
+                    className="profile-image"
+                  />
+                ) : (
+                  <div className="no-photo">
+                    <span>Geen foto</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="profile-info">
+                <div className="info-item">
+                  <strong>Naam:</strong>
+                  <span>{userData.naam || 'Niet ingevuld'}</span>
+                </div>
+
+                <div className="info-item">
+                  <strong>Email:</strong>
+                  <span>{userData.email || 'Niet ingevuld'}</span>
+                </div>
+
+                <div className="info-item">
+                  <strong>LinkedIn:</strong>
+                  {userData.linkedin_url ? (
+                    <a href={userData.linkedin_url} target="_blank" rel="noopener noreferrer">
+                      {userData.linkedin_url}
+                    </a>
+                  ) : (
+                    <span>Niet ingevuld</span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+
           </div>
         )}
       </div>

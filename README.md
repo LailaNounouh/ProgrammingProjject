@@ -42,7 +42,7 @@ Zo combineren we een fysiek netwerkevent met de kracht van IT en innovatie.
 
 3. Start de server:
    ```bash
-   node server.j
+   npm start
 
 
 ## Frontend
@@ -86,10 +86,13 @@ via LinkedIn Learning.
 - LinkedIn Learning – Design Thinking
 - React documentatie (https://react.dev)
 - MediaMarkt (https://www.mediamarkt.nl) – voor inspiratie op het gebied van stijl en layout
+- QR.io (https://qr.io/) - voor het maken van een QR-code voor de check-in
+
 - https://www.w3schools.com/
 - **AI-ondersteuning**
    - ChatGPT-links:
      - https://chatgpt.com/share/68590a38-0ca0-800d-8422-585686c27d76
+     - https://chatgpt.com/share/685914d2-ae24-8002-bddb-a40e5e8adc40
      - https://github.com/copilot/share/c24b519e-0aa0-88b6-a142-b80f6412091d
      - https://chatgpt.com/c/684c1334-ae3c-8008-a4fd-952c53ec4ee7 
    - Screenshots:

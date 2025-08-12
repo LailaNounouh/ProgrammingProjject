@@ -2,10 +2,22 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { baseUrl } from "../../config";
 
+const studierichtingen = [
+  'Informatica',
+  'Toegepaste Informatica',
+  'Bedrijfskunde',
+  'Elektronica-ICT',
+  'Netwerkeconomie',
+  'Biomedische Wetenschappen',
+  'Rechten',
+  'Communicatie',
+  'Andere'
+];
+
 export default function StudentForm() {
   const [naam, setNaam] = useState('');
   const [email, setEmail] = useState('');
-  const [studie, setStudie] = useState('');
+  const [studie, setStudie] = useState(studierichtingen[0]);
   const [wachtwoord, setWachtwoord] = useState('');
 
   const [error, setError] = useState(null);
@@ -39,7 +51,7 @@ export default function StudentForm() {
           naam,
           email,
           wachtwoord,
-          studie, // wordt meegegeven als extra veld
+          studie,
         }),
       });
 
@@ -52,10 +64,9 @@ export default function StudentForm() {
         setTimeout(() => {
           navigate('/login');
         }, 3000);
-        // Reset formuliervelden
         setNaam('');
         setEmail('');
-        setStudie('');
+        setStudie(studierichtingen[0]);
         setWachtwoord('');
       }
     } catch (err) {
@@ -81,13 +92,15 @@ export default function StudentForm() {
         onChange={(e) => setEmail(e.target.value)}
         required
       />
-      <input
-        type="text"
-        placeholder="Studie"
+      <select
         value={studie}
         onChange={(e) => setStudie(e.target.value)}
         required
-      />
+      >
+        {studierichtingen.map((richting, index) => (
+          <option key={index} value={richting}>{richting}</option>
+        ))}
+      </select>
       <input
         type="password"
         placeholder="Wachtwoord"
