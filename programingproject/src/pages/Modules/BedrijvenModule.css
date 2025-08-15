@@ -545,6 +545,27 @@
   font-size: .7rem;
 }
 
+.geen-afspraak {
+  background:#fee2e2;
+  color:#b91c1c;
+  font-size:.7rem;
+  font-weight:600;
+  padding:.45rem .7rem;
+  border-radius:8px;
+  display:inline-block;
+  line-height:1;
+}
+.geen-afspraak-msg {
+  font-size:.7rem;
+  color:#b91c1c;
+  font-weight:500;
+}
+/* Dark mode optioneel */
+@media (prefers-color-scheme: dark) {
+  .geen-afspraak { background:#4a1f1f; color:#fca5a5; }
+  .geen-afspraak-msg { color:#fca5a5; }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
