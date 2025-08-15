@@ -121,6 +121,18 @@
   color: #374151;
 }
 
+.bedrijfdetail__select {
+  background:#fff;
+  font-size:.85rem;
+}
+@media (prefers-color-scheme: dark) {
+  .bedrijfdetail__select {
+    background:#28323c;
+    color:#e6edf3;
+    border:1px solid #3a4956;
+  }
+}
+
 @media (max-width: 760px) {
   .bedrijfdetail {
     padding: 1.5rem 1.1rem;

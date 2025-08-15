@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import "./AfsprakenModule.css";
 import { baseUrl } from "../../config";
 import io from "socket.io-client";
+import { useLocation, useNavigate } from "react-router-dom"; // <-- toegevoegd
 
 export default function Afspraken() {
   const [bedrijven, setBedrijven] = useState([]);
   const [bedrijfId, setBedrijfId] = useState("");
+  const [presetBedrijf, setPresetBedrijf] = useState(false);          // <-- toegevoegd
   const [tijdslot, setTijdslot] = useState("");
   const [datum] = useState("2026-03-13");
   const [beschikbareTijdsloten, setBeschikbareTijdsloten] = useState([]);
@@ -19,118 +21,142 @@ export default function Afspraken() {
   const [socket, setSocket] = useState(null);
   const [afsprakenOverzicht, setAfsprakenOverzicht] = useState([]);
 
+  const location = useLocation();    // <-- toegevoegd
+  const navigate = useNavigate();    // <-- toegevoegd
+
+  // Lees queryparameter ?bedrijf=ID
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const q = params.get("bedrijf");
+    if (q && !bedrijfId) {
+      setBedrijfId(q);
+      setPresetBedrijf(true);
+    }
+  }, [location.search, bedrijfId]);
+
+  // Socket init
   useEffect(() => {
     const newSocket = io(baseUrl);
     setSocket(newSocket);
     return () => newSocket.disconnect();
   }, []);
 
+  // Afspraken van student
   useEffect(() => {
     const student = JSON.parse(localStorage.getItem("user") || "{}");
     if (!student?.id) return;
-
     fetch(`${baseUrl}/afspraken/student/${student.id}?datum=2026-03-13`)
-      .then((res) => res.json())
-      .then((data) => setAfsprakenOverzicht(data))
-      .catch((err) => console.error("Afspraken ophalen mislukt:", err));
+      .then(r => r.json())
+      .then(d => Array.isArray(d) && setAfsprakenOverzicht(d))
+      .catch(() => {});
   }, []);
 
+  // Socket room voor geselecteerd bedrijf
   useEffect(() => {
     if (!socket || !bedrijfId) return;
-
     socket.emit("joinAppointmentRoom", { bedrijfId, datum });
     socket.on("appointmentCreated", (data) => {
-      if (data.bedrijf_id === bedrijfId && data.datum === datum) {
-        setBezetteTijdsloten((prev) => [...prev, data.tijdslot]);
-        setBeschikbareTijdsloten((prev) => prev.filter((t) => t !== data.tijdslot));
+      if (String(data.bedrijf_id) === String(bedrijfId) && data.datum === datum) {
+        setBezetteTijdsloten(p => [...p, data.tijdslot]);
+        setBeschikbareTijdsloten(p => p.filter(t => t !== data.tijdslot));
       }
     });
-
     return () => {
       socket.emit("leaveAppointmentRoom", { bedrijfId, datum });
       socket.off("appointmentCreated");
     };
   }, [socket, bedrijfId, datum]);
 
+  // Bedrijven laden
   useEffect(() => {
-    async function fetchBedrijven() {
+    (async () => {
       try {
         setLoading(true);
         const res = await fetch(`${baseUrl}/bedrijvenmodule`);
-        if (!res.ok) throw new Error("Kon bedrijven niet ophalen");
+        if (!res.ok) throw new Error();
         const data = await res.json();
-        setBedrijven(data);
-      } catch (err) {
+        setBedrijven(data || []);
+      } catch {
         setError("Probleem bij ophalen bedrijven.");
       } finally {
         setLoading(false);
       }
-    }
-    fetchBedrijven();
+    })();
   }, []);
 
+  // Controleer of preset bedrijf bestaat na laden
   useEffect(() => {
-    async function fetchTijdsloten() {
-      if (!bedrijfId) return;
+    if (presetBedrijf && bedrijfId && bedrijven.length) {
+      const exists = bedrijven.some(b => String(b.bedrijf_id) === String(bedrijfId));
+      if (!exists) {
+        setPresetBedrijf(false);
+        setBedrijfId("");
+      }
+    }
+  }, [bedrijven, presetBedrijf, bedrijfId]);
 
+  // Tijdsloten laden voor gekozen bedrijf
+  useEffect(() => {
+    if (!bedrijfId) return;
+    (async () => {
       try {
         setLoading(true);
+        setError("");
         const res = await fetch(`${baseUrl}/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
-        if (!res.ok) throw new Error("Tijdsloten ophalen mislukt");
+        if (!res.ok) throw new Error();
         const data = await res.json();
         setBeschikbareTijdsloten(data.beschikbaar || []);
         setBezetteTijdsloten(data.bezet || []);
         setAlleTijdsloten(data.alle || []);
         setTijdslot("");
-      } catch (err) {
+      } catch {
         setError("Kon tijdsloten niet ophalen.");
       } finally {
         setLoading(false);
       }
-    }
-    fetchTijdsloten();
+    })();
   }, [bedrijfId, datum, refreshTrigger]);
 
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!bedrijfId || !tijdslot) {
       setError("Selecteer een bedrijf en tijdslot");
       return;
     }
-
     try {
       setLoading(true);
+      setError("");
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       const student_id = user.id;
       const res = await fetch(`${baseUrl}/afspraken/nieuw`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ student_id, bedrijf_id: bedrijfId, tijdslot, datum }),
+        body: JSON.stringify({
+          student_id,
+          bedrijf_id: bedrijfId,
+          tijdslot,
+          datum
+        })
       });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Fout bij maken afspraak");
-      }
-
-      const selectedBedrijf = bedrijven.find((b) => b.bedrijf_id === parseInt(bedrijfId));
+      const dataErr = !res.ok ? await res.json().catch(()=>({})) : null;
+      if (!res.ok) throw new Error(dataErr?.error || "Fout bij maken afspraak");
+      const selectedBedrijf = bedrijven.find(b => String(b.bedrijf_id) === String(bedrijfId));
       setAfspraakDetails({
         bedrijfNaam: selectedBedrijf?.naam || "Onbekend",
         tijdslot,
         datum,
-        bedrijfId,
+        bedrijfId
       });
-
-      setBezetteTijdsloten((prev) => [...prev, tijdslot]);
-      setBeschikbareTijdsloten((prev) => prev.filter((t) => t !== tijdslot));
+      setBezetteTijdsloten(p => [...p, tijdslot]);
+      setBeschikbareTijdsloten(p => p.filter(t => t !== tijdslot));
       setAfspraakIngediend(true);
-      setRefreshTrigger((prev) => prev + 1);
-    } catch (err) {
-      setError(err.message);
+      setRefreshTrigger(p => p + 1);
+    } catch (e) {
+      setError(e.message);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
     <div className="page-container afspraken-module">
@@ -139,11 +165,11 @@ export default function Afspraken() {
       {afsprakenOverzicht.length > 0 && (
         <div className="info-blok">
           <h4>📌 Je hebt al afspraken op 13 maart 2026 met:</h4>
-          <ul>
-            {afsprakenOverzicht.map((a, i) => (
-              <li key={i}>🏢 {a.bedrijfsnaam} om {a.tijdslot}</li>
-            ))}
-          </ul>
+            <ul>
+              {afsprakenOverzicht.map((a,i)=>(
+                <li key={i}>🏢 {a.bedrijfsnaam} om {a.tijdslot}</li>
+              ))}
+            </ul>
         </div>
       )}
 
@@ -151,35 +177,74 @@ export default function Afspraken() {
 
       {!afspraakIngediend ? (
         <form onSubmit={handleSubmit}>
-          <select value={bedrijfId} onChange={(e) => setBedrijfId(e.target.value)} required>
-            <option value="">Kies een bedrijf</option>
-            {bedrijven.map((b) => (
-              <option key={b.bedrijf_id} value={b.bedrijf_id}>{b.naam}</option>
-            ))}
-          </select>
+          {presetBedrijf && bedrijfId ? (
+            <div className="vast-bedrijf-label">
+              <strong>Bedrijf:</strong>{" "}
+              {bedrijven.find(b => String(b.bedrijf_id) === String(bedrijfId))?.naam || `#${bedrijfId}`}
+              <button
+                type="button"
+                className="wissel-bedrijf-btn"
+                onClick={() => {
+                  setPresetBedrijf(false);
+                  setBedrijfId("");
+                  setTijdslot("");
+                  navigate("/student/afspraken", { replace: true });
+                }}
+              >
+                Wijzig
+              </button>
+            </div>
+          ) : (
+            <select
+              value={bedrijfId}
+              onChange={e => { setBedrijfId(e.target.value); setTijdslot(""); }}
+              required
+            >
+              <option value="">Kies een bedrijf</option>
+              {bedrijven.map(b => (
+                <option key={b.bedrijf_id} value={b.bedrijf_id}>{b.naam}</option>
+              ))}
+            </select>
+          )}
 
           {bedrijfId && (
             <div className="tijdslot-grid">
-              {alleTijdsloten.map((tijd) => (
-                <button
-                  key={tijd}
-                  type="button"
-                  className={`tijdslot-btn ${tijdslot === tijd ? "gekozen" : ""} ${bezetteTijdsloten.includes(tijd) ? "bezet" : ""}`}
-                  disabled={bezetteTijdsloten.includes(tijd)}
-                  onClick={() => setTijdslot(tijd)}
-                >
-                  {tijd} {bezetteTijdsloten.includes(tijd) ? "🔒" : ""}
-                </button>
-              ))}
+              {alleTijdsloten.map(t => {
+                const bezet = bezetteTijdsloten.includes(t);
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    className={`tijdslot-btn ${tijdslot === t ? "gekozen" : ""} ${bezet ? "bezet" : ""}`}
+                    disabled={bezet}
+                    onClick={() => setTijdslot(t)}
+                  >
+                    {t} {bezet ? "🔒" : ""}
+                  </button>
+                );
+              })}
             </div>
           )}
 
-          <button type="submit" disabled={loading || !tijdslot}>Afspraak maken</button>
+          <button type="submit" disabled={loading || !tijdslot}>
+            {loading ? "Bezig..." : "Afspraak maken"}
+          </button>
         </form>
       ) : (
-        <div>
+        <div className="result-blok">
           <h4>✅ Afspraak succesvol ingediend</h4>
-          <p>{afspraakDetails.bedrijfNaam} op {afspraakDetails.tijdslot}</p>
+          <p>{afspraakDetails.bedrijfNaam} om {afspraakDetails.tijdslot}</p>
+          <button
+            type="button"
+            onClick={() => {
+              setAfspraakIngediend(false);
+              setTijdslot("");
+              setAfspraakDetails(null);
+              if (!presetBedrijf) setBedrijfId("");
+            }}
+          >
+            Nieuwe afspraak
+          </button>
         </div>
       )}
     </div>

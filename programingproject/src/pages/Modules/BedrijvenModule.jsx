@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaSearch, FaFilter, FaTimes, FaGraduationCap, FaGlobe, FaEnvelope, FaPhone, FaLink, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useAuth } from "../../context/AuthProvider";
+import { useNavigate } from 'react-router-dom';
 import "./BedrijvenModule.css";
 import { baseUrl } from "../../config";
 
@@ -21,6 +22,7 @@ export default function Bedrijven() {
   
   const [studierichtingen, setStudierichtingen] = useState([]);
   const [aanbiedingenOpties, setAanbiedingenOpties] = useState([]);
+  const navigate = useNavigate();
 
   const splitStudierichtingen = (opleidingenString) => {
     if (!opleidingenString) return [];
@@ -159,6 +161,10 @@ export default function Bedrijven() {
     if (!url) return "";
     return url.startsWith('http') ? url : `https://${url}`;
   };
+
+  function gaNaarAfspraak(bedrijfId) {
+    navigate(`/student/afspraak-maken?bedrijf=${bedrijfId}`);
+  }
 
   return (
     <div className="page-container bedrijven-module">
@@ -328,6 +334,17 @@ export default function Bedrijven() {
                       {expandedBedrijf === bedrijf.bedrijf_id ? "Minder info" : "Meer info"}
                       {expandedBedrijf === bedrijf.bedrijf_id ? <FaChevronUp /> : <FaChevronDown />}
                     </button>
+
+                    {gebruiker && (
+                      <div className="afspraak-actions">
+                        <button
+                          className="afspraak-btn"
+                          onClick={() => navigate(`/student/afspraken?bedrijf=${bedrijf.bedrijf_id}`)}
+                        >
+                          Maak afspraak
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
                 

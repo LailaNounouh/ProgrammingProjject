@@ -513,6 +513,38 @@
   background-color: #00296b;
 }
 
+.afspraak-actions {
+  margin-top: .6rem;
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+}
+
+.afspraak-btn {
+  background: #0d66d0;
+  color: #fff;
+  border: none;
+  padding: .5rem .8rem;
+  border-radius: 8px;
+  font-size: .75rem;
+  cursor: pointer;
+}
+
+.afspraak-btn:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.afspraak-msg {
+  color: #1b7a38;
+  font-size: .7rem;
+}
+
+.afspraak-err {
+  color: #b91c1c;
+  font-size: .7rem;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

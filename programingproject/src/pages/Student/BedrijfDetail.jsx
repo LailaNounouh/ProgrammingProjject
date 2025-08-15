@@ -1,15 +1,25 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthProvider';
 import './BedrijfDetail.css';
 
-const baseUrl = 'http://10.2.160.211:3000/api'; // zelfde baseUrl als elders
+const baseUrl = 'http://10.2.160.211:3000/api'; 
 
 export default function BedrijfDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { gebruiker } = useAuth();
   const [bedrijf, setBedrijf] = useState(null);
   const [loading, setLoading] = useState(true);
   const [fout, setFout] = useState('');
+  const [slotState, setSlotState] = useState({
+    loading: false,
+    slots: [],
+    error: '',
+    msg: '',
+    hasExisting: false,
+    existingSlot: ''
+  });
 
   useEffect(() => {
     async function load() {
@@ -34,6 +44,72 @@ export default function BedrijfDetail() {
     }
     load();
   }, [id]);
+
+  // Haal bestaande afspraak van deze student met dit bedrijf
+  useEffect(() => {
+    async function checkExisting() {
+      if (!gebruiker) return;
+      try {
+        const r = await fetch(`${baseUrl}/afspraken/student/${gebruiker.student_id || gebruiker.id}`, { credentials: 'include' });
+        if (!r.ok) return;
+        const afspraken = await r.json();
+        const found = afspraken.find(a => (a.bedrijfsnaam_id === id || a.bedrijf_id === Number(id) || a.bedrijf_id === id) && a.datum === '2026-03-13');
+        // fallback: vergelijk bedrijfsnaam als id ontbreekt
+        const found2 = found || afspraken.find(a => a.bedrijfsnaam === bedrijf?.naam && a.datum === '2026-03-13');
+        if (found2) {
+          setSlotState(s => ({ ...s, hasExisting: true, existingSlot: found2.tijdslot }));
+        }
+      } catch (_) {}
+    }
+    checkExisting();
+  }, [gebruiker, id, bedrijf]);
+
+  async function laadSlotsSnel() {
+    setSlotState(s => ({ ...s, loading: true, error: '', msg: '' }));
+    try {
+      const r = await fetch(`${baseUrl}/afspraken/beschikbaar/${id}`, { credentials: 'include' });
+      if (!r.ok) throw new Error('Tijdsloten laden mislukt');
+      const d = await r.json();
+      const available = d.beschikbaar || [];
+      if (!available.length) {
+        setSlotState(s => ({ ...s, loading: false, error: 'Geen vrije tijdsloten' }));
+        return;
+      }
+      // Boek onmiddellijk eerste vrije
+      await boekSnel(available[0], available);
+    } catch (e) {
+      setSlotState(s => ({ ...s, loading: false, error: e.message }));
+    }
+  }
+
+  async function boekSnel(tijdslot, currentSlots) {
+    if (!gebruiker) return;
+    try {
+      const r = await fetch(`${baseUrl}/afspraken/nieuw`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          student_id: gebruiker.student_id || gebruiker.id,
+          bedrijf_id: id,
+          tijdslot,
+          datum: '2026-03-13'
+        })
+      });
+      const resp = await r.json();
+      if (!r.ok) throw new Error(resp.error || 'Aanmaken mislukt');
+      setSlotState(s => ({
+        ...s,
+        loading: false,
+        msg: `Afspraak aangevraagd (${tijdslot})`,
+        hasExisting: true,
+        existingSlot: tijdslot,
+        slots: (currentSlots || []).filter(t => t !== tijdslot)
+      }));
+    } catch (e) {
+      setSlotState(s => ({ ...s, loading: false, error: e.message }));
+    }
+  }
 
   if (loading) return <div className="bedrijfdetail__status">Bezig met laden...</div>;
   if (fout) return <div className="bedrijfdetail__status bedrijfdetail__status--error">Fout: {fout}</div>;
@@ -101,6 +177,37 @@ export default function BedrijfDetail() {
         <p className="bedrijfdetail__statusText">
           {bedrijf.speeddates ? 'Speeddate mogelijk' : 'Geen speeddate beschikbaar'}
         </p>
+      </section>
+
+      <section className="bedrijfdetail__section">
+        <h3 className="bedrijfdetail__sectionTitle">Afspraak</h3>
+        {!gebruiker && <p className="bedrijfdetail__empty">Log in als student om een afspraak te maken.</p>}
+
+        {gebruiker && (
+          <>
+            <button
+              className="bedrijfdetail__back"
+              style={{ background: '#0d66d0', color: '#fff', borderColor: '#0d66d0', minWidth: '150px' }}
+              disabled={slotState.loading || slotState.hasExisting}
+              onClick={laadSlotsSnel}
+            >
+              {slotState.loading ? 'Bezig...' : 'Snel afspraak'}
+            </button>
+
+            {slotState.hasExisting && (
+              <p style={{ fontSize: '.7rem', marginTop: '.45rem', color: '#b55600' }}>
+                Je hebt al een afspraak{slotState.existingSlot && ` om ${slotState.existingSlot}`} op dit tijdslot.
+              </p>
+            )}
+
+            {slotState.error && (
+              <p style={{ fontSize: '.7rem', marginTop: '.5rem', color: '#b91c1c' }}>{slotState.error}</p>
+            )}
+            {slotState.msg && (
+              <p style={{ fontSize: '.7rem', marginTop: '.5rem', color: '#1b7a38' }}>{slotState.msg}</p>
+            )}
+          </>
+        )}
       </section>
     </div>
   );
