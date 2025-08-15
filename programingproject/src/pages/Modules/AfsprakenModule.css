@@ -336,3 +336,296 @@
 .wissel-bedrijf-btn:hover {
   background: #0b58b7;
 }
+
+.afspraken-shell {
+  padding: 2rem 1rem 3rem;
+  display:flex;
+  justify-content:center;
+}
+.afspraken-card {
+  width:100%;
+  max-width:620px;
+  background:#fff;
+  border:1px solid #e5e9ef;
+  border-radius:16px;
+  padding:2.1rem 2rem 2.4rem;
+  box-shadow:0 6px 18px -8px rgba(0,0,0,.06);
+}
+.afspraken-title {
+  margin:0 0 1.4rem;
+  font-size:1.55rem;
+  line-height:1.1;
+  text-align:center;
+  font-weight:600;
+  color:#153b73;
+}
+.afspraken-title .spark { color:#b8005f; margin-right:.35rem; }
+
+.afspraken-reeds {
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  padding:1rem 1rem .85rem;
+  border-radius:12px;
+  margin-bottom:1.1rem;
+}
+.reeds-label {
+  font-size:.78rem;
+  margin:0 0 .55rem;
+  font-weight:500;
+  color:#374151;
+}
+.reeds-list {
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:.4rem;
+}
+.reeds-item {
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  font-size:.72rem;
+  background:#eef6ff;
+  border:1px solid #d4e6f7;
+  padding:.4rem .7rem;
+  border-radius:8px;
+}
+.reeds-bullet {
+  width:8px;
+  height:8px;
+  background:#153b73;
+  border-radius:50%;
+  display:inline-block;
+  flex-shrink:0;
+}
+.reeds-bedrijf { font-weight:600; }
+.reeds-tijd {
+  background:#153b73;
+  color:#fff;
+  padding:.15rem .45rem;
+  border-radius:6px;
+  font-size:.6rem;
+  font-weight:600;
+}
+
+.afspraken-alert {
+  padding:.75rem .9rem;
+  border-radius:10px;
+  font-size:.75rem;
+  font-weight:500;
+  margin:0 0 1rem;
+}
+.afspraken-alert--error {
+  background:#feecec;
+  border:1px solid #f9c6c6;
+  color:#b32626;
+}
+.afspraken-alert--ok {
+  background:#e8f9ef;
+  border:1px solid #b8e9ca;
+  color:#1b7a38;
+}
+
+.afspraak-inline-form { display:flex; flex-direction:column; gap:1.4rem; }
+
+.field-row {
+  display:flex;
+  gap:.7rem;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.afspraak-select {
+  padding:.55rem .75rem;
+  border:1px solid #ccd5df;
+  border-radius:10px;
+  background:#fff;
+  font-size:.8rem;
+  min-width:260px;
+}
+
+.vast-bedrijf-chip {
+  background:#eef6ff;
+  border:1px solid #d4e6f7;
+  color:#134c7d;
+  padding:.55rem .9rem;
+  font-size:.78rem;
+  font-weight:600;
+  border-radius:999px;
+  display:inline-flex;
+  gap:.6rem;
+  align-items:center;
+}
+.wissel-mini {
+  background:#0d66d0;
+  color:#fff;
+  border:none;
+  font-size:.6rem;
+  padding:.3rem .6rem;
+  border-radius:16px;
+  cursor:pointer;
+}
+.wissel-mini:hover { background:#0b58b7; }
+
+.slots-wrap { display:flex; flex-direction:column; gap:.55rem; }
+.slots-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.6rem;
+}
+.slots-label {
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  color:#4a5562;
+}
+.slots-legend {
+  display:flex;
+  gap:.9rem;
+  font-size:.58rem;
+  color:#5a6673;
+  font-weight:500;
+}
+.dot {
+  width:10px;
+  height:10px;
+  border-radius:3px;
+  display:inline-block;
+  margin-right:.3rem;
+  vertical-align:middle;
+}
+.dot--vrij { background:#d9e3ec; }
+.dot--gekozen { background:#0d66d0; }
+.dot--bezet { background:#d9534f; }
+
+.slots-grid {
+  display:grid;
+  gap:.5rem;
+  grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+}
+
+.slot-chip {
+  background:#f6f9fb;
+  border:1px solid #d7e1ea;
+  border-radius:10px;
+  font-size:.7rem;
+  font-weight:600;
+  padding:.55rem .4rem;
+  cursor:pointer;
+  transition:background .2s,border-color .2s,transform .15s;
+}
+.slot-chip:hover:not(.is-bezet):not(.is-active){ background:#eef5fb; }
+.slot-chip.is-active {
+  background:#0d66d0;
+  color:#fff;
+  border-color:#0d66d0;
+  box-shadow:0 4px 12px -4px rgba(13,102,208,.55);
+}
+.slot-chip.is-bezet {
+  background:#f8e6e6;
+  color:#a45a5a;
+  border-color:#e5b4b4;
+  cursor:not-allowed;
+  text-decoration:line-through;
+  font-weight:500;
+}
+
+.primary-btn {
+  background:#0d66d0;
+  color:#fff;
+  border:none;
+  padding:.6rem 1rem;
+  font-size:.75rem;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+  transition:background .2s;
+}
+.primary-btn:hover:not(:disabled){ background:#0b58b7; }
+.primary-btn:disabled { opacity:.55; cursor:not-allowed; }
+
+.ghost-btn {
+  background:#eef2f6;
+  color:#22303c;
+  border:1px solid #d4dbe2;
+  padding:.6rem 1rem;
+  font-size:.72rem;
+  border-radius:10px;
+  cursor:pointer;
+}
+.ghost-btn:hover { background:#e4e9ee; }
+
+.result-actions {
+  margin-top:1.3rem;
+  display:flex;
+  gap:.6rem;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+@media (max-width:680px){
+  .afspraken-card { padding:1.6rem 1.3rem 2rem; }
+  .field-row { flex-direction:column; align-items:stretch; }
+  .afspraak-select, .primary-btn { width:100%; }
+  .slots-grid { grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); }
+}
+
+@media (prefers-color-scheme: dark) {
+  .afspraken-card { background:#1f2933; border-color:#37424c; }
+  .afspraken-title { color:#e6edf3; }
+  .afspraken-reeds { background:#1f2933; border-color:#37424c; }
+  .reeds-label { color:#b1bec9; }
+  .reeds-item { background:#1d3b52; border-color:#295372; color:#cbe9ff; }
+  .reeds-tijd { background:#1570db; }
+  .afspraak-select {
+    background:#1f2a33;
+    color:#e6edf3;
+    border-color:#3a4956;
+  }
+  .vast-bedrijf-chip {
+    background:#1d3b52;
+    border-color:#295372;
+    color:#cbe9ff;
+  }
+  .wissel-mini { background:#1570db; }
+  .wissel-mini:hover { background:#1363c1; }
+  .slots-label { color:#9fb1bf; }
+  .slots-legend { color:#95a5b3; }
+  .slot-chip {
+    background:#25313b;
+    border-color:#3a4753;
+    color:#d3dde6;
+  }
+  .slot-chip.is-active {
+    background:#1570db;
+    border-color:#1570db;
+  }
+  .slot-chip.is-bezet {
+    background:#402727;
+    border-color:#5c3434;
+    color:#ffb3b3;
+  }
+  .primary-btn { background:#1570db; }
+  .primary-btn:hover:not(:disabled){ background:#1363c1; }
+  .ghost-btn {
+    background:#2b3a45;
+    border-color:#42515d;
+    color:#cfd8de;
+  }
+  .ghost-btn:hover { background:#354650; }
+  .afspraken-alert--error {
+    background:#3e1919;
+    border-color:#6b2d2d;
+    color:#f9b3b3;
+  }
+  .afspraken-alert--ok {
+    background:#153926;
+    border-color:#205338;
+    color:#8fddb1;
+  }
+}

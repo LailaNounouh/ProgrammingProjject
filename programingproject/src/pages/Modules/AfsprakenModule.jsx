@@ -159,94 +159,136 @@ export default function Afspraken() {
   }
 
   return (
-    <div className="page-container afspraken-module">
-      <h2 className="module-title">Afspraak maken</h2>
+    <div className="afspraken-shell">
+      <div className="afspraken-card">
+        <h1 className="afspraken-title">
+          <span className="spark">✦</span> Afspraak maken
+        </h1>
 
-      {afsprakenOverzicht.length > 0 && (
-        <div className="info-blok">
-          <h4>📌 Je hebt al afspraken op 13 maart 2026 met:</h4>
-            <ul>
-              {afsprakenOverzicht.map((a,i)=>(
-                <li key={i}>🏢 {a.bedrijfsnaam} om {a.tijdslot}</li>
+        {afsprakenOverzicht.length > 0 && (
+          <div className="afspraken-reeds">
+            <p className="reeds-label">
+              Je hebt al afspraken op <strong>13 maart 2026</strong> met:
+            </p>
+            <ul className="reeds-list">
+              {afsprakenOverzicht.map((a, i) => (
+                <li key={i} className="reeds-item">
+                  <span className="reeds-bullet" />
+                  <span className="reeds-bedrijf">{a.bedrijfsnaam}</span>
+                  <span className="reeds-tijd">{a.tijdslot}</span>
+                </li>
               ))}
             </ul>
-        </div>
-      )}
+          </div>
+        )}
 
-      {error && <div className="error-message">{error}</div>}
+        {error && <div className="afspraken-alert afspraken-alert--error">{error}</div>}
+        {afspraakIngediend && afspraakDetails && (
+          <div className="afspraken-alert afspraken-alert--ok">
+            Afspraak bevestigd: {afspraakDetails.bedrijfNaam} – {afspraakDetails.tijdslot}
+          </div>
+        )}
 
-      {!afspraakIngediend ? (
-        <form onSubmit={handleSubmit}>
-          {presetBedrijf && bedrijfId ? (
-            <div className="vast-bedrijf-label">
-              <strong>Bedrijf:</strong>{" "}
-              {bedrijven.find(b => String(b.bedrijf_id) === String(bedrijfId))?.naam || `#${bedrijfId}`}
+        {!afspraakIngediend && (
+          <form onSubmit={handleSubmit} className="afspraak-inline-form">
+            <div className="field-row">
+              {presetBedrijf && bedrijfId ? (
+                <div className="vast-bedrijf-chip">
+                  {bedrijven.find(b => String(b.bedrijf_id) === String(bedrijfId))?.naam || `#${bedrijfId}`}
+                  <button
+                    type="button"
+                    className="wissel-mini"
+                    onClick={() => {
+                      setPresetBedrijf(false);
+                      setBedrijfId("");
+                      setTijdslot("");
+                      navigate("/student/afspraken", { replace: true });
+                    }}
+                    title="Wijzig bedrijf"
+                  >
+                    Wijzig
+                  </button>
+                </div>
+              ) : (
+                <select
+                  value={bedrijfId}
+                  onChange={e => { setBedrijfId(e.target.value); setTijdslot(""); }}
+                  className="afspraak-select"
+                  required
+                >
+                  <option value="">Kies een bedrijf</option>
+                  {bedrijven.map(b => (
+                    <option key={b.bedrijf_id} value={b.bedrijf_id}>{b.naam}</option>
+                  ))}
+                </select>
+              )}
+
               <button
-                type="button"
-                className="wissel-bedrijf-btn"
-                onClick={() => {
-                  setPresetBedrijf(false);
-                  setBedrijfId("");
-                  setTijdslot("");
-                  navigate("/student/afspraken", { replace: true });
-                }}
+                type="submit"
+                disabled={loading || !bedrijfId || !tijdslot}
+                className="primary-btn"
               >
-                Wijzig
+                {loading ? 'Bezig...' : 'Afspraak maken'}
               </button>
             </div>
-          ) : (
-            <select
-              value={bedrijfId}
-              onChange={e => { setBedrijfId(e.target.value); setTijdslot(""); }}
-              required
+
+            {bedrijfId && (
+              <div className="slots-wrap">
+                <div className="slots-header">
+                  <span className="slots-label">Beschikbare tijdsloten</span>
+                  <div className="slots-legend">
+                    <span><i className="dot dot--vrij" /> vrij</span>
+                    <span><i className="dot dot--gekozen" /> gekozen</span>
+                    <span><i className="dot dot--bezet" /> bezet</span>
+                  </div>
+                </div>
+                <div className="slots-grid">
+                  {alleTijdsloten.map(t => {
+                    const bezet = bezetteTijdsloten.includes(t);
+                    const active = tijdslot === t;
+                    return (
+                      <button
+                        key={t}
+                        type="button"
+                        className={`slot-chip ${bezet ? 'is-bezet' : ''} ${active ? 'is-active' : ''}`}
+                        disabled={bezet}
+                        onClick={() => setTijdslot(t)}
+                      >
+                        {t}
+                      </button>
+                    );
+                  })}
+                  {alleTijdsloten.length === 0 && (
+                    <div className="slots-empty">Geen tijdsloten geladen.</div>
+                  )}
+                </div>
+              </div>
+            )}
+          </form>
+        )}
+
+        {afspraakIngediend && (
+          <div className="result-actions">
+            <button
+              className="primary-btn"
+              onClick={() => {
+                setAfspraakIngediend(false);
+                setTijdslot("");
+                setAfspraakDetails(null);
+                if (!presetBedrijf) setBedrijfId("");
+              }}
             >
-              <option value="">Kies een bedrijf</option>
-              {bedrijven.map(b => (
-                <option key={b.bedrijf_id} value={b.bedrijf_id}>{b.naam}</option>
-              ))}
-            </select>
-          )}
-
-          {bedrijfId && (
-            <div className="tijdslot-grid">
-              {alleTijdsloten.map(t => {
-                const bezet = bezetteTijdsloten.includes(t);
-                return (
-                  <button
-                    key={t}
-                    type="button"
-                    className={`tijdslot-btn ${tijdslot === t ? "gekozen" : ""} ${bezet ? "bezet" : ""}`}
-                    disabled={bezet}
-                    onClick={() => setTijdslot(t)}
-                  >
-                    {t} {bezet ? "🔒" : ""}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-
-          <button type="submit" disabled={loading || !tijdslot}>
-            {loading ? "Bezig..." : "Afspraak maken"}
-          </button>
-        </form>
-      ) : (
-        <div className="result-blok">
-          <h4>✅ Afspraak succesvol ingediend</h4>
-          <p>{afspraakDetails.bedrijfNaam} om {afspraakDetails.tijdslot}</p>
-          <button
-            type="button"
-            onClick={() => {
-              setAfspraakIngediend(false);
-              setTijdslot("");
-              setAfspraakDetails(null);
-              if (!presetBedrijf) setBedrijfId("");
-            }}
-          >
-            Nieuwe afspraak
-          </button>
-        </div>
-      )}
+              Nieuwe afspraak
+            </button>
+            <button
+              className="ghost-btn"
+              onClick={() => navigate('/student')}
+            >
+              Terug naar dashboard
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
