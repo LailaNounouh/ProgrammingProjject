@@ -337,12 +337,18 @@ export default function Bedrijven() {
 
                     {gebruiker && (
                       <div className="afspraak-actions">
-                        <button
-                          className="afspraak-btn"
-                          onClick={() => navigate(`/student/afspraken?bedrijf=${bedrijf.bedrijf_id}`)}
-                        >
-                          Maak afspraak
-                        </button>
+                        {bedrijf.speeddates === 1 ? (
+                          <button
+                            className="afspraak-btn"
+                            onClick={() => navigate(`/student/afspraken?bedrijf=${bedrijf.bedrijf_id}`)}
+                          >
+                            Maak afspraak
+                          </button>
+                        ) : (
+                          <span className="geen-afspraak" title="Dit bedrijf biedt geen speeddate afspraken">
+                            Geen afspraak mogelijk
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>
@@ -459,7 +465,14 @@ export default function Bedrijven() {
                           
                           <div className="vacancy-item">
                             <h5>Speeddate:</h5>
-                            <p>{bedrijf.speeddates === 1 ? "Ja" : "Nee"}</p>
+                            <p>
+                              {bedrijf.speeddates === 1 ? "Ja" : "Nee"}
+                              {bedrijf.speeddates !== 1 && (
+                                <span className="geen-afspraak-msg">
+                                  &nbsp;- Dit bedrijf laat geen afspraken toe
+                                </span>
+                              )}
+                            </p>
                           </div>
                         </div>
                       </div>
