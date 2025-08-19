@@ -1,4 +1,4 @@
- import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   FaEuroSign,
   FaCalendarAlt,
@@ -441,11 +441,10 @@ function BedrijvenDashboard() {
 
   const addEventReminder = (event) => {
   setNewReminder({
-   date: event.date.toISOString().split('T')[0],
-time: event.time?.split('-')[0].trim() || '09:00',
-text: `Herinnering: ${event.title} - ${event.description}`,
-});
-
+    date: event.date.toISOString().split('T')[0],
+    time: event.time?.split('-')[0]?.trim() || '09:00', // Fixed the time parsing
+    text: `Herinnering: ${event.title} - ${event.description}`,
+  });
   setShowReminderModal(true);
 };
 
