@@ -2,12 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db'); // zorg dat backend/db.js exporteert via mysql2/promise
 
-// Haal notifications voor een bedrijf (nieuwste eerst)
-router.get('/afspraken/notifications/:bedrijfId/bedrijf', async (req, res) => {
-  const { bedrijfId } = req.params;
+async function fetchNotificationsForBedrijf(bedrijfId, res) {
   try {
     const [rows] = await db.execute(
-      'SELECT * FROM notifications WHERE bedrijf_id = ? ORDER BY created_at DESC',
+      'SELECT * FROM `Notifications` WHERE bedrijf_id = ? ORDER BY created_at DESC',
       [bedrijfId]
     );
     res.json(rows);
@@ -15,6 +13,26 @@ router.get('/afspraken/notifications/:bedrijfId/bedrijf', async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Database fout' });
   }
+}
+
+// Canonical route: /bedrijf/:bedrijfId/notifications
+router.get('/bedrijf/:bedrijfId/notifications', async (req, res) => {
+  const { bedrijfId } = req.params;
+  await fetchNotificationsForBedrijf(bedrijfId, res);
+});
+
+// (OPTIONEEL) backward-compat aliases that call the same handler
+router.get('/afspraken/notifications/:bedrijfId/bedrijf', async (req, res) => {
+  const { bedrijfId } = req.params;
+  await fetchNotificationsForBedrijf(bedrijfId, res);
+});
+router.get('/afspraken/:bedrijfId/notifications', async (req, res) => {
+  const { bedrijfId } = req.params;
+  await fetchNotificationsForBedrijf(bedrijfId, res);
+});
+router.get('/notifications/bedrijf/:bedrijfId', async (req, res) => {
+  const { bedrijfId } = req.params;
+  await fetchNotificationsForBedrijf(bedrijfId, res);
 });
 
 // Haal notifications voor een student (optioneel)
@@ -22,7 +40,7 @@ router.get('/afspraken/notifications/student/:studentId', async (req, res) => {
   const { studentId } = req.params;
   try {
     const [rows] = await db.execute(
-      'SELECT * FROM notifications WHERE student_id = ? ORDER BY created_at DESC',
+      'SELECT * FROM `Notifications` WHERE student_id = ? ORDER BY created_at DESC',
       [studentId]
     );
     res.json(rows);
@@ -36,7 +54,7 @@ router.get('/afspraken/notifications/student/:studentId', async (req, res) => {
 router.put('/afspraken/notifications/:id/read', async (req, res) => {
   const { id } = req.params;
   try {
-    await db.execute('UPDATE notifications SET gelezen = 1 WHERE notification_id = ?', [id]);
+    await db.execute('UPDATE `Notifications` SET gelezen = 1 WHERE notification_id = ?', [id]);
     res.json({ success: true });
   } catch (err) {
     console.error(err);
@@ -48,7 +66,7 @@ router.put('/afspraken/notifications/:id/read', async (req, res) => {
 router.delete('/afspraken/notifications/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    await db.execute('DELETE FROM notifications WHERE notification_id = ?', [id]);
+    await db.execute('DELETE FROM `Notifications` WHERE notification_id = ?', [id]);
     res.json({ success: true });
   } catch (err) {
     console.error(err);
