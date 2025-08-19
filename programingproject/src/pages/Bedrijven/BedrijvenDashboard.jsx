@@ -11,7 +11,11 @@ import {
   FaPlus,
   FaTrash,
   FaClock,
-  FaExclamationCircle
+  FaExclamationCircle,
+  FaTimes,
+  FaCheck,
+  FaUser,
+  FaMoneyBill
 } from 'react-icons/fa';
 import './BedrijvenDashboard.css';
 import { useNavigate } from 'react-router-dom';
@@ -40,8 +44,50 @@ function DashboardContent({
   newReminder,
   setNewReminder,
   handleReminderSubmit,
-  addEventReminder
+  addEventReminder,
+  markNotificationAsRead,
+  deleteNotification
 }) {
+  
+  const getNotificationIcon = (type) => {
+    switch (type) {
+      case 'nieuwe_afspraak':
+      case 'afspraak_goedgekeurd':
+      case 'afspraak_afgewezen':
+        return <FaCalendarAlt />;
+      case 'afspraak_geannuleerd':
+        return <FaTimes />;
+      case 'betaling_ontvangen':
+      case 'betaling_herinnering':
+        return <FaMoneyBill />;
+      case 'profiel_update':
+        return <FaUser />;
+      case 'systeem':
+      default:
+        return <FaBell />;
+    }
+  };
+
+  const getNotificationColor = (type) => {
+    switch (type) {
+      case 'nieuwe_afspraak':
+        return '#28a745'; // groen
+      case 'afspraak_goedgekeurd':
+        return '#007bff'; // blauw
+      case 'afspraak_afgewezen':
+      case 'afspraak_geannuleerd':
+        return '#dc3545'; // rood
+      case 'betaling_ontvangen':
+        return '#28a745'; // groen
+      case 'betaling_herinnering':
+        return '#ffc107'; // geel
+      case 'profiel_update':
+        return '#6f42c1'; // paars
+      default:
+        return '#6c757d'; // grijs
+    }
+  };
+
   return (
     <div className="dashboard-container">
       <div className="welcome-banner">
@@ -66,25 +112,102 @@ function DashboardContent({
             onClick={() => setShowNotifications(!showNotifications)}
           >
             <FaBell />
-            {notifications.length > 0 && (
-              <span className="notification-badge">{notifications.length}</span>
+            {notifications.filter(n => !n.gelezen).length > 0 && (
+              <span className="notification-badge">
+                {notifications.filter(n => !n.gelezen).length}
+              </span>
             )}
           </div>
 
           {showNotifications && (
             <div className="notification-dropdown">
-              <ul>
+              <div className="notification-header">
+                <h4>Meldingen</h4>
+                {notifications.filter(n => !n.gelezen).length > 0 && (
+                  <span className="unread-count">
+                    {notifications.filter(n => !n.gelezen).length} ongelezen
+                  </span>
+                )}
+              </div>
+              <div className="notification-list">
                 {notifications.length === 0 ? (
-                  <li><p>Geen nieuwe meldingen</p></li>
+                  <div className="no-notifications">
+                    <p>Geen meldingen</p>
+                  </div>
                 ) : (
-                  notifications.map((notif) => (
-                    <li key={notif.id}>
-                      <p>{notif.message}</p>
-                      <small>{new Date(notif.time).toLocaleString('nl-BE')}</small>
-                    </li>
+                  notifications.slice(0, 10).map((notif) => (
+                    <div 
+                      key={notif.notification_id} 
+                      className={`notification-item ${!notif.gelezen ? 'unread' : 'read'}`}
+                    >
+                      <div className="notification-content">
+                        <div 
+                          className="notification-icon"
+                          style={{ color: getNotificationColor(notif.type) }}
+                        >
+                          {getNotificationIcon(notif.type)}
+                        </div>
+                        <div className="notification-text">
+                          <p className="notification-message">{notif.bericht}</p>
+                          <small className="notification-time">
+                            {new Date(notif.created_at).toLocaleString('nl-BE', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </small>
+                          {notif.related_data && (
+                            <div className="notification-details">
+                              {notif.type.includes('afspraak') && notif.related_data.student_naam && (
+                                <span>Student: {notif.related_data.student_naam}</span>
+                              )}
+                              {notif.related_data.tijdslot && (
+                                <span>Tijdslot: {notif.related_data.tijdslot}</span>
+                              )}
+                              {notif.related_data.datum && (
+                                <span>Datum: {new Date(notif.related_data.datum).toLocaleDateString('nl-BE')}</span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="notification-actions">
+                        {!notif.gelezen && (
+                          <button
+                            className="mark-read-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              markNotificationAsRead(notif.notification_id);
+                            }}
+                            title="Markeer als gelezen"
+                          >
+                            <FaCheck />
+                          </button>
+                        )}
+                        <button
+                          className="delete-notification-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteNotification(notif.notification_id);
+                          }}
+                          title="Verwijder melding"
+                        >
+                          <FaTimes />
+                        </button>
+                      </div>
+                    </div>
                   ))
                 )}
-              </ul>
+              </div>
+              {notifications.length > 10 && (
+                <div className="notification-footer">
+                  <button className="view-all-btn">
+                    Alle meldingen bekijken ({notifications.length})
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -404,23 +527,49 @@ function BedrijvenDashboard() {
       }
 
       try {
-        const data = await apiClient.get(`/notifications/${gebruiker.id}`);
-        setNotifications(data);
+        const data = await apiClient.get(`/notifications/bedrijf/${gebruiker.id}`);
+        setNotifications(data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
       } catch (error) {
         console.error('Fout bij ophalen meldingen:', error);
-        // Set some default notifications for demo
-        setNotifications([
-          {
-            id: 1,
-            message: 'Welkom bij Career Launch Day!',
-            time: new Date().toISOString()
-          }
-        ]);
+        setNotifications([]);
       }
     };
 
     fetchNotifications();
+
+    // Polling voor nieuwe meldingen elke 30 seconden
+    const interval = setInterval(fetchNotifications, 30000);
+
+    return () => clearInterval(interval);
   }, [gebruiker]);
+
+  const markNotificationAsRead = async (notificationId) => {
+    try {
+      await apiClient.put(`/notifications/${notificationId}/read`);
+      
+      setNotifications(prev => 
+        prev.map(notif => 
+          notif.notification_id === notificationId 
+            ? { ...notif, gelezen: true }
+            : notif
+        )
+      );
+    } catch (error) {
+      console.error('Fout bij markeren als gelezen:', error);
+    }
+  };
+
+  const deleteNotification = async (notificationId) => {
+    try {
+      await apiClient.delete(`/notifications/${notificationId}`);
+      
+      setNotifications(prev => 
+        prev.filter(notif => notif.notification_id !== notificationId)
+      );
+    } catch (error) {
+      console.error('Fout bij verwijderen melding:', error);
+    }
+  };
 
   const addReminder = (reminder) => {
     const newReminders = [...reminders, reminder];
@@ -536,8 +685,11 @@ const dashboardCards = [
         setNewReminder={setNewReminder}
         handleReminderSubmit={handleReminderSubmit}
         addEventReminder={addEventReminder}
+        markNotificationAsRead={markNotificationAsRead}
+        deleteNotification={deleteNotification}
       />
     </div>
   );
 }
+
 export default BedrijvenDashboard;
