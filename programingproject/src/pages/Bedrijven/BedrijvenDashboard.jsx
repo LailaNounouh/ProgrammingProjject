@@ -19,7 +19,7 @@ import {
 } from 'react-icons/fa';
 import './BedrijvenDashboard.css';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthProvider';
+import useAuth from '../../context/AuthProvider';
 import apiClient from '../../utils/apiClient';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -428,7 +428,7 @@ function DashboardContent({
 
 function BedrijvenDashboard() {
   const navigate = useNavigate();
-  const { gebruiker } = useAuth();
+  const { gebruiker } = useAuth(); // verwacht bedrijf gebruiker object met id
   const [betalingen, setBetalingen] = useState([]);
   const [afspraken, setAfspraken] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -449,6 +449,7 @@ function BedrijvenDashboard() {
   const [afsprakenCount, setAfsprakenCount] = useState(0);
   const [aankomende_afspraken, setAankomende_afspraken] = useState([]);
   const notificationRef = useRef(null);
+  const pollingRef = useRef(null);
 
   const upcomingEvents = [
     {
@@ -541,11 +542,11 @@ function BedrijvenDashboard() {
     if (!gebruiker?.id) return;
 
     try {
-      const data = await apiClient.get(`/afspraken/notifications/${gebruiker.id}/bedrijf`);
-      // apiClient verwacht meestal de JSON body als response; pas aan als jouw apiClient anders werkt
+      const resp = await apiClient.get(`/afspraken/notifications/${gebruiker.id}/bedrijf`);
+      const data = resp?.data ?? resp; // ondersteunt zowel axios-like als fetch-like clients
       setNotifications(Array.isArray(data) ? data : (data?.notifications || []));
-    } catch (error) {
-      console.error('Fout bij ophalen notifications:', error);
+    } catch (err) {
+      console.error('Fout bij ophalen notifications:', err);
     }
   };
 
@@ -571,25 +572,19 @@ function BedrijvenDashboard() {
     try {
       await apiClient.put(`/afspraken/notifications/${notificationId}/read`);
       setNotifications(prev =>
-        prev.map(notif =>
-          notif.notification_id === notificationId
-            ? { ...notif, gelezen: true }
-            : notif
-        )
+        prev.map(n => (n.notification_id === Number(notificationId) ? { ...n, gelezen: 1 } : n))
       );
-    } catch (error) {
-      console.error('Fout bij markeren notification:', error);
+    } catch (err) {
+      console.error('Fout bij markeren als gelezen:', err);
     }
   };
 
   const deleteNotification = async (notificationId) => {
     try {
       await apiClient.delete(`/afspraken/notifications/${notificationId}`);
-      setNotifications(prev =>
-        prev.filter(notif => notif.notification_id !== notificationId)
-      );
-    } catch (error) {
-      console.error('Fout bij verwijderen notification:', error);
+      setNotifications(prev => prev.filter(n => n.notification_id !== Number(notificationId)));
+    } catch (err) {
+      console.error('Fout bij verwijderen notification:', err);
     }
   };
 
