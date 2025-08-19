@@ -3,11 +3,28 @@ const router = express.Router();
 const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
 
+console.log('🟢 Notifications router loaded');
+
 // GET alle notifications voor een bedrijf
 router.get('/bedrijf/:bedrijfId', authenticateToken, async (req, res) => {
+  console.log('🔵 GET /notifications/bedrijf/:bedrijfId called');
+  console.log('🔵 bedrijfId:', req.params.bedrijfId);
+  console.log('🔵 User from token:', req.user);
+  
   const { bedrijfId } = req.params;
   
   try {
+    console.log('🔵 Executing database query...');
+    
+    // Check if Notifications table exists first
+    const [tableCheck] = await db.execute("SHOW TABLES LIKE 'Notifications'");
+    console.log('🔵 Table check result:', tableCheck);
+    
+    if (tableCheck.length === 0) {
+      console.log('🔴 Notifications table does not exist!');
+      return res.status(500).json({ error: 'Notifications table not found' });
+    }
+    
     const [rows] = await db.execute(
       `SELECT 
         notification_id,
@@ -25,21 +42,25 @@ router.get('/bedrijf/:bedrijfId', authenticateToken, async (req, res) => {
       [bedrijfId]
     );
 
+    console.log('🟢 Database query successful, rows found:', rows.length);
+
     // Parse JSON data
     const notifications = rows.map(notif => ({
       ...notif,
       related_data: notif.related_data ? JSON.parse(notif.related_data) : null
     }));
 
+    console.log('🟢 Sending notifications:', notifications);
     res.json(notifications);
   } catch (error) {
-    console.error('Fout bij ophalen notifications:', error);
-    res.status(500).json({ error: 'Server error' });
+    console.error('🔴 Fout bij ophalen notifications:', error);
+    res.status(500).json({ error: 'Server error', details: error.message });
   }
 });
 
 // GET alle notifications voor een student
 router.get('/student/:studentId', authenticateToken, async (req, res) => {
+  console.log('🔵 GET /notifications/student/:studentId called');
   const { studentId } = req.params;
   
   try {
@@ -68,13 +89,20 @@ router.get('/student/:studentId', authenticateToken, async (req, res) => {
 
     res.json(notifications);
   } catch (error) {
-    console.error('Fout bij ophalen notifications:', error);
+    console.error('🔴 Fout bij ophalen notifications:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
+// Test route om te controleren of de router werkt
+router.get('/test', (req, res) => {
+  console.log('🔵 GET /notifications/test called');
+  res.json({ message: 'Notifications router works!', timestamp: new Date() });
+});
+
 // PUT markeer notification als gelezen
 router.put('/:notificationId/read', authenticateToken, async (req, res) => {
+  console.log('🔵 PUT /:notificationId/read called');
   const { notificationId } = req.params;
   
   try {
@@ -83,15 +111,17 @@ router.put('/:notificationId/read', authenticateToken, async (req, res) => {
       [notificationId]
     );
     
+    console.log('🟢 Notification marked as read:', notificationId);
     res.json({ success: true });
   } catch (error) {
-    console.error('Fout bij markeren als gelezen:', error);
+    console.error('🔴 Fout bij markeren als gelezen:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
 // DELETE verwijder notification
 router.delete('/:notificationId', authenticateToken, async (req, res) => {
+  console.log('🔵 DELETE /:notificationId called');
   const { notificationId } = req.params;
   
   try {
@@ -100,15 +130,19 @@ router.delete('/:notificationId', authenticateToken, async (req, res) => {
       [notificationId]
     );
     
+    console.log('🟢 Notification deleted:', notificationId);
     res.json({ success: true });
   } catch (error) {
-    console.error('Fout bij verwijderen notification:', error);
+    console.error('🔴 Fout bij verwijderen notification:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
 // POST create nieuwe notification (gebruikt door andere routes)
 router.post('/create', async (req, res) => {
+  console.log('🔵 POST /create called');
+  console.log('🔵 Body:', req.body);
+  
   const { userId, userType, type, bericht, relatedData } = req.body;
   
   try {
@@ -118,9 +152,10 @@ router.post('/create', async (req, res) => {
       [userId, userType, type, bericht, JSON.stringify(relatedData)]
     );
     
+    console.log('🟢 Notification created successfully');
     res.json({ success: true });
   } catch (error) {
-    console.error('Fout bij maken notification:', error);
+    console.error('🔴 Fout bij maken notification:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -175,5 +210,7 @@ router.get('/unread-count/:userId/:userType', authenticateToken, async (req, res
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+console.log('🟢 All notification routes registered');
 
 module.exports = router;
