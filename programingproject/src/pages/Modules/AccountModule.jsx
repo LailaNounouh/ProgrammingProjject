@@ -20,7 +20,7 @@ export default function AccountModule() {
     naam: "",
     voornaam: "",
     studie: "",
-    foto_url: null,
+    // foto_url: null,   // tijdelijk verwijderd
     linkedin_url: "",
     github_url: "",
     jobstudent: false,
@@ -88,7 +88,7 @@ export default function AccountModule() {
         github_url: profiel.github || "",
         linkedin_url: profiel.linkedin || "",
         studie: profiel.studie || "",
-        foto_url: profiel.foto_url || null,
+        // foto_url: profiel.foto_url || null,
         jobstudent: profiel.jobstudent || false,
         werkzoekend: profiel.werkzoekend || false,
         stage_gewenst: profiel.stage_gewenst || false,
@@ -445,22 +445,9 @@ export default function AccountModule() {
                     />
                   </div>
                   
-                  <div className="form-group">
-                    <label htmlFor="foto">Profielfoto</label>
-                    <div className="file-upload-container">
-                      <input
-                        type="file"
-                        id="foto"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                      />
-                      {(userData.foto_url && typeof userData.foto_url === 'string') && (
-                        <div className="profielfoto-preview">
-                          <img src={userData.foto_url} alt="Profielfoto preview" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  {/* Profielfoto upload veld tijdelijk verwijderd */}
+                  {/* <input type="file" onChange={handleFileChange} /> */}
+                  {/* <button type="button" onClick={uploadFoto}>Upload</button> */}
                 </div>
               )}
               
