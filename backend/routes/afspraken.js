@@ -1,14 +1,31 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../db');
+const db = require('../db');
+const { authenticateToken } = require('../middleware/auth');
 
-const STANDAARD_TIJDEN = [
-  '13:30', '13:45', '14:00', '14:15', '14:30', '14:45',
-  '15:00', '15:15', '15:30', '15:45', '16:00', '16:15',
-];
+// Helper functie om notification te maken
+const createNotification = async (userId, userType, type, bericht, relatedData = null) => {
+  try {
+    await db.execute(
+      `INSERT INTO Notifications (user_id, user_type, type, bericht, related_data)
+       VALUES (?, ?, ?, ?, ?)`,
+      [userId, userType, type, bericht, JSON.stringify(relatedData)]
+    );
+  } catch (error) {
+    console.error('Fout bij maken notification:', error);
+  }
+};
 
-// Constante voor de datum van de Career Launch Day
+// Voeg ook de CAREER_LAUNCH_DAY en STANDAARD_TIJDEN constanten toe
 const CAREER_LAUNCH_DAY = '2026-03-13';
+const STANDAARD_TIJDEN = [
+  '09:00-09:15', '09:15-09:30', '09:30-09:45', '09:45-10:00',
+  '10:00-10:15', '10:15-10:30', '10:30-10:45', '10:45-11:00',
+  '11:00-11:15', '11:15-11:30', '11:30-11:45', '11:45-12:00',
+  '13:00-13:15', '13:15-13:30', '13:30-13:45', '13:45-14:00',
+  '14:00-14:15', '14:15-14:30', '14:30-14:45', '14:45-15:00',
+  '15:00-15:15', '15:15-15:30', '15:30-15:45', '15:45-16:00'
+];
 
 /**
  * @route GET /api/afspraken
@@ -16,7 +33,7 @@ const CAREER_LAUNCH_DAY = '2026-03-13';
  */
 router.get('/', async (req, res) => {
   try {
-    const [afspraken] = await pool.query(`
+    const [afspraken] = await db.query(`
       SELECT a.afspraak_id, a.student_id, a.bedrijf_id, a.tijdslot, a.datum, a.status,
              b.naam AS bedrijfsnaam
       FROM Afspraken a
@@ -37,7 +54,7 @@ router.get('/', async (req, res) => {
 router.get('/student/:studentId', async (req, res) => {
   const { studentId } = req.params;
   try {
-    const [afspraken] = await pool.query(`
+    const [afspraken] = await db.query(`
       SELECT a.afspraak_id, a.tijdslot, a.datum,
              b.naam AS bedrijfsnaam, b.logo_url
       FROM Afspraken a
@@ -60,7 +77,7 @@ router.get('/student/:studentId', async (req, res) => {
 router.get('/bedrijf/:bedrijfId', async (req, res) => {
   const { bedrijfId } = req.params;
   try {
-    const [afspraken] = await pool.query(`
+    const [afspraken] = await db.query(`
       SELECT a.afspraak_id, a.tijdslot, a.datum, a.student_id, a.status,
              s.naam AS studentnaam, s.email AS studentemail
       FROM Afspraken a
@@ -86,7 +103,7 @@ router.get('/beschikbaar/:bedrijfId', async (req, res) => {
   const datum = CAREER_LAUNCH_DAY;
 
   try {
-    const [bedrijven] = await pool.query('SELECT * FROM Bedrijven WHERE bedrijf_id = ?', [bedrijfId]);
+    const [bedrijven] = await db.query('SELECT * FROM Bedrijven WHERE bedrijf_id = ?', [bedrijfId]);
 
     if (bedrijven.length === 0) {
       return res.status(404).json({ error: 'Bedrijf niet gevonden' });
@@ -107,7 +124,7 @@ router.get('/beschikbaar/:bedrijfId', async (req, res) => {
       }
     }
 
-    const [afspraken] = await pool.query(
+    const [afspraken] = await db.query(
       'SELECT tijdslot FROM Afspraken WHERE bedrijf_id = ? AND datum = ?',
       [bedrijfId, datum]
     );
@@ -144,7 +161,7 @@ router.post('/nieuw', async (req, res) => {
 
   try {
     // Check 1: Tijdslot already taken by this company
-    const [bestaandeTijdslot] = await pool.query(
+    const [bestaandeTijdslot] = await db.query(
       'SELECT * FROM Afspraken WHERE bedrijf_id = ? AND datum = ? AND tijdslot = ?',
       [bedrijf_id, datum, tijdslot]
     );
@@ -154,7 +171,7 @@ router.post('/nieuw', async (req, res) => {
     }
 
     // Check 2: Student already has appointment at same time (different company)
-    const [studentTijdslot] = await pool.query(
+    const [studentTijdslot] = await db.query(
       'SELECT * FROM Afspraken WHERE student_id = ? AND datum = ? AND tijdslot = ?',
       [student_id, datum, tijdslot]
     );
@@ -164,7 +181,7 @@ router.post('/nieuw', async (req, res) => {
     }
 
     // Check 3: Student already has appointment with this company (any time)
-    const [studentBedrijf] = await pool.query(
+    const [studentBedrijf] = await db.query(
       'SELECT * FROM Afspraken WHERE student_id = ? AND bedrijf_id = ?',
       [student_id, bedrijf_id]
     );
@@ -174,7 +191,7 @@ router.post('/nieuw', async (req, res) => {
     }
 
     // All checks passed, create the appointment
-    const [result] = await pool.query(
+    const [result] = await db.query(
       `INSERT INTO Afspraken (student_id, bedrijf_id, tijdslot, datum, status)
        VALUES (?, ?, ?, ?, 'in_afwachting')`,
       [student_id, bedrijf_id, tijdslot, datum]
@@ -183,7 +200,7 @@ router.post('/nieuw', async (req, res) => {
     const afspraak_id = result.insertId;
 
     // Create notification for company
-    await pool.query(`
+    await db.query(`
       INSERT INTO Bedrijf_Notifications
         (bedrijf_id, type, message, is_read, created_at)
        VALUES (?, 'appointment', ?, 0, NOW())`,
@@ -217,7 +234,7 @@ router.put('/:afspraakId', async (req, res) => {
   }
 
   try {
-    const [afspraken] = await pool.query('SELECT * FROM Afspraken WHERE afspraak_id = ?', [afspraakId]);
+    const [afspraken] = await db.query('SELECT * FROM Afspraken WHERE afspraak_id = ?', [afspraakId]);
     if (afspraken.length === 0) {
       return res.status(404).json({ error: 'Afspraak niet gevonden' });
     }
@@ -237,7 +254,7 @@ router.put('/:afspraakId', async (req, res) => {
 
     values.push(afspraakId);
 
-    await pool.query(`UPDATE Afspraken SET ${updates.join(', ')} WHERE afspraak_id = ?`, values);
+    await db.query(`UPDATE Afspraken SET ${updates.join(', ')} WHERE afspraak_id = ?`, values);
     res.json({ message: 'Afspraak succesvol bijgewerkt' });
   } catch (err) {
     console.error('[Serverfout] Afspraak bijwerken mislukt:', err);
@@ -253,12 +270,12 @@ router.delete('/:afspraakId', async (req, res) => {
   const { afspraakId } = req.params;
 
   try {
-    const [check] = await pool.query('SELECT * FROM Afspraken WHERE afspraak_id = ?', [afspraakId]);
+    const [check] = await db.query('SELECT * FROM Afspraken WHERE afspraak_id = ?', [afspraakId]);
     if (check.length === 0) {
       return res.status(404).json({ error: 'Afspraak niet gevonden' });
     }
 
-    await pool.query('DELETE FROM Afspraken WHERE afspraak_id = ?', [afspraakId]);
+    await db.query('DELETE FROM Afspraken WHERE afspraak_id = ?', [afspraakId]);
     res.json({ message: 'Afspraak succesvol verwijderd' });
   } catch (err) {
     console.error('[Serverfout] Afspraak verwijderen mislukt:', err);
@@ -285,7 +302,7 @@ router.put('/:id/status', async (req, res) => {
   try {
     // Als de status 'geweigerd' is, verwijder de afspraak
     if (status === 'geweigerd') {
-      const [result] = await pool.execute(
+      const [result] = await db.execute(
         'DELETE FROM Afspraken WHERE afspraak_id = ?',
         [afspraakId]
       );
@@ -301,7 +318,7 @@ router.put('/:id/status', async (req, res) => {
       });
     } else {
       // Anders update de status
-      const [result] = await pool.execute(
+      const [result] = await db.execute(
         'UPDATE Afspraken SET status = ? WHERE afspraak_id = ?',
         [status, afspraakId]
       );
@@ -334,7 +351,7 @@ router.get('/bezet', async (req, res) => {
   }
 
   try {
-    const [afspraken] = await pool.query(
+    const [afspraken] = await db.query(
       'SELECT tijdslot FROM Afspraken WHERE bedrijf_id = ? AND datum = ?',
       [bedrijf_id, datum]
     );
@@ -356,7 +373,7 @@ router.get('/student-details/:studentId', async (req, res) => {
   
   try {
     // Haal basisinformatie op over de student
-    const [studentRows] = await pool.query(`
+    const [studentRows] = await db.query(`
       SELECT s.student_id, s.naam, s.email, s.telefoon, s.studie, 
              s.github_url, s.linkedin_url, s.aboutMe, 
              s.softskills, s.hardskills, s.programmeertalen, s.talen
@@ -422,19 +439,6 @@ router.get('/student-details/:studentId', async (req, res) => {
   }
 });
 
-// Helper functie om notification te maken
-const createNotification = async (userId, userType, type, bericht, relatedData = null) => {
-  try {
-    await db.execute(
-      `INSERT INTO Notifications (user_id, user_type, type, bericht, related_data)
-       VALUES (?, ?, ?, ?, ?)`,
-      [userId, userType, type, bericht, JSON.stringify(relatedData)]
-    );
-  } catch (error) {
-    console.error('Fout bij maken notification:', error);
-  }
-};
-
 /**
  * @route POST /api/afspraken
  * @desc Maak een nieuwe afspraak aan
@@ -445,7 +449,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
   try {
     // Check 1: Tijdslot already taken by this company
-    const [bestaandeTijdslot] = await pool.query(
+    const [bestaandeTijdslot] = await db.execute(
       'SELECT * FROM Afspraken WHERE bedrijf_id = ? AND datum = ? AND tijdslot = ?',
       [bedrijf_id, datum, tijdslot]
     );
@@ -455,7 +459,7 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 
     // Check 2: Student already has appointment at same time (different company)
-    const [studentTijdslot] = await pool.query(
+    const [studentTijdslot] = await db.execute(
       'SELECT * FROM Afspraken WHERE student_id = ? AND datum = ? AND tijdslot = ?',
       [student_id, datum, tijdslot]
     );
@@ -465,7 +469,7 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 
     // Check 3: Student already has appointment with this company (any time)
-    const [studentBedrijf] = await pool.query(
+    const [studentBedrijf] = await db.execute(
       'SELECT * FROM Afspraken WHERE student_id = ? AND bedrijf_id = ?',
       [student_id, bedrijf_id]
     );
@@ -475,19 +479,19 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 
     // All checks passed, create the appointment
-    const [result] = await pool.query(
+    const [result] = await db.execute(
       `INSERT INTO Afspraken (student_id, bedrijf_id, tijdslot, datum, status)
        VALUES (?, ?, ?, ?, 'in_afwachting')`,
       [student_id, bedrijf_id, tijdslot, datum]
     );
 
     // Haal student en bedrijf gegevens op voor notification
-    const [studentRows] = await pool.query(
+    const [studentRows] = await db.execute(
       'SELECT voornaam, naam FROM Studenten WHERE student_id = ?',
       [student_id]
     );
     
-    const [bedrijfRows] = await pool.query(
+    const [bedrijfRows] = await db.execute(
       'SELECT naam FROM Bedrijven WHERE bedrijf_id = ?',
       [bedrijf_id]
     );
@@ -539,7 +543,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
 /**
  * @route PUT /api/afspraken/:id/status
- * @desc Update appointment status (accept/reject)
+ * @desc Update appointment status (accept/reject) - BEHOUD ALLEEN DEZE VERSIE
  */
 router.put('/:id/status', authenticateToken, async (req, res) => {
   const { id } = req.params;
