@@ -3,30 +3,33 @@ const router = express.Router();
 const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
 
+// In-memory notifications store
+let notifications = [];
+let notificationId = 1;
+
 // Helper functie om notification te maken
-const createNotification = async (userId, userType, type, bericht, relatedData = null) => {
-  console.log('🔔 Creating notification:', { userId, userType, type, bericht });
-  try {
-    const [result] = await db.execute(
-      `INSERT INTO Notifications (user_id, user_type, type, bericht, related_data)
-       VALUES (?, ?, ?, ?, ?)`,
-      [userId, userType, type, bericht, JSON.stringify(relatedData)]
-    );
-    console.log('✅ Notification created with ID:', result.insertId);
-    
-    // Test: Direct ophalen van de notification
-    const [check] = await db.execute(
-      'SELECT * FROM Notifications WHERE notification_id = ?',
-      [result.insertId]
-    );
-    console.log('✅ Notification verification:', check[0]);
-    
-  } catch (error) {
-    console.error('❌ Fout bij maken notification:', error);
-  }
+const createNotification = (userId, userType, type, bericht, relatedData = null) => {
+  const notification = {
+    notification_id: notificationId++,
+    user_id: userId,
+    user_type: userType,
+    type: type,
+    bericht: bericht,
+    related_data: relatedData,
+    gelezen: false,
+    created_at: new Date().toISOString()
+  };
+  
+  notifications.push(notification);
+  console.log('🔔 Notification created:', notification);
+  return notification;
 };
 
-// Voeg ook de CAREER_LAUNCH_DAY en STANDAARD_TIJDEN constanten toe
+// Helper functie om notifications op te halen voor een gebruiker
+const getNotificationsForUser = (userId, userType) => {
+  return notifications.filter(n => n.user_id === userId && n.user_type === userType);
+};
+
 const CAREER_LAUNCH_DAY = '2026-03-13';
 const STANDAARD_TIJDEN = [
   '09:00-09:15', '09:15-09:30', '09:30-09:45', '09:45-10:00',
@@ -90,7 +93,7 @@ router.get('/bedrijf/:bedrijfId', async (req, res) => {
     console.log(`[API] GET /api/afspraken/bedrijf/${bedrijfId} - start`);
     const sql = `
       SELECT a.afspraak_id, a.tijdslot, a.datum, a.student_id, a.status,
-             s.naam AS studentnaam, s.email AS studentemail
+             s.voornaam, s.naam AS studentnaam, s.email AS studentemail
       FROM Afspraken a
       LEFT JOIN Studenten s ON a.student_id = s.student_id
       WHERE a.bedrijf_id = ?
@@ -462,7 +465,6 @@ router.post('/', authenticateToken, async (req, res) => {
   const student_id = req.user.id;
 
   try {
-    // Check 1: Tijdslot already taken by this company
     const [bestaandeTijdslot] = await db.execute(
       'SELECT * FROM Afspraken WHERE bedrijf_id = ? AND datum = ? AND tijdslot = ?',
       [bedrijf_id, datum, tijdslot]
@@ -472,7 +474,6 @@ router.post('/', authenticateToken, async (req, res) => {
       return res.status(409).json({ error: 'Dit tijdslot is al bezet bij dit bedrijf' });
     }
 
-    // Check 2: Student already has appointment at same time (different company)
     const [studentTijdslot] = await db.execute(
       'SELECT * FROM Afspraken WHERE student_id = ? AND datum = ? AND tijdslot = ?',
       [student_id, datum, tijdslot]
@@ -482,7 +483,6 @@ router.post('/', authenticateToken, async (req, res) => {
       return res.status(409).json({ error: 'Je hebt al een afspraak op dit tijdslot' });
     }
 
-    // Check 3: Student already has appointment with this company (any time)
     const [studentBedrijf] = await db.execute(
       'SELECT * FROM Afspraken WHERE student_id = ? AND bedrijf_id = ?',
       [student_id, bedrijf_id]
@@ -492,16 +492,15 @@ router.post('/', authenticateToken, async (req, res) => {
       return res.status(409).json({ error: 'Je hebt al een afspraak met dit bedrijf' });
     }
 
-    // All checks passed, create the appointment
     const [result] = await db.execute(
       `INSERT INTO Afspraken (student_id, bedrijf_id, tijdslot, datum, status)
        VALUES (?, ?, ?, ?, 'in_afwachting')`,
       [student_id, bedrijf_id, tijdslot, datum]
     );
 
-    // Haal student en bedrijf gegevens op voor notification
+    // Haal student en bedrijf gegevens op voor notifications
     const [studentRows] = await db.execute(
-      'SELECT naam FROM Studenten WHERE student_id = ?',
+      'SELECT voornaam, naam FROM Studenten WHERE student_id = ?',
       [student_id]
     );
     
@@ -510,11 +509,11 @@ router.post('/', authenticateToken, async (req, res) => {
       [bedrijf_id]
     );
 
-    const studentNaam = studentRows[0] ? studentRows[0].naam : 'Onbekend';
+    const studentNaam = studentRows[0] ? `${studentRows[0].voornaam} ${studentRows[0].naam}` : 'Onbekend';
     const bedrijfNaam = bedrijfRows[0]?.naam || 'Onbekend';
 
     // Stuur notification naar bedrijf
-    await createNotification(
+    createNotification(
       bedrijf_id,
       'bedrijf',
       'nieuwe_afspraak',
@@ -529,7 +528,7 @@ router.post('/', authenticateToken, async (req, res) => {
     );
 
     // Stuur notification naar student
-    await createNotification(
+    createNotification(
       student_id,
       'student',
       'afspraak_aangevraagd',
@@ -566,7 +565,7 @@ router.put('/:id/status', authenticateToken, async (req, res) => {
   try {
     // Haal huidige afspraak gegevens op
     const [afspraakRows] = await db.execute(
-      `SELECT a.*, s.naam as student_naam, b.naam as bedrijf_naam
+      `SELECT a.*, s.voornaam, s.naam as student_naam, b.naam as bedrijf_naam
        FROM Afspraken a
        JOIN Studenten s ON a.student_id = s.student_id
        JOIN Bedrijven b ON a.bedrijf_id = b.bedrijf_id
@@ -579,46 +578,63 @@ router.put('/:id/status', authenticateToken, async (req, res) => {
     }
 
     const afspraak = afspraakRows[0];
-    const studentNaam = afspraak.student_naam || 'Student';
-    const bedrijfNaam = afspraak.bedrijf_naam || 'Bedrijf';
+    const studentNaam = `${afspraak.voornaam} ${afspraak.student_naam}`;
 
-    // Update afspraak status
+    // Update status
     await db.execute(
-      `UPDATE Afspraken SET status = ? WHERE afspraak_id = ?`,
+      'UPDATE Afspraken SET status = ? WHERE afspraak_id = ?',
       [status, id]
     );
 
-    // Stuur notificatie naar student of bedrijf, afhankelijk van de status
-    let message;
+    // Stuur notifications
     if (status === 'goedgekeurd') {
-      message = `Je afspraak met ${bedrijfNaam} op ${afspraak.datum} om ${afspraak.tijdslot} is goedgekeurd.`;
-      await createNotification(afspraak.student_id, 'student', 'afspraak_goedgekeurd', message, {
-        afspraak_id: id,
-        bedrijf_id: afspraak.bedrijf_id,
-        datum: afspraak.datum,
-        tijdslot: afspraak.tijdslot
-      });
-    } else if (status === 'geweigerd') {
-      message = `Je afspraak met ${bedrijfNaam} op ${afspraak.datum} om ${afspraak.tijdslot} is geweigerd.`;
-      await createNotification(afspraak.student_id, 'student', 'afspraak_geweigerd', message, {
-        afspraak_id: id
-      });
+      await createNotification(
+        afspraak.student_id,
+        'student',
+        'afspraak_goedgekeurd',
+        `Uw afspraak met ${afspraak.bedrijf_naam} is goedgekeurd`,
+        {
+          bedrijf_id: afspraak.bedrijf_id,
+          bedrijf_naam: afspraak.bedrijf_naam,
+          tijdslot: afspraak.tijdslot,
+          datum: afspraak.datum,
+          afspraak_id: id
+        }
+      );
+    } else if (status === 'afgewezen') {
+      await createNotification(
+        afspraak.student_id,
+        'student',
+        'afspraak_afgewezen',
+        `Uw afspraak met ${afspraak.bedrijf_naam} is afgewezen`,
+        {
+          bedrijf_id: afspraak.bedrijf_id,
+          bedrijf_naam: afspraak.bedrijf_naam,
+          tijdslot: afspraak.tijdslot,
+          datum: afspraak.datum,
+          afspraak_id: id
+        }
+      );
     }
 
-    res.json({ message: 'Afspraak status succesvol bijgewerkt', status });
+    res.json({ success: true, message: `Afspraak ${status}` });
+
   } catch (error) {
-    console.error('Fout bij bijwerken afspraak status:', error);
-    res.status(500).json({ error: 'Interne serverfout' });
+    console.error('Fout bij updaten afspraak status:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
+/**
+ * @route DELETE /api/afspraken/:id
+ * @desc Verwijder een afspraak
+ */
 router.delete('/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
   
   try {
-    // Haal afspraak gegevens op
     const [afspraakRows] = await db.execute(
-      `SELECT a.*, s.naam as student_naam, b.naam as bedrijf_naam
+      `SELECT a.*, s.voornaam, s.naam as student_naam, b.naam as bedrijf_naam
        FROM Afspraken a
        JOIN Studenten s ON a.student_id = s.student_id
        JOIN Bedrijven b ON a.bedrijf_id = b.bedrijf_id
@@ -630,28 +646,13 @@ router.delete('/:id', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'Afspraak niet gevonden' });
     }
 
-    const afspraak = afspraakRows[0];
-    const studentNaam = afspraak.student_naam || 'Student';
-    const bedrijfNaam = afspraak.bedrijf_naam || 'Bedrijf';
+    await db.execute('DELETE FROM Afspraken WHERE afspraak_id = ?', [id]);
 
-    // Verwijder de afspraak
-    await db.execute(
-      `DELETE FROM Afspraken WHERE afspraak_id = ?`,
-      [id]
-    );
+    res.json({ success: true, message: 'Afspraak geannuleerd' });
 
-    // Stuur notificatie naar student en bedrijf
-    await createNotification(afspraak.student_id, 'student', 'afspraak_geannuleerd', `Je afspraak met ${bedrijfNaam} op ${afspraak.datum} om ${afspraak.tijdslot} is geannuleerd.`, {
-      afspraak_id: id
-    });
-    await createNotification(afspraak.bedrijf_id, 'bedrijf', 'afspraak_geannuleerd', `Afspraak met student ${studentNaam} op ${afspraak.datum} om ${afspraak.tijdslot} is geannuleerd.`, {
-      afspraak_id: id
-    });
-
-    res.json({ message: 'Afspraak succesvol verwijderd' });
   } catch (error) {
-    console.error('Fout bij verwijderen afspraak:', error);
-    res.status(500).json({ error: 'Serverfout bij verwijderen van afspraak' });
+    console.error('Fout bij annuleren afspraak:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 

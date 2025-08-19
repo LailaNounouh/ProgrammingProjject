@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import {
   FaEuroSign,
@@ -537,24 +536,20 @@ function BedrijvenDashboard() {
     };
   }, []);
 
-  // Fetch notifications function (maak deze herbruikbaar)
+  // Fetch notifications functie (gebruik apiClient i.p.v. ongedefinieerde baseUrl)
   const fetchNotifications = async () => {
-    if (!gebruiker?.id || gebruiker?.type !== 'bedrijf') {
-      return;
-    }
+    if (!gebruiker?.id) return;
 
     try {
-      console.log('🔄 Fetching notifications for bedrijf:', gebruiker.id);
-      const data = await apiClient.get(`/notifications/bedrijf/${gebruiker.id}`);
-      console.log('✅ Notifications received:', data);
-      setNotifications(data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+      const data = await apiClient.get(`/afspraken/notifications/${gebruiker.id}/bedrijf`);
+      // apiClient verwacht meestal de JSON body als response; pas aan als jouw apiClient anders werkt
+      setNotifications(Array.isArray(data) ? data : (data?.notifications || []));
     } catch (error) {
-      console.error('Fout bij ophalen meldingen:', error);
-      setNotifications([]);
+      console.error('Fout bij ophalen notifications:', error);
     }
   };
 
-  // Refresh notifications function
+  // Refresh notifications functie
   const refreshNotifications = async () => {
     console.log('🔄 Manual refresh notifications triggered');
     await fetchNotifications();
@@ -562,6 +557,8 @@ function BedrijvenDashboard() {
 
   // Fetch notifications on component mount and polling
   useEffect(() => {
+    if (!gebruiker?.id) return;
+
     fetchNotifications();
 
     // Polling voor nieuwe meldingen elke 30 seconden
@@ -572,29 +569,27 @@ function BedrijvenDashboard() {
 
   const markNotificationAsRead = async (notificationId) => {
     try {
-      await apiClient.put(`/notifications/${notificationId}/read`);
-      
-      setNotifications(prev => 
-        prev.map(notif => 
-          notif.notification_id === notificationId 
+      await apiClient.put(`/afspraken/notifications/${notificationId}/read`);
+      setNotifications(prev =>
+        prev.map(notif =>
+          notif.notification_id === notificationId
             ? { ...notif, gelezen: true }
             : notif
         )
       );
     } catch (error) {
-      console.error('Fout bij markeren als gelezen:', error);
+      console.error('Fout bij markeren notification:', error);
     }
   };
 
   const deleteNotification = async (notificationId) => {
     try {
-      await apiClient.delete(`/notifications/${notificationId}`);
-      
-      setNotifications(prev => 
+      await apiClient.delete(`/afspraken/notifications/${notificationId}`);
+      setNotifications(prev =>
         prev.filter(notif => notif.notification_id !== notificationId)
       );
     } catch (error) {
-      console.error('Fout bij verwijderen melding:', error);
+      console.error('Fout bij verwijderen notification:', error);
     }
   };
 

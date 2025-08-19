@@ -524,7 +524,15 @@ function StudentenDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [studentNaam, setStudentNaam] = useState('');
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      message: 'Welkom bij CareerLaunch!',
+      type: 'info',
+      read: false,
+      timestamp: new Date()
+    }
+  ]);
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [reminders, setReminders] = useState([]);
   const [showReminderModal, setShowReminderModal] = useState(false);
@@ -544,18 +552,16 @@ function StudentenDashboard() {
 
   // Fetch notifications function
   const fetchNotifications = async () => {
-    if (!gebruiker?.id || gebruiker?.type !== 'student') {
-      return;
-    }
-
+    if (!gebruiker?.id) return;
+    
     try {
-      console.log('🔄 Fetching notifications for student:', gebruiker.id);
-      const data = await apiClient.get(`/notifications/student/${gebruiker.id}`);
-      console.log('✅ Student notifications received:', data);
-      setNotifications(data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+      const response = await fetch(`${baseUrl}/afspraken/notifications/${gebruiker.id}/student`);
+      if (response.ok) {
+        const data = await response.json();
+        setNotifications(data);
+      }
     } catch (error) {
-      console.error('Fout bij ophalen student meldingen:', error);
-      setNotifications([]);
+      console.error('Fout bij ophalen notifications:', error);
     }
   };
 
@@ -568,8 +574,9 @@ function StudentenDashboard() {
   // Notification handlers
   const markNotificationAsRead = async (notificationId) => {
     try {
-      await apiClient.put(`/notifications/${notificationId}/read`);
-      
+      await fetch(`${baseUrl}/afspraken/notifications/${notificationId}/read`, {
+        method: 'PUT'
+      });
       setNotifications(prev => 
         prev.map(notif => 
           notif.notification_id === notificationId 
@@ -578,19 +585,20 @@ function StudentenDashboard() {
         )
       );
     } catch (error) {
-      console.error('Fout bij markeren als gelezen:', error);
+      console.error('Fout bij markeren notification:', error);
     }
   };
 
   const deleteNotification = async (notificationId) => {
     try {
-      await apiClient.delete(`/notifications/${notificationId}`);
-      
+      await fetch(`${baseUrl}/afspraken/notifications/${notificationId}`, {
+        method: 'DELETE'
+      });
       setNotifications(prev => 
         prev.filter(notif => notif.notification_id !== notificationId)
       );
     } catch (error) {
-      console.error('Fout bij verwijderen melding:', error);
+      console.error('Fout bij verwijderen notification:', error);
     }
   };
 
