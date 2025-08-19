@@ -34,6 +34,7 @@ import StatusBetaling from './pages/Bedrijven/statusbetaling';
 import AfspraakOverzicht from "./pages/Bedrijven/Afspraakoverzicht";
 import Settingsbedrijf from "./pages/Bedrijven/Settingsbedrijf";
 import Standen from "./pages/Bedrijven/Standen";
+import BedrijfDetail from './pages/Student/BedrijfDetail';
  
 import AfsprakenModule from "./pages/Modules/AfsprakenModule";
 import BedrijvenModule from "./pages/Modules/BedrijvenModule";
@@ -108,6 +109,12 @@ export default function App() {
               <StudentenLayout><StandenModule /></StudentenLayout>
             </ProtectedRoute>
           } />
+              <Route path="/student/bedrijven/:id" element={
+            <ProtectedRoute allowedRoles={['student']}>
+              <StudentenLayout><BedrijfDetail /></StudentenLayout>
+            </ProtectedRoute>
+          } />
+
           
           {/* Admin - Protected Routes */}
           <Route path="/admin" element={
