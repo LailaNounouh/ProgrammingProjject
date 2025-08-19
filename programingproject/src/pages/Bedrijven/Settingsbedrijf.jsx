@@ -9,6 +9,34 @@ const Settingsbedrijf = () => {
   const { gebruiker } = useAuth();
   const navigate = useNavigate();
 
+  // Beschikbare tijdsloten voor speeddate sessies
+  const tijdslotOpties = [
+    "09:00-09:15",
+    "09:15-09:30", 
+    "09:30-09:45",
+    "09:45-10:00",
+    "10:00-10:15",
+    "10:15-10:30",
+    "10:30-10:45",
+    "10:45-11:00",
+    "11:00-11:15",
+    "11:15-11:30",
+    "11:30-11:45",
+    "11:45-12:00",
+    "13:00-13:15",
+    "13:15-13:30",
+    "13:30-13:45",
+    "13:45-14:00",
+    "14:00-14:15",
+    "14:15-14:30",
+    "14:30-14:45",
+    "14:45-15:00",
+    "15:00-15:15",
+    "15:15-15:30",
+    "15:30-15:45",
+    "15:45-16:00"
+  ];
+
   const [bedrijfsgegevens, setBedrijfsgegevens] = useState({
     bedrijfsnaam: "",
     sector: "",
@@ -24,7 +52,9 @@ const Settingsbedrijf = () => {
     poNummer: "",
     beursContact: "",
     beursEmail: "",
-    website: ""
+    website: "",
+    speeddates: false,
+    beschikbareTijdsloten: []
   });
 
   const [sectoren, setSectoren] = useState([]);
@@ -46,7 +76,6 @@ const Settingsbedrijf = () => {
           setSectoren(zichtbare);
         }
       } catch (err) {
-        console.error('Fout bij ophalen sectoren:', err);
         setSectoren([]);
       }
     };
@@ -78,7 +107,7 @@ const Settingsbedrijf = () => {
               const parsedUser = JSON.parse(userData);
               token = parsedUser.token;
             } catch (e) {
-              console.error('Error parsing user data:', e);
+              // Token parsing failed
             }
           }
         }
@@ -110,12 +139,14 @@ const Settingsbedrijf = () => {
           poNummer: data.po_nummer || "",
           beursContact: data.contactpersoon_beurs || "",
           beursEmail: data.email_beurs || "",
-          website: data.website_of_linkedin || ""
+          website: data.website_of_linkedin || "",
+          speeddates: data.speeddates === 1,
+          beschikbareTijdsloten: data.beschikbare_tijdsloten ? 
+            data.beschikbare_tijdsloten.split(',').map(slot => slot.trim().replace(/"/g, '')) : []
         });
 
         setError("");
       } catch (err) {
-        console.error("Fout bij ophalen bedrijfsgegevens:", err);
         setError(`Kon bedrijfsgegevens niet laden: ${err.message}`);
       } finally {
         setLoading(false);
@@ -131,6 +162,37 @@ const Settingsbedrijf = () => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleSpeedDateChange = (e) => {
+    const { checked } = e.target;
+    setBedrijfsgegevens(prev => ({
+      ...prev,
+      speeddates: checked,
+      beschikbareTijdsloten: checked ? prev.beschikbareTijdsloten : []
+    }));
+  };
+
+  // Handler voor tijdslot selectie
+  const handleTijdslotChange = (tijdslot) => {
+    setBedrijfsgegevens(prev => {
+      const huidige = prev.beschikbareTijdsloten;
+      const isGeselecteerd = huidige.includes(tijdslot);
+      
+      if (isGeselecteerd) {
+        // Verwijder tijdslot
+        return {
+          ...prev,
+          beschikbareTijdsloten: huidige.filter(slot => slot !== tijdslot)
+        };
+      } else {
+        // Voeg tijdslot toe
+        return {
+          ...prev,
+          beschikbareTijdsloten: [...huidige, tijdslot].sort()
+        };
+      }
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -153,7 +215,7 @@ const Settingsbedrijf = () => {
             const parsedUser = JSON.parse(userData);
             token = parsedUser.token;
           } catch (e) {
-            console.error('Error parsing user data:', e);
+            // Token parsing failed
           }
         }
       }
@@ -189,7 +251,10 @@ const Settingsbedrijf = () => {
         po_nummer: normalizeValue(bedrijfsgegevens.poNummer),
         contactpersoon_beurs: normalizeValue(bedrijfsgegevens.beursContact),
         email_beurs: normalizeValue(bedrijfsgegevens.beursEmail),
-        website_of_linkedin: normalizeValue(bedrijfsgegevens.website)
+        website_of_linkedin: normalizeValue(bedrijfsgegevens.website),
+        speeddates: bedrijfsgegevens.speeddates ? 1 : 0,
+        beschikbare_tijdsloten: bedrijfsgegevens.beschikbareTijdsloten.length > 0 ? 
+          bedrijfsgegevens.beschikbareTijdsloten.join(',') : null
       };
       
       const response = await fetch(`${baseUrl}/bedrijfprofiel/${gebruiker.id}`, {
@@ -206,13 +271,10 @@ const Settingsbedrijf = () => {
         throw new Error(`HTTP ${response.status}: ${errorData}`);
       }
 
-      const data = await response.json();
-      
       setSuccessMessage("Bedrijfsgegevens succesvol opgeslagen!");
       setEditMode(false);
       
     } catch (err) {
-      console.error("Fout bij opslaan bedrijfsgegevens:", err);
       setError(`Fout: ${err.message}`);
     } finally {
       setSaving(false);
@@ -274,6 +336,12 @@ const Settingsbedrijf = () => {
                 onClick={() => setActiveTab('beurs')}
               >
                 Beurscontact
+              </button>
+              <button 
+                className={`tab-button ${activeTab === 'speeddate' ? 'active' : ''}`}
+                onClick={() => setActiveTab('speeddate')}
+              >
+                Speeddate
               </button>
             </div>
             
@@ -482,6 +550,83 @@ const Settingsbedrijf = () => {
                   </div>
                 </div>
               )}
+
+              {/* Speeddate tab */}
+              {activeTab === 'speeddate' && (
+                <div className="tab-content">
+                  <h3>Speeddate Instellingen</h3>
+                  
+                  <div className="form-group">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={bedrijfsgegevens.speeddates}
+                        onChange={handleSpeedDateChange}
+                      />
+                      Wij willen deelnemen aan speeddate sessies
+                    </label>
+                    <p className="form-help">
+                      Speeddate sessies zijn korte gesprekjes van 15 minuten met studenten die interesse hebben in uw bedrijf.
+                    </p>
+                  </div>
+
+                  {bedrijfsgegevens.speeddates && (
+                    <div className="form-group">
+                      <label>Beschikbare tijdsloten *</label>
+                      <p className="form-help">
+                        Selecteer de tijdsloten waarin u beschikbaar bent voor speeddate sessies op 13 maart 2026.
+                      </p>
+                      
+                      {/* Voormiddag tijdsloten */}
+                      <div className="tijdslot-section">
+                        <h4 className="tijdslot-section-title">Voormiddag (09:00 - 12:00)</h4>
+                        <div className="tijdslot-row">
+                          {tijdslotOpties.slice(0, 12).map((tijdslot) => (
+                            <label key={tijdslot} className="tijdslot-option">
+                              <input
+                                type="checkbox"
+                                checked={bedrijfsgegevens.beschikbareTijdsloten.includes(tijdslot)}
+                                onChange={() => handleTijdslotChange(tijdslot)}
+                              />
+                              <span className="tijdslot-text">{tijdslot}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Namiddag tijdsloten */}
+                      <div className="tijdslot-section">
+                        <h4 className="tijdslot-section-title">Namiddag (13:00 - 16:00)</h4>
+                        <div className="tijdslot-row">
+                          {tijdslotOpties.slice(12).map((tijdslot) => (
+                            <label key={tijdslot} className="tijdslot-option">
+                              <input
+                                type="checkbox"
+                                checked={bedrijfsgegevens.beschikbareTijdsloten.includes(tijdslot)}
+                                onChange={() => handleTijdslotChange(tijdslot)}
+                              />
+                              <span className="tijdslot-text">{tijdslot}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      {bedrijfsgegevens.beschikbareTijdsloten.length > 0 && (
+                        <div className="selected-tijdsloten">
+                          <h4>✓ Geselecteerde tijdsloten ({bedrijfsgegevens.beschikbareTijdsloten.length})</h4>
+                          <div className="selected-list">
+                            {bedrijfsgegevens.beschikbareTijdsloten.sort().map((slot, index) => (
+                              <span key={index} className="selected-slot">
+                                {slot}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
               
               <div className="form-actions">
                 <button type="button" className="cancel-button" onClick={cancelEdit}>
@@ -574,6 +719,32 @@ const Settingsbedrijf = () => {
                   <label>E-mail</label>
                   <p>{bedrijfsgegevens.beursEmail || "Niet ingevuld"}</p>
                 </div>
+              </div>
+            </section>
+
+            <section className="account-section">
+              <h3>Speeddate Instellingen</h3>
+              <div className="info-grid">
+                <div className="info-item">
+                  <label>Deelname speeddate</label>
+                  <p>{bedrijfsgegevens.speeddates ? "Ja, wij nemen deel" : "Nee, geen deelname"}</p>
+                </div>
+                {bedrijfsgegevens.speeddates && (
+                  <div className="info-item">
+                    <label>Beschikbare tijdsloten</label>
+                    <p>
+                      {bedrijfsgegevens.beschikbareTijdsloten.length > 0 ? (
+                        <>
+                          {bedrijfsgegevens.beschikbareTijdsloten.map(slot => slot.replace(/"/g, '')).join(', ')}
+                          <br />
+                          <small>({bedrijfsgegevens.beschikbareTijdsloten.length} tijdsloten geselecteerd)</small>
+                        </>
+                      ) : (
+                        "Geen tijdsloten geselecteerd"
+                      )}
+                    </p>
+                  </div>
+                )}
               </div>
             </section>
           </div>
