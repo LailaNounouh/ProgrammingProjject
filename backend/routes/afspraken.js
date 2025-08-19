@@ -4,29 +4,22 @@ const db = require('../db');
 
 console.log('🟢 Afspraken router loaded');
 
-// Helper functie om notifications aan te maken
-const createNotification = async (userId, userType, type, bericht, relatedData = null) => {
-  console.log('🔔 Creating notification:', { userId, userType, type, bericht, relatedData });
-  try {
-    const [result] = await db.execute(
-      `INSERT INTO Notifications (user_id, user_type, type, bericht, related_data)
-       VALUES (?, ?, ?, ?, ?)`,
-      [userId, userType, type, bericht, JSON.stringify(relatedData)]
-    );
-    console.log('✅ Notification created with ID:', result.insertId);
-    
-    // Verificatie: haal de notification direct op
-    const [verification] = await db.execute(
-      'SELECT * FROM Notifications WHERE notification_id = ?',
-      [result.insertId]
-    );
-    console.log('✅ Notification verification:', verification[0]);
-    
-    return result.insertId;
-  } catch (error) {
-    console.error('❌ Fout bij maken notification:', error);
-    throw error;
-  }
+// Helper functie om real-time notifications te sturen
+const sendNotification = (req, userId, userType, type, message, data = null) => {
+  const io = req.app.get('io');
+  const roomName = `${userType}-${userId}`;
+  
+  const notification = {
+    id: Date.now(), // Simple ID
+    type,
+    message,
+    data,
+    timestamp: new Date().toISOString(),
+    read: false
+  };
+
+  console.log(`📤 Sending notification to room ${roomName}:`, notification);
+  io.to(roomName).emit('notification', notification);
 };
 
 // POST - Nieuwe afspraak aanmaken
@@ -71,9 +64,7 @@ router.post('/', async (req, res) => {
     const studentNaam = studentData[0] ? `${studentData[0].voornaam} ${studentData[0].naam}` : 'Onbekende student';
     const bedrijfNaam = bedrijfData[0] ? bedrijfData[0].bedrijfsnaam : 'Onbekend bedrijf';
 
-    console.log('📋 Student:', studentNaam, '| Bedrijf:', bedrijfNaam);
-
-    // Notification data voor beide partijen
+    // Notification data
     const notificationData = {
       afspraak_id: afspraakId,
       datum: datum,
@@ -82,30 +73,26 @@ router.post('/', async (req, res) => {
       bedrijf_naam: bedrijfNaam
     };
 
-    // Maak notifications aan voor beide partijen
-    try {
-      // Notification voor het bedrijf
-      await createNotification(
-        bedrijf_id,
-        'bedrijf',
-        'nieuwe_afspraak',
-        `Nieuwe afspraak aangevraagd door ${studentNaam} op ${new Date(datum).toLocaleDateString('nl-BE')} om ${tijdslot}`,
-        notificationData
-      );
+    // Stuur real-time notifications
+    sendNotification(
+      req,
+      bedrijf_id,
+      'bedrijf',
+      'nieuwe_afspraak',
+      `🔔 Nieuwe afspraak aangevraagd door ${studentNaam} op ${new Date(datum).toLocaleDateString('nl-BE')} om ${tijdslot}`,
+      notificationData
+    );
 
-      // Notification voor de student
-      await createNotification(
-        student_id,
-        'student',
-        'afspraak_aangevraagd',
-        `Afspraakverzoek verzonden naar ${bedrijfNaam} voor ${new Date(datum).toLocaleDateString('nl-BE')} om ${tijdslot}`,
-        notificationData
-      );
+    sendNotification(
+      req,
+      student_id,
+      'student',
+      'afspraak_aangevraagd',
+      `✅ Afspraakverzoek verzonden naar ${bedrijfNaam} voor ${new Date(datum).toLocaleDateString('nl-BE')} om ${tijdslot}`,
+      notificationData
+    );
 
-      console.log('✅ Both notifications created successfully');
-    } catch (notifError) {
-      console.error('⚠️ Fout bij maken notifications (maar afspraak is wel aangemaakt):', notifError);
-    }
+    console.log('✅ Real-time notifications sent');
 
     // Haal de volledige afspraak op om terug te sturen
     const [afspraakDetails] = await db.execute(
@@ -119,7 +106,6 @@ router.post('/', async (req, res) => {
       [afspraakId]
     );
 
-    console.log('✅ Afspraak created successfully with notifications');
     res.status(201).json({
       message: 'Afspraak succesvol aangemaakt',
       afspraak: afspraakDetails[0]
@@ -134,12 +120,9 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT - Afspraak status updaten (goedkeuren/afwijzen)
+// PUT - Afspraak status updaten
 router.put('/:id/status', async (req, res) => {
   console.log('🔵 PUT /afspraken/:id/status called');
-  console.log('🔵 Params:', req.params);
-  console.log('🔵 Body:', req.body);
-
   const { id } = req.params;
   const { status } = req.body;
 
@@ -165,7 +148,6 @@ router.put('/:id/status', async (req, res) => {
     }
 
     const afspraak = afspraakDetails[0];
-    const studentNaam = `${afspraak.voornaam} ${afspraak.studentnaam}`;
     const bedrijfNaam = afspraak.bedrijfsnaam;
 
     // Update de status
@@ -176,7 +158,7 @@ router.put('/:id/status', async (req, res) => {
 
     console.log(`✅ Afspraak ${id} status updated to: ${status}`);
 
-    // Maak notification voor de student over status wijziging
+    // Stuur real-time notification naar student
     const notificationData = {
       afspraak_id: id,
       datum: afspraak.datum,
@@ -185,30 +167,26 @@ router.put('/:id/status', async (req, res) => {
       nieuwe_status: status
     };
 
-    let notificationType = '';
-    let bericht = '';
+    let message = '';
+    let icon = '';
 
     if (status === 'goedgekeurd') {
-      notificationType = 'afspraak_goedgekeurd';
-      bericht = `Uw afspraak met ${bedrijfNaam} is goedgekeurd! Datum: ${new Date(afspraak.datum).toLocaleDateString('nl-BE')} om ${afspraak.tijdslot}`;
+      icon = '✅';
+      message = `${icon} Uw afspraak met ${bedrijfNaam} is goedgekeurd! Datum: ${new Date(afspraak.datum).toLocaleDateString('nl-BE')} om ${afspraak.tijdslot}`;
     } else if (status === 'afgewezen') {
-      notificationType = 'afspraak_afgewezen';
-      bericht = `Uw afspraak met ${bedrijfNaam} is helaas afgewezen. Probeer een ander tijdslot.`;
+      icon = '❌';
+      message = `${icon} Uw afspraak met ${bedrijfNaam} is helaas afgewezen. Probeer een ander tijdslot.`;
     }
 
-    if (notificationType && bericht) {
-      try {
-        await createNotification(
-          afspraak.student_id,
-          'student',
-          notificationType,
-          bericht,
-          notificationData
-        );
-        console.log('✅ Status change notification created');
-      } catch (notifError) {
-        console.error('⚠️ Fout bij maken status notification:', notifError);
-      }
+    if (message) {
+      sendNotification(
+        req,
+        afspraak.student_id,
+        'student',
+        `afspraak_${status}`,
+        message,
+        notificationData
+      );
     }
 
     res.json({
@@ -255,7 +233,7 @@ router.delete('/:id', async (req, res) => {
     await db.execute('DELETE FROM Afspraken WHERE afspraak_id = ?', [id]);
     console.log(`✅ Afspraak ${id} deleted`);
 
-    // Maak notifications voor beide partijen over de annulering
+    // Stuur real-time notifications
     const notificationData = {
       afspraak_id: id,
       datum: afspraak.datum,
@@ -264,29 +242,23 @@ router.delete('/:id', async (req, res) => {
       bedrijf_naam: bedrijfNaam
     };
 
-    try {
-      // Notification voor het bedrijf
-      await createNotification(
-        afspraak.bedrijf_id,
-        'bedrijf',
-        'afspraak_geannuleerd',
-        `Afspraak met ${studentNaam} is geannuleerd (${new Date(afspraak.datum).toLocaleDateString('nl-BE')} om ${afspraak.tijdslot})`,
-        notificationData
-      );
+    sendNotification(
+      req,
+      afspraak.bedrijf_id,
+      'bedrijf',
+      'afspraak_geannuleerd',
+      `🚫 Afspraak met ${studentNaam} is geannuleerd (${new Date(afspraak.datum).toLocaleDateString('nl-BE')} om ${afspraak.tijdslot})`,
+      notificationData
+    );
 
-      // Notification voor de student
-      await createNotification(
-        afspraak.student_id,
-        'student',
-        'afspraak_geannuleerd',
-        `Uw afspraak met ${bedrijfNaam} is geannuleerd (${new Date(afspraak.datum).toLocaleDateString('nl-BE')} om ${afspraak.tijdslot})`,
-        notificationData
-      );
-
-      console.log('✅ Cancellation notifications created');
-    } catch (notifError) {
-      console.error('⚠️ Fout bij maken cancellation notifications:', notifError);
-    }
+    sendNotification(
+      req,
+      afspraak.student_id,
+      'student',
+      'afspraak_geannuleerd',
+      `🚫 Uw afspraak met ${bedrijfNaam} is geannuleerd (${new Date(afspraak.datum).toLocaleDateString('nl-BE')} om ${afspraak.tijdslot})`,
+      notificationData
+    );
 
     res.json({ message: 'Afspraak succesvol verwijderd' });
 

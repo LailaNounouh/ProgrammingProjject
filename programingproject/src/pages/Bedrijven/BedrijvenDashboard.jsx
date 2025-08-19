@@ -23,6 +23,7 @@ import { useAuth } from '../../context/AuthProvider';
 import apiClient from '../../utils/apiClient';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { useNotifications } from '../../hooks/useNotifications';
 
 function DashboardContent({
   bedrijfNaam,
@@ -426,7 +427,7 @@ function DashboardContent({
   );
 }
 
-function BedrijvenDashboard() {
+const BedrijvenDashboard = () => {
   const navigate = useNavigate();
   const { gebruiker } = useAuth();
   const [betalingen, setBetalingen] = useState([]);
@@ -436,7 +437,7 @@ function BedrijvenDashboard() {
   const [bedrijfNaam, setBedrijfNaam] = useState('');
   const [bedrijfData, setBedrijfData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [notifications, setNotifications] = useState([]);
+  const { notifications, markAsRead, clearNotifications, unreadCount } = useNotifications();
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [reminders, setReminders] = useState([]);
   const [showReminderModal, setShowReminderModal] = useState(false);
@@ -535,23 +536,6 @@ function BedrijvenDashboard() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  // Fetch notifications function (maak deze herbruikbaar)
-  const fetchNotifications = async () => {
-    if (!gebruiker?.id || gebruiker?.type !== 'bedrijf') {
-      return;
-    }
-
-    try {
-      console.log('🔄 Fetching notifications for bedrijf:', gebruiker.id);
-      const data = await apiClient.get(`/notifications/bedrijf/${gebruiker.id}`);
-      console.log('✅ Notifications received:', data);
-      setNotifications(data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
-    } catch (error) {
-      console.error('Fout bij ophalen meldingen:', error);
-      setNotifications([]);
-    }
-  };
 
   // Refresh notifications function
   const refreshNotifications = async () => {
@@ -887,6 +871,42 @@ function BedrijvenDashboard() {
         refreshNotifications={refreshNotifications} 
         dashboardCards={dashboardCards} // Dit blijft
       />
+
+      {/* Notification Bell */}
+      <div className="notification-bell">
+        🔔 
+        {unreadCount > 0 && (
+          <span className="notification-badge">{unreadCount}</span>
+        )}
+      </div>
+
+      {/* Recent Notifications */}
+      <div className="notifications-panel">
+        <h3>Recente Meldingen</h3>
+        {notifications.length === 0 ? (
+          <p>Geen nieuwe meldingen</p>
+        ) : (
+          notifications.slice(0, 5).map(notification => (
+            <div 
+              key={notification.id} 
+              className={`notification-item ${notification.read ? 'read' : 'unread'}`}
+              onClick={() => markAsRead(notification.id)}
+            >
+              <div className="notification-message">
+                {notification.message}
+              </div>
+              <div className="notification-time">
+                {new Date(notification.timestamp).toLocaleString('nl-BE')}
+              </div>
+            </div>
+          ))
+        )}
+        {notifications.length > 0 && (
+          <button onClick={clearNotifications}>
+            Alle meldingen wissen
+          </button>
+        )}
+      </div>
     </div>
   );
 }

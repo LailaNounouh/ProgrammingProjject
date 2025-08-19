@@ -89,9 +89,15 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Socket.IO connection setup
 io.on('connection', (socket) => {
-  console.log('New client connected');
+  console.log('🔌 New client connected:', socket.id);
   
-  // Join a room for a specific company and date
+  // Join user-specific rooms
+  socket.on('join', (roomName) => {
+    socket.join(roomName);
+    console.log(`👤 Client ${socket.id} joined room: ${roomName}`);
+  });
+  
+  // Join a room for a specific company and date (existing functionality)
   socket.on('joinAppointmentRoom', ({ bedrijfId, datum }) => {
     const roomName = `appointments-${bedrijfId}-${datum}`;
     socket.join(roomName);
@@ -106,9 +112,12 @@ io.on('connection', (socket) => {
   });
   
   socket.on('disconnect', () => {
-    console.log('Client disconnected');
+    console.log('🔌 Client disconnected:', socket.id);
   });
 });
+
+// Make io available to all routes
+app.set('io', io);
 
 // Maak apiRouter aan
 const apiRouter = express.Router();
