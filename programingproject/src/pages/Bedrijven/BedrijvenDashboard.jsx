@@ -451,6 +451,8 @@ function BedrijvenDashboard() {
   const notificationRef = useRef(null);
   const skipNotificationsRef = useRef(false);
 
+  const NOTIFICATIONS_ENABLED = false;
+
   const upcomingEvents = [
     {
       date: new Date(2026, 2, 7), 
@@ -556,17 +558,22 @@ function BedrijvenDashboard() {
 
   // Fetch notifications functie — gebruik één consistente endpoint
   const fetchNotifications = async () => {
-    if (!gebruiker?.id) return;
+    // Schakel meteen uit wanneer NOTIFICATIONS_ENABLED false is
+    if (!NOTIFICATIONS_ENABLED) {
+      skipNotificationsRef.current = true;
+      setNotifications([]);
+      return;
+    }
+
+    if (!gebruiker?.id || skipNotificationsRef.current) return;
 
     try {
       const resp = await apiClient.get(`/bedrijf/${gebruiker.id}/notifications`);
       const data = resp?.data ?? resp;
       setNotifications(Array.isArray(data) ? data : (data?.notifications || []));
     } catch (err) {
-      // als 404 of andere fout: log en maak lijst leeg (of houd huidige gedrag)
       console.error('Fout bij ophalen notifications:', err);
       if (err?.response?.status === 404) {
-        // geen endpoint/data gevonden — leegmaken en stop met verdere polling indien gewenst
         setNotifications([]);
         skipNotificationsRef.current = true;
       }
