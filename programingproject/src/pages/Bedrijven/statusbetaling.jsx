@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './StatusBetaling.css';
 import { FiDownload, FiFile } from 'react-icons/fi';
-import axios from 'axios';
+import apiClient from '../../utils/apiClient';
+import { useAuth } from '../../context/AuthProvider';
 
 const StatusBetaling = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -10,15 +11,17 @@ const StatusBetaling = () => {
   const [showModal, setShowModal] = useState(false);
   const timelineRef = useRef(null);
 
-  const bedrijfId = 1;
+  const { gebruiker } = useAuth();
 
   useEffect(() => {
     const fetchBetaling = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/betaling/${bedrijfId}`);
-        setBetalingData(response.data);
+        if (!gebruiker?.id) return;
+        const resp = await apiClient.get(`/betaling/${gebruiker.id}`);
+        const data = resp?.data ?? resp;
+        setBetalingData(data);
 
-        const statusen = response.data.statusen || [];
+        const statusen = data.statusen || [];
         const completedSteps = statusen.filter(s => s.completed).length;
         const newHeight = Math.max(0, (completedSteps - 1) * 72);
 
@@ -31,7 +34,7 @@ const StatusBetaling = () => {
     };
 
     fetchBetaling();
-  }, [bedrijfId]);
+  }, [gebruiker]);
 
   const getStepStatus = (stepName) => {
     if (!betalingData?.status) return '';

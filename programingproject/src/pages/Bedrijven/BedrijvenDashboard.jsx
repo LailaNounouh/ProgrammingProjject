@@ -485,34 +485,34 @@ function BedrijvenDashboard() {
 
       try {
         setLoading(true);
-        const data = await apiClient.get(`/bedrijfprofiel/${gebruiker.id}`);
-
-
+        const resp = await apiClient.get(`/bedrijfprofiel/${gebruiker.id}`);
+        const data = resp?.data ?? resp;
         setBedrijfData(data);
         setBedrijfNaam(data.naam || gebruiker.naam || 'Bedrijf');
-   try {
-        const saved = localStorage.getItem(`reminders_${gebruiker.id}`);
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed)) {
-            setReminders(parsed);
-          }
-        }
-      } catch (error) {
-        console.error("Fout bij lezen van herinneringen:", error);
-      }
 
-    } catch (error) {
-      console.error('Fout bij ophalen bedrijfsgegevens:', error);
-      setBedrijfNaam(gebruiker.naam || 'Bedrijf');
-    } finally {
-      setLoading(false);
-    }
-  };
+        try {
+          const saved = localStorage.getItem(`reminders_${gebruiker.id}`);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) {
+              setReminders(parsed);
+            }
+          }
+        } catch (error) {
+          console.error("Fout bij lezen van herinneringen:", error);
+        }
+
+      } catch (error) {
+        console.error('Fout bij ophalen bedrijfsgegevens:', error);
+        setBedrijfNaam(gebruiker.naam || 'Bedrijf');
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchBedrijfData();
   }, [gebruiker]);
-
+  
   useEffect(() => {
     setBetalingen([
       { id: 1, factuur: "F2023-0456", status: "Betaald", bedrag: 1200, datum: "20-04-2023" }
@@ -536,13 +536,30 @@ function BedrijvenDashboard() {
     };
   }, []);
 
+  // Fetch betaling status
+  useEffect(() => {
+    const fetchBetalingStatus = async () => {
+      if (!gebruiker?.id || gebruiker?.type !== 'bedrijf') return;
+
+      try {
+        const resp = await apiClient.get(`/betaling/${gebruiker.id}`);
+        const data = resp?.data ?? resp;
+        setBetalingStatus(data);
+      } catch (error) {
+        console.error('Fout bij ophalen betaling status:', error);
+      }
+    };
+
+    fetchBetalingStatus();
+  }, [gebruiker]);
+
   // Fetch notifications functie (gebruik apiClient i.p.v. ongedefinieerde baseUrl)
   const fetchNotifications = async () => {
     if (!gebruiker?.id) return;
 
     try {
-      const data = await apiClient.get(`/afspraken/notifications/${gebruiker.id}/bedrijf`);
-      // apiClient verwacht meestal de JSON body als response; pas aan als jouw apiClient anders werkt
+      const resp = await apiClient.get(`/afspraken/notifications/${gebruiker.id}/bedrijf`);
+      const data = resp?.data ?? resp;
       setNotifications(Array.isArray(data) ? data : (data?.notifications || []));
     } catch (error) {
       console.error('Fout bij ophalen notifications:', error);
@@ -636,45 +653,22 @@ function BedrijvenDashboard() {
     addReminder(newReminder);
   };
 
-  // Fetch betaling status
-  useEffect(() => {
-    const fetchBetalingStatus = async () => {
-      if (!gebruiker?.id || gebruiker?.type !== 'bedrijf') return;
-
-      try {
-        // Mock data - vervang later door echte API call
-        const mockBetalingData = {
-          status: 'gedeeltelijk_betaald', // 'niet_betaald', 'gedeeltelijk_betaald', 'volledig_betaald'
-          totaal_bedrag: 1500,
-          betaald_bedrag: 800,
-          openstaand_bedrag: 700,
-          laatste_betaling: '2025-01-10',
-          niveau: 'Premium Partner' // Bronze, Silver, Gold, Premium Partner
-        };
-        setBetalingStatus(mockBetalingData);
-      } catch (error) {
-        console.error('Fout bij ophalen betaling status:', error);
-      }
-    };
-
-    fetchBetalingStatus();
-  }, [gebruiker]);
-
   // Fetch afspraken voor het bedrijf
   useEffect(() => {
     const fetchAfspraken = async () => {
       if (!gebruiker?.id || gebruiker?.type !== 'bedrijf') return;
 
       try {
-        const data = await apiClient.get(`/afspraken/bedrijf/${gebruiker.id}`);
+        const resp = await apiClient.get(`/afspraken/bedrijf/${gebruiker.id}`);
+        const data = resp?.data ?? resp;
         setAfspraken(data);
-        setAfsprakenCount(data.length);
+        setAfsprakenCount(Array.isArray(data) ? data.length : 0);
         
         // Filter aankomende afspraken (vandaag en later)
         const vandaag = new Date();
         vandaag.setHours(0, 0, 0, 0);
         
-        const aankomend = data.filter(afspraak => {
+        const aankomend = (Array.isArray(data) ? data : []).filter(afspraak => {
           const afspraakDatum = new Date(afspraak.datum);
           return afspraakDatum >= vandaag;
         }).slice(0, 3); // Toon max 3 aankomende afspraken
