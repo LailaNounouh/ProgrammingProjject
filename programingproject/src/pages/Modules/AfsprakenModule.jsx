@@ -235,20 +235,6 @@ export default function Afspraken() {
           )}
         </div>
 
-        {/* Debug info (verwijder in productie) */}
-        {process.env.NODE_ENV === 'development' && (
-          <div style={{ background: '#f0f0f0', padding: '10px', margin: '10px 0', fontSize: '12px' }}>
-            <strong>Debug Info:</strong><br/>
-            Totaal bedrijven: {alleBedrijven.length}<br/>
-            Speeddate bedrijven: {bedrijven.length}<br/>
-            Gebruiker: {gebruiker?.naam} (ID: {gebruiker?.id})<br/>
-            {alleBedrijven.slice(0, 3).map(b => (
-              <div key={b.bedrijf_id}>
-                {b.naam}: speeddates={b.speeddates}, speeddate={b.speeddate}
-              </div>
-            ))}
-          </div>
-        )}
 
         {afsprakenOverzicht.length > 0 && (
           <div className="afspraken-reeds">

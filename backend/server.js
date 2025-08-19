@@ -28,13 +28,13 @@ const profielRouter = require('./routes/profiel');
 const bedrijfprofielRouter = require('./routes/bedrijfprofiel');
 const adminRouter = require('./routes/admin');
 const afsprakenRouter = require('./routes/afspraken');
+//const codeertaalRouter = require('./routes/codeertalen');
 const usersRouter = require('./routes/users');
 const statistiekenRouter = require('./routes/Statistieken');
 const attendanceRouter = require('./routes/attendance');
 const betalingRouter = require('./routes/betaling');
 const notificationsRouter = require('./routes/notifications');
 const werkzoekendeProfielRouter = require('./routes/werkzoekendeProfiel');
-
 
 console.log('server.js: Alle routers geïmporteerd.');
 
@@ -89,15 +89,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Socket.IO connection setup
 io.on('connection', (socket) => {
-  console.log('🔌 New client connected:', socket.id);
+  console.log('New client connected');
   
-  // Join user-specific rooms
-  socket.on('join', (roomName) => {
-    socket.join(roomName);
-    console.log(`👤 Client ${socket.id} joined room: ${roomName}`);
-  });
-  
-  // Join a room for a specific company and date (existing functionality)
+  // Join a room for a specific company and date
   socket.on('joinAppointmentRoom', ({ bedrijfId, datum }) => {
     const roomName = `appointments-${bedrijfId}-${datum}`;
     socket.join(roomName);
@@ -112,12 +106,9 @@ io.on('connection', (socket) => {
   });
   
   socket.on('disconnect', () => {
-    console.log('🔌 Client disconnected:', socket.id);
+    console.log('Client disconnected');
   });
 });
-
-// Make io available to all routes
-app.set('io', io);
 
 // Maak apiRouter aan
 const apiRouter = express.Router();
@@ -135,6 +126,7 @@ apiRouter.use('/profiel', profielRouter); // <-- Hier wordt je profiel-router ge
 apiRouter.use('/bedrijfprofiel', bedrijfprofielRouter);
 apiRouter.use('/admin', adminRouter);
 apiRouter.use('/afspraken', afsprakenRouter);
+//apiRouter.use('/codeertaal', codeertaalRouter);
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/statistieken', statistiekenRouter);
 apiRouter.use('/attendance', attendanceRouter);
