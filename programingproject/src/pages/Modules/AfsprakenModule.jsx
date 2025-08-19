@@ -2,12 +2,15 @@ import React, { useState, useEffect } from "react";
 import "./AfsprakenModule.css";
 import { baseUrl } from "../../config";
 import io from "socket.io-client";
-import { useLocation, useNavigate } from "react-router-dom"; // <-- toegevoegd
+import { useLocation, useNavigate } from "react-router-dom";
+import apiClient from "../../utils/apiClient"; // Voeg deze import toe
+import { useAuth } from "../../context/AuthProvider"; // Voeg deze import toe
 
 export default function Afspraken() {
   const [bedrijven, setBedrijven] = useState([]);
+  const [alleBedrijven, setAlleBedrijven] = useState([]);
   const [bedrijfId, setBedrijfId] = useState("");
-  const [presetBedrijf, setPresetBedrijf] = useState(false);          // <-- toegevoegd
+  const [presetBedrijf, setPresetBedrijf] = useState(false);
   const [tijdslot, setTijdslot] = useState("");
   const [datum] = useState("2026-03-13");
   const [beschikbareTijdsloten, setBeschikbareTijdsloten] = useState([]);
@@ -21,8 +24,9 @@ export default function Afspraken() {
   const [socket, setSocket] = useState(null);
   const [afsprakenOverzicht, setAfsprakenOverzicht] = useState([]);
 
-  const location = useLocation();    // <-- toegevoegd
-  const navigate = useNavigate();    // <-- toegevoegd
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { gebruiker } = useAuth(); // Gebruik auth context
 
   // Lees queryparameter ?bedrijf=ID
   useEffect(() => {
@@ -41,15 +45,23 @@ export default function Afspraken() {
     return () => newSocket.disconnect();
   }, []);
 
-  // Afspraken van student
+  // Afspraken van student - gebruik apiClient
   useEffect(() => {
-    const student = JSON.parse(localStorage.getItem("user") || "{}");
-    if (!student?.id) return;
-    fetch(`${baseUrl}/afspraken/student/${student.id}?datum=2026-03-13`)
-      .then(r => r.json())
-      .then(d => Array.isArray(d) && setAfsprakenOverzicht(d))
-      .catch(() => {});
-  }, []);
+    const fetchAfspraken = async () => {
+      if (!gebruiker?.id) return;
+      
+      try {
+        const data = await apiClient.get(`/afspraken/student/${gebruiker.id}?datum=2026-03-13`);
+        if (Array.isArray(data)) {
+          setAfsprakenOverzicht(data);
+        }
+      } catch (error) {
+        console.error('Fout bij ophalen afspraken:', error);
+      }
+    };
+
+    fetchAfspraken();
+  }, [gebruiker]);
 
   // Socket room voor geselecteerd bedrijf
   useEffect(() => {
@@ -67,80 +79,130 @@ export default function Afspraken() {
     };
   }, [socket, bedrijfId, datum]);
 
-  // Bedrijven laden
+  // Bedrijven laden EN FILTEREN OP SPEEDDATE - gebruik apiClient
   useEffect(() => {
-    (async () => {
+    const fetchBedrijven = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${baseUrl}/bedrijvenmodule`);
-        if (!res.ok) throw new Error();
-        const data = await res.json();
-        setBedrijven(data || []);
-      } catch {
+        console.log('🔵 Fetching bedrijven for afspraken module...');
+        
+        const allData = await apiClient.get('/bedrijvenmodule');
+        console.log('📋 All bedrijven received:', allData?.length || 0);
+        console.log('📋 Sample bedrijf data:', allData?.[0]);
+        
+        setAlleBedrijven(allData || []);
+        
+        // Filter alleen bedrijven die speeddate doen
+        const speedDateBedrijven = (allData || []).filter(bedrijf => {
+          const hasSpeedDate = bedrijf.speeddates === 1 || bedrijf.speeddate === 1 || bedrijf.speeddate === true;
+          
+          console.log(`🔍 Bedrijf ${bedrijf.naam}: speeddate=${bedrijf.speeddates}, speeddate alt=${bedrijf.speeddate}, included=${hasSpeedDate}`);
+          
+          return hasSpeedDate;
+        });
+        
+        console.log('✅ Filtered speeddate bedrijven:', speedDateBedrijven.length);
+        console.log('📋 Speeddate bedrijven:', speedDateBedrijven.map(b => ({
+          id: b.bedrijf_id,
+          naam: b.naam,
+          speeddate: b.speeddates || b.speeddate
+        })));
+        
+        setBedrijven(speedDateBedrijven);
+        
+        if (speedDateBedrijven.length === 0) {
+          setError("Geen bedrijven beschikbaar voor speeddate afspraken.");
+        }
+        
+      } catch (err) {
+        console.error('🔴 Error fetching bedrijven:', err);
         setError("Probleem bij ophalen bedrijven.");
       } finally {
         setLoading(false);
       }
-    })();
+    };
+
+    fetchBedrijven();
   }, []);
 
-  // Controleer of preset bedrijf bestaat na laden
+  // Controleer of preset bedrijf bestaat na laden EN of het speeddate doet
   useEffect(() => {
     if (presetBedrijf && bedrijfId && bedrijven.length) {
       const exists = bedrijven.some(b => String(b.bedrijf_id) === String(bedrijfId));
       if (!exists) {
+        console.log(`⚠️ Preset bedrijf ${bedrijfId} does not exist or does not offer speeddate`);
+        setError("Het geselecteerde bedrijf doet niet mee aan speeddate afspraken.");
         setPresetBedrijf(false);
         setBedrijfId("");
       }
     }
   }, [bedrijven, presetBedrijf, bedrijfId]);
 
-  // Tijdsloten laden voor gekozen bedrijf
+  // Tijdsloten laden voor gekozen bedrijf - gebruik apiClient
   useEffect(() => {
-    if (!bedrijfId) return;
-    (async () => {
+    const fetchTijdsloten = async () => {
+      if (!bedrijfId) return;
+      
       try {
         setLoading(true);
         setError("");
-        const res = await fetch(`${baseUrl}/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
-        if (!res.ok) throw new Error();
-        const data = await res.json();
+        const data = await apiClient.get(`/afspraken/beschikbaar/${bedrijfId}?datum=${datum}`);
         setBeschikbareTijdsloten(data.beschikbaar || []);
         setBezetteTijdsloten(data.bezet || []);
         setAlleTijdsloten(data.alle || []);
         setTijdslot("");
-      } catch {
+      } catch (error) {
+        console.error('Fout bij ophalen tijdsloten:', error);
         setError("Kon tijdsloten niet ophalen.");
       } finally {
         setLoading(false);
       }
-    })();
+    };
+
+    fetchTijdsloten();
   }, [bedrijfId, datum, refreshTrigger]);
 
+  // Submit handler - gebruik apiClient
   async function handleSubmit(e) {
     e.preventDefault();
     if (!bedrijfId || !tijdslot) {
       setError("Selecteer een bedrijf en tijdslot");
       return;
     }
+    
+    // Dubbel-check dat het bedrijf speeddate doet
+    const selectedBedrijf = bedrijven.find(b => String(b.bedrijf_id) === String(bedrijfId));
+    if (!selectedBedrijf) {
+      setError("Geselecteerd bedrijf doet niet mee aan speeddate afspraken.");
+      return;
+    }
+    
+    if (!gebruiker?.id) {
+      setError("Je moet ingelogd zijn om een afspraak te maken.");
+      return;
+    }
+    
     try {
       setLoading(true);
       setError("");
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-      const student_id = user.id;
-      const res = await fetch(`${baseUrl}/afspraken/nieuw`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          student_id,
-          bedrijf_id: bedrijfId,
-          tijdslot,
-          datum
-        })
+      
+      console.log('🔵 Creating speeddate afspraak:', {
+        student_id: gebruiker.id,
+        bedrijf_id: bedrijfId,
+        bedrijf_naam: selectedBedrijf.naam,
+        tijdslot,
+        datum
       });
-      const dataErr = !res.ok ? await res.json().catch(()=>({})) : null;
-      if (!res.ok) throw new Error(dataErr?.error || "Fout bij maken afspraak");
-      const selectedBedrijf = bedrijven.find(b => String(b.bedrijf_id) === String(bedrijfId));
+      
+      const response = await apiClient.post('/afspraken', {
+        student_id: gebruiker.id,
+        bedrijf_id: bedrijfId,
+        tijdslot,
+        datum
+      });
+      
+      console.log('✅ Speeddate afspraak created successfully:', response);
+      
       setAfspraakDetails({
         bedrijfNaam: selectedBedrijf?.naam || "Onbekend",
         tijdslot,
@@ -151,8 +213,9 @@ export default function Afspraken() {
       setBeschikbareTijdsloten(p => p.filter(t => t !== tijdslot));
       setAfspraakIngediend(true);
       setRefreshTrigger(p => p + 1);
-    } catch (e) {
-      setError(e.message);
+    } catch (error) {
+      console.error('🔴 Error creating speeddate afspraak:', error);
+      setError(error.message || "Fout bij maken afspraak");
     } finally {
       setLoading(false);
     }
@@ -162,13 +225,35 @@ export default function Afspraken() {
     <div className="afspraken-shell">
       <div className="afspraken-card">
         <h1 className="afspraken-title">
-          <span className="spark">✦</span> Afspraak maken
+          <span className="spark">✦</span> Speeddate Afspraak maken
         </h1>
+        
+        <div className="speeddate-info">
+          <p>Maak een afspraak voor een speeddate gesprek van 15 minuten met een bedrijf.</p>
+          {bedrijven.length > 0 && (
+            <p><strong>{bedrijven.length}</strong> bedrijven beschikbaar voor speeddate.</p>
+          )}
+        </div>
+
+        {/* Debug info (verwijder in productie) */}
+        {process.env.NODE_ENV === 'development' && (
+          <div style={{ background: '#f0f0f0', padding: '10px', margin: '10px 0', fontSize: '12px' }}>
+            <strong>Debug Info:</strong><br/>
+            Totaal bedrijven: {alleBedrijven.length}<br/>
+            Speeddate bedrijven: {bedrijven.length}<br/>
+            Gebruiker: {gebruiker?.naam} (ID: {gebruiker?.id})<br/>
+            {alleBedrijven.slice(0, 3).map(b => (
+              <div key={b.bedrijf_id}>
+                {b.naam}: speeddates={b.speeddates}, speeddate={b.speeddate}
+              </div>
+            ))}
+          </div>
+        )}
 
         {afsprakenOverzicht.length > 0 && (
           <div className="afspraken-reeds">
             <p className="reeds-label">
-              Je hebt al afspraken op <strong>13 maart 2026</strong> met:
+              Je hebt al speeddate afspraken op <strong>13 maart 2026</strong> met:
             </p>
             <ul className="reeds-list">
               {afsprakenOverzicht.map((a, i) => (
@@ -185,16 +270,17 @@ export default function Afspraken() {
         {error && <div className="afspraken-alert afspraken-alert--error">{error}</div>}
         {afspraakIngediend && afspraakDetails && (
           <div className="afspraken-alert afspraken-alert--ok">
-            Afspraak bevestigd: {afspraakDetails.bedrijfNaam} – {afspraakDetails.tijdslot}
+            Speeddate afspraak bevestigd: {afspraakDetails.bedrijfNaam} – {afspraakDetails.tijdslot}
           </div>
         )}
 
-        {!afspraakIngediend && (
+        {!afspraakIngediend && bedrijven.length > 0 && (
           <form onSubmit={handleSubmit} className="afspraak-inline-form">
             <div className="field-row">
               {presetBedrijf && bedrijfId ? (
                 <div className="vast-bedrijf-chip">
                   {bedrijven.find(b => String(b.bedrijf_id) === String(bedrijfId))?.naam || `#${bedrijfId}`}
+                  <span className="speeddate-badge">Speeddate</span>
                   <button
                     type="button"
                     className="wissel-mini"
@@ -216,9 +302,11 @@ export default function Afspraken() {
                   className="afspraak-select"
                   required
                 >
-                  <option value="">Kies een bedrijf</option>
+                  <option value="">Kies een bedrijf voor speeddate</option>
                   {bedrijven.map(b => (
-                    <option key={b.bedrijf_id} value={b.bedrijf_id}>{b.naam}</option>
+                    <option key={b.bedrijf_id} value={b.bedrijf_id}>
+                      {b.naam} (Speeddate)
+                    </option>
                   ))}
                 </select>
               )}
@@ -228,14 +316,14 @@ export default function Afspraken() {
                 disabled={loading || !bedrijfId || !tijdslot}
                 className="primary-btn"
               >
-                {loading ? 'Bezig...' : 'Afspraak maken'}
+                {loading ? 'Bezig...' : 'Speeddate afspraak maken'}
               </button>
             </div>
 
             {bedrijfId && (
               <div className="slots-wrap">
                 <div className="slots-header">
-                  <span className="slots-label">Beschikbare tijdsloten</span>
+                  <span className="slots-label">Beschikbare speeddate tijdsloten (15 min)</span>
                   <div className="slots-legend">
                     <span><i className="dot dot--vrij" /> vrij</span>
                     <span><i className="dot dot--gekozen" /> gekozen</span>
@@ -267,6 +355,18 @@ export default function Afspraken() {
           </form>
         )}
 
+        {!afspraakIngediend && bedrijven.length === 0 && !loading && (
+          <div className="no-speeddate-bedrijven">
+            <p>Er zijn momenteel geen bedrijven beschikbaar die speeddate gesprekken aanbieden.</p>
+            <button
+              className="ghost-btn"
+              onClick={() => navigate('/student/bedrijven')}
+            >
+              Bekijk alle bedrijven
+            </button>
+          </div>
+        )}
+
         {afspraakIngediend && (
           <div className="result-actions">
             <button
@@ -278,7 +378,7 @@ export default function Afspraken() {
                 if (!presetBedrijf) setBedrijfId("");
               }}
             >
-              Nieuwe afspraak
+              Nieuwe speeddate afspraak
             </button>
             <button
               className="ghost-btn"

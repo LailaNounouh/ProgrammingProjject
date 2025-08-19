@@ -568,6 +568,42 @@
   justify-content:center;
 }
 
+.speeddate-info {
+  background: #e3f2fd;
+  border: 1px solid #2196f3;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.speeddate-info p {
+  margin: 4px 0;
+  color: #1976d2;
+  font-size: 14px;
+}
+
+.speeddate-badge {
+  background: #4caf50;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  margin-left: 8px;
+}
+
+.no-speeddate-bedrijven {
+  text-align: center;
+  padding: 24px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  margin: 16px 0;
+}
+
+.no-speeddate-bedrijven p {
+  color: #666;
+  margin-bottom: 16px;
+}
+
 @media (max-width:680px){
   .afspraken-card { padding:1.6rem 1.3rem 2rem; }
   .field-row { flex-direction:column; align-items:stretch; }

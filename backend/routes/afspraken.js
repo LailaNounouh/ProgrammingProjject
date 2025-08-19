@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
-const { authenticateToken } = require('../middleware/auth');
 
-// Helper functie om notification te maken
+console.log('🟢 Afspraken router loaded');
+
+// Helper functie om notifications aan te maken
 const createNotification = async (userId, userType, type, bericht, relatedData = null) => {
-  console.log('🔔 Creating notification:', { userId, userType, type, bericht });
+  console.log('🔔 Creating notification:', { userId, userType, type, bericht, relatedData });
   try {
     const [result] = await db.execute(
       `INSERT INTO Notifications (user_id, user_type, type, bericht, related_data)
@@ -14,675 +15,358 @@ const createNotification = async (userId, userType, type, bericht, relatedData =
     );
     console.log('✅ Notification created with ID:', result.insertId);
     
-    // Test: Direct ophalen van de notification
-    const [check] = await db.execute(
+    // Verificatie: haal de notification direct op
+    const [verification] = await db.execute(
       'SELECT * FROM Notifications WHERE notification_id = ?',
       [result.insertId]
     );
-    console.log('✅ Notification verification:', check[0]);
+    console.log('✅ Notification verification:', verification[0]);
     
+    return result.insertId;
   } catch (error) {
     console.error('❌ Fout bij maken notification:', error);
+    throw error;
   }
 };
 
-// Voeg ook de CAREER_LAUNCH_DAY en STANDAARD_TIJDEN constanten toe
-const CAREER_LAUNCH_DAY = '2026-03-13';
-const STANDAARD_TIJDEN = [
-  '09:00-09:15', '09:15-09:30', '09:30-09:45', '09:45-10:00',
-  '10:00-10:15', '10:15-10:30', '10:30-10:45', '10:45-11:00',
-  '11:00-11:15', '11:15-11:30', '11:30-11:45', '11:45-12:00',
-  '13:00-13:15', '13:15-13:30', '13:30-13:45', '13:45-14:00',
-  '14:00-14:15', '14:15-14:30', '14:30-14:45', '14:45-15:00',
-  '15:00-15:15', '15:15-15:30', '15:30-15:45', '15:45-16:00'
-];
+// POST - Nieuwe afspraak aanmaken
+router.post('/', async (req, res) => {
+  console.log('🔵 POST /afspraken called');
+  console.log('🔵 Body:', req.body);
 
-/**
- * @route GET /api/afspraken
- * @desc Haal alle afspraken op (voor admin)
- */
-router.get('/', async (req, res) => {
-  try {
-    const [afspraken] = await db.query(`
-      SELECT a.afspraak_id, a.student_id, a.bedrijf_id, a.tijdslot, a.datum, a.status,
-             b.naam AS bedrijfsnaam
-      FROM Afspraken a
-      JOIN Bedrijven b ON a.bedrijf_id = b.bedrijf_id
-      ORDER BY a.datum DESC, a.tijdslot ASC
-    `);
-    res.json(afspraken);
-  } catch (err) {
-    console.error('[Serverfout] Afspraken ophalen mislukt:', err);
-    res.status(500).json({ error: 'Fout bij ophalen afspraken', message: err.message });
-  }
-});
+  const { student_id, bedrijf_id, datum, tijdslot, notities, status = 'in_afwachting' } = req.body;
 
-/**
- * @route GET /api/afspraken/student/:studentId
- * @desc Haal afspraken op voor een specifieke student
- */
-router.get('/student/:studentId', async (req, res) => {
-  const { studentId } = req.params;
-  try {
-    const [afspraken] = await db.query(`
-      SELECT a.afspraak_id, a.tijdslot, a.datum,
-             b.naam AS bedrijfsnaam, b.logo_url
-      FROM Afspraken a
-      JOIN Bedrijven b ON a.bedrijf_id = b.bedrijf_id
-      WHERE a.student_id = ?
-      ORDER BY a.datum DESC, a.tijdslot ASC
-    `, [studentId]);
-
-    res.json(afspraken);
-  } catch (err) {
-    console.error('[Serverfout] Afspraken voor student ophalen mislukt:', err);
-    res.status(500).json({ error: 'Fout bij ophalen afspraken', message: err.message });
-  }
-});
-
-/**
- * @route GET /api/afspraken/bedrijf/:bedrijfId
- * @desc Haal afspraken op voor een specifiek bedrijf
- */
-router.get('/bedrijf/:bedrijfId', async (req, res) => {
-  const { bedrijfId } = req.params;
-  try {
-    const [afspraken] = await db.query(`
-      SELECT a.afspraak_id, a.tijdslot, a.datum, a.student_id, a.status,
-             s.naam AS studentnaam, s.email AS studentemail
-      FROM Afspraken a
-      JOIN Studenten s ON a.student_id = s.student_id
-      WHERE a.bedrijf_id = ?
-      ORDER BY a.datum DESC, a.tijdslot ASC
-    `, [bedrijfId]);
-
-    res.json(afspraken);
-  } catch (err) {
-    console.error('[Serverfout] Afspraken voor bedrijf ophalen mislukt:', err);
-    res.status(500).json({ error: 'Fout bij ophalen afspraken', message: err.message });
-  }
-});
-
-/**
- * @route GET /api/afspraken/beschikbaar/:bedrijfId
- * @desc Haal beschikbare tijdsloten op voor een bedrijf op de Career Launch Day
- */
-router.get('/beschikbaar/:bedrijfId', async (req, res) => {
-  const { bedrijfId } = req.params;
-  // Gebruik altijd de vaste datum voor Career Launch Day
-  const datum = CAREER_LAUNCH_DAY;
-
-  try {
-    const [bedrijven] = await db.query('SELECT * FROM Bedrijven WHERE bedrijf_id = ?', [bedrijfId]);
-
-    if (bedrijven.length === 0) {
-      return res.status(404).json({ error: 'Bedrijf niet gevonden' });
-    }
-
-    const bedrijf = bedrijven[0];
-    let alleTijdsloten = STANDAARD_TIJDEN;
-
-    // Als het bedrijf eigen tijdsloten heeft ingesteld
-    if (bedrijf.beschikbare_tijdsloten) {
-      try {
-        const parsed = JSON.parse(bedrijf.beschikbare_tijdsloten);
-        if (Array.isArray(parsed)) alleTijdsloten = parsed;
-      } catch (err) {
-        alleTijdsloten = bedrijf.beschikbare_tijdsloten
-          .split(',')
-          .map((t) => t.trim());
-      }
-    }
-
-    const [afspraken] = await db.query(
-      'SELECT tijdslot FROM Afspraken WHERE bedrijf_id = ? AND datum = ?',
-      [bedrijfId, datum]
-    );
-
-    const bezetteTijdsloten = afspraken.map((a) => a.tijdslot);
-    const beschikbareTijdsloten = alleTijdsloten.filter(
-      (tijd) => !bezetteTijdsloten.includes(tijd)
-    );
-
-    res.json({
-      beschikbaar: beschikbareTijdsloten,
-      bezet: bezetteTijdsloten,
-      alle: alleTijdsloten,
-      datum: datum
-    });
-  } catch (err) {
-    console.error('[Serverfout] Tijdsloten ophalen mislukt:', err);
-    res.status(500).json({ error: 'Fout bij ophalen tijdsloten', message: err.message });
-  }
-});
-
-/**
- * @route POST /api/afspraken/nieuw
- * @desc Maak een nieuwe afspraak aan
- */
-router.post('/nieuw', async (req, res) => {
-  const { student_id, bedrijf_id, tijdslot, datum } = req.body;
-
-  if (!student_id || !bedrijf_id || !tijdslot || !datum) {
-    return res.status(400).json({
-      error: 'Verplichte velden ontbreken',
+  if (!student_id || !bedrijf_id || !datum || !tijdslot) {
+    console.log('🔴 Missing required fields');
+    return res.status(400).json({ 
+      error: 'Student ID, Bedrijf ID, datum en tijdslot zijn verplicht',
+      received: { student_id, bedrijf_id, datum, tijdslot }
     });
   }
 
   try {
-    // Check 1: Tijdslot already taken by this company
-    const [bestaandeTijdslot] = await db.query(
-      'SELECT * FROM Afspraken WHERE bedrijf_id = ? AND datum = ? AND tijdslot = ?',
-      [bedrijf_id, datum, tijdslot]
-    );
-
-    if (bestaandeTijdslot.length > 0) {
-      return res.status(409).json({ error: 'Dit tijdslot is al bezet bij dit bedrijf' });
-    }
-
-    // Check 2: Student already has appointment at same time (different company)
-    const [studentTijdslot] = await db.query(
-      'SELECT * FROM Afspraken WHERE student_id = ? AND datum = ? AND tijdslot = ?',
-      [student_id, datum, tijdslot]
-    );
-
-    if (studentTijdslot.length > 0) {
-      return res.status(409).json({ error: 'Je hebt al een afspraak op dit tijdslot' });
-    }
-
-    // Check 3: Student already has appointment with this company (any time)
-    const [studentBedrijf] = await db.query(
-      'SELECT * FROM Afspraken WHERE student_id = ? AND bedrijf_id = ?',
-      [student_id, bedrijf_id]
-    );
-
-    if (studentBedrijf.length > 0) {
-      return res.status(409).json({ error: 'Je hebt al een afspraak met dit bedrijf' });
-    }
-
-    // All checks passed, create the appointment
-    const [result] = await db.query(
-      `INSERT INTO Afspraken (student_id, bedrijf_id, tijdslot, datum, status)
-       VALUES (?, ?, ?, ?, 'in_afwachting')`,
-      [student_id, bedrijf_id, tijdslot, datum]
-    );
-
-    const afspraak_id = result.insertId;
-
-    // Create notification for company
-    await db.query(`
-      INSERT INTO Bedrijf_Notifications
-        (bedrijf_id, type, message, is_read, created_at)
-       VALUES (?, 'appointment', ?, 0, NOW())`,
-      [bedrijf_id, `Nieuwe afspraak aanvraag op ${datum} om ${tijdslot} van student ID ${student_id}`]
-    );
-
-    return res.status(201).json({
-      message: 'Afspraak succesvol aangemaakt en wacht op goedkeuring',
-      afspraak_id,
-      status: 'in_afwachting'
-    });
-  } catch (err) {
-    console.error('[Serverfout] Afspraak maken mislukt:', err);
-    res.status(500).json({
-      error: 'Fout bij maken afspraak',
-      message: err.message,
-    });
-  }
-});
-
-/**
- * @route PUT /api/afspraken/:afspraakId
- * @desc Update een bestaande afspraak (datum en/of tijdslot)
- */
-router.put('/:afspraakId', async (req, res) => {
-  const { afspraakId } = req.params;
-  const { tijdslot, datum } = req.body;
-
-  if (!tijdslot && !datum) {
-    return res.status(400).json({ error: 'Geen wijzigingen opgegeven' });
-  }
-
-  try {
-    const [afspraken] = await db.query('SELECT * FROM Afspraken WHERE afspraak_id = ?', [afspraakId]);
-    if (afspraken.length === 0) {
-      return res.status(404).json({ error: 'Afspraak niet gevonden' });
-    }
-
-    const updates = [];
-    const values = [];
-
-    if (tijdslot) {
-      updates.push('tijdslot = ?');
-      values.push(tijdslot);
-    }
-
-    if (datum) {
-      updates.push('datum = ?');
-      values.push(datum);
-    }
-
-    values.push(afspraakId);
-
-    await db.query(`UPDATE Afspraken SET ${updates.join(', ')} WHERE afspraak_id = ?`, values);
-    res.json({ message: 'Afspraak succesvol bijgewerkt' });
-  } catch (err) {
-    console.error('[Serverfout] Afspraak bijwerken mislukt:', err);
-    res.status(500).json({ error: 'Fout bij bijwerken afspraak', message: err.message });
-  }
-});
-
-/**
- * @route DELETE /api/afspraken/:afspraakId
- * @desc Verwijder een afspraak
- */
-router.delete('/:afspraakId', async (req, res) => {
-  const { afspraakId } = req.params;
-
-  try {
-    const [check] = await db.query('SELECT * FROM Afspraken WHERE afspraak_id = ?', [afspraakId]);
-    if (check.length === 0) {
-      return res.status(404).json({ error: 'Afspraak niet gevonden' });
-    }
-
-    await db.query('DELETE FROM Afspraken WHERE afspraak_id = ?', [afspraakId]);
-    res.json({ message: 'Afspraak succesvol verwijderd' });
-  } catch (err) {
-    console.error('[Serverfout] Afspraak verwijderen mislukt:', err);
-    res.status(500).json({ error: 'Fout bij verwijderen afspraak', message: err.message });
-  }
-});
-
-/**
- * @route PUT /api/afspraken/:id/status
- * @desc Update appointment status (accept/reject)
- */
-router.put('/:id/status', async (req, res) => {
-  const afspraakId = req.params.id;
-  const { status } = req.body;
-
-  // Validate status
-  const validStatuses = ['in_afwachting', 'goedgekeurd', 'geweigerd'];
-  if (!validStatuses.includes(status)) {
-    return res.status(400).json({
-      error: 'Ongeldige status. Toegestane waarden: in_afwachting, goedgekeurd, geweigerd'
-    });
-  }
-
-  try {
-    // Als de status 'geweigerd' is, verwijder de afspraak
-    if (status === 'geweigerd') {
-      const [result] = await db.execute(
-        'DELETE FROM Afspraken WHERE afspraak_id = ?',
-        [afspraakId]
-      );
-
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ error: 'Afspraak niet gevonden' });
-      }
-
-      return res.json({
-        message: 'Afspraak geweigerd en verwijderd',
-        afspraak_id: afspraakId,
-        status: 'geweigerd'
-      });
-    } else {
-      // Anders update de status
-      const [result] = await db.execute(
-        'UPDATE Afspraken SET status = ? WHERE afspraak_id = ?',
-        [status, afspraakId]
-      );
-
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ error: 'Afspraak niet gevonden' });
-      }
-
-      res.json({
-        message: 'Afspraak status succesvol bijgewerkt',
-        afspraak_id: afspraakId,
-        status: status
-      });
-    }
-  } catch (error) {
-    console.error('Fout bij bijwerken afspraak status:', error);
-    res.status(500).json({ error: 'Interne serverfout' });
-  }
-});
-
-/**
- * @route GET /api/afspraken/bezet
- * @desc Haal bezette tijdsloten op voor een bedrijf op een bepaalde dag
- */
-router.get('/bezet', async (req, res) => {
-  const { bedrijf_id, datum } = req.query;
-
-  if (!bedrijf_id || !datum) {
-    return res.status(400).json({ error: 'Bedrijf ID en datum zijn verplicht' });
-  }
-
-  try {
-    const [afspraken] = await db.query(
-      'SELECT tijdslot FROM Afspraken WHERE bedrijf_id = ? AND datum = ?',
-      [bedrijf_id, datum]
-    );
-
-    const bezette_tijdsloten = afspraken.map(a => a.tijdslot);
-    res.json({ bedrijf_id, datum, bezette_tijdsloten });
-  } catch (err) {
-    console.error('[Serverfout] Bezetting ophalen mislukt:', err);
-    res.status(500).json({ error: 'Fout bij ophalen bezette tijdsloten', message: err.message });
-  }
-});
-
-/**
- * @route GET /api/afspraken/student-details/:studentId
- * @desc Haal gedetailleerde informatie op over een student voor een afspraak
- */
-router.get('/student-details/:studentId', async (req, res) => {
-  const { studentId } = req.params;
-  
-  try {
-    // Haal basisinformatie op over de student
-    const [studentRows] = await db.query(`
-      SELECT s.student_id, s.naam, s.email, s.telefoon, s.studie, 
-             s.github_url, s.linkedin_url, s.aboutMe, 
-             s.softskills, s.hardskills, s.programmeertalen, s.talen
-      FROM Studenten s
-      WHERE s.student_id = ?
-    `, [studentId]);
+    console.log('🔵 Creating new afspraak...');
     
-    if (studentRows.length === 0) {
-      return res.status(404).json({ error: 'Student niet gevonden' });
-    }
-    
-    const student = studentRows[0];
-    
-    // Verwerk de skills en talen
-    let studentDetails = {
-      ...student,
-      softskills: [],
-      hardskills: [],
-      programmeertalen: [],
-      talen: []
-    };
-    
-    // Parse softskills
-    if (student.softskills) {
-      try {
-        studentDetails.softskills = JSON.parse(student.softskills);
-      } catch (e) {
-        console.error('Fout bij parsen softskills:', e);
-      }
-    }
-    
-    // Parse hardskills
-    if (student.hardskills) {
-      try {
-        studentDetails.hardskills = JSON.parse(student.hardskills);
-      } catch (e) {
-        console.error('Fout bij parsen hardskills:', e);
-      }
-    }
-    
-    // Parse programmeertalen
-    if (student.programmeertalen) {
-      try {
-        studentDetails.programmeertalen = JSON.parse(student.programmeertalen);
-      } catch (e) {
-        console.error('Fout bij parsen programmeertalen:', e);
-      }
-    }
-    
-    // Parse talen
-    if (student.talen) {
-      try {
-        studentDetails.talen = JSON.parse(student.talen);
-      } catch (e) {
-        console.error('Fout bij parsen talen:', e);
-      }
-    }
-    
-    res.json(studentDetails);
-  } catch (err) {
-    console.error('[Serverfout] Student details ophalen mislukt:', err);
-    res.status(500).json({ error: 'Fout bij ophalen student details', message: err.message });
-  }
-});
-
-/**
- * @route POST /api/afspraken
- * @desc Maak een nieuwe afspraak aan
- */
-router.post('/', authenticateToken, async (req, res) => {
-  const { bedrijf_id, tijdslot, datum } = req.body;
-  const student_id = req.user.id;
-
-  try {
-    // Check 1: Tijdslot already taken by this company
-    const [bestaandeTijdslot] = await db.execute(
-      'SELECT * FROM Afspraken WHERE bedrijf_id = ? AND datum = ? AND tijdslot = ?',
-      [bedrijf_id, datum, tijdslot]
-    );
-
-    if (bestaandeTijdslot.length > 0) {
-      return res.status(409).json({ error: 'Dit tijdslot is al bezet bij dit bedrijf' });
-    }
-
-    // Check 2: Student already has appointment at same time (different company)
-    const [studentTijdslot] = await db.execute(
-      'SELECT * FROM Afspraken WHERE student_id = ? AND datum = ? AND tijdslot = ?',
-      [student_id, datum, tijdslot]
-    );
-
-    if (studentTijdslot.length > 0) {
-      return res.status(409).json({ error: 'Je hebt al een afspraak op dit tijdslot' });
-    }
-
-    // Check 3: Student already has appointment with this company (any time)
-    const [studentBedrijf] = await db.execute(
-      'SELECT * FROM Afspraken WHERE student_id = ? AND bedrijf_id = ?',
-      [student_id, bedrijf_id]
-    );
-
-    if (studentBedrijf.length > 0) {
-      return res.status(409).json({ error: 'Je hebt al een afspraak met dit bedrijf' });
-    }
-
-    // All checks passed, create the appointment
+    // Maak de afspraak aan
     const [result] = await db.execute(
-      `INSERT INTO Afspraken (student_id, bedrijf_id, tijdslot, datum, status)
-       VALUES (?, ?, ?, ?, 'in_afwachting')`,
-      [student_id, bedrijf_id, tijdslot, datum]
+      `INSERT INTO Afspraken (student_id, bedrijf_id, datum, tijdslot, notities, status)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [student_id, bedrijf_id, datum, tijdslot, notities || '', status]
     );
 
-    // Haal student en bedrijf gegevens op voor notification
-    const [studentRows] = await db.execute(
-      'SELECT voornaam, naam FROM Studenten WHERE student_id = ?',
+    const afspraakId = result.insertId;
+    console.log('✅ Afspraak created with ID:', afspraakId);
+
+    // Haal student en bedrijf gegevens op voor notifications
+    const [studentData] = await db.execute(
+      'SELECT voornaam, naam FROM Users WHERE id = ? AND type = "student"',
       [student_id]
     );
-    
-    const [bedrijfRows] = await db.execute(
-      'SELECT naam FROM Bedrijven WHERE bedrijf_id = ?',
+
+    const [bedrijfData] = await db.execute(
+      'SELECT bedrijfsnaam FROM Users WHERE id = ? AND type = "bedrijf"',
       [bedrijf_id]
     );
 
-    const studentNaam = studentRows[0] ? `${studentRows[0].voornaam} ${studentRows[0].naam}` : 'Onbekend';
-    const bedrijfNaam = bedrijfRows[0]?.naam || 'Onbekend';
+    const studentNaam = studentData[0] ? `${studentData[0].voornaam} ${studentData[0].naam}` : 'Onbekende student';
+    const bedrijfNaam = bedrijfData[0] ? bedrijfData[0].bedrijfsnaam : 'Onbekend bedrijf';
 
-    // Stuur notification naar bedrijf
-    await createNotification(
-      bedrijf_id,
-      'bedrijf',
-      'nieuwe_afspraak',
-      `Nieuwe afspraakverzoek van ${studentNaam}`,
-      {
-        student_id: student_id,
-        student_naam: studentNaam,
-        tijdslot: tijdslot,
-        datum: datum,
-        afspraak_id: result.insertId
-      }
+    console.log('📋 Student:', studentNaam, '| Bedrijf:', bedrijfNaam);
+
+    // Notification data voor beide partijen
+    const notificationData = {
+      afspraak_id: afspraakId,
+      datum: datum,
+      tijdslot: tijdslot,
+      student_naam: studentNaam,
+      bedrijf_naam: bedrijfNaam
+    };
+
+    // Maak notifications aan voor beide partijen
+    try {
+      // Notification voor het bedrijf
+      await createNotification(
+        bedrijf_id,
+        'bedrijf',
+        'nieuwe_afspraak',
+        `Nieuwe afspraak aangevraagd door ${studentNaam} op ${new Date(datum).toLocaleDateString('nl-BE')} om ${tijdslot}`,
+        notificationData
+      );
+
+      // Notification voor de student
+      await createNotification(
+        student_id,
+        'student',
+        'afspraak_aangevraagd',
+        `Afspraakverzoek verzonden naar ${bedrijfNaam} voor ${new Date(datum).toLocaleDateString('nl-BE')} om ${tijdslot}`,
+        notificationData
+      );
+
+      console.log('✅ Both notifications created successfully');
+    } catch (notifError) {
+      console.error('⚠️ Fout bij maken notifications (maar afspraak is wel aangemaakt):', notifError);
+    }
+
+    // Haal de volledige afspraak op om terug te sturen
+    const [afspraakDetails] = await db.execute(
+      `SELECT a.*, 
+              s.voornaam, s.naam as studentnaam,
+              b.bedrijfsnaam
+       FROM Afspraken a
+       LEFT JOIN Users s ON a.student_id = s.id AND s.type = 'student'
+       LEFT JOIN Users b ON a.bedrijf_id = b.id AND b.type = 'bedrijf'
+       WHERE a.afspraak_id = ?`,
+      [afspraakId]
     );
 
-    // Stuur notification naar student
-    await createNotification(
-      student_id,
-      'student',
-      'afspraak_aangevraagd',
-      `Afspraakverzoek verzonden naar ${bedrijfNaam}`,
-      {
-        bedrijf_id: bedrijf_id,
-        bedrijf_naam: bedrijfNaam,
-        tijdslot: tijdslot,
-        datum: datum,
-        afspraak_id: result.insertId
-      }
-    );
-
-    res.status(201).json({ 
-      success: true, 
+    console.log('✅ Afspraak created successfully with notifications');
+    res.status(201).json({
       message: 'Afspraak succesvol aangemaakt',
-      afspraak_id: result.insertId
+      afspraak: afspraakDetails[0]
     });
 
   } catch (error) {
-    console.error('Fout bij maken afspraak:', error);
-    res.status(500).json({ error: 'Serverfout bij maken van afspraak' });
+    console.error('🔴 Fout bij aanmaken afspraak:', error);
+    res.status(500).json({ 
+      error: 'Server error bij aanmaken afspraak',
+      details: error.message 
+    });
   }
 });
 
-/**
- * @route PUT /api/afspraken/:id/status
- * @desc Update appointment status (accept/reject) - BEHOUD ALLEEN DEZE VERSIE
- */
-router.put('/:id/status', authenticateToken, async (req, res) => {
+// PUT - Afspraak status updaten (goedkeuren/afwijzen)
+router.put('/:id/status', async (req, res) => {
+  console.log('🔵 PUT /afspraken/:id/status called');
+  console.log('🔵 Params:', req.params);
+  console.log('🔵 Body:', req.body);
+
   const { id } = req.params;
   const { status } = req.body;
-  
+
+  if (!['goedgekeurd', 'afgewezen', 'in_afwachting'].includes(status)) {
+    return res.status(400).json({ error: 'Ongeldige status' });
+  }
+
   try {
-    // Haal huidige afspraak gegevens op
-    const [afspraakRows] = await db.execute(
-      `SELECT a.*, s.voornaam, s.naam as student_naam, b.naam as bedrijf_naam
+    // Haal de afspraak op voordat we hem updaten
+    const [afspraakDetails] = await db.execute(
+      `SELECT a.*, 
+              s.voornaam, s.naam as studentnaam, s.id as student_id,
+              b.bedrijfsnaam, b.id as bedrijf_id
        FROM Afspraken a
-       JOIN Studenten s ON a.student_id = s.student_id
-       JOIN Bedrijven b ON a.bedrijf_id = b.bedrijf_id
+       LEFT JOIN Users s ON a.student_id = s.id AND s.type = 'student'
+       LEFT JOIN Users b ON a.bedrijf_id = b.id AND b.type = 'bedrijf'
        WHERE a.afspraak_id = ?`,
       [id]
     );
 
-    if (afspraakRows.length === 0) {
+    if (afspraakDetails.length === 0) {
       return res.status(404).json({ error: 'Afspraak niet gevonden' });
     }
 
-    const afspraak = afspraakRows[0];
-    const studentNaam = `${afspraak.voornaam} ${afspraak.student_naam}`;
+    const afspraak = afspraakDetails[0];
+    const studentNaam = `${afspraak.voornaam} ${afspraak.studentnaam}`;
+    const bedrijfNaam = afspraak.bedrijfsnaam;
 
-    // Update status
+    // Update de status
     await db.execute(
       'UPDATE Afspraken SET status = ? WHERE afspraak_id = ?',
       [status, id]
     );
 
-    // Stuur notifications
+    console.log(`✅ Afspraak ${id} status updated to: ${status}`);
+
+    // Maak notification voor de student over status wijziging
+    const notificationData = {
+      afspraak_id: id,
+      datum: afspraak.datum,
+      tijdslot: afspraak.tijdslot,
+      bedrijf_naam: bedrijfNaam,
+      nieuwe_status: status
+    };
+
+    let notificationType = '';
+    let bericht = '';
+
     if (status === 'goedgekeurd') {
-      await createNotification(
-        afspraak.student_id,
-        'student',
-        'afspraak_goedgekeurd',
-        `Uw afspraak met ${afspraak.bedrijf_naam} is goedgekeurd`,
-        {
-          bedrijf_id: afspraak.bedrijf_id,
-          bedrijf_naam: afspraak.bedrijf_naam,
-          tijdslot: afspraak.tijdslot,
-          datum: afspraak.datum,
-          afspraak_id: id
-        }
-      );
+      notificationType = 'afspraak_goedgekeurd';
+      bericht = `Uw afspraak met ${bedrijfNaam} is goedgekeurd! Datum: ${new Date(afspraak.datum).toLocaleDateString('nl-BE')} om ${afspraak.tijdslot}`;
     } else if (status === 'afgewezen') {
-      await createNotification(
-        afspraak.student_id,
-        'student',
-        'afspraak_afgewezen',
-        `Uw afspraak met ${afspraak.bedrijf_naam} is afgewezen`,
-        {
-          bedrijf_id: afspraak.bedrijf_id,
-          bedrijf_naam: afspraak.bedrijf_naam,
-          tijdslot: afspraak.tijdslot,
-          datum: afspraak.datum,
-          afspraak_id: id
-        }
-      );
+      notificationType = 'afspraak_afgewezen';
+      bericht = `Uw afspraak met ${bedrijfNaam} is helaas afgewezen. Probeer een ander tijdslot.`;
     }
 
-    res.json({ success: true, message: `Afspraak ${status}` });
+    if (notificationType && bericht) {
+      try {
+        await createNotification(
+          afspraak.student_id,
+          'student',
+          notificationType,
+          bericht,
+          notificationData
+        );
+        console.log('✅ Status change notification created');
+      } catch (notifError) {
+        console.error('⚠️ Fout bij maken status notification:', notifError);
+      }
+    }
+
+    res.json({
+      message: `Afspraak ${status}`,
+      afspraak: {
+        ...afspraak,
+        status: status
+      }
+    });
 
   } catch (error) {
-    console.error('Fout bij updaten afspraak status:', error);
-    res.status(500).json({ error: 'Server error' });
+    console.error('🔴 Fout bij updaten afspraak status:', error);
+    res.status(500).json({ error: 'Server error bij updaten status' });
   }
 });
 
-/**
- * @route DELETE /api/afspraken/:id
- * @desc Verwijder een afspraak
- */
-router.delete('/:id', authenticateToken, async (req, res) => {
+// DELETE - Afspraak verwijderen
+router.delete('/:id', async (req, res) => {
+  console.log('🔵 DELETE /afspraken/:id called');
   const { id } = req.params;
-  
+
   try {
-    // Haal afspraak gegevens op
-    const [afspraakRows] = await db.execute(
-      `SELECT a.*, s.voornaam, s.naam as student_naam, b.naam as bedrijf_naam
+    // Haal de afspraak op voordat we hem verwijderen
+    const [afspraakDetails] = await db.execute(
+      `SELECT a.*, 
+              s.voornaam, s.naam as studentnaam, s.id as student_id,
+              b.bedrijfsnaam, b.id as bedrijf_id
        FROM Afspraken a
-       JOIN Studenten s ON a.student_id = s.student_id
-       JOIN Bedrijven b ON a.bedrijf_id = b.bedrijf_id
+       LEFT JOIN Users s ON a.student_id = s.id AND s.type = 'student'
+       LEFT JOIN Users b ON a.bedrijf_id = b.id AND b.type = 'bedrijf'
        WHERE a.afspraak_id = ?`,
       [id]
     );
 
-    if (afspraakRows.length === 0) {
+    if (afspraakDetails.length === 0) {
       return res.status(404).json({ error: 'Afspraak niet gevonden' });
     }
 
-    const afspraak = afspraakRows[0];
-    const studentNaam = `${afspraak.voornaam} ${afspraak.student_naam}`;
+    const afspraak = afspraakDetails[0];
+    const studentNaam = `${afspraak.voornaam} ${afspraak.studentnaam}`;
+    const bedrijfNaam = afspraak.bedrijfsnaam;
 
-    // Verwijder afspraak
+    // Verwijder de afspraak
     await db.execute('DELETE FROM Afspraken WHERE afspraak_id = ?', [id]);
+    console.log(`✅ Afspraak ${id} deleted`);
 
-    // Stuur notifications
-    await createNotification(
-      afspraak.bedrijf_id,
-      'bedrijf',
-      'afspraak_geannuleerd',
-      `Afspraak met ${studentNaam} is geannuleerd`,
-      {
-        student_id: afspraak.student_id,
-        student_naam: studentNaam,
-        tijdslot: afspraak.tijdslot,
-        datum: afspraak.datum
-      }
-    );
+    // Maak notifications voor beide partijen over de annulering
+    const notificationData = {
+      afspraak_id: id,
+      datum: afspraak.datum,
+      tijdslot: afspraak.tijdslot,
+      student_naam: studentNaam,
+      bedrijf_naam: bedrijfNaam
+    };
 
-    await createNotification(
-      afspraak.student_id,
-      'student',
-      'afspraak_geannuleerd',
-      `Uw afspraak met ${afspraak.bedrijf_naam} is geannuleerd`,
-      {
-        bedrijf_id: afspraak.bedrijf_id,
-        bedrijf_naam: afspraak.bedrijf_naam,
-        tijdslot: afspraak.tijdslot,
-        datum: afspraak.datum
-      }
-    );
+    try {
+      // Notification voor het bedrijf
+      await createNotification(
+        afspraak.bedrijf_id,
+        'bedrijf',
+        'afspraak_geannuleerd',
+        `Afspraak met ${studentNaam} is geannuleerd (${new Date(afspraak.datum).toLocaleDateString('nl-BE')} om ${afspraak.tijdslot})`,
+        notificationData
+      );
 
-    res.json({ success: true, message: 'Afspraak geannuleerd' });
+      // Notification voor de student
+      await createNotification(
+        afspraak.student_id,
+        'student',
+        'afspraak_geannuleerd',
+        `Uw afspraak met ${bedrijfNaam} is geannuleerd (${new Date(afspraak.datum).toLocaleDateString('nl-BE')} om ${afspraak.tijdslot})`,
+        notificationData
+      );
+
+      console.log('✅ Cancellation notifications created');
+    } catch (notifError) {
+      console.error('⚠️ Fout bij maken cancellation notifications:', notifError);
+    }
+
+    res.json({ message: 'Afspraak succesvol verwijderd' });
 
   } catch (error) {
-    console.error('Fout bij annuleren afspraak:', error);
+    console.error('🔴 Fout bij verwijderen afspraak:', error);
+    res.status(500).json({ error: 'Server error bij verwijderen afspraak' });
+  }
+});
+
+// GET - Alle afspraken voor een bedrijf
+router.get('/bedrijf/:bedrijfId', async (req, res) => {
+  console.log('🔵 GET /afspraken/bedrijf/:bedrijfId called');
+  const { bedrijfId } = req.params;
+
+  try {
+    const [rows] = await db.execute(
+      `SELECT a.*, 
+              s.voornaam, s.naam as studentnaam
+       FROM Afspraken a
+       LEFT JOIN Users s ON a.student_id = s.id AND s.type = 'student'
+       WHERE a.bedrijf_id = ?
+       ORDER BY a.datum DESC, a.tijdslot ASC`,
+      [bedrijfId]
+    );
+
+    console.log(`✅ Found ${rows.length} afspraken for bedrijf ${bedrijfId}`);
+    res.json(rows);
+  } catch (error) {
+    console.error('🔴 Fout bij ophalen bedrijf afspraken:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+// GET - Alle afspraken voor een student
+router.get('/student/:studentId', async (req, res) => {
+  console.log('🔵 GET /afspraken/student/:studentId called');
+  const { studentId } = req.params;
+
+  try {
+    const [rows] = await db.execute(
+      `SELECT a.*, 
+              b.bedrijfsnaam
+       FROM Afspraken a
+       LEFT JOIN Users b ON a.bedrijf_id = b.id AND b.type = 'bedrijf'
+       WHERE a.student_id = ?
+       ORDER BY a.datum DESC, a.tijdslot ASC`,
+      [studentId]
+    );
+
+    console.log(`✅ Found ${rows.length} afspraken for student ${studentId}`);
+    res.json(rows);
+  } catch (error) {
+    console.error('🔴 Fout bij ophalen student afspraken:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// GET - Alle afspraken (admin)
+router.get('/', async (req, res) => {
+  console.log('🔵 GET /afspraken called');
+
+  try {
+    const [rows] = await db.execute(
+      `SELECT a.*, 
+              s.voornaam, s.naam as studentnaam,
+              b.bedrijfsnaam
+       FROM Afspraken a
+       LEFT JOIN Users s ON a.student_id = s.id AND s.type = 'student'
+       LEFT JOIN Users b ON a.bedrijf_id = b.id AND b.type = 'bedrijf'
+       ORDER BY a.datum DESC, a.tijdslot ASC`
+    );
+
+    console.log(`✅ Found ${rows.length} total afspraken`);
+    res.json(rows);
+  } catch (error) {
+    console.error('🔴 Fout bij ophalen alle afspraken:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+console.log('🟢 All afspraken routes registered with notification support');
 
 module.exports = router;
