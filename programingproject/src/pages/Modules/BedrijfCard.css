@@ -90,3 +90,84 @@
 .website-link:hover {
   text-decoration: underline;
 }
+
+.afspraak-section {
+  border-top: 1px solid #e5e9ef;
+  margin-top: .9rem;
+  padding-top: .9rem;
+}
+
+.afspraak-row {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: .25rem;
+}
+
+.afspraak-act-btn {
+  background: #0d66d0;
+  color: #fff;
+  border: none;
+  padding: .5rem .85rem;
+  border-radius: 8px;
+  font-size: .72rem;
+  cursor: pointer;
+  transition: background .2s, transform .15s;
+}
+.afspraak-act-btn:hover { background:#0b58b7; }
+.afspraak-act-btn:active { transform: scale(.95); }
+.afspraak-act-btn:disabled { opacity:.55; cursor:not-allowed; }
+.afspraak-act-btn.ghost {
+  background:#eef4fb;
+  color:#19456b;
+}
+.afspraak-act-btn.ghost:hover { background:#dbe8f3; }
+
+.afspraak-select {
+  padding: .45rem .6rem;
+  border-radius: 7px;
+  border:1px solid #ccd5df;
+  background:#fff;
+  font-size:.7rem;
+}
+
+.afspraak-info {
+  font-size:.65rem;
+  color:#526170;
+  margin:.4rem 0 0;
+}
+.afspraak-error {
+  font-size:.65rem;
+  color:#b32626;
+  margin:.45rem 0 0;
+  font-weight:500;
+}
+.afspraak-ok {
+  font-size:.65rem;
+  color:#1b7a38;
+  margin:.45rem 0 0;
+  font-weight:500;
+}
+.afspraak-hint {
+  font-size:.7rem;
+  color:#66727e;
+  margin:.2rem 0 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .afspraak-section { border-color:#38454f; }
+  .afspraak-select {
+    background:#28323c;
+    border-color:#3a4956;
+    color:#e6edf3;
+  }
+  .afspraak-act-btn { background:#1570db; }
+  .afspraak-act-btn.ghost {
+    background:#324150;
+    color:#d5e5f4;
+  }
+  .afspraak-act-btn.ghost:hover { background:#3d5162; }
+  .afspraak-info { color:#95a5b3; }
+  .afspraak-hint { color:#8795a2; }
+}

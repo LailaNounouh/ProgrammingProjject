@@ -615,6 +615,11 @@ router.post("/update-programmeertalen/:email", async (req, res) => {
   }
 });
 
+// (Zoek de upload/profielfoto route, vervang door:)
+router.post('/upload-foto/:id', (req, res) => {
+  return res.status(410).json({ error: 'Profielfoto upload tijdelijk uitgeschakeld' });
+});
+
 module.exports = router;
 
 

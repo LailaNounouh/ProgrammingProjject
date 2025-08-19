@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from 'react-icons/fi';
-import LogoUploadForm from "../../components/forms/LogoUploadform";
+// import LogoUploadForm from "../../components/forms/LogoUploadform"; // <-- tijdelijk uit
 import { useAuth } from "../../context/AuthProvider";
 import apiClient from "../../utils/apiClient";
 import { baseUrl } from "../../config";
@@ -65,7 +65,20 @@ const Settingsbedrijf = () => {
       try {
         setLoading(true);
         console.log('Fetching bedrijfsgegevens for user:', gebruiker);
-        const data = await apiClient.get(`/bedrijfprofiel/${gebruiker.id}`);
+        
+        // Gebruik ook fetch hier voor consistentie
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${baseUrl}/bedrijfprofiel/${gebruiker.id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
 
         // Map database fields to form fields
         setBedrijfsgegevens({
@@ -89,12 +102,6 @@ const Settingsbedrijf = () => {
         setError("");
       } catch (err) {
         console.error("Fout bij ophalen bedrijfsgegevens:", err);
-        console.error("Error details:", {
-          message: err.message,
-          response: err.response,
-          status: err.response?.status,
-          data: err.response?.data
-        });
         setError(`Kon bedrijfsgegevens niet laden: ${err.message}`);
       } finally {
         setLoading(false);
@@ -114,39 +121,101 @@ const Settingsbedrijf = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!gebruiker?.id) {
-      setError("Geen bedrijf ingelogd");
-      return;
-    }
-
+    
     try {
       setSaving(true);
       setError("");
 
-      await apiClient.put(`/bedrijfprofiel/${gebruiker.id}`, {
-        naam: bedrijfsgegevens.bedrijfsnaam,
-        sector_id: bedrijfsgegevens.sector,
-        straat: bedrijfsgegevens.straat,
-        nummer: bedrijfsgegevens.nummer,
-        postcode: bedrijfsgegevens.postcode,
-        gemeente: bedrijfsgegevens.gemeente,
-        telefoonnummer: bedrijfsgegevens.telefoon,
-        email: bedrijfsgegevens.email,
-        btw_nummer: bedrijfsgegevens.stwNummer,
-        contactpersoon_facturatie: bedrijfsgegevens.facturatieContact,
-        email_facturatie: bedrijfsgegevens.facturatieEmail,
-        po_nummer: bedrijfsgegevens.poNummer,
-        contactpersoon_beurs: bedrijfsgegevens.beursContact,
-        email_beurs: bedrijfsgegevens.beursEmail,
-        website_of_linkedin: bedrijfsgegevens.website
+      // Haal de token op uit verschillende bronnen
+      let token = localStorage.getItem('auth_token') || 
+                  localStorage.getItem('token') || 
+                  gebruiker?.token;
+
+      if (!token) {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+          try {
+            const parsedUser = JSON.parse(userData);
+            token = parsedUser.token;
+          } catch (e) {
+            console.error('Error parsing user data:', e);
+          }
+        }
+      }
+      
+      if (!token) {
+        throw new Error('Geen token gevonden. Log opnieuw in.');
+      }
+
+      // Helper functie om waarden te normaliseren
+      const normalizeValue = (value) => {
+        if (value === undefined || value === null || value === '') {
+          return null;
+        }
+        if (typeof value === 'string') {
+          const trimmed = value.trim();
+          return trimmed === '' ? null : trimmed;
+        }
+        return value;
+      };
+
+      // Bereid de payload voor - zorg ervoor dat ALLE waarden null zijn in plaats van undefined
+      const payload = {
+        naam: normalizeValue(bedrijfsgegevens.bedrijfsnaam),
+        sector_id: normalizeValue(bedrijfsgegevens.sector),
+        straat: normalizeValue(bedrijfsgegevens.straat),
+        nummer: normalizeValue(bedrijfsgegevens.nummer),
+        postcode: normalizeValue(bedrijfsgegevens.postcode),
+        gemeente: normalizeValue(bedrijfsgegevens.gemeente),
+        telefoonnummer: normalizeValue(bedrijfsgegevens.telefoon),
+        email: normalizeValue(bedrijfsgegevens.email),
+        btw_nummer: normalizeValue(bedrijfsgegevens.stwNummer),
+        contactpersoon_facturatie: normalizeValue(bedrijfsgegevens.facturatieContact),
+        email_facturatie: normalizeValue(bedrijfsgegevens.facturatieEmail),
+        po_nummer: normalizeValue(bedrijfsgegevens.poNummer),
+        contactpersoon_beurs: normalizeValue(bedrijfsgegevens.beursContact),
+        email_beurs: normalizeValue(bedrijfsgegevens.beursEmail),
+        website_of_linkedin: normalizeValue(bedrijfsgegevens.website)
+      };
+
+      console.log('Sending payload:', payload);
+      console.log('Payload values check:', Object.entries(payload).map(([key, value]) => 
+        `${key}: ${value} (type: ${typeof value})`
+      ));
+      console.log('Using bedrijf ID:', gebruiker.id);
+      
+      const response = await fetch(`${baseUrl}/bedrijfprofiel/${gebruiker.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
       });
 
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Error response:', errorData);
+        
+        // Als het een 500 error is, is het een backend probleem
+        if (response.status === 500) {
+          throw new Error('Server error - controleer de backend logs');
+        }
+        
+        throw new Error(`HTTP ${response.status}: ${errorData}`);
+      }
+
+      const data = await response.json();
+      console.log('Success response:', data);
+      
       alert("Bedrijfsgegevens succesvol opgeslagen!");
       navigate("/bedrijf");
+      
     } catch (err) {
       console.error("Fout bij opslaan bedrijfsgegevens:", err);
-      setError("Kon bedrijfsgegevens niet opslaan");
+      setError(`Fout: ${err.message}`);
     } finally {
       setSaving(false);
     }
@@ -366,10 +435,12 @@ const Settingsbedrijf = () => {
             </section>
           </div>
 
-          <div className="form-sectie">
+          {/* Logo upload tijdelijk uitgeschakeld */}
+          {/* <div className="form-sectie">
             <h2 className="sectie-titel">Logo uploaden</h2>
             <LogoUploadForm bedrijfId={gebruiker?.id} />
-          </div>
+          </div> */}
+
           <button
             type="submit"
             className="opslaan-knop"

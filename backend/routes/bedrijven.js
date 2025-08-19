@@ -28,4 +28,8 @@ router.get("/:bedrijfId", async (req, res) => {
   }
 });
 
+router.post('/upload-logo/:id', (req, res) => {
+  return res.status(410).json({ error: 'Logo upload tijdelijk uitgeschakeld' });
+});
+
 module.exports = router;

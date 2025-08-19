@@ -3,8 +3,8 @@ import hardSkillsData from "./HardSkills.json";
 import "./DropDowns.css";
 
 const HardSkillsSelector = ({ value = [], onChange, readOnly = false }) => {
-  const [inputValue, setInputValue] = useState("");
-  const [hardSkillsOptions, setHardSkillsOptions] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [categorizedSkills, setCategorizedSkills] = useState({});
   
   useEffect(() => {
@@ -18,28 +18,15 @@ const HardSkillsSelector = ({ value = [], onChange, readOnly = false }) => {
     });
     
     setCategorizedSkills(skillsByTag);
-    
-    // Maak een platte lijst van alle vaardigheden
-    const allSkills = hardSkillsData.map(skill => skill.vaardigheid);
-    setHardSkillsOptions(allSkills);
   }, []);
-
-  const handleAddSkill = () => {
-    if (!inputValue.trim()) return;
-    
-    // Voeg toe als het nog niet bestaat
-    if (!value.includes(inputValue)) {
-      const newValue = [...value, inputValue];
-      onChange(newValue);
-    }
-    setInputValue("");
-  };
 
   const handleSelectSkill = (skill) => {
     if (!value.includes(skill)) {
       const newValue = [...value, skill];
       onChange(newValue);
     }
+    setIsOpen(false);
+    setSelectedCategory(null);
   };
 
   const handleRemoveSkill = (index) => {
@@ -48,52 +35,66 @@ const HardSkillsSelector = ({ value = [], onChange, readOnly = false }) => {
     onChange(newValue);
   };
 
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(selectedCategory === category ? null : category);
+  };
+
   return (
     <div className="skills-selector">
-      <h3>Hard Skills</h3>
+      <label htmlFor="hardskills">Hard Skills</label>
       
       {!readOnly && (
-        <div className="skills-input-container">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Voeg een hard skill toe..."
-            onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
-          />
-          <button type="button" onClick={handleAddSkill}>Toevoegen</button>
-        </div>
-      )}
-      
-      {!readOnly && (
-        <div className="skills-suggestions">
-          <p>Suggesties per categorie:</p>
-          {Object.keys(categorizedSkills).map(tag => (
-            <div key={tag} className="skill-category">
-              <h4>{tag}</h4>
-              <div className="suggestions-list">
-                {categorizedSkills[tag].map((skill) => (
+        <div className="skills-dropdown-container">
+          <button
+            type="button"
+            className="skills-dropdown-trigger"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            Selecteer hard skills
+            <span className={`dropdown-arrow ${isOpen ? 'open' : ''}`}>▼</span>
+          </button>
+          
+          {isOpen && (
+            <div className="skills-dropdown-menu">
+              {Object.keys(categorizedSkills).map(category => (
+                <div key={category} className="skill-category-dropdown">
                   <button
-                    key={skill}
                     type="button"
-                    className="suggestion-button"
-                    onClick={() => handleSelectSkill(skill)}
-                    disabled={value.includes(skill)}
+                    className="category-header"
+                    onClick={() => handleCategorySelect(category)}
                   >
-                    {skill}
+                    {category}
+                    <span className={`category-arrow ${selectedCategory === category ? 'open' : ''}`}>▶</span>
                   </button>
-                ))}
-              </div>
+                  
+                  {selectedCategory === category && (
+                    <div className="category-skills">
+                      {categorizedSkills[category].map((skill) => (
+                        <button
+                          key={skill}
+                          type="button"
+                          className={`skill-option ${value.includes(skill) ? 'selected' : ''}`}
+                          onClick={() => handleSelectSkill(skill)}
+                          disabled={value.includes(skill)}
+                        >
+                          {skill}
+                          {value.includes(skill) && <span className="checkmark">✓</span>}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
       )}
       
       <div className="selected-skills">
         {value && value.length > 0 ? (
-          <ul>
+          <div className="skills-tags">
             {value.map((skill, index) => (
-              <li key={index} className="skill-item">
+              <span key={index} className="skill-tag">
                 {skill}
                 {!readOnly && (
                   <button 
@@ -104,9 +105,9 @@ const HardSkillsSelector = ({ value = [], onChange, readOnly = false }) => {
                     ×
                   </button>
                 )}
-              </li>
+              </span>
             ))}
-          </ul>
+          </div>
         ) : (
           <p className="no-skills">Geen hard skills geselecteerd</p>
         )}
@@ -114,6 +115,5 @@ const HardSkillsSelector = ({ value = [], onChange, readOnly = false }) => {
     </div>
   );
 };
-
 
 export default HardSkillsSelector;
