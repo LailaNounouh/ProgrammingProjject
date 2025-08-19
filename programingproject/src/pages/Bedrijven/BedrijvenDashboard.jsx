@@ -728,44 +728,12 @@ function BedrijvenDashboard() {
     {
       title: "Staat van betaling",
       icon: <FaEuroSign className="icon-fix" />,
+      // simpele link naar statuspagina, geen dynamische inhoud op de tegel
       onClick: () => navigate('/bedrijf/betaling'),
       iconClass: "bg-blue",
-      isDynamic: true,
-      content: () => {
-        const statusInfo = getBetalingStatusInfo();
-        return (
-          <div className="card-dynamic-content">
-            <div className="status-header">
-              <span 
-                className="status-badge"
-                style={{ backgroundColor: statusInfo.color }}
-              >
-                {statusInfo.text}
-              </span>
-              <span className="niveau-badge">{statusInfo.niveau}</span>
-            </div>
-            <div className="amount-info">
-              <div className="bedrag">{statusInfo.bedrag}</div>
-              {betalingStatus && betalingStatus.status !== 'volledig_betaald' && (
-                <div className="betaal-progress">
-                  <div className="progress-bar">
-                    <div 
-                      className="progress-fill"
-                      style={{ 
-                        width: `${(betalingStatus.betaald_bedrag / betalingStatus.totaal_bedrag) * 100}%`,
-                        backgroundColor: statusInfo.color
-                      }}
-                    ></div>
-                  </div>
-                  <small>
-                    €{betalingStatus.betaald_bedrag} van €{betalingStatus.totaal_bedrag} betaald
-                  </small>
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      }
+      isSmall: false,
+      isDynamic: false,
+      description: ''
     },
     {
       title: "Afspraakoverzicht",
