@@ -166,90 +166,210 @@
 }
 
 .studenten-notification-bell {
-  position: relative;
   cursor: pointer;
-  font-size: 22px;
-  color: #555;
-  padding: 10px;
-  transition: all 0.2s;
-  background: #f8f9fa;
+  position: relative;
+  padding: 8px;
   border-radius: 50%;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transition: background-color 0.2s;
 }
 
 .studenten-notification-bell:hover {
-  color: #4a6cf7;
-  background: #e6f0ff;
+  background-color: #f8f9fa;
 }
 
 .studenten-notification-badge {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  background-color: #ff4757;
+  top: 0;
+  right: 0;
+  background-color: #dc3545;
   color: white;
   border-radius: 50%;
   width: 18px;
   height: 18px;
+  font-size: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
   font-weight: bold;
-  border: 2px solid white;
-}
-.subtitle-bedrijf {
-  font-weight: normal;
-  font-size: 0.8em;
-  margin-left: 0.5em;
-  color: #666;
 }
 
 .studenten-notification-dropdown {
   position: absolute;
+  top: 100%;
   right: 0;
-  top: 55px;
-  width: 380px;
-  max-width: 90vw;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  z-index: 100;
-  padding: 5px 0;
-  max-height: 70vh;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 350px;
+  max-height: 400px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.studenten-notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  background-color: #f8f9fa;
+}
+
+.studenten-notification-header h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #212529;
+}
+
+.studenten-notification-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.refresh-notifications-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  font-size: 14px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.refresh-notifications-btn:hover {
+  opacity: 1;
+  background-color: #e9ecef;
+}
+
+.unread-count {
+  background-color: #007bff;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.studenten-notification-list {
+  max-height: 300px;
   overflow-y: auto;
 }
 
-.studenten-notification-dropdown ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.studenten-notification-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f3f4;
+  transition: background-color 0.2s;
 }
 
-.studenten-notification-dropdown li {
-  padding: 12px 20px;
-  border-bottom: 1px solid #eee;
-  transition: background 0.2s;
+.studenten-notification-item:hover {
+  background-color: #f8f9fa;
 }
 
-.studenten-notification-dropdown li:hover {
-  background: #f8f9fa;
+.studenten-notification-item.unread {
+  background-color: #e7f3ff;
+  border-left: 3px solid #007bff;
 }
 
-.studenten-notification-dropdown li p {
-  margin: 0 0 5px;
+.studenten-notification-content {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+}
+
+.studenten-notification-icon {
+  flex-shrink: 0;
+  font-size: 16px;
+  margin-top: 2px;
+}
+
+.studenten-notification-text {
+  flex: 1;
+}
+
+.studenten-notification-message {
+  margin: 0 0 4px 0;
   font-size: 14px;
+  color: #212529;
   line-height: 1.4;
 }
 
-.studenten-notification-dropdown li small {
-  color: #777;
+.studenten-notification-time {
+  color: #6c757d;
+  font-size: 11px;
+}
+
+.studenten-notification-details {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.studenten-notification-details span {
+  font-size: 11px;
+  color: #6c757d;
+}
+
+.studenten-notification-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.mark-read-btn,
+.delete-notification-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
   font-size: 12px;
-  display: block;
+  opacity: 0.6;
+  transition: all 0.2s;
+}
+
+.mark-read-btn:hover {
+  background-color: #28a745;
+  color: white;
+  opacity: 1;
+}
+
+.delete-notification-btn:hover {
+  background-color: #dc3545;
+  color: white;
+  opacity: 1;
+}
+
+.no-notifications {
+  text-align: center;
+  padding: 20px;
+  color: #6c757d;
+}
+
+.studenten-notification-footer {
+  padding: 8px 16px;
+  text-align: center;
+  border-top: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+}
+
+.view-all-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 13px;
+  text-decoration: underline;
+}
+
+.view-all-btn:hover {
+  color: #0056b3;
 }
 
 /* Dashboard layout */
@@ -1350,4 +1470,160 @@
 /* Verbeter de chevron icon styling */
 .chevron-icon {
   font-size: 0.8rem;
+}
+
+/* Dynamic card styles (kopieer van bedrijvendashboard) */
+.dashboard-card.dynamic-card {
+  min-height: 200px;
+}
+
+.dashboard-card.small-card {
+  min-height: 120px;
+}
+
+.card-dynamic-content {
+  flex: 1;
+  padding: 8px 0;
+}
+
+.afspraken-summary {
+  margin-bottom: 12px;
+}
+
+.totaal-afspraken {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.big-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: #007bff;
+}
+
+.label {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.afspraken-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
+
+.stat-number {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.stat-number.goedgekeurd { color: #28a745; }
+.stat-number.in-afwachting { color: #ffc107; }
+.stat-number.afgewezen { color: #dc3545; }
+
+.stat-label {
+  font-size: 10px;
+  color: #6c757d;
+  text-align: center;
+}
+
+.aankomende-afspraken {
+  border-top: 1px solid #e9ecef;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+.aankomende-afspraken h5 {
+  font-size: 12px;
+  color: #6c757d;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.mini-afspraak {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 11px;
+}
+
+.bedrijf-naam {
+  font-weight: 500;
+  color: #212529;
+  flex: 1;
+}
+
+.afspraak-tijd {
+  color: #6c757d;
+  margin: 0 8px;
+}
+
+.status-mini {
+  width: 16px;
+  text-align: center;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background-color: #e9ecef;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+/* Profiel completeness styles */
+.profiel-completeness {
+  padding: 8px 0;
+}
+
+.completeness-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.completeness-percentage {
+  font-size: 24px;
+  font-weight: 700;
+  color: #212529;
+}
+
+.completeness-label {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.profiel-stats {
+  margin-top: 8px;
+}
+
+.profiel-stats small {
+  display: block;
+  color: #6c757d;
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+.missing-fields {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid #e9ecef;
 }

@@ -60,9 +60,22 @@ router.get('/bedrijf/:bedrijfId', async (req, res) => {
 // GET alle notifications voor een student (ZONDER AUTH VOOR TESTING)
 router.get('/student/:studentId', async (req, res) => {
   console.log('🔵 GET /notifications/student/:studentId called');
+  console.log('🔵 studentId:', req.params.studentId);
+  
   const { studentId } = req.params;
   
   try {
+    console.log('🔵 Executing database query for student...');
+    
+    // Check if Notifications table exists first
+    const [tableCheck] = await db.execute("SHOW TABLES LIKE 'Notifications'");
+    console.log('🔵 Table check result:', tableCheck);
+    
+    if (tableCheck.length === 0) {
+      console.log('🔴 Notifications table does not exist!');
+      return res.status(500).json({ error: 'Notifications table not found' });
+    }
+    
     const [rows] = await db.execute(
       `SELECT 
         notification_id,
@@ -80,16 +93,19 @@ router.get('/student/:studentId', async (req, res) => {
       [studentId]
     );
 
+    console.log('🟢 Database query successful for student, rows found:', rows.length);
+
     // Parse JSON data
     const notifications = rows.map(notif => ({
       ...notif,
       related_data: notif.related_data ? JSON.parse(notif.related_data) : null
     }));
 
+    console.log('🟢 Sending student notifications:', notifications);
     res.json(notifications);
   } catch (error) {
-    console.error('🔴 Fout bij ophalen notifications:', error);
-    res.status(500).json({ error: 'Server error' });
+    console.error('🔴 Fout bij ophalen student notifications:', error);
+    res.status(500).json({ error: 'Server error', details: error.message });
   }
 });
 
