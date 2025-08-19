@@ -32,7 +32,6 @@ function DashboardContent({
   showNotifications,
   setShowNotifications,
   notificationRef,
-  filteredCards,
   upcomingEvents,
   calendarDate,
   setCalendarDate,
@@ -46,7 +45,9 @@ function DashboardContent({
   handleReminderSubmit,
   addEventReminder,
   markNotificationAsRead,
-  deleteNotification
+  deleteNotification,
+  refreshNotifications,
+  dashboardCards // Voeg dit toe
 }) {
   
   const getNotificationIcon = (type) => {
@@ -215,22 +216,35 @@ function DashboardContent({
 
       <div className="dashboard-content">
         <div className="card-grid">
-          {filteredCards.map((card, index) => (
-            <div key={index} className="dashboard-card" onClick={card.onClick}>
-              <div className="card-header">
-                <div className={`card-icon ${card.iconClass}`}>
-                  {card.icon}
-                </div>
-                <h3 className="card-title">{card.title}</h3>
-              </div>
-              {card.description && <p className="card-description">{card.description}</p>}
-              <div className="card-footer">
-                <span>Direct naar {card.title.toLowerCase()}</span>
-                <FaChevronRight className="chevron-icon" />
-              </div>
-            </div>
-          ))}
+          {dashboardCards.filter(card =>
+    card.title.toLowerCase().includes(searchTerm.toLowerCase())
+  ).map((card, index) => (
+    <div 
+      key={index} 
+      className={`dashboard-card ${card.isSmall ? 'small-card' : ''} ${card.isDynamic ? 'dynamic-card' : ''}`} 
+      onClick={card.onClick}
+    >
+      <div className="card-header">
+        <div className={`card-icon ${card.iconClass}`}>
+          {card.icon}
         </div>
+        <h3 className="card-title">{card.title}</h3>
+      </div>
+      
+      {card.isDynamic && card.content ? (
+        card.content()
+      ) : (
+        <>
+          {card.description && <p className="card-description">{card.description}</p>}
+          <div className="card-footer">
+            <span>Direct naar {card.title.toLowerCase()}</span>
+            <FaChevronRight className="chevron-icon" />
+          </div>
+        </>
+      )}
+    </div>
+  ))}
+</div>
 
         <div className="calendar-section">
           <div className="calendar-container">
@@ -431,6 +445,9 @@ function BedrijvenDashboard() {
     time: '12:00',
     text: ''
   });
+  const [betalingStatus, setBetalingStatus] = useState(null);
+  const [afsprakenCount, setAfsprakenCount] = useState(0);
+  const [aankomende_afspraken, setAankomende_afspraken] = useState([]);
   const notificationRef = useRef(null);
 
   const upcomingEvents = [
@@ -519,22 +536,31 @@ function BedrijvenDashboard() {
     };
   }, []);
 
-  // Fetch notifications
+  // Fetch notifications function (maak deze herbruikbaar)
+  const fetchNotifications = async () => {
+    if (!gebruiker?.id || gebruiker?.type !== 'bedrijf') {
+      return;
+    }
+
+    try {
+      console.log('🔄 Fetching notifications for bedrijf:', gebruiker.id);
+      const data = await apiClient.get(`/notifications/bedrijf/${gebruiker.id}`);
+      console.log('✅ Notifications received:', data);
+      setNotifications(data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+    } catch (error) {
+      console.error('Fout bij ophalen meldingen:', error);
+      setNotifications([]);
+    }
+  };
+
+  // Refresh notifications function
+  const refreshNotifications = async () => {
+    console.log('🔄 Manual refresh notifications triggered');
+    await fetchNotifications();
+  };
+
+  // Fetch notifications on component mount and polling
   useEffect(() => {
-    const fetchNotifications = async () => {
-      if (!gebruiker?.id || gebruiker?.type !== 'bedrijf') {
-        return;
-      }
-
-      try {
-        const data = await apiClient.get(`/notifications/bedrijf/${gebruiker.id}`);
-        setNotifications(data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
-      } catch (error) {
-        console.error('Fout bij ophalen meldingen:', error);
-        setNotifications([]);
-      }
-    };
-
     fetchNotifications();
 
     // Polling voor nieuwe meldingen elke 30 seconden
@@ -614,41 +640,213 @@ function BedrijvenDashboard() {
     addReminder(newReminder);
   };
 
-const dashboardCards = [
-  {
-    title: "Staat van betaling",
-    icon: <FaEuroSign className="icon-fix" />,
-    description: "Bekijk uw huidige betaalstatus, openstaande bedragen\nen download eenvoudig uw facturen en betalingsbewijzen.",
-    onClick: () => navigate('/bedrijf/betaling'),
-    iconClass: "bg-blue"
-  },
-  {
-    title: "Afspraakoverzicht",
-    icon: <FaCalendarAlt className="icon-fix" />,
-    description: "Overzicht van al uw geplande afspraken met klanten of\npartners. Plan nieuwe afspraken of wijzig bestaande.",
-    onClick: () => navigate('/bedrijf/afspraken'),
-    iconClass: "bg-green",
-    showAfspraken: true
-  },
-  {
-    title: "Beschikbaarheid van standen",
-    icon: <FaMapMarkerAlt className="icon-fix" />,
-    description: "Controleer de beschikbaarheid van uw standplaatsen,\nreserveer locaties en beheer uw bestaande boekingen.",
-    onClick: () => navigate('/bedrijf/standen'),
-    iconClass: "bg-orange"
-  },
-  {
-    title: "Bedrijfsinstellingen",
-    icon: <FaCog className="icon-fix" />,
-    description: "Beheer uw bedrijfsinformatie, contactgegevens,\nvoorkeursinstellingen en toegangsrechten voor medewerkers.",
-    onClick: () => navigate('/bedrijf/Settingsbedrijf'),
-    iconClass: "bg-purple"
-  }
-];
+  // Fetch betaling status
+  useEffect(() => {
+    const fetchBetalingStatus = async () => {
+      if (!gebruiker?.id || gebruiker?.type !== 'bedrijf') return;
 
-  const filteredCards = dashboardCards.filter(card =>
-    card.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      try {
+        // Mock data - vervang later door echte API call
+        const mockBetalingData = {
+          status: 'gedeeltelijk_betaald', // 'niet_betaald', 'gedeeltelijk_betaald', 'volledig_betaald'
+          totaal_bedrag: 1500,
+          betaald_bedrag: 800,
+          openstaand_bedrag: 700,
+          laatste_betaling: '2025-01-10',
+          niveau: 'Premium Partner' // Bronze, Silver, Gold, Premium Partner
+        };
+        setBetalingStatus(mockBetalingData);
+      } catch (error) {
+        console.error('Fout bij ophalen betaling status:', error);
+      }
+    };
+
+    fetchBetalingStatus();
+  }, [gebruiker]);
+
+  // Fetch afspraken voor het bedrijf
+  useEffect(() => {
+    const fetchAfspraken = async () => {
+      if (!gebruiker?.id || gebruiker?.type !== 'bedrijf') return;
+
+      try {
+        const data = await apiClient.get(`/afspraken/bedrijf/${gebruiker.id}`);
+        setAfspraken(data);
+        setAfsprakenCount(data.length);
+        
+        // Filter aankomende afspraken (vandaag en later)
+        const vandaag = new Date();
+        vandaag.setHours(0, 0, 0, 0);
+        
+        const aankomend = data.filter(afspraak => {
+          const afspraakDatum = new Date(afspraak.datum);
+          return afspraakDatum >= vandaag;
+        }).slice(0, 3); // Toon max 3 aankomende afspraken
+        
+        setAankomende_afspraken(aankomend);
+      } catch (error) {
+        console.error('Fout bij ophalen afspraken:', error);
+      }
+    };
+
+    fetchAfspraken();
+  }, [gebruiker]);
+
+  // Helper functie voor betaling status
+  const getBetalingStatusInfo = () => {
+    if (!betalingStatus) return { color: '#gray', text: 'Laden...', niveau: '' };
+
+    switch (betalingStatus.status) {
+      case 'niet_betaald':
+        return { 
+          color: '#dc3545', 
+          text: 'Betaling vereist', 
+          niveau: betalingStatus.niveau,
+          bedrag: `€${betalingStatus.openstaand_bedrag}` 
+        };
+      case 'gedeeltelijk_betaald':
+        return { 
+          color: '#ffc107', 
+          text: 'Gedeeltelijk betaald', 
+          niveau: betalingStatus.niveau,
+          bedrag: `€${betalingStatus.openstaand_bedrag} openstaand` 
+        };
+      case 'volledig_betaald':
+        return { 
+          color: '#28a745', 
+          text: 'Volledig betaald', 
+          niveau: betalingStatus.niveau,
+          bedrag: 'Geen openstaand bedrag' 
+        };
+      default:
+        return { color: '#6c757d', text: 'Onbekend', niveau: '' };
+    }
+  };
+
+  // Helper functie voor afspraken status
+  const getAfsprakenStatusInfo = () => {
+    const totaal = afspraken.length;
+    const goedgekeurd = afspraken.filter(a => a.status === 'goedgekeurd').length;
+    const in_afwachting = afspraken.filter(a => a.status === 'in_afwachting').length;
+    const afgewezen = afspraken.filter(a => a.status === 'afgewezen').length;
+
+    return { totaal, goedgekeurd, in_afwachting, afgewezen };
+  };
+
+  // Update dashboardCards met dynamische content
+  const dashboardCards = [
+    {
+      title: "Staat van betaling",
+      icon: <FaEuroSign className="icon-fix" />,
+      onClick: () => navigate('/bedrijf/betaling'),
+      iconClass: "bg-blue",
+      isDynamic: true,
+      content: () => {
+        const statusInfo = getBetalingStatusInfo();
+        return (
+          <div className="card-dynamic-content">
+            <div className="status-header">
+              <span 
+                className="status-badge"
+                style={{ backgroundColor: statusInfo.color }}
+              >
+                {statusInfo.text}
+              </span>
+              <span className="niveau-badge">{statusInfo.niveau}</span>
+            </div>
+            <div className="amount-info">
+              <div className="bedrag">{statusInfo.bedrag}</div>
+              {betalingStatus && betalingStatus.status !== 'volledig_betaald' && (
+                <div className="betaal-progress">
+                  <div className="progress-bar">
+                    <div 
+                      className="progress-fill"
+                      style={{ 
+                        width: `${(betalingStatus.betaald_bedrag / betalingStatus.totaal_bedrag) * 100}%`,
+                        backgroundColor: statusInfo.color
+                      }}
+                    ></div>
+                  </div>
+                  <small>
+                    €{betalingStatus.betaald_bedrag} van €{betalingStatus.totaal_bedrag} betaald
+                  </small>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }
+    },
+    {
+      title: "Afspraakoverzicht",
+      icon: <FaCalendarAlt className="icon-fix" />,
+      onClick: () => navigate('/bedrijf/afspraken'),
+      iconClass: "bg-green",
+      isDynamic: true,
+      content: () => {
+        const statusInfo = getAfsprakenStatusInfo();
+        return (
+          <div className="card-dynamic-content">
+            <div className="afspraken-summary">
+              <div className="totaal-afspraken">
+                <span className="big-number">{statusInfo.totaal}</span>
+                <span className="label">Totale afspraken</span>
+              </div>
+              <div className="afspraken-stats">
+                <div className="stat-item">
+                  <span className="stat-number goedgekeurd">{statusInfo.goedgekeurd}</span>
+                  <span className="stat-label">Goedgekeurd</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-number in-afwachting">{statusInfo.in_afwachting}</span>
+                  <span className="stat-label">In afwachting</span>
+                </div>
+                {statusInfo.afgewezen > 0 && (
+                  <div className="stat-item">
+                    <span className="stat-number afgewezen">{statusInfo.afgewezen}</span>
+                    <span className="stat-label">Afgewezen</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            {aankomende_afspraken.length > 0 && (
+              <div className="aankomende-afspraken">
+                <h5>Aankomende afspraken:</h5>
+                {aankomende_afspraken.map((afspraak, index) => (
+                  <div key={index} className="mini-afspraak">
+                    <span className="student-naam">{afspraak.voornaam} {afspraak.studentnaam}</span>
+                    <span className="afspraak-tijd">
+                      {new Date(afspraak.datum).toLocaleDateString('nl-BE')} - {afspraak.tijdslot}
+                    </span>
+                    <span className={`status-mini ${afspraak.status}`}>
+                      {afspraak.status === 'goedgekeurd' ? '✓' : 
+                       afspraak.status === 'in_afwachting' ? '⏳' : '✗'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      }
+    },
+    {
+      title: "Beschikbaarheid van standen",
+      icon: <FaMapMarkerAlt className="icon-fix" />,
+      description: "Controleer de beschikbaarheid van uw standplaatsen",
+      onClick: () => navigate('/bedrijf/standen'),
+      iconClass: "bg-orange",
+      isSmall: true
+    },
+    {
+      title: "Bedrijfsinstellingen",
+      icon: <FaCog className="icon-fix" />,
+      description: "Beheer uw bedrijfsinformatie en instellingen",
+      onClick: () => navigate('/bedrijf/Settingsbedrijf'),
+      iconClass: "bg-purple",
+      isSmall: true
+    }
+  ];
 
   // Show loading state while fetching data
   if (loading) {
@@ -672,7 +870,6 @@ const dashboardCards = [
         showNotifications={showNotifications}
         setShowNotifications={setShowNotifications}
         notificationRef={notificationRef}
-        filteredCards={filteredCards}
         upcomingEvents={upcomingEvents}
         calendarDate={calendarDate}
         setCalendarDate={setCalendarDate}
@@ -687,6 +884,8 @@ const dashboardCards = [
         addEventReminder={addEventReminder}
         markNotificationAsRead={markNotificationAsRead}
         deleteNotification={deleteNotification}
+        refreshNotifications={refreshNotifications} 
+        dashboardCards={dashboardCards} // Dit blijft
       />
     </div>
   );

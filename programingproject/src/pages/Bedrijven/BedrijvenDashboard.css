@@ -197,9 +197,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
+  padding: 12px 16px;
   border-bottom: 1px solid #eee;
-  background-color: #f8f9fa;
 }
 
 .notification-header h4 {
@@ -215,6 +214,28 @@
   border-radius: 12px;
   font-size: 0.8rem;
   font-weight: 500;
+}
+
+.notification-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.refresh-notifications-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  font-size: 14px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.refresh-notifications-btn:hover {
+  opacity: 1;
+  background-color: #f5f5f5;
 }
 
 .notification-list {
@@ -884,6 +905,176 @@
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(74, 108, 247, 0.3);
 }
+
+/* Dynamic card styles */
+.dashboard-card.dynamic-card {
+  min-height: 200px;
+}
+
+.dashboard-card.small-card {
+  min-height: 120px;
+}
+
+.card-dynamic-content {
+  flex: 1;
+  padding: 8px 0;
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.status-badge {
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.niveau-badge {
+  background: #f8f9fa;
+  color: #495057;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.amount-info .bedrag {
+  font-size: 18px;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 8px;
+}
+
+.betaal-progress {
+  margin-top: 8px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background-color: #e9ecef;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.afspraken-summary {
+  margin-bottom: 12px;
+}
+
+.totaal-afspraken {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.big-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: #28a745;
+}
+
+.label {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.afspraken-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
+
+.stat-number {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.stat-number.goedgekeurd { color: #28a745; }
+.stat-number.in-afwachting { color: #ffc107; }
+.stat-number.afgewezen { color: #dc3545; }
+
+.stat-label {
+  font-size: 10px;
+  color: #6c757d;
+  text-align: center;
+}
+
+.aankomende-afspraken {
+  border-top: 1px solid #e9ecef;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+.aankomende-afspraken h5 {
+  font-size: 12px;
+  color: #6c757d;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.mini-afspraak {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 11px;
+}
+
+.student-naam {
+  font-weight: 500;
+  color: #212529;
+  flex: 1;
+}
+
+.afspraak-tijd {
+  color: #6c757d;
+  margin: 0 8px;
+}
+
+.status-mini {
+  width: 16px;
+  text-align: center;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.card-grid .dashboard-card:nth-child(3),
+.card-grid .dashboard-card:nth-child(4) {
+  min-height: 120px;
+}
+
+@media (max-width: 768px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Tablet (768px - 1024px) */
 @media (max-width: 1024px) {
   .dashboard-toolbar {

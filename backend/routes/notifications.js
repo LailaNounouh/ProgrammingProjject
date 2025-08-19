@@ -5,11 +5,10 @@ const { authenticateToken } = require('../middleware/auth');
 
 console.log('🟢 Notifications router loaded');
 
-// GET alle notifications voor een bedrijf
-router.get('/bedrijf/:bedrijfId', authenticateToken, async (req, res) => {
+// GET alle notifications voor een bedrijf (ZONDER AUTH VOOR TESTING)
+router.get('/bedrijf/:bedrijfId', async (req, res) => {
   console.log('🔵 GET /notifications/bedrijf/:bedrijfId called');
   console.log('🔵 bedrijfId:', req.params.bedrijfId);
-  console.log('🔵 User from token:', req.user);
   
   const { bedrijfId } = req.params;
   
@@ -58,8 +57,8 @@ router.get('/bedrijf/:bedrijfId', authenticateToken, async (req, res) => {
   }
 });
 
-// GET alle notifications voor een student
-router.get('/student/:studentId', authenticateToken, async (req, res) => {
+// GET alle notifications voor een student (ZONDER AUTH VOOR TESTING)
+router.get('/student/:studentId', async (req, res) => {
   console.log('🔵 GET /notifications/student/:studentId called');
   const { studentId } = req.params;
   

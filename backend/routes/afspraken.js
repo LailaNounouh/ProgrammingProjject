@@ -5,14 +5,24 @@ const { authenticateToken } = require('../middleware/auth');
 
 // Helper functie om notification te maken
 const createNotification = async (userId, userType, type, bericht, relatedData = null) => {
+  console.log('🔔 Creating notification:', { userId, userType, type, bericht });
   try {
-    await db.execute(
+    const [result] = await db.execute(
       `INSERT INTO Notifications (user_id, user_type, type, bericht, related_data)
        VALUES (?, ?, ?, ?, ?)`,
       [userId, userType, type, bericht, JSON.stringify(relatedData)]
     );
+    console.log('✅ Notification created with ID:', result.insertId);
+    
+    // Test: Direct ophalen van de notification
+    const [check] = await db.execute(
+      'SELECT * FROM Notifications WHERE notification_id = ?',
+      [result.insertId]
+    );
+    console.log('✅ Notification verification:', check[0]);
+    
   } catch (error) {
-    console.error('Fout bij maken notification:', error);
+    console.error('❌ Fout bij maken notification:', error);
   }
 };
 
